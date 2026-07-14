@@ -1,0 +1,370 @@
+# Tese, formalização e pré-registro de hipóteses
+
+> **Status**: v1 — congelado antes de qualquer contato com dados de retorno.
+> **Regra de ouro deste documento**: tudo aqui foi escrito *antes* de rodar o primeiro
+> backtest. Se mudarmos algo depois de ver resultados, a mudança tem que ser registrada
+> em `07_RISCOS_E_DECISOES.md` com data e justificativa. Um plano que muda silenciosamente
+> depois de ver o resultado não é um plano, é overfitting narrado.
+
+---
+
+## 1. A tese em uma frase
+
+> Choques climáticos nas regiões produtoras brasileiras carregam informação sobre a oferta
+> futura de commodities agrícolas, e essa informação chega ao preço das ações da B3 **com
+> defasagem e de forma heterogênea entre empresas** — porque o mesmo choque é *bom* para
+> quem vende a commodity e *ruim* para quem a compra como insumo. Exploramos a defasagem
+> (timing) e a heterogeneidade (cross-section), e usamos o dado de comércio exterior como
+> confirmação independente de que o choque de fato se materializou em oferta física.
+
+---
+
+## 2. O erro que quase cometemos (e por que a tese não é o óbvio)
+
+
+A formulação ingênua da tese seria:
+
+> "Detectamos seca → a safra vai cair → *vende* ações do agro."
+
+**Isso está economicamente errado**, e é importante que o time entenda por quê antes de
+escrever uma linha de código. O Brasil é um dos maiores exportadores mundiais de soja,
+milho, açúcar, café e carne. Uma quebra de safra brasileira não é um evento local — é um
+**choque de oferta global**, que *empurra o preço internacional da commodity para cima*.
+
+Para uma empresa que **vende** a commodity (SLC Agrícola, São Martinho, BrasilAgro), uma
+seca tem dois efeitos de sinais opostos:
+
+| Canal | Efeito de uma seca | Impacto no lucro do produtor |
+|---|---|---|
+| **Quantidade** | produz menos sacas | negativo |
+| **Preço** | preço internacional sobe | **positivo** |
+
+O efeito líquido é **ambíguo** e depende de quanto da lavoura *dela* foi atingida versus
+quanto do agregado global foi atingido. Um produtor cuja lavoura escapou da seca enquanto o
+resto do país secou é o grande vencedor: vende o mesmo volume a um preço muito maior.
+
+Já para uma empresa que **compra** a commodity como insumo — um frigorífico (JBS, BRF,
+Marfrig, Minerva) compra milho e farelo de soja para ração — a seca é **inequivocamente
+ruim**: o custo do insumo sobe e a margem é comprimida. Não há canal compensatório.
+
+### A consequência: onde está o alfa
+
+O alfa **não** está em prever a direção do setor agro como bloco. Está na **dispersão
+cross-seccional** que o choque cria dentro do setor: o mesmo evento climático deveria
+empurrar produtores e processadores em direções opostas. Um índice setorial agregado
+mistura os dois e cancela o efeito — que é exatamente a razão pela qual essa informação
+pode continuar não-arbitrada.
+
+Isso transforma a estratégia de uma **aposta direcional** (frágil, fácil de estar errada,
+correlacionada com o mercado) em uma **estratégia de valor relativo dentro do setor**
+(long produtores / short processadores num choque negativo de oferta, e o inverso numa
+supersafra), que é neutra a mercado por construção e muito mais defensável.
+
+> **Formalmente**: não modelamos `E[retorno do agro | clima]`. Modelamos
+> `E[retorno da empresa i | clima] = f(exposição líquida da empresa i à commodity c)`.
+
+Essa reformulação é o principal ativo intelectual do projeto e o que responde ao critério
+"Conceito da estratégia" (20%): a ineficiência não é "ninguém olha o tempo" (todo mundo
+olha), é que **traduzir o tempo em posicionamento relativo exige juntar três bases
+heterogêneas — grade meteorológica, mapa de produção agrícola e composição de receita/custo
+das empresas — e essa agregação é cara o suficiente para não estar no preço no dia seguinte.**
+
+---
+
+## 3. Formalização do sinal
+
+Seja:
+
+- `c ∈ C` — commodity (soja, milho, cana/açúcar, café, algodão, boi, celulose)
+- `i ∈ U_t` — empresa no universo elegível na data `t` (universo **dinâmico**, ver §7)
+- `Shock_{c,t}` — índice de estresse climático da cultura `c`, agregado nacionalmente,
+  observável em `t` (respeitando o lag de publicação — ver `02_DADOS.md`)
+- `E_{i,c}` — exposição líquida da empresa `i` à commodity `c`, em `[-1, +1]`:
+  `+1` = produtor puro (ganha quando o preço de `c` sobe);
+  `-1` = consumidor puro do insumo (perde quando o preço de `c` sobe)
+
+**Sinal bruto por empresa:**
+
+```
+S_{i,t} = Σ_c  E_{i,c} · Shock_{c,t}
+```
+
+**Nota de sinal (importante):** `Shock` é definido como **estresse** — valores positivos
+significam condição climática *ruim* para a lavoura (seca/calor), que implica **preço da
+commodity subindo**. Logo `S_{i,t} > 0` ⇒ esperamos retorno positivo para a empresa `i`.
+O produtor (`E > 0`) sob estresse (`Shock > 0`) recebe score positivo; o frigorífico
+(`E < 0`) sob o mesmo estresse recebe score negativo. Essa convenção de sinal está
+codificada em teste unitário (`tests/test_signal_sign.py`) porque inverter sinal é o bug
+mais comum e mais caro deste tipo de estratégia.
+
+### 3.1 O componente climático `Shock_{c,t}`
+
+```
+Shock_{c,t} = Σ_g  w_{g,c,t} · z_{g,t}(janela fenológica de c)
+```
+
+- `g` — célula da grade meteorológica (NASA POWER / ERA5)
+- `w_{g,c,t}` — **peso de produção**: participação da célula `g` na produção nacional da
+  cultura `c`, segundo a **última safra já divulgada** em `t` (nunca a safra corrente —
+  isso seria lookahead; ver §6.2)
+- `z_{g,t}` — anomalia climática padronizada na célula `g`: z-score da variável (déficit de
+  precipitação acumulada, dias com T_max acima de limiar de estresse térmico) contra a
+  **climatologia da própria célula**, calculada apenas com anos anteriores a `t`
+  (climatologia expanding, nunca a média do período inteiro — isso também é lookahead)
+- **Janela fenológica**: a anomalia só é contada durante a fase crítica da cultura
+  (floração/enchimento de grão), que é quando o estresse hídrico de fato destrói
+  produtividade. Chuva em julho no Mato Grosso é irrelevante para a soja porque não há soja
+  no campo. Essa janela vem do calendário agrícola (CONAB/Embrapa/ZARC) e é **definida a
+  priori por agronomia, não escolhida por grid search no retorno** — ver
+  `09_FENOLOGIA_E_LIMIARES.md`.
+
+> 🔴 **O sinal não é linear nem tem direção única em todas as culturas.** Três exceções
+> confirmadas na literatura agronômica, que precisam estar no modelo — não são detalhes:
+>
+> - **Cana**: seca no **verão** (crescimento, nov-abr) reduz tonelagem — ruim. Seca no
+>   **inverno** (maturação, mai-set) **aumenta o ATR/sacarose** — *boa*. Um z-score linear
+>   aplicado à cana o ano inteiro teria **o sinal trocado em metade do tempo**.
+> - **Café**: a florada (set/out) exige **seca seguida de retomada de chuva**. Menos chuva
+>   nessa janela **não é linearmente ruim** — o gatilho é a *sequência*, não o nível.
+> - **Milho safrinha**: o efeito é fortemente **assimétrico no tempo** — déficit *no*
+>   embonecamento custa −40% a −50% de produtividade; o mesmo déficit depois custa −10% a
+>   −20%. Exige janela estreita e bem posicionada, não média sazonal larga.
+>
+> Consequência: `Shock_{c,t}` é definido **por cultura e por fase**, com direção
+> explicitamente declarada em cada uma. Um sinal linear único para todas as culturas está
+> errado, e produziria um resultado medíocre e inexplicável.
+
+### 3.2 O componente de exposição `E_{i,c}`
+
+Estimado por **dois métodos independentes**, que se cruzam:
+
+**Método A — fundamentalista (prior, "de baixo para cima")**
+Composição de receita e de custo divulgada pela própria empresa (releases trimestrais,
+Formulário de Referência CVM). Ex.: São Martinho é ~100% cana → `E = +1` em açúcar/etanol.
+BRF tem ~30-40% do CPV em milho e farelo → `E` negativo relevante nessas duas.
+*Vantagem*: interpretável, estável, defensável na banca. *Custo*: trabalho manual, baixa
+frequência de atualização.
+
+**Método B — estatístico (validação, "de cima para baixo")**
+Beta rolling da ação contra o retorno do futuro da commodity, **controlando por Ibovespa e
+USDBRL** (sem esse controle, capturamos só beta de mercado e de câmbio, já que exportadora
+sobe com dólar):
+
+```
+r_{i,t} = α + β_mkt·r_IBOV,t + β_fx·r_USDBRL,t + Σ_c γ_{i,c}·r_{fut c,t} + ε
+```
+`γ_{i,c}` estimado em janela móvel (ex. 252 dias) → normalizado para `[-1,+1]`.
+*Vantagem*: automatizável, atualiza sozinho. *Risco*: ruidoso, endógeno, e pode capturar
+correlação espúria.
+
+**Como usamos os dois**: A é o prior; B é o teste de sanidade.
+**A discordância entre A e B é informação, não ruído** — se a empresa se declara produtora
+mas o mercado a precifica como consumidora (ou vice-versa), isso vai para o relatório como
+achado. Registramos a matriz de discordância explicitamente.
+
+**Decisão pré-registrada**: o resultado **primário** usa o Método A (exposição
+fundamentalista, fixa e auditável). O Método B entra como **teste de robustez**, não como
+o resultado principal. Motivo: `E` estimado por regressão dos próprios retornos cria uma
+dependência circular entre o sinal e o alvo que enfraquece a interpretação causal.
+
+### 3.3 A camada intermediária: a revisão da estimativa de safra da CONAB
+
+Entre o choque climático (causa) e o preço da ação (efeito) existe um elo intermediário que
+é **observável, quantificável e — o mais importante — tem data de publicação conhecida**:
+a revisão da estimativa oficial de safra.
+
+A CONAB publica **12 levantamentos** ao longo de cada safra, e o arquivo público
+`LevantamentoGraos.txt` preserva **todas as estimativas anteriores** — ou seja, é um painel
+de *vintages* verdadeiro. Exemplo (soja, Mato Grosso, mil toneladas):
+
+| Safra | 1º Lev. | 4º Lev. | 6º Lev. | 12º Lev. | Revisão total |
+|---|---|---|---|---|---|
+| 2023/24 (seca) | 44.348 | 40.200 | 37.568 | 40.420 | **−15% do 1º ao 6º** |
+| 2022/23 (boa) | 41.146 | 42.534 | 43.903 | 46.906 | **+14%** |
+
+Revisões dessa magnitude são eventos materiais para uma empresa cuja receita depende do
+volume e do preço da commodity.
+
+**Isso reformula a cadeia causal do projeto de forma mais forte e mais testável:**
+
+```
+choque climático  →  revisão da estimativa CONAB  →  preço da commodity / ação
+   (t)                (publicada em t+k,               (reprecificação)
+                       data conhecida)
+```
+
+Duas consequências metodológicas importantes:
+
+**(a) A hipótese central fica diretamente falsificável.** A pergunta deixa de ser a vaga
+"o clima afeta as ações?" e passa a ser a específica: **o choque climático observado prevê a
+revisão que a CONAB vai publicar?** Se prevê, temos um sinal antecedente de uma informação
+que o mercado só vai receber semanas depois, num evento datado. Se não prevê, a tese está
+errada e sabemos disso cedo, com pouco código escrito.
+
+**(b) Permite um estudo de evento.** As datas de publicação dos levantamentos são conhecidas
+(mensais, em torno do dia 15). Podemos medir o retorno anormal das ações **na janela ao redor
+da publicação**, condicionado ao sinal climático prévio. Isso isola a reprecificação de uma
+forma que uma regressão de retornos diários não consegue.
+
+**Limitações desta camada, declaradas desde já:**
+
+1. **O painel de vintages só começa na safra 2017/18** — são ~9 safras. A série histórica
+   longa da CONAB (desde 1976/77) traz apenas o número **final**, sem os vintages. Isso
+   limita severamente o poder estatístico desta camada específica (ver `05_SUITE_ROBUSTEZ.md`
+   §6 sobre N efetivo).
+2. **O arquivo não traz a data de publicação de cada levantamento** — só o número (1 a 12).
+   Precisamos mapear `(safra, nº do levantamento) → data de divulgação` manualmente, a
+   partir dos calendários oficiais. Errar essa data por poucos dias contamina o estudo de
+   evento, então o mapeamento tem que ser conferido ano a ano, não interpolado.
+3. **Granularidade é por UF, não por município.** Aceitável, porque a grade meteorológica
+   utilizável (0.5°, ~55 km) também não sustenta resolução municipal.
+
+### 3.4 A camada de confirmação: comércio exterior (ComexStat)
+
+O sinal climático é uma **previsão** de choque de oferta. O volume exportado (kg líquido,
+por NCM, mensal, Secex/MDIC) é a **realização observada** desse choque.
+
+Isso cumpre **duas funções distintas**, que não devem ser confundidas:
+
+**(a) Como teste do mecanismo econômico (validação da tese, não do trade)**
+Pergunta pré-registrada: *o choque climático em `t` prevê queda no volume exportado em
+`t+3` a `t+6` meses?* Se **não** prevê, o mecanismo econômico que postulamos é falso, e
+qualquer alfa que aparecesse seria coincidência. Este teste roda **antes** de olhar
+retornos, e o resultado — inclusive negativo — vai para o relatório (padrão Kairos:
+documentar a hipótese falsificada é o que a banca premia em "Análise dos Resultados").
+
+**(b) Como camada de confirmação no dimensionamento da posição**
+A posição é **proporcional à concordância entre as camadas**, não binária (padrão
+KernelNet):
+
+| Camada climática | Camada de exportação | Posição |
+|---|---|---|
+| acende | confirma | tamanho cheio (peso 1.0) |
+| acende | ainda sem dado / neutra | tamanho reduzido (peso 0.5) |
+| acende | **contradiz** | sem posição (peso 0.0) |
+
+O caso "contradiz" é o mais interessante: houve seca mas o embarque veio normal — ou o
+choque não atingiu a área que importa, ou havia estoque de passagem. Nesses dois casos a
+tese não se aplica, e a resposta correta é **não operar**, não operar menor.
+
+---
+
+## 4. As hipóteses, formalmente
+
+Pré-registradas. Cada uma tem um critério de falsificação explícito — se o teste falhar,
+o resultado vai para o relatório como achado negativo, não é escondido.
+
+| # | Hipótese | Teste | Critério de falsificação |
+|---|---|---|---|
+| **H1a** (mecanismo — o elo central) | O choque climático prevê a **revisão da estimativa de safra da CONAB** antes de ela ser publicada | Regressão `revisão_{lev n} ~ Shock` acumulado até a data de corte do levantamento, painel (safra × UF × cultura), erros agrupados por ano-safra | Coeficiente sem o sinal esperado ou não-significativo após BH-FDR |
+| **H1b** (mecanismo físico) | O choque prevê a produção/exportação física da cultura | Regressão preditiva `Δ log(volume exportado)_{t+h} ~ Shock_t`, `h ∈ {3,4,5,6}` meses, erros-padrão Newey-West | idem |
+| **H2** (transmissão a preço) | O choque se transmite ao preço do futuro da commodity, e a **publicação do levantamento** move o preço | (i) regressão preditiva sobre o futuro; (ii) **estudo de evento** na janela ao redor da divulgação da CONAB | ausência de retorno anormal na janela do evento, condicionado ao sinal |
+| **H3** (defasagem no equity) | O choque prevê retorno **cross-seccional** das ações via exposição líquida `E` | Fama-MacBeth: `r_{i,t+1..t+h} ~ a + b·S_{i,t} + controles`; `b > 0` significativo | `b ≤ 0` ou não-significativo |
+| **H4** (a que mata o projeto) | O retorno da estratégia **não é apenas beta de commodity reembalado** | *Spanning regression*: `r_strat ~ α + IBOV + USDBRL + futuros (soja, milho, açúcar, café) + fatores NEFIN (SMB, HML, WML, IML)` | **α ≤ 0** ou não-significativo ⇒ a estratégia é uma forma cara de comprar o futuro da soja, e temos que dizer isso |
+| **H5** (especificidade / placebo) | O sinal vem da agronomia, não de um confundidor macro | Placebo espacial: recalcular `Shock` usando células de grade **sem produção agrícola relevante** (Amazônia central, litoral) | Se o alfa **sobrevive** ao placebo, o sinal está capturando outra coisa (ENSO, risco global, FX) e não o que dizemos que captura |
+
+**H4 e H5 são as duas que podem matar o projeto** e por isso são as mais importantes.
+Uma banca de gestora vai fazer exatamente essas duas perguntas. Rodá-las por conta própria,
+antes, e reportar o resultado honestamente, é o que separa um trabalho sério de um pitch.
+
+### Confundidor conhecido: ENSO (El Niño / La Niña)
+
+El Niño/La Niña afeta simultaneamente (i) o clima brasileiro, (ii) o clima dos outros
+grandes produtores (EUA, Argentina) e (iii) o apetite global a risco. Nosso sinal pode ser
+um proxy disfarçado de ENSO. **Controle pré-registrado**: incluir o índice ONI (Oceanic
+Niño Index, NOAA, mensal, público) como controle nas regressões de H3 e como fator na
+spanning regression de H4. Se o alfa morre ao controlar por ONI, o achado é "o sinal é
+ENSO" — o que ainda é um resultado publicável, mas uma tese diferente da nossa, e teríamos
+que dizê-lo com todas as letras.
+
+---
+
+## 5. Definição do experimento primário (congelada)
+
+Um único conjunto de parâmetros é declarado **primário**. Todo o resto é robustez.
+Isto existe para impedir que o resultado reportado seja o melhor de centenas de
+combinações testadas — que é a forma mais comum de auto-engano em backtest.
+
+| Parâmetro | Valor primário | Justificativa (**não** derivada de retorno) |
+|---|---|---|
+| Variável climática | déficit de precipitação acumulada + dias de estresse térmico (`T_max > limiar`) na janela fenológica | Agronomia: são os dois canais físicos documentados de perda de produtividade |
+| Climatologia base | z-score vs. média/desvio **expanding** dos anos anteriores (mín. 10 anos) | Único jeito de não usar o futuro. Descarta a climatologia fixa 1991-2020, que é lookahead |
+| Janela fenológica | por cultura e por região, do calendário agrícola CONAB/Embrapa | Fonte externa, definida a priori |
+| Lag de publicação do clima | **7 dias corridos** | Conservador vs. a latência real da fonte (ver `02_DADOS.md`); sensibilidade testada em 3/7/14 dias |
+| Lag de publicação do ComexStat | data real de divulgação Secex + 1 dia útil | Calendário oficial de divulgação |
+| Exposição `E_{i,c}` | Método A (fundamentalista) | Auditável, não circular |
+| Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a frequência do dado de confirmação (mensal) e com a hipótese de difusão lenta |
+| Execução | no **close de D+1** após o sinal de D | Nunca no mesmo close que gerou o sinal |
+| Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`, cap de 20% por nome | Neutralidade a mercado é consequência direta da tese (§2) |
+| Custos | corretagem+emolumentos B3 + slippage proporcional à participação no ADTV | Ver `04_PROTOCOLO_BACKTEST.md` |
+| Benchmark | Ibovespa **e** CDI, ambos declarados a priori | Não escolher depois qual "ganhou" |
+
+---
+
+## 6. Split temporal e disciplina de holdout (congelado)
+
+
+O edital cita nominalmente "escolha oportunista de período" como viés a ser mitigado. Nossa
+resposta:
+
+```
+├─────────── DESENVOLVIMENTO (in-sample) ───────────┤├──── HOLDOUT (lacrado) ────┤
+2013-01-01                              2019-12-31   2020-01-01        2025-12-31
+```
+
+- **Todo** o desenvolvimento — escolha de variável climática, calibração de limiares,
+  decisões de desenho — acontece **exclusivamente** em 2013-2019.
+- O período 2020-2025 é **lacrado**. Ninguém do time roda backtest nele até o desenho
+  estar congelado. Rodamos **uma única vez**, e o resultado — qualquer que seja — vai para
+  o relatório.
+- O holdout contém COVID (2020), o superciclo de commodities (2021-22), a guerra na Ucrânia
+  e a seca histórica de 2021 no Brasil. É um teste **duro** e de regime genuinamente
+  diferente. Se a estratégia sobreviver a ele, o resultado é forte. Se não sobreviver,
+  isso também é um resultado, e vamos reportá-lo.
+
+**Tensão real, assumida com honestidade** (ver §7): boa parte do universo agro da B3 só
+existe *depois* de 2020. Ou seja, o período com universo rico é justamente o holdout. Não
+há solução limpa para isso. Nossa resposta é rodar **dois backtests declarados desde já**:
+
+- **Backtest A — "núcleo histórico" (2013-2025)**: universo restrito às empresas listadas
+  desde ~2012 (SLCE3, SMTO3, JBSS3, BRFS3, MRFG3, BEEF3, SUZB3, KLBN11, AGRO3, RAIL3).
+  Menos nomes, mas histórico longo e split in-sample/holdout íntegro.
+- **Backtest B — "universo amplo" (2021-2025)**: todos os nomes, incluindo os IPOs de
+  2020-21 (SOJA3, TTEN3, JALL3, RAIZ4, VITT3...). Mais nomes, histórico curto, e
+  **inteiramente dentro do holdout** — portanto não pode ser usado para calibrar nada.
+
+Reportamos os dois lado a lado, com a limitação explicada. Um gráfico da **contagem de
+ativos elegíveis ao longo do tempo** entra no relatório: é a prova visual de que tratamos
+o problema em vez de escondê-lo.
+
+---
+
+## 7. Vieses que estamos atacando explicitamente
+
+
+| Viés | Como ele entraria aqui | Mitigação implementada |
+|---|---|---|
+| **Look-ahead climático** | usar dado meteorológico do dia `t` no dia `t` (a fonte só o publica dias depois); usar climatologia calculada com o período inteiro | Lag de publicação explícito (7d) + climatologia *expanding* + teste de sensibilidade ao lag |
+| **Look-ahead de reanálise** | NASA POWER/ERA5 **revisam** valores passados. O número que vemos hoje para 2015 pode não ser o que estava disponível em 2015 | **Não é totalmente removível com dado gratuito.** Assumido como limitação. Mitigamos usando variáveis robustas a revisão (acumulados mensais, não picos diários) e declaramos isso no relatório |
+| **Look-ahead do mapa de produção** | ponderar as células de grade pela produção da safra **corrente** (só conhecida no fim) | Usar sempre a **última safra já divulgada** em `t` |
+| **Survivorship / backfill do universo** | rodar 2013-2025 com o universo de hoje (só quem sobreviveu e já abriu capital) | **Universo dinâmico**: a ação entra na data de IPO + 60 dias e sai na data de deslistagem. Contagem de ativos plotada |
+| **Multiple testing** | culturas × regiões × janelas × lags × limiares = centenas de combinações; alguma vai parecer significativa por acaso | Benjamini-Hochberg (FDR) sobre toda a família de testes + um único conjunto primário pré-registrado (§5) |
+| **Escolha oportunista de período** | escolher 2013-2025 porque foi onde funcionou | Split declarado a priori (§6), holdout lacrado |
+| **Autocorrelação inflando t-stats** | o sinal climático é altamente persistente; retornos sobrepostos violam independência | Newey-West + *block bootstrap* para inferência |
+| **Viés de sobrevivência do sinal** | testar 21 teses e reportar a que funcionou | As 20 teses descartadas estão documentadas em `05_Ideacao_Tese/teses_candidatas.md` com a justificativa da escolha, feita **antes** de qualquer backtest |
+| **Ilusão de liquidez** | assumir que dá para operar R$ 10 mi em JALL3 | Filtro de ADTV mínimo + modelo de slippage proporcional à participação no volume |
+
+---
+
+## 8. O que este projeto **não** é (escopo negativo, declarado)
+
+- **Não** é um modelo de previsão de safra. Não competimos com CONAB/USDA. Usamos o clima
+  como sinal *ruidoso e antecedente*, não como estimativa de produtividade.
+- **Não** é uma aposta direcional em commodity. Se quiséssemos ficar comprados em soja,
+  compraríamos o futuro de soja — é mais barato e mais líquido. A estratégia só se
+  justifica se gerar alfa **além** disso (é literalmente o teste H4).
+- **Não** usa machine learning para decidir direção. ML, se entrar, entra só na camada de
+  execução (padrão KernelNet) e é opcional. Complexidade não pontua por si só, e um sinal
+  economicamente interpretável é mais defensável do que um que não conseguimos explicar.
+- **Não** promete bater o Ibovespa sempre. É posicionada como estratégia **market-neutral
+  de valor relativo dentro do agro** — o benchmark honesto é CDI + prêmio, não o índice.
