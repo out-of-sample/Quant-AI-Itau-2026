@@ -1,0 +1,52 @@
+# Materiais de referência do desafio (edital, aulas, relatórios de anos anteriores de outros
+# times). Ficam apenas na máquina de cada integrante: são material de terceiros e não devem
+# ser republicados. Não são necessários para reproduzir o projeto.
+01_Edital_e_Regras/
+02_Material_de_Aulas/
+03_Exemplos_Anos_Anteriores/
+04_Outros/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env
+.env.*
+*.key
+
+# Dados brutos, intermediários e processados.
+# São grandes e regeneráveis pelo código de ingestão. O que garante reprodutibilidade é o
+# código que baixa + o manifesto (data/manifests/), não o arquivo commitado.
+data/raw/
+data/interim/
+data/processed/
+*.csv
+*.parquet
+*.zip
+
+# Exceção: os MANIFESTOS são versionados. São pequenos e são a prova de qual vintage de
+# cada fonte foi usado — sem eles o backtest não é auditável.
+!data/manifests/
+!data/manifests/**
+
+# Saídas geradas (regeneráveis pelo pipeline)
+outputs/figures/*
+outputs/tables/*
+!outputs/**/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Guia local de convenções (não versionado — fica na máquina de cada integrante)
+CLAUDE.md
