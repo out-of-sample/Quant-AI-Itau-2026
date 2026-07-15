@@ -180,6 +180,19 @@ Eventos **em ações** (split/bonificação/incorporação/subscrição) vêm do
 terminais dos deslistados — mas parece truncar as listas, o que precisa ser conferido ao
 construir os fatores.
 
+### D-014 — Série de retorno total point-in-time, não "adjusted close" retroativo
+**Data**: 2026-07-15
+O motor de preços (`quantagro.prices.adjust`) devolve **retorno total diário**, não um nível de
+preço ajustado. Motivo: o ajuste retroativo clássico reescala todo o passado a cada novo
+provento, então o nível ajustado numa data `t` passaria a embutir dividendos pagos **depois** de
+`t` — lookahead puro para qualquer sinal que olhe nível. O retorno total é calculado só para
+frente, aplicando cada evento a partir da sua data-ex (= 1º pregão após a data-com). A
+propriedade está **travada em teste** (`tests/test_price_adjust.py::TestPointInTime`): o retorno
+até `t` não muda quando se acrescenta um evento posterior a `t`.
+**Custo/limitação**: quem precisar de nível (ex.: filtro de preço mínimo) terá de reconstruir um
+índice a partir do retorno, ciente de que só é válido para frente. A normalização específica de
+cada fonte (fator da B3, campo `adj` da StatusInvest) fica na ingestão, fora do motor.
+
 ---
 
 ## Como registrar uma decisão nova
