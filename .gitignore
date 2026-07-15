@@ -14,6 +14,13 @@ __pycache__/
 venv/
 env/
 .ipynb_checkpoints/
+build/
+dist/
+
+# Caches de ferramentas (ruff, pytest, mypy, pre-commit)
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
 
 # Environment / secrets
 .env
