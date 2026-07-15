@@ -1,8 +1,8 @@
-# Arquitetura do pipeline — especificação
+# Arquitetura do pipeline — especificação e estado
 
-> Este documento **especifica**, não implementa. Descreve o que cada camada recebe, o que
-> entrega, e qual invariante ela é obrigada a garantir. O código vem depois e tem que
-> obedecer a este contrato.
+> Este documento **especifica** o contrato de cada camada: o que recebe, o que entrega, e qual
+> invariante é obrigada a garantir. Parte do pipeline já está implementada e obedece a este
+> contrato — o **estado de implementação** (o que existe hoje em `src/quantagro/`) está na §6.
 
 
 ---
@@ -198,17 +198,21 @@ concretos. Alimenta o relatório de 5 páginas.
 │   ├── 08_IDENTIDADE_ROBO.md      nome + identidade visual (5% da nota)
 │   ├── DIARIO_GENAI.md            registro contínuo de uso de IA (15% da nota)
 │   └── adr/                       Architecture Decision Records
-├── src/                         (código — fase seguinte)
-│   └── <pacote>/
-│       ├── ingest/              C0 — um módulo por fonte
-│       ├── validate/            C1 — schemas e carimbo PIT
-│       ├── features/            C2 — shock, exposure, context
-│       ├── stats/               C3 — testes, FDR, bootstrap
-│       ├── signal/              C4 — score → carteira
-│       ├── backtest/            C6 — engine, custos, métricas
-│       ├── robustness/          C7 — sensibilidade, placebo, spanning
-│       └── report/              C8 — tabelas e gráficos do relatório
-├── tests/                       espelha src/ — inclui testes de anti-lookahead
+├── pyproject.toml               empacotamento + config de ruff/pytest
+├── requirements.lock            stack pinado com hashes (reprodutível)
+├── scripts/                     guards determinísticos (check_lookahead, check_secrets)
+├── src/quantagro/
+│   ├── ingest/              C0 — cotahist (preço/universo), events_b3 (proventos)
+│   ├── validate/            C1 — schemas e carimbo PIT
+│   ├── prices/             C0–C1 — COTAHIST + eventos → retorno total point-in-time
+│   ├── features/            C2 — shock, exposure, context
+│   ├── stats/               C3 — testes, FDR, bootstrap
+│   ├── signal/              C4 — convention (sinal), score → carteira
+│   ├── backtest/            C6 — engine, custos, métricas
+│   ├── robustness/          C7 — sensibilidade, placebo, spanning
+│   └── report/              C8 — tabelas e gráficos do relatório
+├── tests/                       espelha src/ — inclui fixtures reais e anti-lookahead
+│   └── fixtures/                amostras reais (COTAHIST, respostas da B3)
 ├── notebooks/                   exploração (nunca fonte de verdade)
 ├── data/
 │   ├── raw/        (gitignored)  como veio da fonte, intocado
@@ -244,14 +248,44 @@ regenerável pelo código. O manifesto é pequeno e é a **prova** de qual vinta
 
 Hooks e CI existem para tornar impossível o erro que mais custa neste projeto.
 
-| Guardião | O que faz | Onde |
+| Guardião | O que faz | Onde (implementado) |
 |---|---|---|
-| **Formatador automático** | roda o linter/formatador a cada arquivo salvo | hook local |
-| **Bloqueio de segredo** | impede commit que contenha chave/token | git hook (`.githooks/pre-commit`) |
-| **Varredura anti-lookahead** | procura padrões suspeitos: `.shift(-1)`, filtro por `ref_date` a jusante da C1, estatística calculada sobre o período inteiro | git hook + CI |
-| **CI** | lint + testes a cada PR; `main` só recebe merge com CI verde | GitHub Actions |
-| **Teste de sinal invertido** | trava a convenção de sinal (`estresse ⇒ produtor sobe, frigorífico cai`) | teste unitário |
+| **Lint + formatador** | `ruff check` + `ruff format` a cada commit e na CI | `.pre-commit-config.yaml` + `.github/workflows/ci.yml` |
+| **Bloqueio de segredo** | impede commit com chave/token/credencial | `scripts/check_secrets.py` (pre-commit + CI) |
+| **Varredura anti-lookahead** | tripwire contra `.shift(-N)` sem justificativa | `scripts/check_lookahead.py` (pre-commit + CI) |
+| **CI** | lint + guards + testes a cada PR; `main` só recebe merge com CI verde | GitHub Actions |
+| **Teste de sinal invertido** | trava a convenção `estresse ⇒ produtor sobe, frigorífico cai` | `tests/test_signal_sign.py` |
+| **Reprodutibilidade** | stack pinado com hashes; instalação idêntica à da CI | `requirements.lock` (ver D-012) |
+
+> Os dois tripwires (lookahead e segredo) são *baratos e determinísticos*, não prova de
+> ausência — a defesa real continua sendo a revisão de PR e os testes (ver D-012). O formatador
+> é só o `ruff format` (o `black` foi removido para evitar dois formatadores em conflito).
 
 > O bug de **sinal invertido** e o bug de **lookahead** são os dois que destroem um projeto
 > quant, e ambos são silenciosos: o backtest roda, produz um número bonito, e está errado.
 > Por isso os dois têm guardião automatizado, não confiam em revisão humana.
+
+---
+
+## 6. Estado de implementação (atualizado em 2026-07-15)
+
+O que já existe em `src/quantagro/` e obedece ao contrato acima. O restante permanece
+especificação (§2) até ser construído — e cada peça construída entra com teste e CI verde.
+
+| Camada | Módulo | Estado | Notas |
+|---|---|---|---|
+| Fundação | `pyproject.toml`, `requirements.lock`, CI, guards | ✅ | D-012; stack cp314 pinado com hashes |
+| C0 preço | `ingest/cotahist.py` | ✅ | parser de largura fixa (offsets validados em arquivo real), download com cache + manifesto de vintage; delisting-proof (R4/D-004) |
+| C0 eventos | `ingest/events_b3.py` | ✅ parcial | proventos em dinheiro (`GetListedCashDividends`, paginado) e eventos em ações (`GetListedSupplementCompany`, `factor` validado contra preço). Falta a StatusInvest (cauda deslistada) |
+| C0–C1 preço | `prices/adjust.py` | ✅ | **retorno total point-in-time** (não *adjusted close* retroativo — D-014); consome `CorporateEvent` |
+| C4 sinal | `signal/convention.py` | ✅ | convenção de sinal `S = E·Shock` travada por teste (R11) |
+| C1 validação | `validate/` | ⬜ | esqueleto; carimbo de `avail_date` a construir |
+| C2 features | `features/` | ⬜ | `Shock`, `E`, contexto |
+| C3 stats · C6 backtest · C7 robustez · C8 report | idem | ⬜ | especificados nos docs `04`/`05` |
+
+> A camada **`prices/`** não estava no esqueleto original de 8 camadas: ela nasceu na Fase 1
+> como o passo que transforma preço bruto + eventos corporativos em retorno total antes das
+> features. Fica entre C0 (ingestão) e C1 (validação). Registrá-la aqui, em vez de encaixá-la
+> à força numa caixa existente, é a escolha honesta — a arquitetura real tem essa peça.
+
+Ver o andamento por fase em `00_PLANO_MESTRE.md` §4 e as decisões em `07_RISCOS_E_DECISOES.md`.

@@ -74,9 +74,20 @@ era falsa.
 Tese formalizada, hipóteses e critérios de falsificação congelados, dados verificados ao
 vivo, arquitetura especificada, riscos mapeados. **Nada disso depende de escrever código.**
 
-### Fase 1 — Ingestão e point-in-time
+### Fase 1 — Ingestão e point-in-time (em andamento)
 Trazer as fontes, carimbar `avail_date`, montar o universo dinâmico via COTAHIST.
 Resolver as pendências de `02_DADOS.md` §7 (ajuste de proventos, calendário CONAB).
+
+Andamento (2026-07-15), toda peça com teste e CI verde (ver `03_ARQUITETURA.md` §6):
+- ✅ Fundação de engenharia (empacotamento, lockfile com hashes, CI, guards de lookahead/segredo).
+- ✅ Fontes de proventos verificadas ao vivo e decididas (D-013): B3 oficial + StatusInvest.
+- ✅ Motor de **retorno total point-in-time** (D-014), sem *adjusted close* retroativo.
+- ✅ Parser + download do **COTAHIST** (offsets validados em arquivo real, delisting-proof).
+- ✅ Fetchers de eventos da **B3**: dinheiro (dividendo/JCP) e ações (split/bonificação/
+  grupamento, `factor` validado contra preço).
+- ⬜ Fetcher da **StatusInvest** (dividendos da cauda deslistada, campo `adj`).
+- ⬜ **Montador**: COTAHIST + eventos → série de retorno total por papel, delisting-aware.
+- ⬜ Carimbo de `avail_date` (C1) e universo dinâmico com filtro de liquidez.
 
 > **Portão**: se não conseguirmos construir uma série de preços delisting-aware e ajustada
 > por proventos, o cross-section não é confiável e nada adiante vale.
