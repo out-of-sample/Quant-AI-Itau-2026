@@ -153,6 +153,41 @@ não-confirmado **está proibido de virar parâmetro do sinal**.
 
 ---
 
+## 2026-07-15 — Fundação de engenharia do repositório
+
+**Uso**: montar, com assistência da IA, o esqueleto de engenharia antes de qualquer código de
+pesquisa — empacotamento (`pyproject.toml`), lockfile reprodutível com hashes, ganchos de
+pré-commit, CI no GitHub Actions, guards determinísticos de lookahead e de segredo, e o
+teste-canário da convenção de sinal.
+
+**Valor real**: velocidade em trabalho de configuração de baixo julgamento (escrever workflow
+de CI, regex de detecção, estrutura de pacote) — o tipo de tarefa em que a IA rende sem risco
+conceitual, desde que **cada peça seja executada de verdade**, e não só escrita.
+
+**Validação humana**: nada foi aceito no papel. Criou-se o ambiente, instalou-se o stack,
+rodou-se lint + guards + testes, e — o passo que pegou os erros — validou-se uma instalação
+**limpa a partir do lockfile**, reproduzindo exatamente os passos da CI.
+
+**O que a IA errou** — e caiu na verificação:
+- **Lockfile quebrado**: o lock gerado com `--generate-hashes` não instalava em `--require-hashes`
+  porque `setuptools` (dependência do `pip-tools`) ficava sem pin. Só apareceu ao instalar do
+  zero num venv limpo; passaria despercebido enquanto se usasse o venv de desenvolvimento.
+  Corrigido com `--allow-unsafe`.
+- **Falso alarme de sintaxe**: a IA leu `except OSError, UnicodeDecodeError:` (sem parênteses,
+  produzido pelo `ruff format`) como se fosse erro de Python 2. Testar a sintaxe mostrou que é
+  **válida em Python 3.14** (PEP 758). O reflexo certo — verificar em vez de "consertar" — evitou
+  reverter código correto.
+- **Dois formatadores**: a configuração inicial trazia `black` **e** `ruff format`, que podem
+  discordar. A checagem de formatação expôs o conflito; ficou só o `ruff format`.
+- **Regra de lint inexistente**: `ignore = ["PD901"]` referenciava uma regra já removida do ruff;
+  o próprio ruff avisou.
+
+> A mesma lição das fases anteriores se repetiu numa tarefa "puramente técnica": as saídas da IA
+> eram plausíveis e passariam numa leitura superficial. O que as separou do que estava certo foi
+> **executá-las** — instalar do zero, compilar, rodar — não revisá-las no editor.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

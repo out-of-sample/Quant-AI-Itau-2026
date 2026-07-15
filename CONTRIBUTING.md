@@ -110,7 +110,35 @@ Antes de aprovar, o revisor confirma:
 
 ---
 
-## 5. Fluxo do dia a dia
+## 5. Setup do ambiente (primeira vez neste clone)
+
+O ambiente é Python 3.14 (única versão no projeto). As versões exatas de tudo — runtime e
+ferramental — vivem em `requirements.lock` (gerado com hashes, reprodutível bit a bit).
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.lock        # stack travado, idêntico ao da CI
+pip install -e . --no-deps              # o pacote quantagro em modo editável
+pre-commit install                      # ativa os ganchos de qualidade a cada commit
+```
+
+A partir daí, todo commit passa automaticamente por: `ruff` (lint), `ruff format`, o tripwire
+de lookahead (`scripts/check_lookahead.py`) e o de segredos (`scripts/check_secrets.py`). A
+mesma bateria roda na CI — o gancho local só existe para você não descobrir na CI o que dá
+para pegar na sua máquina.
+
+**Adicionou ou mudou uma dependência?** Edite `pyproject.toml` e regenere o lock:
+
+```bash
+pip-compile --generate-hashes --allow-unsafe --extra dev -o requirements.lock pyproject.toml
+```
+
+`--allow-unsafe` é obrigatório (pina `setuptools`/`wheel`, sem os quais a instalação com hash
+falha). Commite `pyproject.toml` e `requirements.lock` juntos, sempre.
+
+---
+
+## 6. Fluxo do dia a dia
 
 ```bash
 git switch main && git pull                  # sempre partir do main atualizado
@@ -125,7 +153,7 @@ git branch -d feat/minha-mudanca             # limpa
 
 ---
 
-## 6. O que NÃO entra no git
+## 7. O que NÃO entra no git
 
 - Dados brutos baixados (`data/raw/`, `data/interim/`) — são grandes e regeneráveis pelo
   código de ingestão. O que garante reprodutibilidade é o **código que baixa**, mais o

@@ -1,0 +1,46 @@
+name: ci
+
+# Roda em todo push e em todo PR. Um PR só pode ser mergeado com esta CI verde
+# (CONTRIBUTING.md §4). É a rede que impede uma mudança de introduzir lookahead,
+# segredo, sinal invertido ou lint quebrado sem ninguém ver.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Instalar dependências (lockfile reprodutível)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+          pip install -e . --no-deps
+
+      - name: Lint (ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Tripwire de lookahead
+        run: |
+          git ls-files '*.py' | xargs -r python scripts/check_lookahead.py
+
+      - name: Tripwire de segredos
+        run: |
+          git ls-files | xargs -r python scripts/check_secrets.py
+
+      - name: Testes
+        run: pytest

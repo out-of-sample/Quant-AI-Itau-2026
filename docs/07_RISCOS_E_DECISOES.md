@@ -133,6 +133,29 @@ scipy 1.18 e statsmodels 0.14.6 têm wheels e funcionam.
 ⚠️ **pandas 3.x tem breaking changes vs. 2.x** (Copy-on-Write por padrão): tutoriais e
 respostas antigas podem não funcionar. Fixar versões no lockfile.
 
+### D-012 — Fundação de engenharia: lock com hashes, um formatador, guards determinísticos
+**Data**: 2026-07-15
+Antes de escrever qualquer ingestão, montamos o esqueleto de engenharia do repositório, para
+que nenhum commit posterior consiga introduzir lookahead, segredo ou lint quebrado sem a CI
+barrar. Escolhas e seus custos:
+- **Reprodutibilidade por lockfile com hashes** (`requirements.lock`, via `pip-compile
+  --generate-hashes --allow-unsafe`), não `pip freeze`. Custo: quem mexe em dependência
+  precisa regenerar o lock (documentado no `CONTRIBUTING.md` §5). O `--allow-unsafe` foi
+  **necessário**, não opcional: sem pinar `setuptools`/`wheel`, a instalação em modo
+  `--require-hashes` falha — bug pego numa validação de instalação limpa, não em teoria.
+- **Um único formatador (`ruff format`)**, removendo o `black`. Ter os dois é um footgun
+  conhecido (podem discordar e oscilar). Custo: contraria a menção a "ruff/black" no guia
+  local, mas `ruff format` reimplementa o estilo do black, então a intenção é preservada.
+- **Guards de lookahead e de segredo como scripts determinísticos** (`scripts/check_*.py`),
+  não como checagem de IA. São *tripwires* baratos, não prova de ausência — a defesa real
+  continua sendo a revisão de PR (`CONTRIBUTING.md` §4) e os testes. Reforçam R11 e a regra
+  dura de point-in-time.
+- **Teste-canário `tests/test_signal_sign.py` antes do sinal existir**, travando a convenção
+  produtor(+)/frigorífico(−) de `01_TESE` §3. Mitigação ativa de R11.
+- **Versões verificadas ao vivo com wheels cp314**: pandas 3.0.3, numpy 2.5.1, scipy 1.18.0,
+  statsmodels 0.14.6 (confirma D-009). Nota py3.14: `except A, B:` sem parênteses é sintaxe
+  **válida** agora (PEP 758) e o `ruff format` a adota — não é erro.
+
 ---
 
 ## Como registrar uma decisão nova

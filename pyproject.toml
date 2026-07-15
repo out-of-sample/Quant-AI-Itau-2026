@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantagro"
+version = "0.0.0"
+description = "Estratégia long/short cross-seccional agro na B3 dirigida por choque climático"
+requires-python = "==3.14.*"
+# Runtime — versões travadas porque foram verificadas ao vivo com wheels para cp314
+# (ver docs/07_RISCOS_E_DECISOES.md, D-009). pandas 3.x tem Copy-on-Write por padrão.
+dependencies = [
+    "pandas==3.0.3",
+    "numpy==2.5.1",
+    "scipy==1.18.0",
+    "statsmodels==0.14.6",
+    "pyarrow>=17",   # parquet dos intermediários
+    "requests>=2.32", # ingestão das APIs públicas
+]
+
+[project.optional-dependencies]
+# Ferramental de desenvolvimento. A versão exata (com hashes) vive em requirements.lock;
+# aqui ficam só os limites inferiores. Instale com:  pip install -e ".[dev]"
+dev = [
+    "ruff>=0.6",
+    "pytest>=8.3",
+    "pre-commit>=3.8",
+    "pip-tools>=7.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ---------------------------------------------------------------------------
+# ruff — linter + formatador. line-length 100 combina com o estilo dos docs.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# E/W pycodestyle, F pyflakes, I isort, B bugbear, UP pyupgrade, NPY numpy, PD pandas-vet
+select = ["E", "W", "F", "I", "B", "UP", "NPY", "PD"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["quantagro"]
+
+# Formatador: `ruff format` (reimplementa o estilo do black). Um formatador só, de propósito
+# — ter black e ruff-format juntos pode fazê-los discordar e entrar em loop.
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra -q"
