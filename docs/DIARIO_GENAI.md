@@ -205,8 +205,9 @@ também **expôs um gotcha**: a StatusInvest reescreve valores por ação para s
 fator de ajuste.
 
 **O que a IA errou**: chutou `GetListedStockDividends` como o endpoint de eventos em ações da
-B3 — retornou 404. O nome correto segue por localizar; ficou registrado como item em aberto em
-vez de presumido.
+B3 — retornou 404. O nome correto (`GetListedSupplementCompany`) foi achado testando candidatos,
+não presumido — e a checagem seguinte mostrou que ele também **trunca** as listas, ressalva que
+entrou no registro antes de virar armadilha no código.
 
 ---
 

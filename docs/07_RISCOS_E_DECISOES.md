@@ -174,7 +174,11 @@ Verificação ao vivo de duas fontes gratuitas de proventos (detalhes em `02_DAD
 exatamente a data-com da B3 (o preço ajusta no pregão seguinte).
 **Custo/limitação**: parte do lado short depende de um agregador não-oficial. Mitiga-se tratando
 o campo `adj` explicitamente (nunca misturar valor ajustado e nominal) e reportando qualquer
-divergência entre as fontes como achado. Pendente: endpoint da B3 para eventos em ações.
+divergência entre as fontes como achado.
+Eventos **em ações** (split/bonificação/incorporação/subscrição) vêm do endpoint
+`GetListedSupplementCompany` da B3 (com data de deliberação e fator), que cobre até os eventos
+terminais dos deslistados — mas parece truncar as listas, o que precisa ser conferido ao
+construir os fatores.
 
 ---
 

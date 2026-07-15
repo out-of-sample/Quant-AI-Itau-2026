@@ -306,9 +306,14 @@ ação para a base pós-split (campo `adj`), enquanto a B3 mantém o nominal da 
 SLC de 04/05/2023 — B3 `2,596`, StatusInvest `1,299` = metade, por um desdobramento posterior).
 Misturar valores ajustados e nominais corromperia o fator — tratar o `adj` explicitamente.
 
-**Ainda em aberto**: o endpoint da B3 para eventos **em ações** (desdobramento/bonificação/
-grupamento/subscrição) — `GetListedStockDividends` retorna 404; o nome correto precisa ser
-localizado antes de codar o construtor de fatores.
+**Eventos em ações** (split/bonificação/grupamento/subscrição/incorporação): endpoint
+`GetListedSupplementCompany` (por código de empresa), campos `approvedOn` (deliberação),
+`factor`, `label` e `subscriptions`. Cobre inclusive os **eventos terminais dos deslistados**
+(BRFS→incorporação na Marfrig, JBSS incorporação, STBP resgate — todos 2025), úteis para
+encerrar a posição short corretamente. ⚠️ **Ressalva**: esse endpoint parece **truncar** as
+listas (retorna poucos registros por empresa) — a completude para todo o período precisa ser
+conferida quando o construtor de fatores for escrito. O `cashDividends` dele é só um resumo; o
+histórico completo de dinheiro segue no `GetListedCashDividends`.
 
 ### 4.3 🔴 O trade-off que define o escopo do projeto: histórico × universo
 
