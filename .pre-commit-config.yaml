@@ -1,0 +1,34 @@
+# Ganchos de pré-commit. Todos são `language: system` — chamam as ferramentas já instaladas
+# no ambiente (pip install -e ".[dev]"), então rodam offline e usam exatamente as versões
+# travadas em requirements.lock. Sem pinagem de revisão de repositório remoto.
+#
+# Instalar uma vez por clone:  pre-commit install
+minimum_pre_commit_version: "3.8.0"
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff (lint)
+        entry: ruff check --force-exclude
+        language: system
+        types: [python]
+        require_serial: false
+
+      - id: ruff-format
+        name: ruff (format)
+        entry: ruff format
+        language: system
+        types: [python]
+
+      - id: check-lookahead
+        name: tripwire de lookahead (shift negativo)
+        entry: python scripts/check_lookahead.py
+        language: system
+        types: [python]
+
+      - id: check-secrets
+        name: tripwire de segredos
+        entry: python scripts/check_secrets.py
+        language: system
+        types: [text]
+        exclude: '^scripts/check_secrets\.py$'  # os próprios padrões disparariam o hook
