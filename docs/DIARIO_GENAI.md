@@ -233,6 +233,29 @@ ponta, contra a API.
 
 ---
 
+## 2026-07-15 — Eventos em ações da B3 (o `factor`)
+
+**Uso**: normalizar os eventos em ações (`GetListedSupplementCompany`) para `share_ratio`.
+
+**Valor real**: o campo `factor` da B3 não é auto-explicativo. Em vez de assumir uma fórmula,
+a interpretação foi **calibrada contra o preço real do COTAHIST** em eventos conhecidos.
+
+**Validação humana** — o passo que definiu o desenho:
+- Baixou-se o preço em torno da data-ex de um split (SLC, 13/12/2023): o preço caiu **2,08×**,
+  confirmando `DESDOBRAMENTO factor=100 ⇒ ratio 2,0` (isto é, `1 + factor/100`).
+- E de um grupamento (MGLU, 24/05/2024): o preço **saltou 9,96×**, confirmando
+  `GRUPAMENTO factor=0,10 ⇒ ratio 0,10` — semântica **diferente** (o `factor` já é o ratio).
+
+**O que a IA errou / teria errado**: a tentação era aplicar uma única fórmula a todos os
+labels. Isso teria invertido/escalado errado o grupamento. Além disso, `INCORPORACAO`/`RESGATE`
+não são ratios simples (o papel vira outro ou é resgatado) — se tratados como `share_ratio`
+produziriam retorno espúrio na deslistagem; foram separados como eventos terminais.
+
+> É o mesmo padrão do erro da cana (D-010): uma regra "óbvia" e uniforme que estaria errada em
+> parte dos casos, pega só porque foi conferida contra o dado real, não contra a intuição.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

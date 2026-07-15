@@ -14,16 +14,25 @@ import pytest
 from quantagro.ingest.events_b3 import (
     _br_float,
     _share_class,
+    _stock_ratio,
     b3_cash_to_events,
+    b3_stock_to_events,
     fetch_b3_cash_dividends,
+    fetch_b3_stock_events,
 )
 
 FIXTURE = Path(__file__).parent / "fixtures" / "b3_cash_slc.json"
+FIXTURE_STOCK = Path(__file__).parent / "fixtures" / "b3_stock_mglu.json"
 
 
 @pytest.fixture
 def slc_results() -> list[dict]:
     return json.loads(FIXTURE.read_text(encoding="utf-8"))["results"]
+
+
+@pytest.fixture
+def mglu_stock() -> list[dict]:
+    return json.loads(FIXTURE_STOCK.read_text(encoding="utf-8"))["stockDividends"]
 
 
 class TestBrFloat:
@@ -90,6 +99,46 @@ class TestNormalizacaoForjada:
         assert ev[0].cash_value == pytest.approx(0.01)
 
 
+class TestStockRatio:
+    def test_desdobramento_e_um_mais_factor_sobre_100(self):
+        assert _stock_ratio("DESDOBRAMENTO", 100.0) == pytest.approx(2.0)
+        assert _stock_ratio("DESDOBRAMENTO", 200.0) == pytest.approx(3.0)
+
+    def test_bonificacao_e_um_mais_factor_sobre_100(self):
+        assert _stock_ratio("BONIFICACAO", 30.0) == pytest.approx(1.30)
+
+    def test_grupamento_e_o_factor_direto(self):
+        assert _stock_ratio("GRUPAMENTO", 0.10) == pytest.approx(0.10)
+
+    def test_evento_terminal_nao_e_ratio(self):
+        assert _stock_ratio("INCORPORACAO", 50.0) is None
+        assert _stock_ratio("RESG TOTAL RV", 100.0) is None
+
+
+class TestNormalizacaoAcoesReal:
+    def test_mglu_gera_tres_eventos_com_ratio_validado(self, mglu_stock):
+        ev = {e.cum_date: e.share_ratio for e in b3_stock_to_events(mglu_stock)}
+        assert ev[pd.Timestamp("2025-12-29")] == pytest.approx(1.05)  # BONIFICACAO 5%
+        assert ev[pd.Timestamp("2024-05-24")] == pytest.approx(0.10)  # GRUPAMENTO 10:1
+        assert ev[pd.Timestamp("2020-10-13")] == pytest.approx(4.00)  # DESDOBRAMENTO 300
+
+    def test_eventos_em_acoes_nao_tem_dinheiro(self, mglu_stock):
+        assert all(e.cash_value == 0.0 for e in b3_stock_to_events(mglu_stock))
+
+
+class TestNormalizacaoAcoesForjada:
+    def test_descarta_eventos_terminais(self):
+        regs = [
+            {"label": "INCORPORACAO", "factor": "50,0", "lastDatePrior": "06/06/2025"},
+            {"label": "RESG TOTAL RV", "factor": "100,0", "lastDatePrior": "27/11/2025"},
+        ]
+        assert b3_stock_to_events(regs) == []
+
+    def test_descarta_sem_data_com(self):
+        regs = [{"label": "DESDOBRAMENTO", "factor": "100,0", "lastDatePrior": None}]
+        assert b3_stock_to_events(regs) == []
+
+
 class _FakeResp:
     def __init__(self, payload):
         self._payload = payload
@@ -151,3 +200,22 @@ class TestFetch:
         out = fetch_b3_cash_dividends("MUITOS", session=sess, page_size=1, max_pages=3)
         assert len(out) == 3
         assert sess.calls == 3
+
+
+class _RawSession:
+    """Sessão fake cujo json() devolve o payload cru (o supplement responde uma lista)."""
+
+    def __init__(self, payload):
+        self._payload = payload
+
+    def get(self, url, headers=None, timeout=None):
+        return _FakeResp(self._payload)
+
+
+class TestFetchStock:
+    def test_fetch_stock_retorna_stockdividends(self, mglu_stock):
+        sess = _RawSession([{"stockDividends": mglu_stock}])
+        assert fetch_b3_stock_events("MGLU", session=sess) == mglu_stock
+
+    def test_fetch_stock_vazio(self):
+        assert fetch_b3_stock_events("XXXX", session=_RawSession([])) == []
