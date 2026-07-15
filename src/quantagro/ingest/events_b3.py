@@ -4,8 +4,9 @@ Duas portas da B3 (ver docs/02_DADOS.md §4.2.1 e D-013):
 - `GetListedCashDividends` — eventos em **dinheiro** (dividendo/JCP/rendimento). Autoritativa,
   com data de deliberação e data-com. **Não cobre deslistados** (a StatusInvest preenche essa
   cauda, em outro módulo).
-- `GetListedSupplementCompany` — eventos em **ações** (split/bonificação/grupamento). Fica para
-  o próximo passo.
+- `GetListedSupplementCompany` — eventos em **ações** (split/bonificação/grupamento), com o
+  campo `factor`. ⚠️ parece truncar as listas (poucos registros por empresa) — a completude
+  para todo o período precisa ser conferida no montador (02_DADOS §4.2.1).
 
 Cuidados calibrados contra dados reais:
 - `valueCash` vem em decimal brasileiro (vírgula) e é **por ação** quando `quotedPerShares == 1`
@@ -14,6 +15,16 @@ Cuidados calibrados contra dados reais:
   dividendo de PN entraria num papel ON.
 - a resposta traz **duplicatas** (visto em PETROBRAS) — normalizamos deduplicando.
 - a data-com é `lastDatePriorEx`; registros sem ela (ex ainda não definido) são descartados.
+
+Interpretação do `factor` dos eventos em ações — **validada contra o preço do COTAHIST**:
+- `DESDOBRAMENTO`/`BONIFICACAO`: `factor` é % de ações novas ⇒ `ratio = 1 + factor/100`
+  (SLC split 100 → 2,0×, confirmado: preço caiu 2,08×; WEG 100 → 2×; TOTVS 200 → 3×).
+- `GRUPAMENTO`: `factor` é o próprio `ratio` (MGLU 0,10 → reverso 10:1, confirmado: preço
+  saltou 9,96×). **Semântica diferente** dos anteriores — calibrada em um caso, marcada como a
+  mais arriscada.
+- `INCORPORACAO`/`RESGATE`/`CISAO`: eventos **terminais** (o papel deixa de existir ou vira
+  outro) — **não** são `share_ratio` simples e são deixados para o montador tratar como fim de
+  série; aqui são descartados.
 """
 
 from __future__ import annotations
@@ -25,14 +36,17 @@ import pandas as pd
 
 from quantagro.prices.adjust import CorporateEvent
 
-_CASH_URL = (
-    "https://sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/"
-    "GetListedCashDividends/"
-)
+_PROXY = "https://sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/"
+_CASH_URL = _PROXY + "GetListedCashDividends/"
+_SUPPLEMENT_URL = _PROXY + "GetListedSupplementCompany/"
 _HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 # sufixo do ticker → classe (typeStock) da B3
 _CLASS_BY_SUFFIX = {"3": "ON", "4": "PN", "5": "PNA", "6": "PNB", "11": "UNT"}
+
+# labels de evento em ações → como o `factor` vira `share_ratio` (validado contra preço real)
+_RATIO_ADD = {"DESDOBRAMENTO", "BONIFICACAO"}  # ratio = 1 + factor/100
+_RATIO_DIRECT = {"GRUPAMENTO"}  # ratio = factor
 
 
 def _br_float(s: str) -> float:
@@ -115,4 +129,56 @@ def b3_cash_to_events(results: list[dict], ticker: str) -> list[CorporateEvent]:
             continue
         seen.add(key)
         events.append(CorporateEvent(cum_date=cum_date, cash_value=value))
+    return events
+
+
+def fetch_b3_stock_events(issuing_company: str, session=None, timeout: int = 30) -> list[dict]:
+    """Busca os eventos em ações de uma empresa (por código, ex.: 'MGLU') no supplement da B3.
+
+    Retorna a lista crua de `stockDividends` (split/bonificação/grupamento/incorporação/…).
+    """
+    payload = {"issuingCompany": issuing_company, "language": "pt-br"}
+    enc = base64.b64encode(json.dumps(payload).encode()).decode()
+    if session is None:
+        import requests
+
+        session = requests
+    resp = session.get(_SUPPLEMENT_URL + enc, headers=_HEADERS, timeout=timeout)
+    resp.raise_for_status()
+    data = resp.json()
+    if not data:
+        return []
+    company = data[0] if isinstance(data, list) else data
+    return company.get("stockDividends") or []
+
+
+def _stock_ratio(label: str, factor: float) -> float | None:
+    """`share_ratio` a partir do label + `factor`; None se não for um ratio simples.
+
+    Interpretação validada contra o preço real do COTAHIST (ver docstring do módulo).
+    """
+    if label in _RATIO_ADD:
+        return 1.0 + factor / 100.0
+    if label in _RATIO_DIRECT:
+        return factor
+    return None  # INCORPORACAO/RESGATE/CISAO — terminal, tratado no montador
+
+
+def b3_stock_to_events(stock_dividends: list[dict]) -> list[CorporateEvent]:
+    """Normaliza os eventos em ações em `CorporateEvent` (só `share_ratio`, sem dinheiro).
+
+    Descarta o que não é ratio simples (incorporação/resgate/cisão) e registros sem data-com.
+    """
+    events: list[CorporateEvent] = []
+    for e in stock_dividends:
+        com = e.get("lastDatePrior")
+        raw = e.get("factor")
+        label = (e.get("label") or "").strip()
+        if not com or not raw:
+            continue
+        ratio = _stock_ratio(label, _br_float(raw))
+        if ratio is None:
+            continue
+        cum_date = pd.to_datetime(com, format="%d/%m/%Y")
+        events.append(CorporateEvent(cum_date=cum_date, share_ratio=ratio))
     return events

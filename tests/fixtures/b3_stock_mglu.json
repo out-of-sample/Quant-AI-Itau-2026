@@ -1,0 +1,25 @@
+{
+  "stockDividends": [
+    {
+      "label": "BONIFICACAO",
+      "factor": "5,00000000000",
+      "approvedOn": "22/12/2025",
+      "lastDatePrior": "29/12/2025",
+      "isinCode": "BRMGLUACNOR2"
+    },
+    {
+      "label": "GRUPAMENTO",
+      "factor": "0,10000000000",
+      "approvedOn": "24/04/2024",
+      "lastDatePrior": "24/05/2024",
+      "isinCode": "BRMGLUACNOR2"
+    },
+    {
+      "label": "DESDOBRAMENTO",
+      "factor": "300,00000000000",
+      "approvedOn": "07/10/2020",
+      "lastDatePrior": "13/10/2020",
+      "isinCode": "BRMGLUACNOR2"
+    }
+  ]
+}
