@@ -1,0 +1,68 @@
+{
+  "results": [
+    {
+      "typeStock": "ON",
+      "dateApproval": "04/12/2025",
+      "lastDatePriorEx": "12/12/2025",
+      "valueCash": "0,86051967",
+      "quotedPerShares": "1",
+      "corporateAction": "DIVIDENDO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "04/12/2025",
+      "lastDatePriorEx": "12/12/2025",
+      "valueCash": "0,04529051",
+      "quotedPerShares": "1",
+      "corporateAction": "JRS CAP PROPRIO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "29/04/2025",
+      "lastDatePriorEx": "05/05/2025",
+      "valueCash": "0,54632738",
+      "quotedPerShares": "1",
+      "corporateAction": "DIVIDENDO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "29/04/2024",
+      "lastDatePriorEx": "30/04/2024",
+      "valueCash": "0,82996450013",
+      "quotedPerShares": "1",
+      "corporateAction": "DIVIDENDO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "20/12/2023",
+      "lastDatePriorEx": "27/12/2023",
+      "valueCash": "0,05452740721",
+      "quotedPerShares": "1",
+      "corporateAction": "JRS CAP PROPRIO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "27/04/2023",
+      "lastDatePriorEx": "04/05/2023",
+      "valueCash": "2,59617683",
+      "quotedPerShares": "1",
+      "corporateAction": "DIVIDENDO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "20/12/2022",
+      "lastDatePriorEx": "26/12/2022",
+      "valueCash": "0,34775659867",
+      "quotedPerShares": "1",
+      "corporateAction": "JRS CAP PROPRIO"
+    },
+    {
+      "typeStock": "ON",
+      "dateApproval": "29/04/2022",
+      "lastDatePriorEx": "29/04/2022",
+      "valueCash": "2,42614793111",
+      "quotedPerShares": "1",
+      "corporateAction": "DIVIDENDO"
+    }
+  ]
+}

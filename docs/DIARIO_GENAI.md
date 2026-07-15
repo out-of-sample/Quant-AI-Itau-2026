@@ -211,6 +211,28 @@ entrou no registro antes de virar armadilha no código.
 
 ---
 
+## 2026-07-15 — Fetcher de proventos em dinheiro da B3
+
+**Uso**: escrever o fetcher/normalizador do endpoint `GetListedCashDividends` da B3 → schema
+`CorporateEvent`, com testes.
+
+**Valor real**: normalização com os cuidados certos (decimal brasileiro, filtro de classe ON/PN
+pelo sufixo do ticker, dedupe de registros repetidos, descarte de eventos sem data-com).
+
+**Validação humana**: fixture com resposta **real** da B3 amarra o parse; teste ao vivo, ponta a
+ponta, contra a API.
+
+**O que a IA errou** — e o teste ao vivo pegou (o fixture não pegaria):
+- A IA fixou `pageSize=200`. A B3 **devolve vazio acima de ~120** — o fetch retornava zero
+  silenciosamente. Corrigido para 100.
+- A IA não paginava. PETROBRAS tem **337 eventos em 4 páginas**; sem paginar, truncaria em 100.
+  Corrigido para percorrer `totalPages`.
+
+> Lição registrada: um fixture prova o *parse*, mas só o teste **contra a fonte viva** pega
+> truncamento silencioso de paginação. Os dois erros passariam verdes numa suíte só de fixture.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
