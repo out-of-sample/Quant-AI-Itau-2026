@@ -282,8 +282,33 @@ Testado: 2015 (14 MB), 2021 (50 MB), 2025 (89 MB) — todos HTTP 200, gratuitos,
 
 ⚠️ **Pendência conhecida**: o COTAHIST traz preços **não ajustados por proventos** (dividendos,
 splits, bonificações). Construir a série de retorno total exige aplicar fatores de ajuste.
-É trabalho real e é o principal item técnico em aberto da camada de ingestão.
-**NÃO CONFIRMADO** ainda qual a melhor fonte gratuita de eventos corporativos para o ajuste.
+É trabalho real e é o principal item técnico em aberto da camada de ingestão (risco R5).
+
+#### 4.2.1 Fonte de proventos — verificada ao vivo (2026-07-15)
+
+Duas fontes gratuitas testadas ao vivo. Nenhuma sozinha resolve; a decisão (D-013) é usar as
+duas com papéis distintos.
+
+| Critério | **B3 oficial** (`GetListedCashDividends`) | **StatusInvest** (`companytickerprovents`) |
+|---|---|---|
+| Acesso | API JSON (payload base64, por `tradingName`) | API JSON, por ticker |
+| `avail_date` (deliberação) | ✅ `dateApproval` — **vintage-safe** | ❌ só data-com (`ed`) e pagamento (`pd`) |
+| Preço de referência pré-ex | ✅ `closingPricePriorExDate` + `lastDatePriorEx` | ❌ |
+| Cobre **deslistados** | ❌ **BRF e Santos Brasil = 0 registros; JBS congela em 2019** | ✅ JBSS3 com eventos até 05/2025 |
+| Tipos cobertos | só **dinheiro** (dividendo/JCP) | dinheiro (desdobramento/bonificação: a confirmar) |
+
+**Cross-check (o que legitima usar a StatusInvest na cauda deslistada):** onde as duas se
+sobrepõem (SLC), os **valores batem** e o `ed` da StatusInvest **é exatamente** o
+`lastDatePriorEx` (data-com) da B3 — logo o preço ajusta no **pregão seguinte** ao `ed`.
+
+**Gotcha de vintage confirmado:** em evento pré-split, a StatusInvest **reescreve** o valor por
+ação para a base pós-split (campo `adj`), enquanto a B3 mantém o nominal da época (ex.: dividendo
+SLC de 04/05/2023 — B3 `2,596`, StatusInvest `1,299` = metade, por um desdobramento posterior).
+Misturar valores ajustados e nominais corromperia o fator — tratar o `adj` explicitamente.
+
+**Ainda em aberto**: o endpoint da B3 para eventos **em ações** (desdobramento/bonificação/
+grupamento/subscrição) — `GetListedStockDividends` retorna 404; o nome correto precisa ser
+localizado antes de codar o construtor de fatores.
 
 ### 4.3 🔴 O trade-off que define o escopo do projeto: histórico × universo
 
@@ -383,8 +408,10 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
 
 ## 7. Itens em aberto (a resolver antes de codar a ingestão)
 
-1. **Ajuste de proventos no COTAHIST** — qual fonte gratuita de eventos corporativos usar
-   para construir a série de retorno total (crítico, afeta todos os preços).
+1. **Ajuste de proventos no COTAHIST** — fonte de eventos **em dinheiro** definida (B3 oficial
+   primária + StatusInvest para a cauda deslistada, ver §4.2.1 e D-013). **Ainda falta**:
+   localizar o endpoint da B3 de eventos **em ações** (split/bonificação/grupamento/subscrição),
+   e então escrever o construtor de fatores de ajuste com teste.
 2. **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — conferir ano a ano
    no calendário oficial, 2017/18 em diante. Não interpolar.
 3. **Acesso programático ao CEPEA** — se não existir, usar futuros internacionais e declarar.
