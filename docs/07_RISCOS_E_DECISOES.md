@@ -20,7 +20,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS (prelim vs. final) como fonte primária de precipitação; medir a magnitude; restringir à precipitação se for material | Mitigado parcialmente. **Temperatura segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
-| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Necessário construir os fatores de ajuste. Fonte gratuita ainda não definida | 🟡 **Aberto — principal pendência técnica** |
+| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Fonte de eventos em dinheiro definida (B3 oficial + StatusInvest, D-013). Falta o endpoint de eventos em ações e o construtor de fatores | 🟡 **Em andamento** — fonte parcialmente resolvida |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
@@ -155,6 +155,30 @@ barrar. Escolhas e seus custos:
 - **Versões verificadas ao vivo com wheels cp314**: pandas 3.0.3, numpy 2.5.1, scipy 1.18.0,
   statsmodels 0.14.6 (confirma D-009). Nota py3.14: `except A, B:` sem parênteses é sintaxe
   **válida** agora (PEP 758) e o `ruff format` a adota — não é erro.
+
+### D-013 — Proventos: B3 oficial primária, StatusInvest para a cauda deslistada
+**Data**: 2026-07-15
+Verificação ao vivo de duas fontes gratuitas de proventos (detalhes em `02_DADOS.md` §4.2.1):
+- A **API oficial da B3** (`GetListedCashDividends`) é a melhor onde cobre — traz a data de
+  deliberação (`dateApproval` = nosso `avail_date`, **vintage-safe**) e o preço de referência
+  pré-ex, que é o que se precisa para o fator de ajuste. Mas **não cobre deslistados**: BRF e
+  Santos Brasil retornam 0 registros e JBS congela em 2019. O problema de survivorship (R4)
+  reaparece na dimensão de proventos.
+- A **StatusInvest** guarda a cauda deslistada (JBSS3 com eventos até 05/2025), mas é agregador
+  derivado: só tem data-com e pagamento (sem deliberação) e **reescreve** valores por ação para
+  splits posteriores (campo `adj`).
+
+**Decisão**: B3 oficial como **primária** para todo nome que ela cobre; StatusInvest como
+**preenchedor da cauda deslistada** (BRF, Santos Brasil, JBS pós-2019). Legitimado por um
+**cross-check** onde as duas se sobrepõem — em SLC os valores batem e o `ed` da StatusInvest é
+exatamente a data-com da B3 (o preço ajusta no pregão seguinte).
+**Custo/limitação**: parte do lado short depende de um agregador não-oficial. Mitiga-se tratando
+o campo `adj` explicitamente (nunca misturar valor ajustado e nominal) e reportando qualquer
+divergência entre as fontes como achado.
+Eventos **em ações** (split/bonificação/incorporação/subscrição) vêm do endpoint
+`GetListedSupplementCompany` da B3 (com data de deliberação e fator), que cobre até os eventos
+terminais dos deslistados — mas parece truncar as listas, o que precisa ser conferido ao
+construir os fatores.
 
 ---
 

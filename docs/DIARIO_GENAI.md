@@ -188,6 +188,29 @@ rodou-se lint + guards + testes, e — o passo que pegou os erros — validou-se
 
 ---
 
+## 2026-07-15 — Verificação ao vivo das fontes de proventos (R5)
+
+**Uso**: testar ao vivo, endpoint a endpoint, as fontes gratuitas candidatas a fornecer os
+eventos corporativos que faltam ao COTAHIST (ajuste de dividendos/JCP/splits).
+
+**Valor real**: transformou uma pendência vaga ("achar uma fonte de proventos") numa decisão
+com trade-off medido (D-013). O achado central: a API **oficial da B3 não cobre os deslistados**
+(BRF e Santos Brasil retornam 0; JBS congela em 2019) — o mesmo survivorship que já tínhamos
+resolvido no preço reaparece nos proventos. A StatusInvest cobre a cauda, mas é agregador.
+
+**Validação humana**: em vez de confiar na StatusInvest de cara, cruzou-se contra a B3 onde as
+duas se sobrepõem. O cross-check **passou** (valores idênticos; `ed` = data-com da B3), mas
+também **expôs um gotcha**: a StatusInvest reescreve valores por ação para splits posteriores
+(um dividendo pré-split apareceu pela metade). Sem o cruzamento, isso entraria silencioso no
+fator de ajuste.
+
+**O que a IA errou**: chutou `GetListedStockDividends` como o endpoint de eventos em ações da
+B3 — retornou 404. O nome correto (`GetListedSupplementCompany`) foi achado testando candidatos,
+não presumido — e a checagem seguinte mostrou que ele também **trunca** as listas, ressalva que
+entrou no registro antes de virar armadilha no código.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
