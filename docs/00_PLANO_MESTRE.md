@@ -96,9 +96,15 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   da SLC (05/2023) ausente de **todas** as fontes automáticas — corrigida via registro curado
   com proveniência (`ingest/events_manual.py`); validação repetível em
   `scripts/crosscheck_yahoo.py`, obrigatória por papel vivo antes de congelar o dataset.
-- ⬜ Ingestão das demais fontes da tese: clima (CHIRPS/POWER), CONAB (vintages), ComexStat,
-  ONI, NEFIN — cada uma com carimbo de `avail_date` na entrada.
-- ⬜ Calendário CONAB (R10): mapa `(safra, nº levantamento) → data de divulgação`, ano a ano.
+- ✅ **Ingestão CONAB** (`ingest/conab.py`): download com manifesto de vintage (a fonte
+  reescreve o arquivo no lugar ⇒ captura datada + hash), parser dos painéis de grãos, café e
+  cana, validado ao vivo contra os números conhecidos (soja/MT 2023/24: 44.348 → 37.568).
+- ✅ **Calendário CONAB (R10, D-017)**: mapa curado `(ano_agricola, id_levantamento) → data de
+  divulgação` em `ingest/conab_calendar.py`, ano a ano de fontes primárias, sem interpolação;
+  carimbo `avail_date` integrado ao contrato PIT (`attach_avail_date` + `available_asof`).
+  A verificação pegou o site oficial exibindo datas falsas para 2022/23 — ver D-017.
+- ⬜ Ingestão das demais fontes da tese: clima (CHIRPS/POWER), ComexStat, ONI, NEFIN —
+  cada uma com carimbo de `avail_date` na entrada.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O

@@ -1,0 +1,26 @@
+ano_agricola;safra;uf;produto;id_produto;id_levantamento;dsc_levantamento;area_plantada_mil_ha;producao_mil_t;produtividade_mil_ha_mil_t
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 010;10º LEV             ;12376.1;39343.6;3.2
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 011;11º LEV             ;12376.1;39343.6;3.2
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 012;12º LEV             ;12376.1;40420.3;3.3
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 001;1º LEV              ;12291.5;44347.7;3.6
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 002;2º LEV              ;12303.5;44391;3.6
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 003;3º LEV              ;12303.5;43492.9;3.5
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 004;4º LEV              ;12218.9;40200.2;3.3
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 005;5º LEV              ;12134.3;38635.6;3.2
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 006;6º LEV              ;12134.3;37567.8;3.1
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 007;7º LEV              ;12134.3;38126;3.1
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 008;8º LEV              ;12170.6;38410.4;3.2
+2023/24             ;UNICA          ;MT;SOJA                                    ;4744; 009;9º LEV              ;12376.1;39343.6;3.2
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 010;10º LEV             ;696;1307;1.9
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 011;11º LEV             ;696;1440;2.1
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 012;12º LEV             ;681.7;1871.9;2.7
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 001;1º LEV              ;682;1691;2.5
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 002;2º LEV              ;682;1872;2.7
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 003;3º LEV              ;682;1872;2.7
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 004;4º LEV              ;682;1872;2.7
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 005;5º LEV              ;699;1314;1.9
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 006;6º LEV              ;699;1314;1.9
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 007;7º LEV              ;699;1314;1.9
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 008;8º LEV              ;699;1314;1.9
+2018                ;UNICA          ;RS;TRIGO                                   ;4747; 009;9º LEV              ;699;1314;1.9
+2018/19             ;UNICA          ;BA;ALGODAO EM PLUMA                        ;4586; 099;LEVANT              ;332;597.6;1.8

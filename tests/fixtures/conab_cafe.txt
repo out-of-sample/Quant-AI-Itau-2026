@@ -1,0 +1,15 @@
+ano_agricola;safra;uf;produto;id_produto;id_levantamento;dsc_levantamento;area_plantada_mil_ha;producao_mil_t;produtividade_mil_ha_mil_t
+2020                ;UNICA          ;MG;CAFE                                    ;7498; 001;1º LEV              ;1023986;31075;30.3
+2020                ;UNICA          ;MG;CAFE                                    ;7090; 001;1º LEV              ;9457;321;33.9
+2020                ;UNICA          ;MG;CAFE                                    ;7090; 003;3º LEV              ;9457;318;33.6
+2020                ;UNICA          ;MG;CAFE                                    ;7498; 003;3º LEV              ;1031908;33142;32.1
+2020                ;UNICA          ;MG;CAFE                                    ;7090; 004;4º LEV              ;9112;310;34
+2020                ;UNICA          ;MG;CAFE                                    ;7498; 004;4º LEV              ;1032280;34337;33.3
+2021                ;UNICA          ;MG;CAFE                                    ;7090; 001;1º LEV              ;9112;310;34
+2021                ;UNICA          ;MG;CAFE                                    ;7498; 001;1º LEV              ;908905;20661;22.7
+2021                ;UNICA          ;MG;CAFE                                    ;7090; 002;2º LEV              ;9942;348;35
+2021                ;UNICA          ;MG;CAFE                                    ;7498; 002;2º LEV              ;982471;22996;23.4
+2021                ;UNICA          ;MG;CAFE                                    ;7090; 003;3º LEV              ;9635;321;33.3
+2021                ;UNICA          ;MG;CAFE                                    ;7498; 003;3º LEV              ;961283;21121;22
+2021                ;UNICA          ;MG;CAFE                                    ;7498; 004;4º LEV              ;970934;21858.9;22.5
+2021                ;UNICA          ;MG;CAFE                                    ;7090; 004;4º LEV              ;8515;283.4;33.3

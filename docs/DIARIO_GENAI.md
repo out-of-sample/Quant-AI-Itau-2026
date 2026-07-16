@@ -349,6 +349,43 @@ sozinho não faz.
 
 ---
 
+## 2026-07-16 — Ingestão CONAB e o calendário R10 (arqueologia de datas)
+
+**Uso**: implementar a ingestão dos painéis de vintages da CONAB (grãos/café/cana) e
+construir o mapa `(safra, nº do levantamento) → data de divulgação` que o arquivo não traz
+(risco R10) — pesquisa ano a ano, 2017/18 → 2026, sem interpolar.
+
+**Valor real**: a parte de código é rotineira; o valor esteve na **arqueologia de fontes**.
+A IA reconstruiu ~180 datas de divulgação triangulando: PDFs oficiais do Calendário de
+Divulgação recuperados do Wayback Machine (2017, 2021-2023), a página antiga da CONAB
+(Joomla), que guardava a data de publicação de cada boletim, em oito snapshots do Wayback
+(2018-2023), o espelho da associação de produtores de MT (AMPA) — que baixava o boletim no
+dia da divulgação e o timestamp fica gravado no nome do arquivo —, timestamps de upload do
+site antigo da própria CONAB e notícias datadas do dia (Agência Brasil, novacana, udop,
+Cecafé, ConabCast). Fazer isso à mão levaria dias; levou uma tarde.
+
+**Validação humana/mecânica**: nenhuma fonte entrou sem calibração — o espelho da AMPA foi
+validado contra 7 datas já conhecidas por outras vias (7/7 no mesmo dia) antes de ser aceito
+como evidência; as datas da página antiga foram cruzadas com os calendários oficiais
+(2020/21-2022/23: 33/33 concordantes). Testes automatizados travam sanidade do mapa (dia
+útil, monotônico por safra, 12 levantamentos por safra fechada de grãos) e âncoras
+verificadas em ≥2 fontes. Verificação ao vivo de ponta a ponta reproduziu o exemplo canônico
+da tese: em 15/03/2024, a última estimativa visível de soja/MT é o 6º levantamento
+(12/03/2024, 37.568 mil t) — nunca o 7º.
+
+**O que a verificação pegou (a lição da sessão)**: o **site oficial atual da CONAB mente**
+sobre a safra 2022/23 de grãos — o listing exibe "Publicado em dia 10" para os 12
+levantamentos, incluindo dois sábados, com erro de até 6 dias contra as datas reais
+(artefato da migração de site de nov/2023). A primeira coleta, ingênua, tinha aceitado essas
+datas; o padrão uniforme + sábados disparou a suspeita, e a triangulação derrubou as 12. No
+sentido oposto, a página antiga também engana: itens pré-migração de 2018 carregam data de
+importação, não de publicação (o "6º lev 04/04/18" era importação; a data real, 08/03/2018,
+veio do espelho AMPA). Duas fontes oficiais, dois modos de falha diferentes — a regra que
+sobrou está em D-017: nenhuma data entra com fonte única quando há como triangular, e na
+dúvida vale a mais tardia.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
