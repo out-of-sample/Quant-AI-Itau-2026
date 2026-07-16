@@ -78,7 +78,7 @@ vivo, arquitetura especificada, riscos mapeados. **Nada disso depende de escreve
 Trazer as fontes, carimbar `avail_date`, montar o universo dinâmico via COTAHIST.
 Resolver as pendências de `02_DADOS.md` §7 (ajuste de proventos, calendário CONAB).
 
-Andamento (2026-07-15), toda peça com teste e CI verde (ver `03_ARQUITETURA.md` §6):
+Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md` §6):
 - ✅ Fundação de engenharia (empacotamento, lockfile com hashes, CI, guards de lookahead/segredo).
 - ✅ Fontes de proventos verificadas ao vivo e decididas (D-013): B3 oficial + StatusInvest.
 - ✅ Motor de **retorno total point-in-time** (D-014), sem *adjusted close* retroativo.
@@ -89,10 +89,20 @@ Andamento (2026-07-15), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   cross-check 8/8 contra a B3 na sobreposição).
 - ✅ **Montador** (D-015): COTAHIST + eventos → retorno total por papel, delisting-aware;
   validado contra o split real da SLC e a deslistagem da JBS; tripwire de split perdido.
-- ⬜ Carimbo de `avail_date` (C1) e universo dinâmico com filtro de liquidez.
+- ✅ Carimbo de `avail_date` (C1, `validate/pit.py`) e **universo dinâmico** com filtro de
+  liquidez (`validate/universe.py`) — validado em 2025 real: JBSS3 sai em 06/06, BRFS3/MRFG3
+  em 22/09 (fusão), STBP3 em 02/10, e MBRF3 *entra* em dezembro ao completar o seasoning.
+- ✅ **Cross-check contra fonte ajustada independente** (D-016): pegou uma bonificação de 10%
+  da SLC (05/2023) ausente de **todas** as fontes automáticas — corrigida via registro curado
+  com proveniência (`ingest/events_manual.py`); validação repetível em
+  `scripts/crosscheck_yahoo.py`, obrigatória por papel vivo antes de congelar o dataset.
+- ⬜ Ingestão das demais fontes da tese: clima (CHIRPS/POWER), CONAB (vintages), ComexStat,
+  ONI, NEFIN — cada uma com carimbo de `avail_date` na entrada.
+- ⬜ Calendário CONAB (R10): mapa `(safra, nº levantamento) → data de divulgação`, ano a ano.
 
-> **Portão**: se não conseguirmos construir uma série de preços delisting-aware e ajustada
-> por proventos, o cross-section não é confiável e nada adiante vale.
+> **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
+> ajustada por proventos existe, é testada e foi validada contra fonte independente. O
+> restante da Fase 1 é a ingestão das fontes de sinal (clima/safra/exportação).
 
 ### Fase 2 — Validação do mecanismo (o portão mais importante)
 Testar **H1a**: o choque climático prevê a revisão da CONAB? E **H1b**: prevê o volume

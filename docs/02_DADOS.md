@@ -324,10 +324,15 @@ que a data de deslistagem via COTAHIST corta esses resíduos.
 `GetListedSupplementCompany` (por código de empresa), campos `approvedOn` (deliberação),
 `factor`, `label` e `subscriptions`. Cobre inclusive os **eventos terminais dos deslistados**
 (BRFS→incorporação na Marfrig, JBSS incorporação, STBP resgate — todos 2025), úteis para
-encerrar a posição short corretamente. ⚠️ **Ressalva**: esse endpoint parece **truncar** as
-listas (retorna poucos registros por empresa) — a completude para todo o período precisa ser
-conferida quando o construtor de fatores for escrito. O `cashDividends` dele é só um resumo; o
-histórico completo de dinheiro segue no `GetListedCashDividends`.
+encerrar a posição short corretamente. 🔴 **Truncamento CONFIRMADO com omissão material**
+(2026-07-16): o endpoint **não lista a bonificação de 10% da SLC de 05/2023** (AGO/E de
+27/04/2023, ex 09/05/2023) — só o desdobramento de 12/2023 e a bonificação de 12/2025. A
+StatusInvest também não a tem (todos os `chartProventsType` testados). O buraco foi pego pelo
+cross-check contra o *adjclose* do Yahoo (divergência de 9,1% num dia) e corrigido via registro
+curado com proveniência (`ingest/events_manual.py`) — processo formalizado em **D-016**: todo
+papel vivo passa por `scripts/crosscheck_yahoo.py` antes de o dataset ser congelado; papéis
+deslistados não têm Yahoo e ficam com a limitação declarada. O `cashDividends` dele é só um
+resumo; o histórico completo de dinheiro segue no `GetListedCashDividends`.
 
 ### 4.3 🔴 O trade-off que define o escopo do projeto: histórico × universo
 
@@ -428,10 +433,10 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
 ## 7. Itens em aberto (a resolver antes de codar a ingestão)
 
 1. ✅ **Ajuste de proventos no COTAHIST** — **resolvido** (R5). Três fontes de eventos + motor
-   de retorno total + **montador** (`prices/assemble`, D-015), validado contra o split real da
-   SLC e a deslistagem da JBS. Residual declarado: a completude do supplement (truncamento) é
-   vigiada por tripwire de retorno suspeito (pega splits ≥ 1,5:1); bonificações pequenas exigem
-   cross-check contra fonte ajustada independente — pendência levada para a validação C1.
+   de retorno total + **montador** (`prices/assemble`, D-015) + **cross-check contra o Yahoo
+   por papel vivo** (D-016) — que já pegou e corrigiu uma bonificação de 10% ausente de todas
+   as fontes (§4.2.1). Pendência aberta: rodar o cross-check nos demais nomes vivos do universo
+   antes de congelar o dataset; deslistados ficam com a limitação declarada em D-016.
 2. **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — conferir ano a ano
    no calendário oficial, 2017/18 em diante. Não interpolar.
 3. **Acesso programático ao CEPEA** — se não existir, usar futuros internacionais e declarar.

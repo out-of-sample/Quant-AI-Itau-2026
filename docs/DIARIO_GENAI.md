@@ -311,6 +311,44 @@ e o corte pós-deslistagem reproduz o resíduo real da BRFS3.
 
 ---
 
+## 2026-07-16 — C1 (carimbo PIT + universo dinâmico) e o cross-check que achou um evento fantasma
+
+**Uso**: implementar a camada C1 (`validate/pit.py`, `validate/universe.py`) e executar a
+validação pendente de D-015: cross-check da série de retorno total contra o *adjclose* do
+Yahoo.
+
+**Valor real — o universo dinâmico validado contra 2025 real**: com o COTAHIST A2025, o
+universo reproduz as quatro deslistagens do ano nas datas exatas (JBSS3 sai em 06/06,
+BRFS3/MRFG3 em 22/09 com a fusão, STBP3 em 02/10) e ainda captura a **entrada** do MBRF3 em
+dezembro, quando completa os 60 pregões de seasoning. O universo respira nos dois sentidos —
+é a antítese do survivorship.
+
+**Valor real — o cross-check pegou um buraco de verdade**: SLCE3 divergiu 9,1% do Yahoo num
+único dia (09/05/2023), sem nenhum evento em **nenhuma** das nossas fontes (B3 dinheiro, B3
+ações, StatusInvest em todos os `chartProventsType`).
+
+**Validação humana — a cadeia de hipóteses, com as erradas registradas**:
+1. Primeira hipótese da IA: *redução de capital com restituição* (~R$ 3,59/ação). Derrubada:
+   nenhuma fonte brasileira registra restituição, e a busca por fato societário não achou nada.
+2. Segunda hipótese: *o Yahoo está errado e a queda foi mercado* (o 1T23 saiu em maio).
+   Derrubada: o resultado saiu em 15/05, não 09/05.
+3. A pista decisiva veio da aritmética: −9,04% ≈ 1/1,1 − 1 ⇒ **bonificação de 10%**. Busca
+   dirigida confirmou na fonte primária: AGO/E de 27/04/2023, 1 ON nova para cada 10,
+   data-base 08/05, ex 09/05 (RI da SLC). `(1,1×35,92)/39,49 − 1 = +0,06%` = exatamente o
+   retorno do Yahoo no dia.
+4. Consequência estrutural: o truncamento do supplement da B3 (ressalva desde D-013) virou
+   **omissão material confirmada**. Resposta de processo em D-016: cross-check obrigatório
+   por papel vivo + registro curado com proveniência (`events_manual.py`). Após a correção,
+   SLCE3 fecha limpo (max 2,6e-3 em 748 pregões).
+
+**O que mais a verificação separou**: a divergência da AGRO3 em 25/10/2023 (nosso −8,04% vs
+Yahoo −9,00%) **não é bug** — é a convenção multiplicativa do Yahoo distorcendo dividendo
+grande (10,6%); nossa álgebra é o retorno real do acionista (CRSP). Saber qual divergência é
+buraco e qual é convenção é exatamente o tipo de julgamento que o cross-check automatizado
+sozinho não faz.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
