@@ -295,16 +295,30 @@ duas com papéis distintos.
 | `avail_date` (deliberação) | ✅ `dateApproval` — **vintage-safe** | ❌ só data-com (`ed`) e pagamento (`pd`) |
 | Preço de referência pré-ex | ✅ `closingPricePriorExDate` + `lastDatePriorEx` | ❌ |
 | Cobre **deslistados** | ❌ **BRF e Santos Brasil = 0 registros; JBS congela em 2019** | ✅ JBSS3 com eventos até 05/2025 |
-| Tipos cobertos | só **dinheiro** (dividendo/JCP) | dinheiro (desdobramento/bonificação: a confirmar) |
+| Tipos cobertos | só **dinheiro** (dividendo/JCP) | só **dinheiro** (Dividendo/JCP/Amortização — confirmado na resposta) |
 
 **Cross-check (o que legitima usar a StatusInvest na cauda deslistada):** onde as duas se
 sobrepõem (SLC), os **valores batem** e o `ed` da StatusInvest **é exatamente** o
 `lastDatePriorEx` (data-com) da B3 — logo o preço ajusta no **pregão seguinte** ao `ed`.
 
-**Gotcha de vintage confirmado:** em evento pré-split, a StatusInvest **reescreve** o valor por
-ação para a base pós-split (campo `adj`), enquanto a B3 mantém o nominal da época (ex.: dividendo
-SLC de 04/05/2023 — B3 `2,596`, StatusInvest `1,299` = metade, por um desdobramento posterior).
-Misturar valores ajustados e nominais corromperia o fator — tratar o `adj` explicitamente.
+**Gotcha de vintage confirmado — e resolvido na própria fonte:** em evento pré-split, a
+StatusInvest **reescreve** o valor por ação para a base pós-split (campo `adj`), enquanto a B3
+mantém o nominal da época (ex.: dividendo SLC de 04/05/2023 — B3 `2,596`, StatusInvest `1,299` =
+metade, por um desdobramento posterior). Misturar valores ajustados e nominais corromperia o
+fator. A calibração ao vivo (2026-07-16) encontrou porém um campo não documentado, **`sov`**,
+que preserva o **valor nominal original**: quando `adj=True`, o nominal está em `sov`; quando
+`adj=False`, `sov` vem como `"-"` e `v` já é nominal. A regra `nominal = sov se adj senão v`
+está implementada em `ingest/events_statusinvest.py` e travada por teste, inclusive um
+**cross-check contra a B3** na sobreposição (SLC): 8/8 registros batem, 7 exatos e 1 com desvio
+de 3,9e-4 (a StatusInvest reconstrói o nominal multiplicando o valor ajustado pelo fator do
+split, com arredondamento — tolerância de comparação: 5e-4).
+
+**Cobertura da cauda deslistada, confirmada ao vivo (2026-07-16)**: JBSS3 = 22 eventos (11 deles
+pós-2019, exatamente o trecho que a B3 congela); BRFS3 = 22 (até 09/2025); STBP3 = 50 (até
+03/2025). JCP vem **bruto**, consistente com o `valueCash` da B3 — as fontes podem ser somadas
+sem ajuste de base. ⚠️ BRFS3 traz evento com data-com **posterior** à incorporação pela Marfrig;
+o motor de retorno já ignora eventos além do fim da série de preços, mas o montador deve conferir
+que a data de deslistagem via COTAHIST corta esses resíduos.
 
 **Eventos em ações** (split/bonificação/grupamento/subscrição/incorporação): endpoint
 `GetListedSupplementCompany` (por código de empresa), campos `approvedOn` (deliberação),
@@ -413,10 +427,10 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
 
 ## 7. Itens em aberto (a resolver antes de codar a ingestão)
 
-1. **Ajuste de proventos no COTAHIST** — fonte de eventos **em dinheiro** definida (B3 oficial
-   primária + StatusInvest para a cauda deslistada, ver §4.2.1 e D-013). **Ainda falta**:
-   localizar o endpoint da B3 de eventos **em ações** (split/bonificação/grupamento/subscrição),
-   e então escrever o construtor de fatores de ajuste com teste.
+1. **Ajuste de proventos no COTAHIST** — as três fontes de eventos estão implementadas e
+   testadas (B3 dinheiro + B3 ações + StatusInvest para a cauda deslistada, ver §4.2.1,
+   D-013/D-014). **Ainda falta**: o **montador** — COTAHIST + eventos → série de retorno total
+   por papel, delisting-aware, conferindo ali a completude do endpoint supplement (truncamento).
 2. **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — conferir ano a ano
    no calendário oficial, 2017/18 em diante. Não interpolar.
 3. **Acesso programático ao CEPEA** — se não existir, usar futuros internacionais e declarar.

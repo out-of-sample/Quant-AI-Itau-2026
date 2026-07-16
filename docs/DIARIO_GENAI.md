@@ -256,6 +256,34 @@ produziriam retorno espúrio na deslistagem; foram separados como eventos termin
 
 ---
 
+## 2026-07-16 — Fetcher da StatusInvest (a cauda deslistada)
+
+**Uso**: escrever o fetcher/normalizador dos proventos da StatusInvest para os papéis que a API
+da B3 não cobre (JBSS3 pós-2019, BRFS3, STBP3), com o cuidado do campo `adj` (D-013).
+
+**Valor real**: a calibração ao vivo, feita **antes** de escrever o código, encontrou um campo
+não documentado — **`sov`** ("valor original") — que resolve na própria fonte o problema que
+esperávamos ter de resolver à mão: quando `adj=True`, o `v` está reescrito para a base
+pós-split, mas o `sov` preserva o nominal da época. Sem essa sondagem, o desenho teria sido
+reconstruir o nominal multiplicando pelos fatores de split (mais código, mais hipóteses, mais
+chance de erro).
+
+**Validação humana**:
+- **Cross-check quantitativo contra a B3** na sobreposição (SLC, 8 registros): 7 batem exatos,
+  1 diverge 3,9e-4 — a StatusInvest reconstrói o nominal com arredondamento do fator. A
+  tolerância (5e-4) e o caso divergente estão documentados e travados em teste de CI.
+- Cobertura da cauda confirmada ao vivo: JBSS3 22 eventos (11 pós-2019), BRFS3 22, STBP3 50.
+- Teste ponta a ponta contra a fonte viva, além das fixtures reais.
+
+**O que a IA errou / quase errou**: a premissa herdada da sessão anterior era que o valor
+nominal exigiria reconstrução externa (foi assim que D-013 registrou o risco). A sondagem
+derrubou a premissa — para melhor. Ficou também um achado que teria virado bug no montador:
+BRFS3 traz provento com data-com **posterior** à incorporação pela Marfrig; se a série de preços
+não cortar na data de deslistagem via COTAHIST, esse resíduo entraria no retorno de um papel
+que já não existia.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
