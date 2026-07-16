@@ -20,7 +20,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS (prelim vs. final) como fonte primária de precipitação; medir a magnitude; restringir à precipitação se for material | Mitigado parcialmente. **Temperatura segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
-| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor de retorno total (D-014), três fontes de eventos (D-013) e **montador** (D-015) implementados, testados e **validados contra o split real da SLC e a deslistagem da JBS**. Residual: split perdido por truncamento do supplement é detectável pelo tripwire (piso 1,5:1); bonificação pequena exige cross-check externo | ✅ **Resolvido** (com guarda residual declarada) |
+| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor de retorno total (D-014), três fontes de eventos (D-013), **montador** (D-015) e **cross-check obrigatório contra fonte ajustada independente** (D-016) — que já pegou e corrigiu uma bonificação de 10% ausente de todas as fontes. Residual: papéis **deslistados** não têm Yahoo para conferir — declarado | ✅ **Resolvido** (residual: deslistados sem cross-check externo) |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
@@ -217,6 +217,31 @@ fonte ajustada independente (yfinance, nos papéis vivos), pendência levada par
 C1; (ii) um evento de fallback na mesma data-com com valor fora da tolerância é tratado como
 lacuna da primária e mantido — se for na verdade divergência de valor, entraria duplicado
 (mitigado pelo cross-check em teste e pelo tripwire).
+
+### D-016 — Cross-check contra fonte ajustada independente é obrigatório por papel vivo; correções entram por registro curado com proveniência
+**Data**: 2026-07-16
+O cross-check da série montada contra o *adjclose* do Yahoo (SLCE3 e AGRO3, 2023-2025, 748
+pregões cada) encontrou **uma divergência real de 9,1% num único dia** (09/05/2023): uma
+**bonificação de 10%** da SLC (AGO/E de 27/04/2023, data-base 08/05, ex 09/05) que está
+ausente de **todas** as fontes automáticas do projeto — o `GetListedSupplementCompany` da B3
+(que lista o desdobramento de 12/2023 e a bonificação de 12/2025, mas não a de 05/2023) e a
+StatusInvest (todos os `chartProventsType` testados). Com isso, o truncamento do supplement
+deixa de ser ressalva ("parece truncar", D-013) e vira **fato confirmado com omissão material**.
+Decisões:
+- **Todo papel vivo do universo passa pelo cross-check** (`scripts/crosscheck_yahoo.py`)
+  antes de o dataset de preços ser congelado. Feito até agora: SLCE3 ✅ (limpo após correção),
+  AGRO3 ✅ (limpo). Os demais nomes do universo são pendência aberta.
+- Eventos ausentes das APIs entram por **registro curado manualmente**
+  (`ingest/events_manual.py`), sempre com fonte primária citada (documento societário/RI) e
+  nascidos de divergência concreta — nunca de memória. O git é a trilha de auditoria.
+- **Divergência de convenção não é bug**: em dividendo grande, o Yahoo usa fator
+  multiplicativo `P_ex/(P_cum−div)`, que se afasta do retorno verdadeiro do acionista
+  `(P_ex+div)/P_cum` (nossa convenção, CRSP) — no dividendo de 10,6% da AGRO3 (25/10/2023),
+  Yahoo −9,00% vs nosso −8,04%. Mantemos a nossa; o script documenta a leitura.
+**Custo/limitação**: papéis **deslistados não existem no Yahoo** — a cauda short (JBSS3,
+BRFS3, STBP3) fica sem cross-check externo de eventos em ações; mitigação parcial: o tripwire
+de D-015 e o fato de a B3 cobrir os eventos terminais. Limitação declarada, sem solução
+gratuita conhecida.
 
 ---
 
