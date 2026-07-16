@@ -284,6 +284,33 @@ que já não existia.
 
 ---
 
+## 2026-07-16 — Montador da série de retorno total
+
+**Uso**: implementar a peça que junta COTAHIST + as três fontes de eventos numa série de
+retorno total por papel (fecha R5), com as regras de merge, corte na deslistagem e tripwire
+de split perdido (D-015).
+
+**Valor real**: a validação ponta a ponta contra dados reais, não sintéticos — COTAHIST de
+nov-dez/2023 e mai-jun/2025 baixados com manifesto de vintage, eventos ao vivo das APIs. No
+dia ex do desdobramento 2:1 da SLC, o retorno cru é **−51,8%** e o montado **−3,7%** (o
+movimento real do papel); na JBS, o dividendo que só a StatusInvest tem é absorvido no ex e a
+série termina exatamente na deslistagem (06/06/2025).
+
+**Validação humana**: além do caso real acima, o merge foi testado com as fixtures reais das
+duas fontes (incluindo o caso divergente de 3,9e-4 e o par dividendo+JCP na mesma data-com),
+e o corte pós-deslistagem reproduz o resíduo real da BRFS3.
+
+**O que a IA errou / precisou corrigir**:
+- O registro de 15/07 chamava 13/12/2023 de "data-ex" do split da SLC. A validação de hoje
+  desambiguou: 13/12 é a **data-com**; a queda de preço acontece em **14/12**. O motor já
+  mapeava certo (1º pregão estritamente após a data-com) — mas se a convenção tivesse sido
+  implementada a partir daquela frase, o ajuste cairia um pregão cedo demais.
+- O limiar inicial do tripwire (35%) não pegaria um split 1,5:1 perdido (−33%). Corrigido
+  para 30%, com o piso de detecção **declarado** — e a limitação honesta de que bonificação
+  pequena (12,5% → −11%) escapa de qualquer limiar útil e exige cross-check externo.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

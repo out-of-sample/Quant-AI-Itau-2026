@@ -277,7 +277,7 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | Fundação | `pyproject.toml`, `requirements.lock`, CI, guards | ✅ | D-012; stack cp314 pinado com hashes |
 | C0 preço | `ingest/cotahist.py` | ✅ | parser de largura fixa (offsets validados em arquivo real), download com cache + manifesto de vintage; delisting-proof (R4/D-004) |
 | C0 eventos | `ingest/events_b3.py`, `ingest/events_statusinvest.py` | ✅ | B3: dinheiro (`GetListedCashDividends`, paginado) e ações (`GetListedSupplementCompany`, `factor` validado contra preço). StatusInvest: cauda deslistada, nominal via `sov`, cross-check contra a B3 em teste |
-| C0–C1 preço | `prices/adjust.py` | ✅ | **retorno total point-in-time** (não *adjusted close* retroativo — D-014); consome `CorporateEvent` |
+| C0–C1 preço | `prices/adjust.py`, `prices/assemble.py` | ✅ | **retorno total point-in-time** (D-014) + **montador** (D-015): merge B3×StatusInvest sem dupla contagem, corte na deslistagem, tripwire de split perdido; validado contra o split real da SLC |
 | C4 sinal | `signal/convention.py` | ✅ | convenção de sinal `S = E·Shock` travada por teste (R11) |
 | C1 validação | `validate/` | ⬜ | esqueleto; carimbo de `avail_date` a construir |
 | C2 features | `features/` | ⬜ | `Shock`, `E`, contexto |

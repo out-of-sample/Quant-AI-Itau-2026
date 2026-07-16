@@ -87,7 +87,8 @@ Andamento (2026-07-15), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   grupamento, `factor` validado contra preço).
 - ✅ Fetcher da **StatusInvest** (dividendos da cauda deslistada; nominal via campo `sov`,
   cross-check 8/8 contra a B3 na sobreposição).
-- ⬜ **Montador**: COTAHIST + eventos → série de retorno total por papel, delisting-aware.
+- ✅ **Montador** (D-015): COTAHIST + eventos → retorno total por papel, delisting-aware;
+  validado contra o split real da SLC e a deslistagem da JBS; tripwire de split perdido.
 - ⬜ Carimbo de `avail_date` (C1) e universo dinâmico com filtro de liquidez.
 
 > **Portão**: se não conseguirmos construir uma série de preços delisting-aware e ajustada

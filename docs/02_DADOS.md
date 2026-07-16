@@ -427,10 +427,11 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
 
 ## 7. Itens em aberto (a resolver antes de codar a ingestão)
 
-1. **Ajuste de proventos no COTAHIST** — as três fontes de eventos estão implementadas e
-   testadas (B3 dinheiro + B3 ações + StatusInvest para a cauda deslistada, ver §4.2.1,
-   D-013/D-014). **Ainda falta**: o **montador** — COTAHIST + eventos → série de retorno total
-   por papel, delisting-aware, conferindo ali a completude do endpoint supplement (truncamento).
+1. ✅ **Ajuste de proventos no COTAHIST** — **resolvido** (R5). Três fontes de eventos + motor
+   de retorno total + **montador** (`prices/assemble`, D-015), validado contra o split real da
+   SLC e a deslistagem da JBS. Residual declarado: a completude do supplement (truncamento) é
+   vigiada por tripwire de retorno suspeito (pega splits ≥ 1,5:1); bonificações pequenas exigem
+   cross-check contra fonte ajustada independente — pendência levada para a validação C1.
 2. **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — conferir ano a ano
    no calendário oficial, 2017/18 em diante. Não interpolar.
 3. **Acesso programático ao CEPEA** — se não existir, usar futuros internacionais e declarar.
