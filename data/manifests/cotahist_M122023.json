@@ -1,0 +1,8 @@
+{
+  "source": "COTAHIST",
+  "period": "M122023",
+  "url": "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_M122023.ZIP",
+  "sha256": "0364aaa609671942ff2ab747d7a0c50db7535e325966e4f81a91b1baa71816bb",
+  "bytes": 5327918,
+  "downloaded_at": "2026-07-16T17:09:16.654084+00:00"
+}

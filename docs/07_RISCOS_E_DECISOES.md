@@ -20,7 +20,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS (prelim vs. final) como fonte primária de precipitação; medir a magnitude; restringir à precipitação se for material | Mitigado parcialmente. **Temperatura segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
-| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor de retorno total (D-014) e as **três fontes de eventos** (B3 dinheiro + B3 ações + StatusInvest com nominal via `sov`, cross-check 8/8 contra a B3) implementados e testados. Falta só o montador | 🟡 **Em andamento** — fontes completas, falta o montador |
+| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor de retorno total (D-014), três fontes de eventos (D-013) e **montador** (D-015) implementados, testados e **validados contra o split real da SLC e a deslistagem da JBS**. Residual: split perdido por truncamento do supplement é detectável pelo tripwire (piso 1,5:1); bonificação pequena exige cross-check externo | ✅ **Resolvido** (com guarda residual declarada) |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
@@ -192,6 +192,31 @@ até `t` não muda quando se acrescenta um evento posterior a `t`.
 **Custo/limitação**: quem precisar de nível (ex.: filtro de preço mínimo) terá de reconstruir um
 índice a partir do retorno, ciente de que só é válido para frente. A normalização específica de
 cada fonte (fator da B3, campo `adj` da StatusInvest) fica na ingestão, fora do motor.
+
+### D-015 — Montador: merge de fontes com tolerância, corte na deslistagem e tripwire de split
+**Data**: 2026-07-16
+O montador (`quantagro.prices.assemble`) junta COTAHIST + as três fontes de eventos numa série
+de retorno total por papel. Três regras de desenho:
+- **Merge B3 × StatusInvest sem dupla contagem**: a B3 entra inteira; da StatusInvest entra só
+  o que não casa 1-para-1 com um evento B3 na mesma data-com e valor dentro de **5e-4 relativo**
+  (a tolerância medida no cross-check). O casamento é 1-para-1 de propósito: dividendo e JCP na
+  mesma data-com (caso real em SLC 12/12/2025) não podem se fundir.
+- **A série termina onde o pregão terminou**: evento com data-com no último pregão ou depois
+  (caso real: BRFS3 tem provento datado após a incorporação pela Marfrig) não tem data-ex e é
+  descartado. Travado em teste.
+- **Tripwire de split perdido** (`flag_suspect_returns`): dias com |retorno| ≥ 30% são listados
+  para inspeção humana — é o sintoma de um split ausente (truncamento conhecido do supplement da
+  B3). O limiar pega splits ≥ 1,5:1.
+**Validação**: contra dados reais, ponta a ponta — no dia ex do desdobramento 2:1 da SLC
+(14/12/2023) o retorno cru é −51,8% e o montado −3,7% (= movimento real do papel); na JBS o
+dividendo da StatusInvest é absorvido no ex e a série termina na deslistagem (06/06/2025).
+Manifestos dos COTAHIST usados em `data/manifests/`.
+**Custo/limitação**: (i) bonificações pequenas (ex.: 12,5%) ficam **abaixo de qualquer limiar
+útil** do tripwire — a completude do supplement só é verificável por cross-check contra uma
+fonte ajustada independente (yfinance, nos papéis vivos), pendência levada para a validação
+C1; (ii) um evento de fallback na mesma data-com com valor fora da tolerância é tratado como
+lacuna da primária e mantido — se for na verdade divergência de valor, entraria duplicado
+(mitigado pelo cross-check em teste e pelo tripwire).
 
 ---
 
