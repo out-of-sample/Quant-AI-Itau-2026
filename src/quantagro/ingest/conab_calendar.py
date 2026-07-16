@@ -162,7 +162,7 @@ _GRAOS: dict[str, dict[int, str]] = {
         11: "2024-08-13",
         12: "2024-09-12",
     },
-    # [gov.br] (itens nativos do site novo, datas orgânicas em ter/qui).
+    # 4º-12º [cal2025 + gov.br, 9/9 ✓✓]; 1º-3º [gov.br] (itens nativos do site novo).
     "2024/25": {
         1: "2024-10-15",
         2: "2024-11-14",
@@ -177,7 +177,8 @@ _GRAOS: dict[str, dict[int, str]] = {
         11: "2025-08-14",
         12: "2025-09-11",
     },
-    # [gov.br] (site vivo; 10º divulgado em 14/07/2026, dois dias antes desta escrita).
+    # 1º-4º [cal2025 + gov.br ✓✓]; 5º-10º [gov.br] (site vivo; 10º divulgado em
+    # 14/07/2026, dois dias antes desta escrita).
     "2025/26": {
         1: "2025-10-14",
         2: "2025-11-13",
@@ -215,9 +216,9 @@ _CAFE: dict[str, dict[int, str]] = {
     # gov.br mostra 25/05, um sábado: artefato, descartado]; 3º [gov.br + news
     # cal2024 ✓✓]; 4º deslizou para janeiro [gov.br + news cal2024 + ConabCast ✓✓✓].
     "2024": {1: "2024-01-18", 2: "2024-05-23", 3: "2024-09-19", 4: "2025-01-21"},
-    # [gov.br] (era pós-migração).
+    # [cal2025 + gov.br, 4/4 ✓✓].
     "2025": {1: "2025-01-28", 2: "2025-05-06", 3: "2025-09-04", 4: "2025-12-04"},
-    # [gov.br] (site vivo).
+    # 1º [cal2025 + gov.br ✓✓]; 2º [gov.br] (site vivo).
     "2026": {1: "2026-02-05", 2: "2026-05-21"},
 }
 
@@ -246,9 +247,10 @@ _CANA: dict[str, dict[int, str]] = {
     # 1º-2º [K2 + cal2023 ✓✓]; 3º [news udop datada 29/11 + cal2023 ✓✓];
     # 4º [gov.br + news cal2024 ✓✓].
     "2023/24": {1: "2023-04-26", 2: "2023-08-17", 3: "2023-11-29", 4: "2024-04-18"},
-    # [gov.br]; 1º-3º também [news cal2024 ✓✓].
+    # [gov.br]; 1º-3º também [news cal2024 ✓✓]; 4º também [cal2025 ✓✓].
     "2024/25": {1: "2024-04-25", 2: "2024-08-22", 3: "2024-11-28", 4: "2025-04-17"},
-    # [gov.br] (site vivo).
+    # 1º-3º [cal2025 + gov.br ✓✓]; 4º [gov.br] (cal2025 planejava 16/abr; o listing
+    # vivo diz 17/abr — efetiva e mais tardia, vale a regra 3).
     "2025/26": {1: "2025-04-29", 2: "2025-08-26", 3: "2025-11-04", 4: "2026-04-17"},
     # [gov.br] (site vivo).
     "2026/27": {1: "2026-04-28"},
