@@ -1,0 +1,8 @@
+ano_agricola;dsc_safra_previsao;uf;produto;id_produto;dsc_levantamento;id_levantamento;area_plantada_mil_ha;producao_mil_t;producao_acucar_mil_t;producao_etanol_anidro_mil_l;producao_etanol_hidratado_mil_l;producao_etanol_total_mil_l;produtcao_atr_kg_t
+2022/23             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;1º LEV              ;1;4089.5;301377.1;24124.2;4748996.2;5993084.9;10742081.1;145.5
+2022/23             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;2º LEV              ;2;3986.4;283406.8;21008.9;5096249.4;5710663.9;10806913.4;135.2
+2022/23             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;3º LEV              ;3;4147.6;308146.8;22218.9;5507287;6205550;11712837;133.6
+2022/23             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;4º LEV              ;4;4147.6;312879.5;22487.6;5553618;6415042;11968660;133.6
+2017/18             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;1º LEV              ;1;4558.4;352214;24964.1;6338642.2;5919745.5;12258387.7;134.6
+2017/18             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;2º LEV              ;2;4509.2;352803.9;24069.3;5745577.4;6573910;12319487.3;131.9
+2017/18             ;UNICA          ;SP;CANA DE ACUCAR                          ;4238;LEVANT              ;99;4558.4;349200.5;23859.1;5942501;7144554;13087055;136.3

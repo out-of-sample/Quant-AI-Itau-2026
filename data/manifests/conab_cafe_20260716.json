@@ -1,0 +1,8 @@
+{
+  "source": "CONAB",
+  "dataset": "cafe",
+  "url": "https://portaldeinformacoes.conab.gov.br/downloads/arquivos/LevantamentoCafe.txt",
+  "sha256": "8ed2b3accb69cf924c593ab8ed72825fedda0412a8a8c4d129a4ba47c526e73c",
+  "bytes": 65050,
+  "downloaded_at": "2026-07-16T20:37:23.695160+00:00"
+}

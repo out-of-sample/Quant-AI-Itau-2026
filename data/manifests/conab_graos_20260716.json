@@ -1,0 +1,8 @@
+{
+  "source": "CONAB",
+  "dataset": "graos",
+  "url": "https://portaldeinformacoes.conab.gov.br/downloads/arquivos/LevantamentoGraos.txt",
+  "sha256": "c2e8e2aa2e1b9c818850dcf56dee6bb4406fca37751f527fb4f95257e93ddd94",
+  "bytes": 6445802,
+  "downloaded_at": "2026-07-16T20:37:23.473388+00:00"
+}

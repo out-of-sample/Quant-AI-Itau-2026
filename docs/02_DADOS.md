@@ -153,8 +153,35 @@ publicar?*
 | Limitação | Impacto |
 |---|---|
 | 🔴 **O painel de vintages só começa em 2017/18** (~9 safras) | Limita severamente o poder estatístico desta camada. A série longa (1976/77) só tem o número final |
-| 🟡 **O arquivo NÃO traz a data de publicação de cada levantamento** — só o número (1-12) | Precisamos mapear `(safra, nº do levantamento) → data de divulgação` **manualmente**, do calendário oficial. São mensais, ~dia 15, mas **NÃO CONFIRMADO** que valha para todos os anos. Errar por poucos dias contamina o estudo de evento ⇒ **conferir ano a ano, nunca interpolar** |
+| ✅ **O arquivo NÃO traz a data de publicação de cada levantamento** — só o número (1-12) | **Resolvido (R10, D-017)**: mapa `(ano_agricola, id_levantamento) → data` curado ano a ano de fontes primárias em `ingest/conab_calendar.py` — grãos 2017/18→2025/26 completo, café 2017→2026, cana 2017/18→2026/27. Ver §2.3 |
 | 🟡 Granularidade **por UF**, não município | Aceitável: a grade meteorológica (~55 km) também não sustenta resolução municipal |
+| 🟡 **O TXT do portal atrasa dias em relação ao boletim** | Verificado ao vivo: 10º lev de grãos 2025/26 divulgado em 14/07/2026, mas em 16/07 o `LevantamentoGraos.txt` ainda só continha até o 9º. O número é público na data do boletim (é ela o `avail_date`); o TXT é só o canal de captura, e o manifesto prova qual vintage baixamos |
+
+### 2.3 Fatos do arquivo e do calendário (verificados em 2026-07-16)
+
+- **Formatos de `ano_agricola` em grãos**: "2017/18" (safra de verão) e "2018" (ano civil —
+  culturas de inverno: trigo, aveia, cevada...). O alinhamento dos levantamentos de inverno
+  com o calendário de boletins é **ambíguo** (as revisões de trigo não casam com um único
+  ano-boletim) ⇒ inverno fica **fora do calendário** e o carimbo falha alto se aparecer.
+  A tese não usa culturas de inverno.
+- **`id_levantamento == 99` ("LEVANT")**: resíduo legado sem número (algodão 2017/18–2021/22,
+  café 2017, cana ≤2020/21). Não é datável; o parser preserva, o calendário não cobre.
+- **Café 2020 não tem 2º levantamento** (suspenso na pandemia) — ausente do painel e da
+  página da CONAB da época. Buraco real da fonte, não do mapa.
+- **Armadilha de vintage no próprio site da CONAB**: o listing atual (gov.br) mostra, para a
+  safra 2022/23 de grãos, datas nominais falsas (todas "dia 10", incluindo sábados) — artefato
+  da migração de site de nov/2023. As datas verdadeiras (K2 da página antiga + calendário
+  oficial, 12/12 concordantes) diferem em até 6 dias. **Nunca confiar num "Publicado em" sem
+  checar se o item é nativo da era do site.**
+- **Fontes do mapa** (detalhe em `ingest/conab_calendar.py`): PDFs oficiais do "Calendário de
+  Divulgação de Safras" 2017 e 2021-2023 (Wayback); página Joomla antiga com data de publicação
+  por item (snapshots 2018-2023); espelho same-day da AMPA (timestamp no nome do arquivo,
+  validado 7/7 contra datas conhecidas); timestamps de upload do site antigo da CONAB; notícias
+  datadas do dia (Agência Brasil, MAPA, novacana, udop, Cecafé, ConabCast). Regra: data efetiva
+  > planejada; irresolvido → a mais tardia (atrasar sinal nunca cria lookahead).
+- **Divergências reais planejado × efetivo já observadas** (por que "nunca interpolar"):
+  4º lev grãos 2023/24 (04→10/jan), 1º lev cana 2021/22 (29/abr→18/mai), 3º lev cana 2022/23
+  (22→27/dez). O calendário planejado sozinho **não** é confiável.
 
 **Para peso espacial por município** (não para sinal): IBGE **SIDRA** (PAM), API pública sem
 chave, testada e funcional. É **anual e com ~1 ano de lag** ⇒ inútil como sinal, útil como
@@ -437,8 +464,10 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
    por papel vivo** (D-016) — que já pegou e corrigiu uma bonificação de 10% ausente de todas
    as fontes (§4.2.1). Pendência aberta: rodar o cross-check nos demais nomes vivos do universo
    antes de congelar o dataset; deslistados ficam com a limitação declarada em D-016.
-2. **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — conferir ano a ano
-   no calendário oficial, 2017/18 em diante. Não interpolar.
+2. ✅ **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — **resolvido**
+   (R10, D-017): curado ano a ano de fontes primárias em `ingest/conab_calendar.py`, com a
+   proveniência de cada safra anotada no módulo. Ver §2.3 — inclusive a armadilha encontrada
+   (o site oficial exibe datas falsas para 2022/23).
 3. **Acesso programático ao CEPEA** — se não existir, usar futuros internacionais e declarar.
 4. **Futuros agro da B3** — confirmar se há histórico gratuito, ou abandonar.
 5. **Magnitude da revisão do ComexStat** nas NCMs agro — quantificar via snapshot do Wayback

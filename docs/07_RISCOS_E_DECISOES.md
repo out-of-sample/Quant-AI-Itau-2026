@@ -25,7 +25,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
 | R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | Reportar a capacidade estimada explicitamente | Aceito |
-| R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapear ano a ano do calendário oficial. **Proibido interpolar** | 🟡 Aberto |
+| R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido** (residual: poucas datas com fonte única, anotadas no módulo) |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
 
@@ -242,6 +242,33 @@ Decisões:
 BRFS3, STBP3) fica sem cross-check externo de eventos em ações; mitigação parcial: o tripwire
 de D-015 e o fato de a B3 cobrir os eventos terminais. Limitação declarada, sem solução
 gratuita conhecida.
+
+### D-017 — Calendário CONAB (R10): curadoria multi-fonte com data efetiva > planejada; na dúvida, a mais tardia
+**Data**: 2026-07-16
+O `Levantamento*.txt` não traz a data de divulgação de cada levantamento, e a verificação
+ano a ano provou que o problema era real e pior do que o previsto: **o listing atual do site
+da CONAB (gov.br) exibe datas falsas para toda a safra 2022/23 de grãos** — datas nominais
+"dia 10" (incluindo sábados), artefato da migração de site de nov/2023, com erro de até 6
+dias contra as datas verdadeiras. Um mapa ingênuo lido do site oficial contaminaria o estudo
+de evento em silêncio.
+
+O mapa foi curado em `ingest/conab_calendar.py` (grãos 2017/18→2025/26 completo, café
+2017→2026, cana 2017/18→2026/27), com fontes primárias trianguladas: PDFs oficiais do
+Calendário de Divulgação (Wayback), a página antiga da CONAB com data de publicação por item
+(snapshots 2018-2023), o espelho same-day da AMPA (timestamp no nome do arquivo, validado
+7/7 contra datas conhecidas), timestamps de upload do site antigo e notícias datadas do dia.
+Decisões:
+- **Data efetiva vence planejada** (foram observados 3 adiamentos reais de 5-20 dias:
+  grãos 4º/2023-24, cana 1º/2021-22 e 3º/2022-23); divergência irresolvida → vale a **mais
+  tardia** (atrasar sinal nunca cria lookahead; adiantar cria).
+- **Entrada nova só com fonte primária citada** no comentário da safra — mesma disciplina do
+  registro de eventos societários (D-016). O git é a trilha de auditoria.
+- **O carimbo falha alto** para qualquer `(ano_agricola, id_levantamento)` fora do mapa —
+  cobre o resíduo legado `lev 99`, as culturas de inverno (alinhamento de boletim ambíguo,
+  não usadas pela tese) e safras futuras ainda não curadas.
+**Custo/limitação**: poucas datas seguem com fonte única (anotadas no módulo): café e cana
+2017 só têm o calendário planejado; 9º lev de grãos 2017/18 só tem a página antiga. O painel
+de café de 2020 não tem 2º levantamento (suspenso na pandemia) — buraco da fonte, declarado.
 
 ---
 

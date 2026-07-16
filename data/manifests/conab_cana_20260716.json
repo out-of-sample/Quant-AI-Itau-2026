@@ -1,0 +1,8 @@
+{
+  "source": "CONAB",
+  "dataset": "cana",
+  "url": "https://portaldeinformacoes.conab.gov.br/downloads/arquivos/LevantamentoCana.txt",
+  "sha256": "164b9842e2db658db9a11da2bd26bd822fd9c697fc122a11f72578d818951181",
+  "bytes": 121202,
+  "downloaded_at": "2026-07-16T20:37:23.857991+00:00"
+}
