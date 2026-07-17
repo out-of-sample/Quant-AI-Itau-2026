@@ -16,13 +16,15 @@ final e evitar que a fundamentação vire "achismo com verniz acadêmico".
 - **Pista ≠ citação.** Quando o método é canônico e a atribuição é "de conhecimento comum"
   (ex.: um estimador com nome próprio), o nome do autor pode entrar como **pista para buscar**,
   sempre marcado `⚠ não verificado`. Só vira citação de verdade — sem o aviso — depois que
-  alguém conferиu título/ano/venue na fonte.
-- **Proveniência.** Cada entrada diz de onde veio (doc do repo + linha, ou "verificado na
-  fonte por <quem> em <data>"). O git é a trilha de auditoria.
+  alguém conferiu título/ano/venue na fonte.
+- **Proveniência.** Cada entrada diz de onde veio (doc do repo + linha, ou fonte/identificador
+  verificável + data da conferência). O git é a trilha de auditoria.
 
 > Status desta primeira versão: montada a partir de uma varredura dos documentos do repo
 > (principalmente `05_Ideacao_Tese/teses_candidatas.md`). É um ponto de partida, não uma
-> bibliografia fechada. **Nenhum autor/ano/DOI foi preenchido de memória.**
+> bibliografia fechada. **Nenhum autor/ano/DOI foi preenchido de memória.** As lacunas ativas
+> e seus critérios de encerramento estão centralizados em `12_PENDENCIAS_TRANSVERSAIS.md`
+> (PT-003, PT-004 e PT-006).
 
 ---
 
@@ -116,6 +118,6 @@ esse paper, quando citado, entra com o mesmo cuidado dos §1-3.
 
 1. Se veio de um doc do repo: cite o doc + linha na proveniência, verbatim, com lacunas
    marcadas `[A CONFIRMAR]`.
-2. Se você abriu a fonte e conferiu: registre autor, ano, título, venue, DOI/URL e assine a
-   proveniência ("verificado por <nome> em AAAA-MM-DD"). Só aí remova os avisos `⚠`.
+2. Se a fonte foi aberta e conferida: registre autor, ano, título, venue, DOI/URL, data da
+   verificação e identificador verificável da fonte. Só aí remova os avisos `⚠`.
 3. Nunca copie uma citação "que parece certa" de um LLM sem abrir a fonte. Pista ≠ citação.

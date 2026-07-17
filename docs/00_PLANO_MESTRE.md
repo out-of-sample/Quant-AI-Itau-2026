@@ -61,6 +61,7 @@ Detalhes em `01_TESE_E_PRE_REGISTRO.md` §2.
 | **`09_FENOLOGIA_E_LIMIARES.md`** | Quando o clima importa, por cultura e estado — janelas e limiares agronômicos |
 | **`10_REFERENCIAS.md`** | Referências acadêmicas, métodos e fontes de dados usados, com proveniência e lacunas marcadas |
 | **`11_AUDITORIA_FASE1.md`** | Evidências do fechamento da ingestão: cross-check dos preços, decisões sobre preços de commodities e limite de vintage do ComexStat |
+| **`12_PENDENCIAS_TRANSVERSAIS.md`** | Fonte única das dívidas legadas/transversais que não pertencem a uma fase futura |
 | **`DIARIO_GENAI.md`** | Registro contínuo do uso de IA generativa no processo |
 | `../CONTRIBUTING.md` | Branches, commits, PRs, checklist de revisão |
 | `../05_Ideacao_Tese/` | As 21 teses avaliadas e por que esta foi escolhida |
@@ -152,7 +153,8 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
 > **PORTÃO DA FASE 1: ATRAVESSADO em 2026-07-16.** Preços, safra, clima, exportação,
 > controles ONI/NEFIN e regionalização PAM/IBGE têm ingestão reproduzível e contrato PIT;
 > as pendências metodológicas foram decididas em D-025/D-026 e auditadas em
-> `11_AUDITORIA_FASE1.md`. O próximo artefato é C2 `Shock`, não um backtest.
+> `11_AUDITORIA_FASE1.md`. C2 `Shock` foi concluído em D-027/D-028; o próximo artefato são
+> os rodadores H1a/H1b, não um backtest.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. A
@@ -162,7 +164,8 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
 Testar **H1a**: o choque climático prevê a revisão da CONAB? E **H1b**: prevê o volume
 exportado? Com BH-FDR e erros agrupados por ano-safra.
 
-Pré-requisito da fase: construir o C2 `Shock` (é ele que entra nas regressões). Andamento:
+Pré-requisito da fase: construir o C2 `Shock` (é ele que entra nas regressões) — **cumprido**.
+Andamento:
 - ✅ **Regionalização raster→município (D-027)** (`features/regionalize.py`): média de
   precipitação CHIRPS por polígono municipal da malha IBGE 2013, sem GDAL (ponto-em-polígono
   numpy sobre centros de célula p05). Índice município→células validado ao vivo nas 7 UFs
@@ -186,7 +189,8 @@ Pré-requisito da fase: construir o C2 `Shock` (é ele que entra nas regressões
 ### Fase 3 — Sinal e carteira
 Matriz de exposição `E`, score e construção da carteira. O ComexStat valida H1b *ex post* e
 não dimensiona o experimento primário (D-026). Calibração
-**exclusivamente** em 2013-2019.
+**exclusivamente** no desenvolvimento até 2019; o `Shock` operacional começa em 2015/16
+(R16), embora preços e universo preservem o recorte anterior como histórico auxiliar.
 
 ### Fase 4 — Backtest
 Backtest A (núcleo histórico, primário) e B (universo amplo, secundário). Custos, capacidade,

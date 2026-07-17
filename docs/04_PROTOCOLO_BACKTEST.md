@@ -31,7 +31,7 @@ Vai no relatório. É a prova visual de que o universo é dinâmico.
 
 | | **A — Núcleo histórico** (primário) | **B — Universo amplo** (secundário) |
 |---|---|---|
-| Período | 2008-2025 (~18 anos) | 2021-2025 (~5 anos) |
+| Período | sinal 2015/16–2025; preços anteriores só como histórico auxiliar | 2021-2025 (~5 anos) |
 | Universo | ~14 nomes listados desde ~2007 (inclui os deslistados, via COTAHIST, e os *adjacentes* que compram insumo agrícola) | + IPOs de 2020-21 (SOJA3, TTEN3, VITT3, JALL3, RAIZ4, AGXY3, HBSA3) |
 | Papel | **resultado principal** — tem histórico para sustentar afirmação | ilustra o cross-section rico; **não calibra nada** |
 | Limitação | menos nomes "agro puro" | está **inteiramente dentro do holdout** ⇒ não pode ser usado para desenvolver |
@@ -66,9 +66,8 @@ errado é o projeto inteiro.
 |---|---|---|
 | Estrutura | **dollar-neutral long/short** | consequência direta da tese: produtores e processadores se movem em direções opostas sob o mesmo choque |
 | Peso | proporcional ao score `S_{i,t}`, normalizado | sizing ∝ convicção, não binário |
-| Gate de confirmação | peso × 1.0 (ComexStat confirma) / × 0.5 (sem dado) / × 0.0 (contradiz) | ver `01_TESE_E_PRE_REGISTRO.md` §3.4 |
 | Cap por nome | 20% do bruto | impede que o resultado seja uma aposta única disfarçada de estratégia |
-| Rebalanceamento | mensal, com holding de 21 pregões | compatível com a frequência do dado de confirmação |
+| Rebalanceamento | mensal, com holding de 21 pregões | compatível com a hipótese pré-registrada de difusão lenta; ComexStat é apenas H1b *ex post* (D-026) |
 | Cap de turnover | a definir na calibração (in-sample) | turnover alto come o alfa em nomes ilíquidos |
 | Alavancagem | 1.0× bruto (0.5 long + 0.5 short) | sem alavancagem — não é onde está a contribuição |
 

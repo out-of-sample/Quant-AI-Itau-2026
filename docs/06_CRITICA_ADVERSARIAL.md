@@ -12,11 +12,12 @@
 
 ## As objeções, por gravidade
 
-### 🔴 1. "Vocês têm 12 eventos, não 3.000."
+### 🔴 1. "Vocês têm poucos anos-safra, não 3.000 eventos."
 
 **A objeção.** A safra é anual. O choque climático relevante acontece numa janela de poucas
-semanas por ano, por cultura. Um backtest de 2013 a 2025 tem ~3.000 dias úteis, mas **não
-tem 3.000 observações independentes — tem ~12 safras**. Pior: soja no MT, GO e MS no mesmo
+semanas por ano, por cultura. Milhares de barras diárias **não viram milhares de observações
+independentes**: o sinal começa em 2015/16 e H1a depende do painel iniciado em 2017/18. Pior:
+soja no MT, GO e MS no mesmo
 ano de seca não são três eventos, são um. Qualquer Sharpe, t-stat ou intervalo de confiança
 calculado sobre retornos diários está **inflando o N em uma ou duas ordens de grandeza**.
 
@@ -28,8 +29,8 @@ calculado sobre retornos diários está **inflando o N em uma ou duas ordens de 
   os erros-padrão por ano-safra.
 - Usamos *block bootstrap* em vez de inferência i.i.d.
 
-**Onde a defesa é fraca.** Ela não resolve o problema, apenas o mede honestamente. Com ~12
-safras, **não temos poder estatístico para detectar um efeito pequeno.** Só conseguiríamos
+**Onde a defesa é fraca.** Ela não resolve o problema, apenas o mede honestamente. Com tão
+poucos anos-safra, **não temos poder estatístico para detectar um efeito pequeno.** Só conseguiríamos
 detectar um efeito grande. Se o efeito verdadeiro for modesto, nosso teste vai ser
 inconclusivo, e a resposta correta é dizer "inconclusivo", não espremer significância.
 O CHIRPS prelim só começa em 2015/16 (R16), reduzindo ainda mais a janela operacional.
@@ -116,7 +117,8 @@ longo com o universo de hoje é **survivorship + backfill bias** puro. E um back
 ao período em que todos existem tem 4-5 anos — curto demais para qualquer afirmação séria.
 
 **A defesa.** Universo **dinâmico** (a ação entra na data efetiva de IPO + 60 dias, sai na
-deslistagem) e **dois backtests declarados a priori**: núcleo histórico 2013-2025 com
+deslistagem) e **dois backtests declarados a priori**: núcleo histórico com sinal desde
+2015/16 e
 universo restrito, e universo amplo 2021-2025. Publicamos a contagem de ativos elegíveis ao
 longo do tempo como gráfico.
 
@@ -129,12 +131,15 @@ pagando conscientemente, e é a razão de o backtest primário ser o de universo
 
 ### 🟡 6. "Vocês precificam por UF, mas a fazenda não é o estado."
 
-**A objeção.** A CONAB divulga por UF. A grade meteorológica utilizável tem ~55 km. A SLC
+**A objeção.** A CONAB divulga por UF. Embora o CHIRPS p05 tenha células de ~5 km e o pipeline
+as agregue por município com pesos PAM, a SLC
 Agrícola tem fazendas em pontos específicos que podem estar completamente fora da área
 atingida por uma seca "do Mato Grosso". Estamos atribuindo a uma empresa um choque que pode
 não ter tocado uma única fazenda dela.
 
-**A defesa.** É verdade, e é uma fonte de **ruído de medida** — que atenua o coeficiente
+**A defesa.** D-027/D-028 evitam a antiga aproximação por caixa/grade grosseira: cada célula
+CHIRPS é associada à malha municipal IBGE 2013, municípios são ponderados pela PAM disponível
+em `t` e só então agregados à UF. Ainda assim, é uma fonte de **ruído de medida** — que atenua o coeficiente
 estimado (viés para zero), tornando nosso teste **conservador**, não otimista. Ou seja: o
 ruído joga contra nós, não a nosso favor. Se acharmos sinal apesar dele, o efeito verdadeiro
 é maior do que o medido.
@@ -146,7 +151,7 @@ produtor cuja lavoura escapou. E o produtor que escapou é justamente o mais ben
 **Melhoria possível (não obrigatória)**: usar o CAR/mapas de propriedade para localizar as
 fazendas das empresas listadas e construir um choque **específico da empresa**, em vez de um
 choque da UF. Seria uma contribuição forte, mas é trabalho substancial. Registrado como
-próximo passo, não como escopo.
+robustez futura, não como pendência solta nem como escopo primário.
 
 ---
 

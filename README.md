@@ -58,6 +58,8 @@ Comece por **[`docs/00_PLANO_MESTRE.md`](docs/00_PLANO_MESTRE.md)**.
 | [`08_IDENTIDADE.md`](docs/08_IDENTIDADE.md) | Nome e identidade visual |
 | [`09_FENOLOGIA_E_LIMIARES.md`](docs/09_FENOLOGIA_E_LIMIARES.md) | Quando o clima importa, por cultura e estado |
 | [`10_REFERENCIAS.md`](docs/10_REFERENCIAS.md) | Referências acadêmicas, métodos e fontes usados — só o rastreável, lacunas marcadas |
+| [`11_AUDITORIA_FASE1.md`](docs/11_AUDITORIA_FASE1.md) | Evidências e decisões que fecharam a ingestão point-in-time |
+| [`12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md) | Fonte única das dívidas legadas e transversais ainda abertas |
 | [`DIARIO_GENAI.md`](docs/DIARIO_GENAI.md) | Registro do uso de IA — acertos **e erros** |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branches, commits, PRs, checklist de revisão |
 
@@ -72,8 +74,10 @@ Três compromissos que estruturam tudo o mais:
    `avail_date > t`. E, onde a *fonte* reescreve o passado — reanálise climática, revisões do
    ComexStat —, isso está identificado, medido e declarado, não ignorado.
 
-2. **Holdout lacrado.** Desenvolvimento em 2013-2019; 2020-2025 é rodado **uma única vez**,
-   com o desenho já congelado. O resultado vai para o relatório, qualquer que seja.
+2. **Holdout lacrado.** O recorte de desenvolvimento é 2013–2019, mas o `Shock` primário só
+   existe point-in-time desde a safra 2015/16. O período 2020–2025 é rodado **uma única vez**,
+   com o desenho já congelado. O perímetro do lacre nos testes físicos H1 ainda exige a
+   decisão explícita PT-001 antes de executar esses testes.
 
 3. **Os achados negativos são reportados.** Há três coisas que podem matar a tese (N efetivo
    pequeno; a estratégia ser apenas beta de commodity; o sinal ser El Niño disfarçado). Estão
@@ -83,5 +87,7 @@ Três compromissos que estruturam tudo o mais:
 
 ## Estado atual
 
-**Fase 0 — planejamento e pré-registro.** Tese formalizada, hipóteses congeladas, fontes de
-dados verificadas ao vivo, arquitetura especificada, riscos mapeados. Ainda sem implementação.
+**Fase 2 — validação do mecanismo.** A Fase 1 de ingestão point-in-time foi encerrada. O
+`Shock` climático as-of já foi implementado e validado (D-027/D-028); o próximo portão são
+H1a/H1b, antes de qualquer backtest de ações. Dívidas que não pertencem a uma fase futura são
+controladas em [`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).

@@ -269,9 +269,9 @@ previsto para 2027, então uma versão operacional futura migraria para VIIRS ou
 
 ---
 
-## 7. Graus de liberdade fechados e pendências honestas
+## 7. Graus de liberdade fechados e estado de implementação
 
-| Elemento | Estado após D-023 |
+| Elemento | Estado após D-028 |
 |---|---|
 | culturas primárias | fechado: soja + milho 2ª |
 | UFs primárias | fechadas: 7 da soja + 4 do milho 2ª |
@@ -279,11 +279,12 @@ previsto para 2027, então uma versão operacional futura migraria para VIIRS ou
 | janelas | fechadas em `features/shock_spec.py` |
 | climatologia | fechada: expanding, mínimo 10 safras |
 | início operacional | fechado: safra 2015/16; `prelim` anterior não existe |
-| geografia | fechado o método PAM/IBGE → UF → CONAB; falta implementar a ingestão PAM e polígonos |
+| geografia | implementada: PAM/IBGE point-in-time (D-024) + raster→município (D-027) + município→UF→CONAB as-of (D-028) |
 | nível de risco/ciclo ZARC | não é parâmetro primário; só robustez futura pré-fixada |
 | temperatura | secundária; limiares fixados, vintage imperfeito declarado |
-| progresso semanal da CONAB | fora do primário; formato histórico/vintage ainda não confirmado |
+| progresso semanal da CONAB | descartado do primário; não há ação ativa nem dependência do pipeline |
 
-O próximo passo técnico desta trilha é implementar a ingestão point-in-time da PAM e das
-geometrias municipais do IBGE. Só depois o `Shock` pode ser calculado sem voltar às caixas
-ilustrativas.
+O `Shock` já pode ser calculado sem voltar às caixas ilustrativas. O próximo passo é usá-lo
+nos rodadores H1a/H1b, sujeito à decisão prévia sobre o perímetro do holdout (PT-001 em
+`12_PENDENCIAS_TRANSVERSAIS.md`). ZARC, temperatura e outras culturas permanecem robustez
+futura deliberada, não pendências desta trilha.

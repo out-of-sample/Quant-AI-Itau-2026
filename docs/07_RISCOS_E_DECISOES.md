@@ -4,6 +4,11 @@ Duas coisas neste documento: o **registro de riscos** (o que pode dar errado e o
 a respeito) e o **log de decisões** (o que decidimos, quando, por quê — e o que mudou de
 ideia depois).
 
+Pendências executáveis que atravessam fases, mas não são riscos nem entregáveis de uma camada
+futura, ficam em `12_PENDENCIAS_TRANSVERSAIS.md`. Os dois registros se referenciam sem duplicar
+responsabilidade: risco descreve incerteza/impacto; pendência descreve ação e critério de
+encerramento.
+
 O log de decisões é a defesa contra a versão mais insidiosa de overfitting: mudar o desenho
 depois de ver o resultado e depois contar a história como se o desenho sempre tivesse sido
 aquele. **Toda mudança de desenho posterior ao congelamento entra aqui, com data.**
@@ -16,7 +21,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 
 | # | Risco | Prob. | Impacto | Mitigação | Status |
 |---|---|---|---|---|---|
-| R1 | **N efetivo pequeno** — a safra é anual, então temos ~12-18 eventos independentes, não 3.000 dias. Sem poder estatístico para efeito pequeno | Alta | Alto | Primário combina soja e milho 2ª em painel de UFs, mas inferência continua agrupada por ano-safra; block bootstrap; **reportar N efetivo**. Outras culturas não são adicionadas só para fabricar N | 🔴 **Sem solução. É a limitação nº 1 e vai declarada no relatório** |
+| R1 | **N efetivo pequeno** — o sinal operacional começa em 2015/16 e H1a depende do painel iniciado em 2017/18; linhas UF×cultura não viram eventos independentes. Sem poder estatístico para efeito pequeno | Alta | Alto | Primário combina soja e milho 2ª em painel de UFs, mas inferência continua agrupada por ano-safra; block bootstrap; **reportar N efetivo por teste**. Outras culturas não são adicionadas só para fabricar N | 🔴 **Sem solução. É a limitação nº 1 e vai declarada no relatório** |
 | R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS prelim arquivado é o único canal primário (D-023); comparar prelim/final. POWER só em robustez térmica | ✅ Mitigado no primário. **Temperatura secundária segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
@@ -25,7 +30,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
 | R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | Reportar a capacidade estimada explicitamente | Aceito |
-| R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido** (residual: poucas datas com fonte única, anotadas no módulo) |
+| R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido operacionalmente**; reforço das poucas datas com fonte única em PT-005 |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
 | R13 | **ONI histórico contaminado por revisão** — a NOAA sobrescreve valores recentes e atualiza a base centrada a cada cinco anos | Confirmada | Médio | Captura datada + hash; caso primário espera a janela declarada de 2 meses; sensibilidade com publicação inicial e RONI | Mitigado parcialmente. **Vintage histórico não é reconstruível** |
@@ -105,6 +110,9 @@ e a **discordância entre os dois é reportada como achado**, não escondida.
 **Data**: 2026-07-14
 Desenvolvimento restrito a 2013-2019. Holdout 2020-2025 lacrado, rodado **uma única vez**.
 Resposta direta ao viés de "escolha oportunista de período" citado nominalmente pelo edital.
+
+**Ponto ainda a fechar antes de H1**: D-008 não explicitou se o lacre alcança também os
+desfechos físicos sem retornos. A decisão será tomada em PT-001, antes de executar H1a/H1b.
 
 ### D-010 — O sinal climático é condicional à cultura e à fase, não linear
 **Data**: 2026-07-14
@@ -243,7 +251,10 @@ Decisões:
 - **Divergência de convenção não é bug**: em dividendo grande, o Yahoo usa fator
   multiplicativo `P_ex/(P_cum−div)`, que se afasta do retorno verdadeiro do acionista
   `(P_ex+div)/P_cum` (nossa convenção, CRSP) — no dividendo de 10,6% da AGRO3 (25/10/2023),
-  Yahoo −9,00% vs nosso −8,04%. Mantemos a nossa; o script documenta a leitura.
+Yahoo −9,00% vs nosso −8,04%. Mantemos a nossa; o script documenta a leitura.
+
+**Status posterior**: D-025 concluiu o cross-check dos 19 papéis vivos e encerrou a pendência
+aberta acima. O texto original é preservado para mostrar a sequência da auditoria.
 **Custo/limitação**: papéis **deslistados não existem no Yahoo** — a cauda short (JBSS3,
 BRFS3, STBP3) fica sem cross-check externo de eventos em ações; mitigação parcial: o tripwire
 de D-015 e o fato de a B3 cobrir os eventos terminais. Limitação declarada, sem solução
@@ -314,6 +325,9 @@ origem. A afirmação inicial de “~18 anos × 2” superestimava a cobertura o
 volume real — mitigado pelo cache local (não rebaixa) e por só se materializar quando o backtest
 exigir. A grade de ~5 km e a agregação por caixa não resolvem município. NASA POWER (temperatura,
 sem vintage) fica para o próximo passo com a limitação de revisão declarada.
+
+**Status posterior**: D-019 implementou POWER e D-023/D-024/D-027 substituíram as caixas pela
+regionalização municipal do sinal primário.
 
 ---
 
@@ -453,6 +467,9 @@ perder choques térmicos reais. A PAM tem atraso anual, revisa o passado e não 
 safra municipalmente (R15). Implementar PAM + polígonos IBGE torna-se bloqueio da C2. O custo é
 aceito porque reduz graus de liberdade, evita a fonte térmica sem vintage e elimina regiões
 escolhidas à mão.
+
+**Status posterior**: o bloqueio descrito acima foi encerrado por D-024 (PAM/malha), D-027
+(raster→município) e D-028 (agregação as-of e cálculo do `Shock`).
 
 Durante a validação, confirmou-se ainda que o CHIRPS prelim só começa em 2015 e que os primeiros
 arquivos foram backfill. O primeiro ano-safra completo foi fixado em 2015/16 (R16); isso reduz o

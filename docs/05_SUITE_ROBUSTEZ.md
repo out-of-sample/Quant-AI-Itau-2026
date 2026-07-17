@@ -172,12 +172,12 @@ exposição líquida → long/short) ao mercado americano:
 | **Múltiplas comparações** | culturas × UFs × horizontes × janelas = centenas de testes; alguns "significativos" por puro acaso | **Benjamini-Hochberg (FDR)** sobre toda a família de testes (padrão KernelNet) |
 | **Autocorrelação** | o sinal climático é fortemente persistente e usamos retornos sobrepostos; o t-stat ingênuo é inflado | **Newey-West** + **block bootstrap** |
 | **N efetivo ≪ N nominal** | soja no MT, GO e MS no mesmo ano de seca não são 3 observações independentes — é 1 evento climático | **cluster por ano-safra**; reportar o número de **eventos independentes**, não de linhas |
-| **Poucos eventos** | 1 safra/ano ⇒ ~12 safras no período todo. Um Sharpe bonito sobre 12 eventos é frágil | ser explícito sobre isso no relatório; **é a limitação nº 1 do projeto** (ver `06_CRITICA_ADVERSARIAL.md`) |
+| **Poucos eventos** | 1 safra/ano; o sinal começa em 2015/16 e H1a em 2017/18. O N independente é menor que o sugerido pelo painel UF×cultura | computar e reportar o N efetivo **por teste**; é a limitação nº 1 do projeto (ver `06_CRITICA_ADVERSARIAL.md`) |
 | **Data-mining do universo** | escolher os tickers depois de ver quais funcionaram | universo definido a priori por critério econômico (exposição declarada), não por retorno |
 
 > **O ponto mais desconfortável e mais importante do projeto**: a natureza sazonal do sinal
 > significa que temos **poucas dezenas de eventos verdadeiramente independentes**, não
 > milhares. Nenhuma quantidade de dias de backtest muda isso — 3.000 dias úteis de retorno
-> derivados de 12 safras são 12 eventos, não 3.000. Qualquer intervalo de confiança que
+> derivados de poucos anos-safra continuam sendo poucos eventos, não 3.000. Qualquer intervalo de confiança que
 > ignore isso está mentindo. Vamos reportar o **N efetivo** explicitamente. Um avaliador de
 > gestora vai reparar nisso na hora, e é melhor sermos nós a levantar a questão.
