@@ -111,8 +111,14 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   (`tifffile`, Python puro). Verificado ao vivo: a revisão prelim→final de 15/01/2024 no
   médio-norte de MT foi +0,87 mm/dia (~+23%) — a contaminação que a fonte com vintage existe
   para medir. Carimbo `avail_date` = ref + 7 dias corridos (lag congelado, `01_TESE §5`).
-- ⬜ Ingestão das demais fontes da tese: clima secundário (NASA POWER, temperatura),
-  ComexStat, ONI, NEFIN — cada uma com carimbo de `avail_date` na entrada.
+- ✅ **Ingestão NASA POWER (clima secundário, D-019)** (`ingest/power.py`): temperatura
+  (`T2M`/`T2M_MAX`/`T2M_MIN`) por ponto nomeado — centroides das mesmas regiões do CHIRPS, para
+  casar `region`. A fonte **não preserva vintage**, então o módulo classifica a proveniência de
+  cada captura via `header.sources` (`MERRA2` = definitivo; `GEOSIT`/`FLASHFLUX` = provisório,
+  verificado ao vivo) e grava no manifesto — a limitação é declarada e mensurável, não ignorada.
+  Carimbo `avail_date` = ref + 3 dias corridos (latência meteorológica medida).
+- ⬜ Ingestão das demais fontes da tese: ComexStat, ONI, NEFIN — cada uma com carimbo de
+  `avail_date` na entrada.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O
