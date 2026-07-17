@@ -415,6 +415,34 @@ depois do teste ao vivo** — inspeção de URL não basta.
 
 ---
 
+## 2026-07-16 — Ingestão do clima secundário (NASA POWER)
+
+**Uso**: implementar a ingestão de temperatura do POWER sabendo que a fonte **não preserva
+vintage** — o desafio não era baixar (JSON trivial), e sim tratar a limitação com honestidade.
+
+**Valor real**: a IA sondou o mecanismo de vintage ao vivo *antes* de codar e transformou uma
+propriedade incômoda da fonte num carimbo de proveniência de primeira classe. Lendo o campo
+`header.sources` em duas consultas, mostrou empiricamente que um fetch de 2015 vem como `MERRA2`
+(definitivo) e um de jun/2026 como `GEOSIT` (provisório). Isso virou `classify_vintage` +
+coluna `source_vintage` no painel + registro no manifesto — a limitação passou de "declarada no
+texto" para "mensurável no dado". Decisões de escopo (só temperatura; pontos = centroides das
+caixas do CHIRPS para casar `region`) saíram diretas da leitura crítica da fonte.
+
+**Validação humana/mecânica**: verificação ao vivo de ponta a ponta — `download_power` real
+baixou os dois pontos em duas faixas de data e a classificação de vintage bateu (2015 definitivo,
+2026 provisório), com a célula real da grade no manifesto. 15 testes novos (classificação nas 4
+ramificações, parse, fill −999→NaN, painel, carimbo PIT lag 3d, download com manifesto de
+vintage, join `region` com o CHIRPS). Suite 169/169.
+
+**O que a IA errou**: (1) primeira asserção do teste de PIT assumia que em D+3−1 haveria "a
+última linha visível anterior", mas com lag de 3 dias **nada** ainda está disponível naquele
+ponto — o `available_asof` retorna vazio e `.max()` vira `NaT`. Corrigido para afirmar o que é
+de fato verdade (filtro vazio antes da avail_date; entra o 01/01 mas não o 02/01 em D+3). Erro
+honesto de raciocínio sobre a própria regra PIT, pego pelo teste. (2) Uma linha longa demais
+(E501) na montagem da URL — trivial, mas o `ruff` travou antes de subir, como deve.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

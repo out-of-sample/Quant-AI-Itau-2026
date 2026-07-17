@@ -101,6 +101,19 @@ térmico, geada), onde não achamos alternativa gratuita com vintage.
 revisão**, em magnitude que precisamos medir. Se for material, restringimos o sinal à
 precipitação (CHIRPS).
 
+**Ingestão implementada e verificada ao vivo (2026-07-16, `ingest/power.py`, D-019).** Endpoint
+`temporal/daily/point`, JSON, HTTP 200, sem chave, ~0,9 s/consulta; `fill_value = -999.0` (→
+`NaN`, nunca tratado como temperatura); unidades °C; `header.api.version` versiona a API; a
+resposta snapa para a célula da grade e devolve `geometry.coordinates` (`[lon, lat, elev]`).
+**A proveniência de vintage é carimbada por resposta** via `header.sources`, confirmado ao vivo:
+fetch de 2015 → `['MERRA2', 'POWER']` (definitivo); fetch de jun/2026 → `['GEOSIT', 'POWER']`
+(provisório). Como a fonte sobrescreve o passado (não há consulta *as-of*), o módulo baixa por
+ponto nomeado — centroides das mesmas regiões do CHIRPS, para casar `region` entre chuva e
+temperatura — com **cache por captura datada** (rate limit não garantido) e grava sources +
+classificação no manifesto. Escopo restrito à temperatura (`T2M`/`T2M_MAX`/`T2M_MIN`); carimbo
+`avail_date` = ref + 3 dias corridos. A limitação de revisão fica declarada e mensurável (a
+coluna `source_vintage` no painel permite quantificá-la na suíte de robustez).
+
 ### 1.3 ERA5 / ERA5T (Copernicus) — alternativa avaliada e preterida
 
 Latência de 5 dias (ERA5T preliminar), mas **o ERA5T é sobrescrito pelo ERA5 final 2-3 meses

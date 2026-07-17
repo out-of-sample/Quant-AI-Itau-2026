@@ -306,6 +306,35 @@ sem vintage) fica para o próximo passo com a limitação de revisão declarada.
 
 ---
 
+### D-019 — Ingestão NASA POWER: só temperatura, proveniência de vintage carimbada, limitação declarada
+**Data**: 2026-07-16
+O POWER é o clima **secundário** (`02_DADOS §1.2`). Diferente do CHIRPS, ele **não preserva
+vintage** — a série é MERRA-2 com uma cauda de baixa latência (GEOS-IT/FLASHFLUX), e os últimos
+~2 meses são provisórios e sobrescritos; mesmo o MERRA-2 é reprocessado a cada alguns meses.
+Respeitar `avail_date` não conserta o problema (o valor em si é revisado). O desenho da ingestão
+foi fixado por verificação ao vivo:
+- **Escopo restrito à temperatura** (`T2M`/`T2M_MAX`/`T2M_MIN`). A precipitação, canal físico
+  dominante, vem do CHIRPS (que tem vintage). O POWER só entra onde não há alternativa gratuita
+  com vintage — estresse térmico e geada.
+- **Proveniência de vintage carimbada por resposta** via `header.sources` — mecanismo confirmado
+  ao vivo: fetch de 2015 → `MERRA2` (definitivo); fetch de jun/2026 → `GEOSIT` (provisório). A
+  classificação (`classify_vintage`) e a lista de sources vão para o manifesto e para a coluna
+  `source_vintage` do painel. A API não expõe a fonte por data, então a classificação é
+  **por resposta** — declarado como tal, não fingido mais fino do que é.
+- **Cache por captura datada** (como a CONAB): a fonte sobrescreve no lugar, então o nome do
+  arquivo leva a data de captura (um vintage por captura) e não rebaixa. O rate limit não é
+  garantido (a doc menciona HTTP 429), o que reforça o cache agressivo.
+- **Pontos = centroides das caixas do CHIRPS** (`DEFAULT_POINTS` espelha `DEFAULT_BOXES`), para
+  que chuva e temperatura casem pela coluna `region` na camada de sinal. Grade ~0.5° (grosseira
+  para município, aceitável para mesorregião). Carimbo `avail_date` = ref + 3 dias corridos.
+- **Fill −999 → `NaN`** sempre — o fill nunca pode ser tratado como temperatura real.
+**Custo/limitação**: a componente de temperatura do sinal permanece **contaminada por revisão**,
+irremovível na fonte. A mitigação é medir a magnitude (a suíte de robustez usa `source_vintage`,
+e capturas datadas a partir de agora permitem comparar provisório × definitivo no futuro); se for
+material, o sinal se restringe à precipitação (CHIRPS). Grade grosseira não resolve município.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
