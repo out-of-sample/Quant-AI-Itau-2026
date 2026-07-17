@@ -112,8 +112,8 @@ que o resultado não desmorona na vizinhança. Tabela no relatório.
 
 | Parâmetro | Primário | Variações testadas | Falha se... |
 |---|---|---|---|
-| Janela fenológica | do calendário CONAB/Embrapa | ±15 dias, ±30 dias | resultado só existe na janela exata |
-| Limiar de estresse térmico | limiar agronômico (Embrapa) | ±2 °C | idem |
+| Janela fenológica | contrato D-023 por cultura × UF | bloco completo em −10 e +10 dias | resultado só existe na janela exata |
+| Temperatura (secundária) | fora do primário | soja `T_max>40 °C`; milho `T_max>35 °C` | o ganho depende da fonte POWER sem vintage |
 | Mínimo de anos da climatologia | 10 | 5, 15 | idem |
 | Horizonte de holding | 21 dias úteis | 5, 10, 42, 63 | alfa só existe num horizonte específico |
 | Lag de publicação | 7 dias | 0, 3, 14, 21 | ver §2.3 |

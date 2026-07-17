@@ -131,14 +131,23 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   presos ao SHA do commit oficial, manifesto e carimbo pelo snapshot. A comparação de dois
   vintages provou revisão histórica material do HML; por isso os fatores são controles de
   atribuição **ex post**, nunca informação para gerar posição.
+- ✅ **Especificação fenológica/regional congelada (D-023)** (`features/shock_spec.py`): sem
+  consultar retornos, o primário foi limitado a soja + milho 2ª safra, chuva CHIRPS, UFs que
+  cobrem mais de 80% da produção, janelas cultura × UF e climatologia expanding. As caixas
+  climáticas de ingestão ficaram como smoke tests; a geografia final usa PAM/IBGE→UF→CONAB.
+  A auditoria de cobertura fixou o início em 2015/16: o CHIRPS prelim não existe antes (R16).
+- ⬜ **Ingestão PIT da PAM/IBGE e geometrias municipais**: último bloqueio para materializar
+  a geografia D-023 e então calcular o `Shock` em C2.
 
 > **Portão (fontes centrais): ATRAVESSADO em 2026-07-16.** Preços, safra, clima, exportação
 > e controles ONI/NEFIN têm ingestão reproduzível e contrato PIT. A Fase 1 permanece aberta
-> apenas para o fechamento das pendências de congelamento do dataset e do desenho fenológico.
+> apenas para implementar a geografia PAM/IBGE definida em D-023 e fechar as pendências de
+> congelamento do dataset.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O
-> restante da Fase 1 é a ingestão das fontes de sinal (clima/safra/exportação).
+> restante da Fase 1 é materializar a geografia PAM/IBGE de D-023 e fechar as auditorias do
+> dataset antes de calcular features.
 
 ### Fase 2 — Validação do mecanismo (o portão mais importante)
 Testar **H1a**: o choque climático prevê a revisão da CONAB? E **H1b**: prevê o volume

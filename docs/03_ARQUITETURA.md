@@ -288,7 +288,7 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C0 controle | `ingest/nefin.py` | ✅ | fatores brasileiros para H4, em decimal. Download preso ao SHA do commit oficial + manifesto; snapshot inteiro recebe a data do commit. Revisão HML material comprovada entre dois vintages; uso exclusivamente ex post, nunca no sinal (D-022) |
 | C4 sinal | `signal/convention.py` | ✅ | convenção de sinal `S = E·Shock` travada por teste (R11) |
 | C1 validação | `validate/pit.py`, `validate/universe.py` | ✅ | carimbo `avail_date` (lag fixo ou mapa explícito — sem interpolação, R10) + filtro as-of canônico; **universo dinâmico** (negociada em t, IPO+60 pregões, ADTV≥piso) validado nas 4 deslistagens reais de 2025. Cross-check externo repetível em `scripts/crosscheck_yahoo.py` (D-016) |
-| C2 features | `features/` | ⬜ | `Shock`, `E`, contexto |
+| C2 features | `features/shock_spec.py` | 🟡 | contrato do `Shock` primário congelado e testado (D-023): soja + milho 2ª, UFs/janelas, chuva CHIRPS, mínimo 10 safras e geografia PAM/IBGE→UF→CONAB. O cálculo ainda não existe; próximo bloqueio é ingerir PAM + polígonos municipais |
 | C3 stats · C6 backtest · C7 robustez · C8 report | idem | ⬜ | especificados nos docs `04`/`05` |
 
 > A camada **`prices/`** não estava no esqueleto original de 8 camadas: ela nasceu na Fase 1

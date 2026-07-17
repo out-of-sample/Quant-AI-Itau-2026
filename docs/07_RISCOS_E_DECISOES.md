@@ -16,9 +16,9 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 
 | # | Risco | Prob. | Impacto | Mitigação | Status |
 |---|---|---|---|---|---|
-| R1 | **N efetivo pequeno** — a safra é anual, então temos ~12-18 eventos independentes, não 3.000 dias. Sem poder estatístico para efeito pequeno | Alta | Alto | Cruzar culturas com ciclos fenológicos distintos (soja nov-mar, safrinha fev-jun, cana abr-nov, café set-out); agrupar erros por ano-safra; block bootstrap; **reportar N efetivo** | 🔴 **Sem solução. É a limitação nº 1 e vai declarada no relatório** |
+| R1 | **N efetivo pequeno** — a safra é anual, então temos ~12-18 eventos independentes, não 3.000 dias. Sem poder estatístico para efeito pequeno | Alta | Alto | Primário combina soja e milho 2ª em painel de UFs, mas inferência continua agrupada por ano-safra; block bootstrap; **reportar N efetivo**. Outras culturas não são adicionadas só para fabricar N | 🔴 **Sem solução. É a limitação nº 1 e vai declarada no relatório** |
 | R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
-| R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS (prelim vs. final) como fonte primária de precipitação; medir a magnitude; restringir à precipitação se for material | Mitigado parcialmente. **Temperatura segue exposta** |
+| R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS prelim arquivado é o único canal primário (D-023); comparar prelim/final. POWER só em robustez térmica | ✅ Mitigado no primário. **Temperatura secundária segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor de retorno total (D-014), três fontes de eventos (D-013), **montador** (D-015) e **cross-check obrigatório contra fonte ajustada independente** (D-016) — que já pegou e corrigiu uma bonificação de 10% ausente de todas as fontes. Residual: papéis **deslistados** não têm Yahoo para conferir — declarado | ✅ **Resolvido** (residual: deslistados sem cross-check externo) |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
@@ -30,6 +30,8 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
 | R13 | **ONI histórico contaminado por revisão** — a NOAA sobrescreve valores recentes e atualiza a base centrada a cada cinco anos | Confirmada | Médio | Captura datada + hash; caso primário espera a janela declarada de 2 meses; sensibilidade com publicação inicial e RONI | Mitigado parcialmente. **Vintage histórico não é reconstruível** |
 | R14 | **NEFIN reescreve fatores históricos** — HML mudou materialmente entre dois snapshots oficiais | Confirmada | Alto para H4 | URL presa ao SHA, manifesto e comparação de vintages; fatores restritos à atribuição ex post | Mitigado. **Não usar NEFIN para gerar posição** |
+| R15 | **Peso espacial PAM não é vintage perfeito** — SIDRA revisa anos antigos; milho municipal não separa 1ª/2ª safra | Confirmada | Médio | Captura datada + manifesto; usar somente ano já divulgado em `t`; documentar correções conhecidas; sensibilidade com peso uniforme dentro da UF | Aberto — ingestão PAM ainda não implementada |
+| R16 | **CHIRPS prelim começa em 2015** — não há vintage operacional para 2013-14; jan/início de fev de 2015 foi backfill | Confirmada | Alto para poder estatístico | Primeiro ano-safra primário = 2015/16; ausência antes disso, nunca substituir silenciosamente por `final`; reportar redução do desenvolvimento | Aceito — limitação irremovível da fonte |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -301,7 +303,12 @@ preserva vintage. A verificação ao vivo confirmou o mecanismo e fixou o desenh
   do recorte — exercita o mesmo caminho de leitura auto-descrita e reproduz **exatamente** os
   valores extraídos do raster global (prova cruzada rodada ao vivo). O leitor lê as tags direto
   da página (não de `geotiff_metadata`, que o `tifffile` só popula com `GeoKeyDirectoryTag`).
-**Custo/limitação**: baixar o histórico completo (prelim+final, ~3 MB/dia × ~18 anos × 2) é
+**Correção factual posterior (D-023/R16)**: o `final` cobre desde 1981, mas a pasta `prelim`
+começa em 01/01/2015; consultas a 2008/2013 retornam 404. Os arquivos de janeiro e início de
+fevereiro de 2015 foram carregados em bloco em 17/02, logo não representam baixa latência na
+origem. A afirmação inicial de “~18 anos × 2” superestimava a cobertura operacional.
+
+**Custo/limitação**: baixar o histórico completo disponível (prelim desde 2015 + final) é
 volume real — mitigado pelo cache local (não rebaixa) e por só se materializar quando o backtest
 exigir. A grade de ~5 km e a agregação por caixa não resolvem município. NASA POWER (temperatura,
 sem vintage) fica para o próximo passo com a limitação de revisão declarada.
@@ -415,6 +422,39 @@ Validação ao vivo: snapshot `e12ab2b324cbd0d26e300477949349711598bccc`, public
 **Custo/limitação**: o histórico de commits do site atual começa em junho de 2026; vintages
 anteriores não são reconstruíveis por esse canal. H4 descreve a atribuição segundo a
 metodologia e o snapshot registrados, não o fator que teria sido baixado em cada data passada.
+
+---
+
+### D-023 — O `Shock` primário é soja + milho 2ª, chuva CHIRPS e geografia PAM/IBGE
+**Data**: 2026-07-16
+
+Antes de observar qualquer retorno, a especificação fenológica e regional foi reduzida e
+transformada em contrato executável (`features/shock_spec.py`). O caso primário ficou:
+
+- **culturas**: soja e milho 2ª safra — mecanismos hídricos lineares, exportação observável e
+  painel CONAB com 12 levantamentos anuais desde 2017/18;
+- **suporte fixo**: soja em MT/GO/PR/RS/MS/MG/BA (82,2% da produção 2024/25) e milho 2ª em
+  MT/PR/GO/MS (86,2%). Regra: menor conjunto acima de 80%, decidida por produção física, não
+  por retorno;
+- **canal**: déficit de precipitação CHIRPS prelim, padronizado contra climatologia expanding
+  do mesmo trecho da janela, com mínimo de dez safras. `Shock=-z(chuva)`;
+- **janelas**: fixas por cultura × UF, derivadas de CONAB/ZARC/Embrapa e travadas por teste;
+- **geografia**: média CHIRPS por polígono municipal, ponderada pela PAM mais recente já
+  publicada dentro da UF; agregação nacional pelos pesos CONAB da **safra anterior encerrada**.
+
+Isto rebaixa a temperatura POWER, algodão, café, cana, caixas retangulares e deslocamentos de
+janela a especificações secundárias com pergunta própria. Também esclarece D-018: as caixas
+continuam válidas para testar a ingestão, mas não definem o sinal final.
+
+**Custo/limitação**: o primário abre mão de culturas que poderiam aumentar o N aparente e pode
+perder choques térmicos reais. A PAM tem atraso anual, revisa o passado e não separa milho 1ª/2ª
+safra municipalmente (R15). Implementar PAM + polígonos IBGE torna-se bloqueio da C2. O custo é
+aceito porque reduz graus de liberdade, evita a fonte térmica sem vintage e elimina regiões
+escolhidas à mão.
+
+Durante a validação, confirmou-se ainda que o CHIRPS prelim só começa em 2015 e que os primeiros
+arquivos foram backfill. O primeiro ano-safra completo foi fixado em 2015/16 (R16); isso reduz o
+desenvolvimento efetivo, custo aceito em vez de preencher 2013-14 com dado final revisado.
 
 ---
 

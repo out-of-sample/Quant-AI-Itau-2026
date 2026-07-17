@@ -43,7 +43,7 @@ projeto**:
 | | |
 |---|---|
 | O que é | Precipitação diária/pêntada, satélite + estações, UCSB |
-| Cobertura | 1981-hoje, grade **0.05° (~5 km)** |
+| Cobertura | `final`: 1981-hoje; `prelim`: arquivos desde 01/01/2015, grade **0.05° (~5 km)** |
 | Latência | **~2 dias** (produto *prelim*, publicado nos dias 2/7/12/17/22/27); *final* mensal, ~3ª semana do mês seguinte |
 | Acesso | `data.chc.ucsb.edu` — gratuito, sem chave |
 | **Vintage** | ✅ **Arquiva prelim e final SEPARADAMENTE** |
@@ -62,11 +62,16 @@ produto p05 confirmados no arquivo real: grade **2000×7200** (0.05°), canto su
 auto-descrito nas tags `ModelPixelScale`/`ModelTiepoint` — lido **sem GDAL** (só `tifffile`,
 Python puro; cp314 não tem wheel de rasterio). URLs por data são imutáveis (prelim sob
 `/prelim/`, final sob `/global_daily/`), ambos `.tif.gz` de ~3 MB. **Prelim e final permanecem
-arquivados** (não é produto *rolling*): o timestamp do diretório corrobora a latência (prelim de
-15/01/2024 datado 17/01; final 15/02) e confirma que o vintage é reconstruível. **A revisão foi
-medida**: prelim→final de 15/01/2024 no médio-norte de MT = +0,87 mm/dia (~+23%). A agregação é
-por **caixas lat/lon nomeadas** (a escolha das caixas é da camada de sinal); o carimbo
-`avail_date` = ref + 7 dias corridos preserva `kind` (prelim/final) como eixo de vintage.
+arquivados** (não é produto *rolling*) desde 2015: o timestamp do diretório corrobora a latência
+(prelim de 15/01/2024 datado 17/01; final 15/02) e confirma que o vintage é reconstruível nesse
+período. A pasta prelim **não existe em 2013**; além disso, janeiro–início de fevereiro de 2015
+foi carregado em bloco em 17/02, não em baixa latência. Por isso o primeiro ano-safra completo
+admitido no primário é **2015/16** (R16). **A revisão foi
+medida**: prelim→final de 15/01/2024 no médio-norte de MT = +0,87 mm/dia (~+23%). A ingestão
+aceita **caixas lat/lon nomeadas**; as duas caixas default são somente smoke tests. O sinal
+primário usa média por polígono municipal ponderada pela PAM/IBGE (D-023), não regiões
+escolhidas à mão. O carimbo `avail_date` = ref + 7 dias corridos preserva `kind`
+(prelim/final) como eixo de vintage.
 
 ### 1.2 NASA POWER — temperatura e demais variáveis — **fonte secundária**
 
@@ -226,9 +231,12 @@ publicar?*
   4º lev grãos 2023/24 (04→10/jan), 1º lev cana 2021/22 (29/abr→18/mai), 3º lev cana 2022/23
   (22→27/dez). O calendário planejado sozinho **não** é confiável.
 
-**Para peso espacial por município** (não para sinal): IBGE **SIDRA** (PAM), API pública sem
-chave, testada e funcional. É **anual e com ~1 ano de lag** ⇒ inútil como sinal, útil como
-**máscara/peso de produção**.
+**Para peso espacial por município**: IBGE **SIDRA** (PAM, tabela 1612), API pública sem
+chave, testada e funcional. É anual e divulgada no ano seguinte, portanto não gera o choque;
+entra apenas como máscara/peso espacial point-in-time (D-023). A implementação deve usar o ano
+mais recente cuja data oficial de divulgação seja conhecida em `t`, salvar captura + manifesto
+e reconhecer que a PAM revisa anos antigos. Para milho, a PAM municipal não separa 1ª e 2ª
+safra — limitação explícita do peso espacial.
 
 ---
 
@@ -549,5 +557,7 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 4. **Futuros agro da B3** — confirmar se há histórico gratuito, ou abandonar.
 5. **Magnitude da revisão do ComexStat** nas NCMs agro — quantificar via snapshot do Wayback
    vs. dado atual.
-6. **Calendário fenológico e limiares agronômicos** por cultura/UF — definem a janela do
-   sinal. Fonte: CONAB (calendário agrícola), ZARC/MAPA, Embrapa.
+6. ✅ **Especificação fenológica e regional do `Shock`** — **congelada** em D-023, sem
+   consultar retornos: soja + milho 2ª, UFs fixas, chuva CHIRPS, janelas por cultura × UF e
+   geografia PAM/IBGE. O CSV oficial do ZARC foi testado. Falta implementar a ingestão PIT da
+   PAM e as geometrias municipais antes de calcular C2.
