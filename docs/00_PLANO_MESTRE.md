@@ -60,6 +60,7 @@ Detalhes em `01_TESE_E_PRE_REGISTRO.md` §2.
 | **`08_IDENTIDADE.md`** | Nome e identidade visual da estratégia |
 | **`09_FENOLOGIA_E_LIMIARES.md`** | Quando o clima importa, por cultura e estado — janelas e limiares agronômicos |
 | **`10_REFERENCIAS.md`** | Referências acadêmicas, métodos e fontes de dados usados, com proveniência e lacunas marcadas |
+| **`11_AUDITORIA_FASE1.md`** | Evidências do fechamento da ingestão: cross-check dos preços, decisões sobre preços de commodities e limite de vintage do ComexStat |
 | **`DIARIO_GENAI.md`** | Registro contínuo do uso de IA generativa no processo |
 | `../CONTRIBUTING.md` | Branches, commits, PRs, checklist de revisão |
 | `../05_Ideacao_Tese/` | As 21 teses avaliadas e por que esta foi escolhida |
@@ -76,7 +77,7 @@ era falsa.
 Tese formalizada, hipóteses e critérios de falsificação congelados, dados verificados ao
 vivo, arquitetura especificada, riscos mapeados. **Nada disso depende de escrever código.**
 
-### Fase 1 — Ingestão e point-in-time (em andamento)
+### Fase 1 — Ingestão e point-in-time ✅
 Trazer as fontes, carimbar `avail_date`, montar o universo dinâmico via COTAHIST.
 Resolver as pendências de `02_DADOS.md` §7 (ajuste de proventos, calendário CONAB).
 
@@ -87,8 +88,8 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
 - ✅ Parser + download do **COTAHIST** (offsets validados em arquivo real, delisting-proof).
 - ✅ Fetchers de eventos da **B3**: dinheiro (dividendo/JCP) e ações (split/bonificação/
   grupamento, `factor` validado contra preço).
-- ✅ Fetcher da **StatusInvest** (dividendos da cauda deslistada; nominal via campo `sov`,
-  cross-check 8/8 contra a B3 na sobreposição).
+- ✅ Fetcher da **StatusInvest** (cauda deslistada ou histórico B3 vazio; nominal via campo
+  `sov`, cross-check 8/8 contra a B3 na sobreposição; parcelas iguais legítimas preservadas).
 - ✅ **Montador** (D-015): COTAHIST + eventos → retorno total por papel, delisting-aware;
   validado contra o split real da SLC e a deslistagem da JBS; tripwire de split perdido.
 - ✅ Carimbo de `avail_date` (C1, `validate/pit.py`) e **universo dinâmico** com filtro de
@@ -141,14 +142,21 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   efetivo 2014–2024, captura datada e pesos *as-of*; malha IBGE 2013 fixa e pré-amostra, sem
   fronteiras futuras. Símbolos `...` permanecem ausentes e são contabilizados, nunca viram
   zero. A cobertura foi validada nas 7 UFs e nos vintages usados em 2015, 2020 e 2025.
+- ✅ **Auditoria de fechamento (D-025/D-026)**: os 19 papéis vivos do universo foram
+  confrontados com fonte ajustada independente em 2023–2025, sem consultar retorno da
+  estratégia. O teste encontrou e corrigiu bonificações ausentes de VITT3/KLBN11, repetição
+  ON/PN/UNIT no endpoint B3 e parcelas legítimas iguais da KLBN11. CEPEA e futuros B3 foram
+  classificados como robustez; a ausência de vintages históricos do ComexStat retirou o
+  gate 1.0/0.5/0.0 do sizing primário, preservando H1b como validação física *ex post*.
 
-> **Portão (fontes centrais e geografia): ATRAVESSADO em 2026-07-16.** Preços, safra, clima,
-> exportação, controles ONI/NEFIN e regionalização PAM/IBGE têm ingestão reproduzível e
-> contrato PIT. A Fase 1 permanece aberta apenas para as auditorias finais do dataset.
+> **PORTÃO DA FASE 1: ATRAVESSADO em 2026-07-16.** Preços, safra, clima, exportação,
+> controles ONI/NEFIN e regionalização PAM/IBGE têm ingestão reproduzível e contrato PIT;
+> as pendências metodológicas foram decididas em D-025/D-026 e auditadas em
+> `11_AUDITORIA_FASE1.md`. O próximo artefato é C2 `Shock`, não um backtest.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
-> ajustada por proventos existe, é testada e foi validada contra fonte independente. O
-> restante da Fase 1 é fechar as auditorias do dataset antes de calcular features.
+> ajustada por proventos existe, é testada e foi validada contra fonte independente. A
+> auditoria integral e suas correções estão em D-025 e `11_AUDITORIA_FASE1.md`.
 
 ### Fase 2 — Validação do mecanismo (o portão mais importante)
 Testar **H1a**: o choque climático prevê a revisão da CONAB? E **H1b**: prevê o volume
@@ -161,7 +169,8 @@ exportado? Com BH-FDR e erros agrupados por ano-safra.
 > construído sobre um mecanismo inexistente.
 
 ### Fase 3 — Sinal e carteira
-Matriz de exposição `E`, score, gate de confirmação, construção da carteira. Calibração
+Matriz de exposição `E`, score e construção da carteira. O ComexStat valida H1b *ex post* e
+não dimensiona o experimento primário (D-026). Calibração
 **exclusivamente** em 2013-2019.
 
 ### Fase 4 — Backtest

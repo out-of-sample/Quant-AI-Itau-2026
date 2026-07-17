@@ -225,7 +225,8 @@ forma que uma regressão de retornos diários não consegue.
 O sinal climático é uma **previsão** de choque de oferta. O volume exportado (kg líquido,
 por NCM, mensal, Secex/MDIC) é a **realização observada** desse choque.
 
-Isso cumpre **duas funções distintas**, que não devem ser confundidas:
+Isso cumpre uma função primária e uma possível extensão prospectiva, que não devem ser
+confundidas:
 
 **(a) Como teste do mecanismo econômico (validação da tese, não do trade)**
 Pergunta pré-registrada: *o choque climático em `t` prevê queda no volume exportado em
@@ -234,19 +235,21 @@ qualquer alfa que aparecesse seria coincidência. Este teste roda **antes** de o
 retornos, e o resultado — inclusive negativo — vai para o relatório (padrão Kairos:
 documentar a hipótese falsificada é o que a banca premia em "Análise dos Resultados").
 
-**(b) Como camada de confirmação no dimensionamento da posição**
-A posição é **proporcional à concordância entre as camadas**, não binária (padrão
-KernelNet):
+**(b) Como confirmação de posição — somente prospectiva, fora do experimento primário**
 
-| Camada climática | Camada de exportação | Posição |
-|---|---|---|
-| acende | confirma | tamanho cheio (peso 1.0) |
-| acende | ainda sem dado / neutra | tamanho reduzido (peso 0.5) |
-| acende | **contradiz** | sem posição (peso 0.0) |
+A auditoria de vintage da Fase 1 mostrou que a Secex reprocessa todo o ano corrente a cada
+mês e só estabiliza o ano anterior em fevereiro. A API e os CSVs públicos servem apenas o
+vintage mais recente; o Wayback não preservou os arquivos anuais consultados nem foram
+encontrados snapshots das respostas `POST`. Portanto, aplicar retrospectivamente pesos
+1.0/0.5/0.0 usando a base final como se
+ela fosse a primeira publicação seria **lookahead de vintage**.
 
-O caso "contradiz" é o mais interessante: houve seca mas o embarque veio normal — ou o
-choque não atingiu a área que importa, ou havia estoque de passagem. Nesses dois casos a
-tese não se aplica, e a resposta correta é **não operar**, não operar menor.
+Por D-026, o ComexStat permanece central em H1b como realização física *ex post*, mas sai do
+dimensionamento do backtest primário. Capturas prospectivas continuam sendo armazenadas e,
+quando houver histórico suficiente, poderão testar um gate realmente point-in-time. Esta é
+uma redução de escopo metodológica feita antes de observar retornos, não o abandono da tese
+Clima + ComexStat: uma fonte antecipa a safra e a outra testa se o mecanismo chegou ao fluxo
+exportado.
 
 ---
 
@@ -293,9 +296,9 @@ combinações testadas — que é a forma mais comum de auto-engano em backtest.
 | Culturas e UFs | soja (MT, GO, PR, RS, MS, MG, BA) + milho 2ª (MT, PR, GO, MS) | Menor suporte acima de 80% da produção no 12º lev. 2024/25, congelado sem consultar retornos (D-023) |
 | Janela fenológica | fixa por cultura × UF em `features/shock_spec.py` | CONAB/ZARC/Embrapa; datas e custo documentados em `09_FENOLOGIA_E_LIMIARES.md` |
 | Lag de publicação do clima | **7 dias corridos** | Conservador vs. a latência real da fonte (ver `02_DADOS.md`); sensibilidade testada em 3/7/14 dias |
-| Lag de publicação do ComexStat | data real de divulgação Secex + 1 dia útil | Calendário oficial de divulgação |
+| Uso do ComexStat | H1b *ex post*; **não entra no sizing primário** | Vintages históricos da primeira publicação não são recuperáveis; usar a base final como gate criaria lookahead (D-026) |
 | Exposição `E_{i,c}` | Método A (fundamentalista) | Auditável, não circular |
-| Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a frequência do dado de confirmação (mensal) e com a hipótese de difusão lenta |
+| Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a hipótese de difusão lenta e declarado antes de consultar retornos |
 | Execução | no **close de D+1** após o sinal de D | Nunca no mesmo close que gerou o sinal |
 | Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`, cap de 20% por nome | Neutralidade a mercado é consequência direta da tese (§2) |
 | Custos | corretagem+emolumentos B3 + slippage proporcional à participação no ADTV | Ver `04_PROTOCOLO_BACKTEST.md` |

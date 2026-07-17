@@ -302,10 +302,16 @@ vivo da API bateu exatamente com o cronograma oficial. **Latência: ~3-5 dias ú
 > valores e volumes já divulgados"* — congelamento definitivo só em **fevereiro do ano
 > seguinte**.
 
-**Não existe API "as-of"** — a base serve apenas o vintage mais recente. Mesma classe de
-problema da reanálise climática. Mitigação: usar o dado como **confirmação de baixa
-frequência** (não como gatilho de alta frequência), e quantificar a magnitude da revisão
-comparando um snapshot antigo (Wayback) contra o atual.
+**Não existe API "as-of"** — a base serve apenas o vintage mais recente. A tentativa de
+reconstrução também falhou: o Wayback não preservou os CSVs anuais consultados nem foram
+encontrados snapshots das respostas `POST` da API. Logo, a magnitude histórica da revisão
+**não é identificável**.
+
+**Consequência (D-026):** o dado final pode ser usado como variável dependente de H1b — a
+realização física que o choque deveria prever —, mas não como gate histórico de posição com
+`avail_date` da primeira divulgação. Isso atribuiria ao passado um vintage revisado que não
+existia. Capturas datadas passam a medir revisões prospectivamente; o gate fica fora do
+backtest primário.
 
 ### 3.4 🔴 Balança semanal — existe, mas é **inutilizável** para backtest
 
@@ -394,9 +400,9 @@ Testado: 2015 (14 MB), 2021 (50 MB), 2025 (89 MB) — todos HTTP 200, gratuitos,
 | Preços de empresas vivas | COTAHIST; yfinance como conferência cruzada |
 | Preços de empresas **mortas** | **Só COTAHIST** — não há alternativa gratuita |
 
-⚠️ **Pendência conhecida**: o COTAHIST traz preços **não ajustados por proventos** (dividendos,
-splits, bonificações). Construir a série de retorno total exige aplicar fatores de ajuste.
-É trabalho real e é o principal item técnico em aberto da camada de ingestão (risco R5).
+O COTAHIST traz preços **não ajustados por proventos**. O motor D-014, o montador D-015 e a
+auditoria D-025 transformam esses preços em retorno total forward-only; R5 está encerrado com
+as limitações residuais declaradas abaixo.
 
 #### 4.2.1 Fonte de proventos — verificada ao vivo (2026-07-15)
 
@@ -431,8 +437,10 @@ split, com arredondamento — tolerância de comparação: 5e-4).
 pós-2019, exatamente o trecho que a B3 congela); BRFS3 = 22 (até 09/2025); STBP3 = 50 (até
 03/2025). JCP vem **bruto**, consistente com o `valueCash` da B3 — as fontes podem ser somadas
 sem ajuste de base. ⚠️ BRFS3 traz evento com data-com **posterior** à incorporação pela Marfrig;
-o motor de retorno já ignora eventos além do fim da série de preços, mas o montador deve conferir
-que a data de deslistagem via COTAHIST corta esses resíduos.
+o montador ignora eventos além do fim da série de preços. Para papel vivo, a StatusInvest só
+substitui a B3 se o histórico oficial de caixa vier inteiramente vazio (KLBN11); não se somam
+fontes secundárias por padrão. Além disso, linhas idênticas não são deduplicadas: quatro parcelas
+iguais da KLBN11 reproduzem o caixa agregado e não têm identificador que autorize colapso.
 
 **Eventos em ações** (split/bonificação/grupamento/subscrição/incorporação): endpoint
 `GetListedSupplementCompany` (por código de empresa), campos `approvedOn` (deliberação),
@@ -443,10 +451,11 @@ encerrar a posição short corretamente. 🔴 **Truncamento CONFIRMADO com omiss
 27/04/2023, ex 09/05/2023) — só o desdobramento de 12/2023 e a bonificação de 12/2025. A
 StatusInvest também não a tem (todos os `chartProventsType` testados). O buraco foi pego pelo
 cross-check contra o *adjclose* do Yahoo (divergência de 9,1% num dia) e corrigido via registro
-curado com proveniência (`ingest/events_manual.py`) — processo formalizado em **D-016**: todo
-papel vivo passa por `scripts/crosscheck_yahoo.py` antes de o dataset ser congelado; papéis
-deslistados não têm Yahoo e ficam com a limitação declarada. O `cashDividends` dele é só um
-resumo; o histórico completo de dinheiro segue no `GetListedCashDividends`.
+curado com proveniência (`ingest/events_manual.py`). A auditoria D-025 dos 19 papéis vivos
+encontrou ainda bonificações omitidas de VITT3 e KLBN11 e repetição do mesmo evento KLBN para
+ON/PN/UNIT; a normalização agora filtra classe pelo ISIN. Papéis deslistados não têm Yahoo e
+ficam com a limitação declarada. O `cashDividends` do supplement é só resumo; o histórico
+completo de dinheiro segue no `GetListedCashDividends`.
 
 ### 4.3 🔴 O trade-off que define o escopo do projeto: histórico × universo
 
@@ -507,15 +516,30 @@ O universo amplo pós-2021 vira o **backtest secundário**, com a limitação de
 diária, histórico longo, licença CC BY-NC. Conceitualmente **melhor que o futuro de Chicago**
 para esta tese, porque é o preço que a empresa brasileira efetivamente realiza.
 
-⚠️ **NÃO CONFIRMADO**: endpoint programático estável. A consulta é via web/planilha por
-produto. **Item pendente de verificação** — se não houver acesso automatizável, usamos os
-futuros internacionais e declaramos a aproximação.
+✅ **Acesso histórico confirmado, automação estável não.** O banco oficial permite escolher
+produto, especificação, periodicidade e intervalo e gerar uma planilha Excel. A licença
+oficial é CC BY-NC 4.0, compatível com o uso acadêmico mediante atribuição. A tentativa de
+acesso HTTP direto encontrou proteção JavaScript/Cloudflare; não foi localizada API pública
+documentada e reproduzível.
+
+**Decisão:** CEPEA é validação/robustez brasileira obtida por exportação manual com arquivo e
+hash preservados, não dependência da ingestão primária. Fonte:
+`cepea.org.br/br/consultas-ao-banco-de-dados-do-site.aspx` e
+`cepea.org.br/br/licenca-de-uso-de-dados.aspx`.
 
 ### 5.3 Futuros da B3 (BGI boi, CCM milho, ICF café, SJC soja)
 
-🔴 **NÃO CONFIRMADO.** As "Séries Históricas" gratuitas da B3 (COTAHIST) cobrem o **segmento
-de ações**; os derivativos BM&F não estão lá. Não foi possível confirmar download histórico
-longo e gratuito. **Item em aberto.**
+✅ **Dados diários por vencimento confirmados, série contínua pronta não.** A área oficial
+`Market Data > Histórico > Derivativos` publica ajustes do pregão e resumos estatísticos; as
+fichas dos contratos confirmam código, unidade e vencimentos. O preço de ajuste é específico
+por contrato e, em sessões sem negócio suficiente, pode ser calculado por regras de
+apreçamento/interpolação da B3.
+
+Transformar esses arquivos em retorno contínuo exige regra de rolagem declarada, controle de
+vencimento e validação dos ajustes — uma camada de modelagem adicional. **Decisão:** futuros
+internacionais são a fonte primária reproduzível de H2, em janelas de evento com datas de
+rolagem excluídas; contratos B3 e CEPEA entram como robustez brasileira. Fonte:
+`b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/`.
 
 ### 5.4 Fatores de risco brasileiros — NEFIN/FEA-USP
 
@@ -554,7 +578,7 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 | ERA5/ERA5T | 5 dias | 🔴 não | preterida |
 | INMET | ~1 dia | ~ (não revisa, mas tem buracos) | preterida (62% das estações da BA em pane) |
 | **CONAB levantamentos** | mensal, ~dia 15 | ✅ **sim** (painel 1º-12º lev.) | 🥇 elo causal intermediário |
-| **ComexStat** | 3-5 dias úteis | 🔴 não (revisa até fev do ano seguinte) | camada de confirmação (mensal) |
+| **ComexStat** | 3-5 dias úteis | 🔴 não (revisa até fev do ano seguinte; vintages históricos irrecuperáveis) | H1b *ex post*; não entra no sizing primário |
 | ComexStat semanal | ~1 dia | 🔴 **não arquiva** | ❌ inutilizável para backtest |
 | ANTAQ | ~40 dias | — | ❌ despriorizada (pior que ComexStat) |
 | **COTAHIST (B3)** | D+1 | ✅ (registro de pregão) | 🥇 preços + universo point-in-time |
@@ -565,21 +589,23 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 
 ---
 
-## 7. Itens em aberto (a resolver antes de codar a ingestão)
+## 7. Checklist de fechamento da Fase 1
 
-1. ✅ **Ajuste de proventos no COTAHIST** — **resolvido** (R5). Três fontes de eventos + motor
-   de retorno total + **montador** (`prices/assemble`, D-015) + **cross-check contra o Yahoo
-   por papel vivo** (D-016) — que já pegou e corrigiu uma bonificação de 10% ausente de todas
-   as fontes (§4.2.1). Pendência aberta: rodar o cross-check nos demais nomes vivos do universo
-   antes de congelar o dataset; deslistados ficam com a limitação declarada em D-016.
+1. ✅ **Ajuste de proventos no COTAHIST** — **resolvido** (R5/D-025). Três fontes de eventos +
+   motor de retorno total + montador + auditoria dos **19 papéis vivos** em 2023–2025. Foram
+   corrigidas bonificações ausentes de SLC, VITT3 e KLBN11, repetição de classes da KLBN11 e
+   preservação de parcelas de caixa legítimas. Deslistados seguem sem cross-check Yahoo.
 2. ✅ **Mapa `(safra, nº do levantamento) → data de divulgação` da CONAB** — **resolvido**
    (R10, D-017): curado ano a ano de fontes primárias em `ingest/conab_calendar.py`, com a
    proveniência de cada safra anotada no módulo. Ver §2.3 — inclusive a armadilha encontrada
    (o site oficial exibe datas falsas para 2022/23).
-3. **Acesso programático ao CEPEA** — se não existir, usar futuros internacionais e declarar.
-4. **Futuros agro da B3** — confirmar se há histórico gratuito, ou abandonar.
-5. **Magnitude da revisão do ComexStat** nas NCMs agro — quantificar via snapshot do Wayback
-   vs. dado atual.
+3. ✅ **CEPEA** — planilha histórica e licença acadêmica confirmadas; sem API estável.
+   Classificado como robustez manual, não dependência do pipeline (D-026).
+4. ✅ **Futuros agro da B3** — ajustes diários por vencimento confirmados; exigem construção
+   e validação de rolagem. Robustez, não fonte primária de H2 (D-026).
+5. ✅ **Revisão do ComexStat** — magnitude histórica não reconstruível: API/CSVs só expõem o
+   vintage atual e o Wayback não preservou os artefatos consultados. O gate sai do sizing;
+   ComexStat fica em H1b *ex post* e os snapshots medem revisões futuras (D-026/R18).
 6. ✅ **Especificação fenológica e regional do `Shock`** — congelada em D-023, sem consultar
    retornos; ingestão PIT da PAM e malha municipal fixa implementadas em D-024. Falta calcular
-   a interseção raster→município→UF em C2, depois da auditoria final da Fase 1.
+   a interseção raster→município→UF em C2. A auditoria da Fase 1 foi fechada em D-025/D-026.

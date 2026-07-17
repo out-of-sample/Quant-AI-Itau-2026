@@ -20,7 +20,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS prelim arquivado é o único canal primário (D-023); comparar prelim/final. POWER só em robustez térmica | ✅ Mitigado no primário. **Temperatura secundária segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
-| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor de retorno total (D-014), três fontes de eventos (D-013), **montador** (D-015) e **cross-check obrigatório contra fonte ajustada independente** (D-016) — que já pegou e corrigiu uma bonificação de 10% ausente de todas as fontes. Residual: papéis **deslistados** não têm Yahoo para conferir — declarado | ✅ **Resolvido** (residual: deslistados sem cross-check externo) |
+| R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
@@ -33,6 +33,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R15 | **Peso espacial PAM não é vintage perfeito** — SIDRA revisa anos antigos; milho municipal não separa 1ª/2ª safra; `...` é indisponível | Confirmada | Médio | Calendário efetivo 2014–2024; captura + manifesto; somente `avail_date≤t`; ausentes ficam `NaN` e contados; sensibilidade uniforme | 🟡 Mitigado, residual irremovível (D-024) |
 | R16 | **CHIRPS prelim começa em 2015** — não há vintage operacional para 2013-14; jan/início de fev de 2015 foi backfill | Confirmada | Alto para poder estatístico | Primeiro ano-safra primário = 2015/16; ausência antes disso, nunca substituir silenciosamente por `final`; reportar redução do desenvolvimento | Aceito — limitação irremovível da fonte |
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
+| R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -484,6 +485,66 @@ positiva nos *snapshots as-of* de 01/12/2015, 01/12/2020 e 01/12/2025.
 malha fixa ignora refinamentos posteriores; e milho total é proxy para safrinha. Esses custos
 são preferíveis a fabricar vintage, converter ausente em zero ou deixar a fronteira variar.
 Peso municipal uniforme permanece robustez pré-registrada.
+
+---
+
+### D-025 — Auditoria integral fecha o lado de preços com correções curadas
+**Data**: 2026-07-16
+
+Antes de congelar o dataset, os 19 papéis vivos do universo foram confrontados, em 2023–2025,
+com o `adjclose` do Yahoo. O exercício validou somente integridade de preço/evento; não calculou
+retorno de estratégia, sinal, exposição ou métrica do holdout.
+
+Três classes de achado exigiram tratamento diferente:
+
+- **lacunas nossas**: bonificações de 10% de VITT3 (04/2024) e KLBN11 (05/2024) estavam
+  ausentes do endpoint atual da B3, como já ocorrera com SLC (05/2023). Entraram no registro
+  manual somente após confirmação em documento CVM/B3, com data-com e proveniência;
+- **normalização**: a B3 repetia eventos da KLBN para ON, PN e UNIT; agora a classe é filtrada
+  pelo marcador do ISIN. Já a StatusInvest traz quatro parcelas legítimas de KLBN11 com mesmo
+  dia e valor; deduplicá-las apagava caixa real, portanto linhas sem ID não são colapsadas;
+- **falhas do comparador**: BEEF3, RAIZ4, SUZB3, HBSA3 e KEPL3 têm barras isoladas ou
+  reescaladas no Yahoo que revertem depois; AGRO3 expõe a diferença conhecida entre o fator
+  multiplicativo do Yahoo e o retorno total verdadeiro. COTAHIST continua autoritativo.
+
+A fonte secundária não é somada indiscriminadamente à B3. Nos papéis vivos, StatusInvest só
+substitui o histórico de caixa quando a B3 devolve zero registros (caso KLBN11); lacunas
+pontuais exigem fonte primária e registro curado. Resultado detalhado em
+`11_AUDITORIA_FASE1.md`.
+
+**Custo/limitação**: Yahoo não é padrão-ouro e não cobre deslistados. A auditoria detecta
+inconsistências, mas sua conclusão depende da classificação manual contra COTAHIST e documentos
+societários. Esse custo é preferível a ajustar a fonte oficial para imitar barras defeituosas.
+
+---
+
+### D-026 — ComexStat confirma H1b ex post; CEPEA e futuros B3 são robustez
+**Data**: 2026-07-16
+
+A auditoria das três pendências de `02_DADOS.md §7` alterou o desenho antes de qualquer retorno
+de estratégia:
+
+1. **ComexStat**: a Secex reprocessa semanalmente o mês corrente, mensalmente todo o ano e,
+   em fevereiro, o ano anterior. A API e os CSVs anuais só expõem o vintage mais recente; o
+   Wayback não preservou os arquivos consultados nem foram encontrados snapshots das respostas
+   `POST`. Não é possível saber
+   qual volume estava publicado em cada mês histórico. O gate 1.0/0.5/0.0 sairia contaminado
+   por vintage futuro e foi removido do sizing primário. ComexStat permanece como desfecho
+   físico de H1b *ex post* e os snapshots atuais medirão revisões prospectivamente.
+2. **CEPEA**: séries históricas e licença CC BY-NC foram confirmadas, mas a exportação é
+   interativa e não há API pública estável. Entra como robustez brasileira, com planilha e hash.
+3. **Futuros B3**: ajustes diários por vencimento são públicos. Não há série contínua pronta;
+   construí-la exige regra de rolagem e preços de ajuste podem ser calculados pela metodologia
+   da bolsa quando não há negócio suficiente. Entra como robustez. H2 usa futuros internacionais
+   em janelas de evento, excluindo datas de rolagem.
+
+Esta decisão **restringe** D-001/D-006/D-020: a combinação Clima + ComexStat continua sendo a
+tese causal — antecipação meteorológica e confirmação física —, mas só a primeira gera o sinal
+histórico. A segunda testa se a história econômica é verdadeira.
+
+**Custo/limitação**: o backtest perde uma camada narrativa atraente de confirmação e H2 usa
+proxy internacional no primário. Em troca, elimina-se um lookahead irremovível e separa-se
+claramente sinal negociável de validação causal.
 
 ---
 
