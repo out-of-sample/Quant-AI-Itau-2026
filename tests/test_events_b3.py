@@ -23,6 +23,7 @@ from quantagro.ingest.events_b3 import (
 
 FIXTURE = Path(__file__).parent / "fixtures" / "b3_cash_slc.json"
 FIXTURE_STOCK = Path(__file__).parent / "fixtures" / "b3_stock_mglu.json"
+FIXTURE_STOCK_KLBN = Path(__file__).parent / "fixtures" / "b3_stock_klbn.json"
 
 
 @pytest.fixture
@@ -33,6 +34,11 @@ def slc_results() -> list[dict]:
 @pytest.fixture
 def mglu_stock() -> list[dict]:
     return json.loads(FIXTURE_STOCK.read_text(encoding="utf-8"))["stockDividends"]
+
+
+@pytest.fixture
+def klbn_stock() -> list[dict]:
+    return json.loads(FIXTURE_STOCK_KLBN.read_text(encoding="utf-8"))["stockDividends"]
 
 
 class TestBrFloat:
@@ -124,6 +130,20 @@ class TestNormalizacaoAcoesReal:
 
     def test_eventos_em_acoes_nao_tem_dinheiro(self, mglu_stock):
         assert all(e.cash_value == 0.0 for e in b3_stock_to_events(mglu_stock))
+
+    def test_klabin_filtra_evento_pela_classe_da_unit(self, klbn_stock):
+        events = b3_stock_to_events(klbn_stock, "KLBN11")
+        assert len(events) == 2
+        by_date = {e.cum_date: e.share_ratio for e in events}
+        assert by_date[pd.Timestamp("2025-12-17")] == pytest.approx(1.01)
+        assert by_date[pd.Timestamp("2014-03-24")] == pytest.approx(5.0)
+
+    def test_klabin_deduplica_classes_mesmo_sem_ticker(self, klbn_stock):
+        assert len(b3_stock_to_events(klbn_stock)) == 2
+
+    @pytest.mark.parametrize("ticker", ["KLBN3", "KLBN4", "KLBN11"])
+    def test_klabin_cada_classe_recebe_um_evento_por_data(self, klbn_stock, ticker):
+        assert len(b3_stock_to_events(klbn_stock, ticker)) == 2
 
 
 class TestNormalizacaoAcoesForjada:

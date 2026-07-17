@@ -5,8 +5,9 @@ Duas portas da B3 (ver docs/02_DADOS.md §4.2.1 e D-013):
   com data de deliberação e data-com. **Não cobre deslistados** (a StatusInvest preenche essa
   cauda, em outro módulo).
 - `GetListedSupplementCompany` — eventos em **ações** (split/bonificação/grupamento), com o
-  campo `factor`. ⚠️ parece truncar as listas (poucos registros por empresa) — a completude
-  para todo o período precisa ser conferida no montador (02_DADOS §4.2.1).
+  campo `factor`. ⚠️ trunca as listas (confirmado em SLC/VITT/KLABIN) e pode repetir o mesmo
+  evento para ON, PN e UNIT. A normalização filtra a classe pelo marcador do ISIN e deduplica
+  data/ratio; a completude continua sendo conferida externamente (02_DADOS §4.2.1).
 
 Cuidados calibrados contra dados reais:
 - `valueCash` vem em decimal brasileiro (vírgula) e é **por ação** quando `quotedPerShares == 1`
@@ -43,6 +44,7 @@ _HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 # sufixo do ticker → classe (typeStock) da B3
 _CLASS_BY_SUFFIX = {"3": "ON", "4": "PN", "5": "PNA", "6": "PNB", "11": "UNT"}
+_ISIN_MARKER_BY_SUFFIX = {"3": "NOR", "4": "NPR", "5": "NPA", "6": "NPB", "11": "DAM"}
 
 # labels de evento em ações → como o `factor` vira `share_ratio` (validado contra preço real)
 _RATIO_ADD = {"DESDOBRAMENTO", "BONIFICACAO"}  # ratio = 1 + factor/100
@@ -164,13 +166,30 @@ def _stock_ratio(label: str, factor: float) -> float | None:
     return None  # INCORPORACAO/RESGATE/CISAO — terminal, tratado no montador
 
 
-def b3_stock_to_events(stock_dividends: list[dict]) -> list[CorporateEvent]:
+def b3_stock_to_events(
+    stock_dividends: list[dict], ticker: str | None = None
+) -> list[CorporateEvent]:
     """Normaliza os eventos em ações em `CorporateEvent` (só `share_ratio`, sem dinheiro).
+
+    Quando ``ticker`` é informado, filtra o ISIN pela classe do papel (ON/PN/UNIT). Isso é
+    obrigatório para companhias com várias classes: a B3 devolve uma linha por classe e,
+    sem o filtro, o mesmo bônus seria multiplicado várias vezes. Registros idênticos também
+    são deduplicados como segunda defesa.
 
     Descarta o que não é ratio simples (incorporação/resgate/cisão) e registros sem data-com.
     """
+    marker = None
+    if ticker is not None:
+        suffix = ticker[4:]
+        if suffix not in _ISIN_MARKER_BY_SUFFIX:
+            raise ValueError(f"sufixo de classe não reconhecido no ticker {ticker!r}")
+        marker = _ISIN_MARKER_BY_SUFFIX[suffix]
+    seen: set[tuple[pd.Timestamp, float, str]] = set()
     events: list[CorporateEvent] = []
     for e in stock_dividends:
+        isin = (e.get("assetIssued") or e.get("isinCode") or "").strip()
+        if marker is not None and isin and marker not in isin:
+            continue
         com = e.get("lastDatePrior")
         raw = e.get("factor")
         label = (e.get("label") or "").strip()
@@ -180,5 +199,9 @@ def b3_stock_to_events(stock_dividends: list[dict]) -> list[CorporateEvent]:
         if ratio is None:
             continue
         cum_date = pd.to_datetime(com, format="%d/%m/%Y")
+        key = (cum_date, round(ratio, 12), label)
+        if key in seen:
+            continue
+        seen.add(key)
         events.append(CorporateEvent(cum_date=cum_date, share_ratio=ratio))
     return events

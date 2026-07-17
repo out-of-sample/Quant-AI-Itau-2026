@@ -1,8 +1,9 @@
 """Fetcher de proventos em dinheiro da StatusInvest, normalizados para `CorporateEvent`.
 
-Papel desta fonte (D-013, docs/02_DADOS.md §4.2.1): **preencher a cauda deslistada** que a API
-oficial da B3 não cobre — JBSS3 pós-2019, BRFS3 e STBP3. Onde a B3 cobre, ela é a primária e
-esta fonte serve só de cross-check.
+Papel desta fonte (D-013, docs/02_DADOS.md §4.2.1): preencher a cauda deslistada que a API
+oficial da B3 não cobre — JBSS3 pós-2019, BRFS3 e STBP3 — e históricos que a B3 devolve vazios
+mesmo para papel vivo (caso verificado: KLBN11). Onde a B3 cobre, ela é a primária e esta
+fonte serve só de cross-check; não se somam as duas indiscriminadamente.
 
 Calibrações contra dados reais (verificação ao vivo em 2026-07-16):
 
@@ -77,9 +78,11 @@ def statusinvest_to_events(rows: list[dict]) -> list[CorporateEvent]:
     utilizável é erro de dados e levanta ``ValueError`` — deixá-lo passar contaminaria a
     série com um valor reescrito, silenciosamente.
 
-    Descarta registros sem data-com e deduplica por (data-com, valor, tipo).
+    Descarta registros sem data-com. **Não deduplica**: companhias podem declarar parcelas
+    distintas com a mesma data-com, valor, tipo e até pagamento. Caso real: KLBN11 tem quatro
+    parcelas iguais em 15/12/2025; a soma confere com a fonte ajustada independente. Sem um
+    identificador do direito na resposta, colapsar linhas apagaria caixa legítimo.
     """
-    seen: set[tuple] = set()
     events: list[CorporateEvent] = []
     for r in rows:
         com = r.get("ed")
@@ -97,9 +100,5 @@ def statusinvest_to_events(rows: list[dict]) -> list[CorporateEvent]:
         if value <= 0:
             continue
         cum_date = pd.to_datetime(com, format="%d/%m/%Y")
-        key = (cum_date, round(value, 10), r.get("et"))
-        if key in seen:
-            continue
-        seen.add(key)
         events.append(CorporateEvent(cum_date=cum_date, cash_value=value))
     return events

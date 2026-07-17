@@ -594,6 +594,39 @@ impedindo que consultas diferentes reutilizem silenciosamente o mesmo arquivo.
 
 ---
 
+## 2026-07-16 — Auditoria de fechamento da Fase 1
+
+**Uso**: confrontar os preços montados dos 19 papéis vivos com uma fonte ajustada independente,
+investigar cada divergência contra dados oficiais e resolver as pendências CEPEA, futuros B3 e
+vintage ComexStat antes de construir features.
+
+**Valor real**: o cross-check encontrou duas bonificações de 10% ausentes do endpoint B3 atual
+(VITT3 e KLBN11), além da SLC já conhecida; revelou que o supplement repete o mesmo evento para
+ON, PN e UNIT; e mostrou que quatro parcelas iguais da KLBN11 eram direitos legítimos que o
+normalizador apagava. Fontes CVM/B3 confirmaram data-com e razão antes de qualquer correção.
+A pesquisa oficial também mudou o desenho: o CEPEA possui exportação Excel licenciada, a B3
+publica ajustes de derivativos por vencimento e os vintages históricos da primeira divulgação
+do ComexStat não são recuperáveis. O gate de exportação foi retirado do sizing primário antes
+de observar retornos; H1b permanece como validação física *ex post*.
+
+**Validação humana/mecânica**: 19 tickers, 2023–2025, com COTAHIST oficial como base e limiar
+de 0,5% contra Yahoo. As correções fizeram VITT3 voltar a diferença máxima de 0,07%; os saltos
+de eventos da KLBN11 em 2024–2025 foram absorvidos. Documentação oficial CEPEA/B3/MDIC e
+documentos societários foram preservados em `11_AUDITORIA_FASE1.md`; testes com fixtures reais
+travam as classes KLBN e as quatro parcelas iguais.
+
+**O que a IA errou**: a primeira implementação somou StatusInvest como fallback para todos os
+papéis vivos. O rerun integral criou novas divergências em SOJA3, SMTO3, VITT3 e CAML3: a fonte
+secundária estava sendo tratada como verdade adicional mesmo quando a B3 já cobria a empresa.
+A política foi corrigida para substituição apenas quando a B3 devolve histórico vazio; lacuna
+pontual exige documento primário e registro curado. A investigação também mostrou que vários
+alertas não eram bugs nossos: BEEF3, RAIZ4, SUZB3, HBSA3 e KEPL3 têm barras Yahoo que revertem
+depois. Ajustar o COTAHIST para “bater” teria introduzido erro. Por fim, a expectativa inicial
+de quantificar a revisão ComexStat via Wayback falhou: não havia snapshots do CSV consultado.
+A ausência de evidência virou restrição do experimento, não número inventado.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

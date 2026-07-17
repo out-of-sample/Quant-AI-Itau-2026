@@ -20,6 +20,7 @@ from quantagro.ingest.events_statusinvest import (
 
 FIXTURE_SLC = Path(__file__).parent / "fixtures" / "statusinvest_slc.json"
 FIXTURE_JBS = Path(__file__).parent / "fixtures" / "statusinvest_jbs.json"
+FIXTURE_KLBN = Path(__file__).parent / "fixtures" / "statusinvest_klbn_installments.json"
 FIXTURE_B3_SLC = Path(__file__).parent / "fixtures" / "b3_cash_slc.json"
 
 
@@ -60,6 +61,12 @@ class TestNormalizacaoReal:
         ultimo = max(ev, key=lambda e: e.cum_date)
         assert ultimo.cum_date == pd.Timestamp("2025-05-23")
         assert ultimo.cash_value == pytest.approx(1.0)
+
+    def test_klabin_preserva_quatro_parcelas_iguais(self):
+        rows = json.loads(FIXTURE_KLBN.read_text(encoding="utf-8"))["assetEarningsModels"]
+        events = statusinvest_to_events(rows)
+        assert len(events) == 4
+        assert sum(e.cash_value for e in events) == pytest.approx(0.91194344496)
 
 
 class TestCrossCheckContraB3:
@@ -110,9 +117,9 @@ class TestNormalizacaoForjada:
         with pytest.raises(ValueError, match="adj=True sem valor original"):
             statusinvest_to_events([self._reg(adj=True, sov="-")])
 
-    def test_deduplica_registros_identicos(self):
+    def test_preserva_registros_identicos_sem_id_do_direito(self):
         ev = statusinvest_to_events([self._reg(), self._reg()])
-        assert len(ev) == 1
+        assert len(ev) == 2
 
     def test_valor_zero_ou_ausente_descartado(self):
         assert statusinvest_to_events([self._reg(v=0.0)]) == []

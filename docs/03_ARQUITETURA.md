@@ -57,7 +57,7 @@ agora instanciado para a tese Clima + ComexStat.
                                  ▼
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ C4  SINAL → POSIÇÃO                                                      │
-│     S = E·Shock · gate de confirmação ComexStat · sizing ∝ convicção     │
+│     S = E·Shock · sizing ∝ convicção · ComexStat valida H1b ex post      │
 │     dollar-neutral · caps de nome e de turnover · filtro de liquidez     │
 └────────────────────────────────┬─────────────────────────────────────────┘
                                  ▼
@@ -151,7 +151,8 @@ commodity?) e `H5` (placebo espacial) **antes** de qualquer backtest de retorno 
 Converte o score contínuo em uma carteira observável e replicável.
 
 - `S_{i,t} = Σ_c E_{i,c} · Shock_{c,t}` (ver `01_TESE_E_PRE_REGISTRO.md` §3)
-- **Gate de confirmação** ComexStat: peso 1.0 (confirma) / 0.5 (sem dado) / 0.0 (contradiz)
+- ComexStat **não entra no sizing primário**: valida H1b *ex post*. O gate histórico foi
+  removido em D-026 porque a fonte não preserva o vintage da primeira publicação
 - **Sizing proporcional à convicção**, não binário
 - **Dollar-neutral** long/short — consequência direta da tese (produtores vs. processadores)
 - Filtro de liquidez (ADTV mínimo), cap por nome, cap de turnover
@@ -278,17 +279,17 @@ especificação (§2) até ser construído — e cada peça construída entra co
 |---|---|---|---|
 | Fundação | `pyproject.toml`, `requirements.lock`, CI, guards | ✅ | D-012; stack cp314 pinado com hashes |
 | C0 preço | `ingest/cotahist.py` | ✅ | parser de largura fixa (offsets validados em arquivo real), download com cache + manifesto de vintage; delisting-proof (R4/D-004) |
-| C0 eventos | `ingest/events_b3.py`, `ingest/events_statusinvest.py`, `ingest/events_manual.py` | ✅ | B3: dinheiro (paginado) e ações (`factor` validado contra preço). StatusInvest: cauda deslistada, nominal via `sov`. Manual: eventos curados com proveniência que as APIs comprovadamente perdem (D-016) |
+| C0 eventos | `ingest/events_b3.py`, `ingest/events_statusinvest.py`, `ingest/events_manual.py` | ✅ | B3: dinheiro paginado e ações filtradas por classe/ISIN. StatusInvest: cauda deslistada ou B3 inteiramente vazia, nominal via `sov`, sem apagar parcelas iguais legítimas. Manual: bonificações SLC/VITT/KLABIN com fonte primária (D-025) |
 | C0–C1 preço | `prices/adjust.py`, `prices/assemble.py` | ✅ | **retorno total point-in-time** (D-014) + **montador** (D-015): merge B3×StatusInvest sem dupla contagem, corte na deslistagem, tripwire de split perdido; validado contra o split real da SLC |
 | C0 safra | `ingest/conab.py`, `ingest/conab_calendar.py` | ✅ | painéis de vintages (grãos/café/cana) com manifesto por captura datada (a fonte reescreve o arquivo no lugar); **calendário R10 curado** (D-017): `(ano_agricola, id_levantamento) → data de divulgação` de fontes primárias, carimbo `avail_date` que falha alto fora do mapa |
 | C0 clima | `ingest/chirps.py` | ✅ | precipitação CHIRPS com **vintage real** (prelim/final arquivados separadamente); download + manifesto (hash), GeoTIFF lido sem GDAL (`tifffile`), agregação em caixas lat/lon nomeadas ignorando `nodata`; tripwire de grade global; revisão prelim→final medida ao vivo (D-018) |
 | C0 clima | `ingest/power.py` | ✅ | temperatura NASA POWER (secundária) por ponto — centroides das regiões do CHIRPS. Fonte **não** preserva vintage: classifica proveniência (`MERRA2`=definitivo / `GEOSIT`/`FLASHFLUX`=provisório) por resposta e grava no manifesto; fill −999→`NaN`; cache por captura datada (D-019) |
-| C0 comércio | `ingest/comexstat.py` | ✅ | confirmação por comércio exterior (`POST /general`). **Guardrail do NCM** (string de 8 dígitos — int retorna vazio com `success:true`, `_validate_ncms` falha alto); métricas string→int; **não** preserva vintage (grava `dates/updated` no manifesto); cache por captura datada; rate limit 429 confirmado (D-020) |
+| C0 comércio | `ingest/comexstat.py` | ✅ | H1b *ex post* (`POST /general`). Guardrail do NCM string de 8 dígitos; métricas string→int; captura datada e `dates/updated`. Vintages históricos não são recuperáveis, portanto a fonte **não entra no sizing primário** (D-020/D-026) |
 | C0 controle | `ingest/oni.py` | ✅ | ONI NOAA/CPC sazonal: parser da temporada centrada, captura datada + manifesto; fonte sobrescreve o histórico e revisa os valores recentes. `initial_avail_date` no dia 5 após o fim da janela; caso primário espera mais 2 meses para estabilização (D-021). RONI fica para robustez, sem troca silenciosa do pré-registro |
 | C0 controle | `ingest/nefin.py` | ✅ | fatores brasileiros para H4, em decimal. Download preso ao SHA do commit oficial + manifesto; snapshot inteiro recebe a data do commit. Revisão HML material comprovada entre dois vintages; uso exclusivamente ex post, nunca no sinal (D-022) |
 | C0 geografia | `ingest/pam.py`, `ingest/pam_calendar.py`, `ingest/ibge_geometry.py` | ✅ | PAM/SIDRA 1612 municipal com calendário efetivo 2014–2024, captura datada e pesos *as-of*; malha IBGE 2013 fixa pré-amostra, lida sem GDAL. Cobertura positiva sem polígono falha alto (D-024) |
 | C4 sinal | `signal/convention.py` | ✅ | convenção de sinal `S = E·Shock` travada por teste (R11) |
-| C1 validação | `validate/pit.py`, `validate/universe.py` | ✅ | carimbo `avail_date` (lag fixo ou mapa explícito — sem interpolação, R10) + filtro as-of canônico; **universo dinâmico** (negociada em t, IPO+60 pregões, ADTV≥piso) validado nas 4 deslistagens reais de 2025. Cross-check externo repetível em `scripts/crosscheck_yahoo.py` (D-016) |
+| C1 validação | `validate/pit.py`, `validate/universe.py` | ✅ | carimbo `avail_date` + filtro as-of; universo dinâmico validado nas 4 deslistagens reais de 2025. Cross-check dos 19 papéis vivos concluído, com divergências classificadas contra COTAHIST oficial (`scripts/crosscheck_yahoo.py`, D-025) |
 | C2 features | `features/shock_spec.py` | 🟡 | contrato do `Shock` primário congelado e testado (D-023): soja + milho 2ª, UFs/janelas, chuva CHIRPS, mínimo 10 safras e geografia PAM/IBGE→UF→CONAB. PAM + polígonos já existem (D-024); o cálculo raster→município→UF ainda não existe |
 | C3 stats · C6 backtest · C7 robustez · C8 report | idem | ⬜ | especificados nos docs `04`/`05` |
 
