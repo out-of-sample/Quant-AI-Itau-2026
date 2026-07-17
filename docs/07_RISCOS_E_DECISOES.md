@@ -335,6 +335,33 @@ material, o sinal se restringe à precipitação (CHIRPS). Grade grosseira não 
 
 ---
 
+### D-020 — Ingestão ComexStat: guardrail do NCM, proveniência de vintage, camada mensal
+**Data**: 2026-07-16
+O ComexStat é a **camada de confirmação por comércio exterior** (H1b): o volume exportado das
+commodities é a contraparte comercial do choque de oferta. Duas propriedades da fonte, ambas
+reconfirmadas ao vivo, fixaram o desenho:
+- **Guardrail do NCM (a decisão central)**: a API exige o código NCM como **string de 8 dígitos**;
+  passá-lo como int (perdendo o zero à esquerda) retorna **lista vazia com `success:true`** — erro
+  silencioso que corromperia café (0901) e carnes (02xx), metade das NCMs da tese. Verificado:
+  café `"09011110"` = 2 linhas, `9011110` (int) = 0. `_validate_ncms` **falha alto** para qualquer
+  valor que não seja string de 8 dígitos, antes de tocar a rede — e um meta-teste garante que a
+  própria constante `THESIS_NCMS` passa no guardrail.
+- **Não preserva vintage**: a fonte revisa todos os meses do ano corrente até fevereiro do ano
+  seguinte, e não há consulta *as-of*. O manifesto grava o `general/dates/updated` (mês mais
+  recente + data de atualização) como prova de qual versão foi capturada; o arquivo é datado por
+  captura (um vintage por captura, como CONAB/POWER). A fonte entra como confirmação **mensal**,
+  nunca como gatilho de alta frequência.
+- **`ref_date` = fim do mês de referência**; carimbo `avail_date` a jusante (divulgação nos
+  primeiros dias úteis do mês seguinte, latência ~3-5 dias úteis). Métricas string→int.
+- **Rate limit confirmado**: a verificação ao vivo bateu em **HTTP 429**, confirmando o limite
+  que a doc marcava como não caracterizado. Reforça o cache agressivo (não rebaixa).
+**Custo/limitação**: a contaminação por revisão é irremovível na fonte (mitigada pela captura
+datada + `dates/updated`, que permitem comparar snapshots no futuro). O dado semanal do MDIC
+continua inutilizável para backtest (não arquiva — `02_DADOS §3.4`), então a confirmação opera em
+frequência mensal, com ~poucas dezenas de observações — coerente com o N efetivo já pequeno da tese.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

@@ -117,8 +117,14 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   cada captura via `header.sources` (`MERRA2` = definitivo; `GEOSIT`/`FLASHFLUX` = provisório,
   verificado ao vivo) e grava no manifesto — a limitação é declarada e mensurável, não ignorada.
   Carimbo `avail_date` = ref + 3 dias corridos (latência meteorológica medida).
-- ⬜ Ingestão das demais fontes da tese: ComexStat, ONI, NEFIN — cada uma com carimbo de
-  `avail_date` na entrada.
+- ✅ **Ingestão ComexStat (confirmação por comércio exterior, D-020)** (`ingest/comexstat.py`):
+  `POST /general` por NCM, com o **guardrail obrigatório** contra o gotcha do NCM — a API exige
+  string de 8 dígitos; int (que perde o zero à esquerda) retorna vazio com `success:true`, e
+  `_validate_ncms` falha alto antes da rede. Não preserva vintage (revisa até fev do ano seguinte)
+  ⇒ o manifesto grava o `dates/updated` como prova de vintage; uso como confirmação mensal.
+  Carimbo `avail_date` = ref (fim do mês) + lag (divulgação no início do mês seguinte).
+- ⬜ Ingestão das demais fontes da tese: ONI (controle El Niño), NEFIN (fatores H4) — cada uma
+  com carimbo de `avail_date` na entrada.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O

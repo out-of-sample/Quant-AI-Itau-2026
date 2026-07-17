@@ -443,6 +443,35 @@ honesto de raciocínio sobre a própria regra PIT, pego pelo teste. (2) Uma linh
 
 ---
 
+## 2026-07-16 — Ingestão da confirmação por comércio exterior (ComexStat)
+
+**Uso**: implementar a ingestão do ComexStat sabendo que a fonte tem uma armadilha silenciosa
+documentada (NCM como int) e não preserva vintage.
+
+**Valor real**: a IA reconfirmou ao vivo, antes de codar, o gotcha do NCM (café `"09011110"` =
+2 linhas; `9011110` int = 0 linhas com `success:true`) e transformou isso no guardrail central do
+módulo — `_validate_ncms` falha alto para qualquer NCM que não seja string de 8 dígitos, antes de
+tocar a rede, mais um meta-teste que garante que a própria constante `THESIS_NCMS` não cai na
+armadilha. O endpoint `dates/updated` virou prova de vintage no manifesto. Schema do POST fixado
+por consulta real, não por suposição.
+
+**Validação humana/mecânica**: 19 testes novos (guardrail nas 5 entradas ruins, parse com
+métricas string→int e `ref_date` no fim do mês, resposta-armadilha vazia, carimbo mensal,
+download com manifesto de vintage e `success=False` levantando). Fixtures são respostas reais,
+inclusive a resposta vazia do NCM-int. Suite 188/188.
+
+**O que a verificação pegou (a lição da sessão)**: a verificação ao vivo do `download_comex`
+bateu em **HTTP 429 Too Many Requests** — o rate limit que a doc marcava como "não confirmado
+numericamente" se materializou por causa das minhas próprias sondagens em sequência. Não é bug do
+código (o caminho é idêntico ao teste de sessão fake, que passa), mas é um **achado real**: a
+fonte limita requisição de fato, o que vira justificativa empírica do cache agressivo e entra no
+D-020. O "erro" da verificação (bater no limite) foi mais informativo que um sucesso limpo teria
+sido. Também foram pegos dois E501 (mensagem de erro e nome de arquivo montados inline) — o `ruff`
+travou antes do commit, e a correção extraiu um helper `_stamped_name` que de quebra removeu uma
+duplicação real entre o download e o manifesto.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
