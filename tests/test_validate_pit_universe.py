@@ -174,6 +174,18 @@ class TestManualEvents:
 
         assert manual_events("XXXX3") == []
 
+    @pytest.mark.parametrize(
+        "ticker,cum_date",
+        [("VITT3", "2024-04-12"), ("KLBN11", "2024-05-06")],
+    )
+    def test_bonificacoes_encontradas_na_auditoria_final(self, ticker, cum_date):
+        from quantagro.ingest.events_manual import manual_events
+
+        events = manual_events(ticker)
+        assert len(events) == 1
+        assert events[0].cum_date == pd.Timestamp(cum_date)
+        assert events[0].share_ratio == pytest.approx(1.1)
+
     def test_devolve_copia_nao_o_registro(self):
         from quantagro.ingest.events_manual import manual_events
 

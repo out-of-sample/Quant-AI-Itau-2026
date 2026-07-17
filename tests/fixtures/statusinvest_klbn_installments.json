@@ -1,0 +1,8 @@
+{
+  "assetEarningsModels": [
+    {"y":0,"m":0,"d":0,"ed":"15/12/2025","pd":"27/02/2026","et":"Dividendo","etd":"Dividendo","v":0.22798586124,"sv":"0,22798586","sov":"-","adj":false},
+    {"y":0,"m":0,"d":0,"ed":"15/12/2025","pd":"12/11/2026","et":"Dividendo","etd":"Dividendo","v":0.22798586,"sv":"0,22798586","sov":"-","adj":false},
+    {"y":0,"m":0,"d":0,"ed":"15/12/2025","pd":"27/02/2026","et":"Dividendo","etd":"Dividendo","v":0.22798586124,"sv":"0,22798586","sov":"-","adj":false},
+    {"y":0,"m":0,"d":0,"ed":"15/12/2025","pd":"20/05/2026","et":"Dividendo","etd":"Dividendo","v":0.22798586124,"sv":"0,22798586","sov":"-","adj":false}
+  ]
+}

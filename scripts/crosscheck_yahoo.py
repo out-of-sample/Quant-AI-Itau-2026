@@ -37,6 +37,10 @@ from quantagro.ingest.events_b3 import (
     fetch_b3_stock_events,
 )
 from quantagro.ingest.events_manual import manual_events
+from quantagro.ingest.events_statusinvest import (
+    fetch_statusinvest_proventos,
+    statusinvest_to_events,
+)
 from quantagro.prices.assemble import assemble_total_return, close_series
 
 THRESHOLD = 5e-3
@@ -73,15 +77,26 @@ def main() -> int:
 
     close = close_series(quotes, ticker)
     cash = b3_cash_to_events(fetch_b3_cash_dividends(trading_name), ticker)
-    stock = b3_stock_to_events(fetch_b3_stock_events(issuing)) + manual_events(ticker)
-    nosso = assemble_total_return(close, cash_primary=cash, stock=stock).dropna()
+    # Uma fonte secundária não deve ser somada indiscriminadamente à oficial: diferenças
+    # de classificação/arredondamento podem reaparecer como eventos falsos. Na auditoria
+    # dos papéis vivos, StatusInvest só substitui a B3 quando esta não devolve histórico
+    # algum (caso real: KLBN11). Lacunas pontuais são investigadas e corrigidas no registro
+    # manual com fonte primária.
+    cash_fallback = statusinvest_to_events(fetch_statusinvest_proventos(ticker)) if not cash else []
+    stock = b3_stock_to_events(fetch_b3_stock_events(issuing), ticker) + manual_events(ticker)
+    nosso = assemble_total_return(
+        close, cash_primary=cash, cash_fallback=cash_fallback, stock=stock
+    ).dropna()
 
     ya = yahoo_adjclose(f"{ticker}.SA", f"{ano_ini}-01-01", f"{int(ano_fim) + 1}-01-01")
     deles = ya.pct_change().dropna()
     comum = nosso.index.intersection(deles.index)
     d = (nosso.loc[comum] - deles.loc[comum]).abs()
 
-    print(f"{ticker}: {len(comum)} pregões | {len(cash)} cash, {len(stock)} stock (c/ manuais)")
+    print(
+        f"{ticker}: {len(comum)} pregões | {len(cash)} cash B3, "
+        f"{len(cash_fallback)} cash fallback, {len(stock)} stock (c/ manuais)"
+    )
     print(f"diff médio {d.mean():.2e} | p99 {d.quantile(0.99):.2e} | max {d.max():.2e}")
     suspeitos = d[d > THRESHOLD]
     if suspeitos.empty:

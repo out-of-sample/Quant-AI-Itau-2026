@@ -1,0 +1,10 @@
+{
+  "stockDividends": [
+    {"approvedOn":"08/12/2025","assetIssued":"BRKLBNACNOR2","factor":"1,00000000000","isinCode":"BRKLBNACNOR2","label":"BONIFICACAO","lastDatePrior":"17/12/2025","remarks":""},
+    {"approvedOn":"08/12/2025","assetIssued":"BRKLBNACNPR9","factor":"1,00000000000","isinCode":"BRKLBNACNPR9","label":"BONIFICACAO","lastDatePrior":"17/12/2025","remarks":""},
+    {"approvedOn":"08/12/2025","assetIssued":"BRKLBNCDAM18","factor":"1,00000000000","isinCode":"BRKLBNCDAM18","label":"BONIFICACAO","lastDatePrior":"17/12/2025","remarks":""},
+    {"approvedOn":"20/03/2014","assetIssued":"BRKLBNACNOR2","factor":"400,00000000000","isinCode":"BRKLBNACNOR2","label":"DESDOBRAMENTO","lastDatePrior":"24/03/2014","remarks":""},
+    {"approvedOn":"20/03/2014","assetIssued":"BRKLBNACNPR9","factor":"400,00000000000","isinCode":"BRKLBNACNPR9","label":"DESDOBRAMENTO","lastDatePrior":"24/03/2014","remarks":""},
+    {"approvedOn":"20/03/2014","assetIssued":"BRKLBNCDAM18","factor":"400,00000000000","isinCode":"BRKLBNCDAM18","label":"DESDOBRAMENTO","lastDatePrior":"24/03/2014","remarks":""}
+  ]
+}
