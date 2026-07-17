@@ -111,8 +111,10 @@ e a **discordância entre os dois é reportada como achado**, não escondida.
 Desenvolvimento restrito a 2013-2019. Holdout 2020-2025 lacrado, rodado **uma única vez**.
 Resposta direta ao viés de "escolha oportunista de período" citado nominalmente pelo edital.
 
-**Ponto ainda a fechar antes de H1**: D-008 não explicitou se o lacre alcança também os
-desfechos físicos sem retornos. A decisão será tomada em PT-001, antes de executar H1a/H1b.
+**Ponto fechado (D-029)**: D-008 não explicitava se o lacre alcança também os desfechos
+físicos sem retornos. Resolvido em **D-029** (encerra PT-001): o lacre veda a estratégia e seus
+parâmetros, não os testes de mecanismo H1a/H1b, que rodam no span cheio com sub-amostras
+dev/holdout reportadas em separado.
 
 ### D-010 — O sinal climático é condicional à cultura e à fase, não linear
 **Data**: 2026-07-14
@@ -645,6 +647,52 @@ geografia real da soja de MT. O peso nacional veio do 12º levantamento CONAB 20
 os pesos *as-of* únicos significam que o `Shock` recalculado em `t'` > `t` pode diferir do
 calculado em `t` se uma edição PAM entrou no meio — é o comportamento correto de um sinal
 point-in-time, mas exige que H1a fixe `t` nos cortes dos levantamentos, não recicle valores.
+
+---
+
+### D-029 — Perímetro do holdout: lacra a estratégia, não os testes de mecanismo (encerra PT-001)
+**Data**: 2026-07-17
+
+**Decisão.** O holdout 2020–2025 (D-008) veda os **retornos da estratégia e todo parâmetro de
+desenho** — matriz de exposição `E`, score, *position sizing* e o backtest, que só é rodado
+uma vez na Fase 6. Ele **não** veda os testes físicos de mecanismo H1a (revisão CONAB ~ Shock)
+e H1b (Δlog exportação ~ Shock). Estes rodam no **span cheio operacional 2015/16–2024/25** e
+são reportados com as sub-amostras **desenvolvimento (2015/16–2019/20)** e **holdout
+(2020/21–2024/25)** exibidas separadamente, além do estimador agrupado. Esta decisão é tomada
+**antes de qualquer resultado de H1**, cumprindo o critério de encerramento de PT-001.
+
+**N efetivo por perímetro** (contagem de anos-safra = clusters de inferência, sem olhar
+resultado; H1a é limitado pelo painel de vintages CONAB, que começa em 2017/18; H1b é limitado
+pelo Shock prelim, que começa em 2015/16):
+
+| Perímetro | H1a (revisão CONAB) | H1b (exportação) |
+|---|---|---|
+| Lacre físico também (dev ≤ 2019/20) | ~2–3 anos-safra | ~4 anos-safra |
+| **Lacre só a estratégia (escolhido)** | **~8 anos-safra** (2017/18–2024/25) | **~9 anos-safra** (2015/16–2024/25) |
+
+**Por quê.** Três razões, na ordem em que pesam:
+1. **H1a/H1b não contêm retorno de ação nem parâmetro da estratégia.** Testam um fato do mundo
+   — déficit de chuva na janela fenológica prevê a revisão para baixo da safra CONAB e a queda
+   da exportação física? — não a performance da carteira. O viés de "escolha oportunista de
+   período" que o edital cita nominalmente mira o **backtest**; usar todos os anos disponíveis
+   num teste de mecanismo é o oposto de *cherry-picking* — maximiza a amostra e reduz a chance
+   de uma janela de sorte.
+2. **O Shock já está congelado (D-023), antes de qualquer retorno.** Culturas, UFs, janelas
+   cultura×fase e regra de climatologia estão travadas em `features/shock_spec.py`. Nenhum
+   parâmetro é ajustado a 2020–2025; as regressões consomem um sinal pré-registrado.
+3. **Lacrar os desfechos físicos torna H1a intestável.** Restrito ao desenvolvimento, o portão
+   mais importante do projeto ficaria com ~2–3 anos-safra — cluster-bootstrap e Newey-West
+   inviáveis. Lacrar o mecanismo mataria justamente o teste que deveria proteger a tese antes
+   do backtest.
+
+**Custo/limitação declarado.** A decisão de go/no-go do portão da Fase 2 é informada por
+comportamento do mecanismo que **inclui anos do holdout** — é um uso brando da janela lacrada.
+Aceitamos o custo e o mitigamos por **transparência**: H1a/H1b são reportados com a sub-amostra
+de holdout separada da de desenvolvimento, de modo que a banca veja se o mecanismo está
+presente nos anos lacrados em vez de diluído no agrupado. O lacre dos **retornos** da
+estratégia (Fase 6, rodada única) permanece absoluto: nenhum retorno, exposição, peso de score
+ou parâmetro de sizing é calculado sobre 2020–2025 antes do portão do holdout. Esta decisão
+**não reverte** D-008; ela explicita o ponto que D-008 havia deixado em aberto.
 
 ---
 

@@ -177,6 +177,10 @@ Andamento:
   UF (peso municipal PAM *as-of* `t`) → nacional (peso CONAB da safra **anterior** encerrada,
   nunca a corrente), renormalizada sobre janelas já iniciadas com composição visível.
   Validado com álgebra sintética conferível no papel e de ponta a ponta com dados reais.
+- ✅ **Perímetro do holdout para H1 fixado (D-029, encerra PT-001)**: o lacre 2020–2025 veda a
+  estratégia e seus parâmetros, não os testes de mecanismo. H1a/H1b rodam no span cheio
+  2015/16–2024/25 (N efetivo ~8 e ~9 anos-safra) com sub-amostras dev/holdout reportadas em
+  separado. Decidido antes de qualquer resultado de H1.
 - ⬜ Rodadores de H1a (revisão CONAB) e H1b (exportação física) com BH-FDR e erros agrupados
   por ano-safra — o portão da fase.
 
