@@ -30,8 +30,9 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
 | R13 | **ONI histórico contaminado por revisão** — a NOAA sobrescreve valores recentes e atualiza a base centrada a cada cinco anos | Confirmada | Médio | Captura datada + hash; caso primário espera a janela declarada de 2 meses; sensibilidade com publicação inicial e RONI | Mitigado parcialmente. **Vintage histórico não é reconstruível** |
 | R14 | **NEFIN reescreve fatores históricos** — HML mudou materialmente entre dois snapshots oficiais | Confirmada | Alto para H4 | URL presa ao SHA, manifesto e comparação de vintages; fatores restritos à atribuição ex post | Mitigado. **Não usar NEFIN para gerar posição** |
-| R15 | **Peso espacial PAM não é vintage perfeito** — SIDRA revisa anos antigos; milho municipal não separa 1ª/2ª safra | Confirmada | Médio | Captura datada + manifesto; usar somente ano já divulgado em `t`; documentar correções conhecidas; sensibilidade com peso uniforme dentro da UF | Aberto — ingestão PAM ainda não implementada |
+| R15 | **Peso espacial PAM não é vintage perfeito** — SIDRA revisa anos antigos; milho municipal não separa 1ª/2ª safra; `...` é indisponível | Confirmada | Médio | Calendário efetivo 2014–2024; captura + manifesto; somente `avail_date≤t`; ausentes ficam `NaN` e contados; sensibilidade uniforme | 🟡 Mitigado, residual irremovível (D-024) |
 | R16 | **CHIRPS prelim começa em 2015** — não há vintage operacional para 2013-14; jan/início de fev de 2015 foi backfill | Confirmada | Alto para poder estatístico | Primeiro ano-safra primário = 2015/16; ausência antes disso, nunca substituir silenciosamente por `final`; reportar redução do desenvolvimento | Aceito — limitação irremovível da fonte |
+| R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -455,6 +456,34 @@ escolhidas à mão.
 Durante a validação, confirmou-se ainda que o CHIRPS prelim só começa em 2015 e que os primeiros
 arquivos foram backfill. O primeiro ano-safra completo foi fixado em 2015/16 (R16); isso reduz o
 desenvolvimento efetivo, custo aceito em vez de preencher 2013-14 com dado final revisado.
+
+---
+
+### D-024 — PAM usa calendário efetivo e a geografia é fixa na malha IBGE 2013
+**Data**: 2026-07-16
+
+A regionalização de D-023 foi implementada sem consultar retornos. A tabela SIDRA 1612 fornece
+quantidade municipal de soja (2713) e milho total (2711); o segundo continua sendo proxy
+declarado para a localização do milho 2ª safra. As datas efetivas de divulgação de cada PAM
+2014–2024 foram verificadas em calendários/releases do IBGE e codificadas sem interpolação.
+Em `D`, entra apenas a edição com maior ano de referência e `avail_date≤D`.
+
+A malha municipal foi fixada na edição IBGE 2013. Os arquivos internos foram gerados em
+16/03/2015, antes da primeira janela operacional (dezembro/2015). A alternativa de pedir o
+`periodo` correspondente a cada ano na API foi rejeitada: ao vivo, a API entregou 2019–2022,
+mas devolveu erro 500 para 2014–2018 e 2023–2024. Misturar versões disponíveis com *fallbacks*
+atuais criaria uma quebra de suporte difícil de distinguir de choque climático.
+
+Validação integral: 38.467 linhas PAM (2014–2024), 25.208 observadas, 13.129 zeros SIDRA e 130
+`...` (dado indisponível). `...` permanece `NaN`; os pesos normalizam somente tonelagem
+reportada e carregam a contagem ausente. As sete malhas têm 141 (MT), 246 (GO), 399 (PR), 499
+(RS), 79 (MS), 853 (MG) e 417 (BA) municípios. A cobertura foi completa para toda produção
+positiva nos *snapshots as-of* de 01/12/2015, 01/12/2020 e 01/12/2025.
+
+**Custo/limitação**: a captura atual do SIDRA não recupera valores anteriores às revisões; a
+malha fixa ignora refinamentos posteriores; e milho total é proxy para safrinha. Esses custos
+são preferíveis a fabricar vintage, converter ausente em zero ou deixar a fronteira variar.
+Peso municipal uniforme permanece robustez pré-registrada.
 
 ---
 

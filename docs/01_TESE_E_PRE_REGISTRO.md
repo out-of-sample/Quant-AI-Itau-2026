@@ -105,7 +105,7 @@ Shock_{c,t} = Σ_u  w_{u,c,t} · Shock_{u,c,t}(janela fenológica de c)
 ```
 
 - `u` — UF do suporte primário congelado em D-023; dentro dela, o clima municipal é ponderado
-  pela PAM/IBGE mais recente já publicada
+  pela PAM/IBGE mais recente já publicada, sobre malha municipal fixa de 2013 (D-024)
 - `w_{u,c,t}` — **peso de produção** da UF segundo a safra CONAB anterior já encerrada
   (nunca a safra corrente cuja revisão queremos prever; ver §6.2)
 - `Shock_{u,c,t}` — anomalia climática padronizada na UF. O caso primário é déficit de
@@ -351,7 +351,7 @@ o problema em vez de escondê-lo.
 |---|---|---|
 | **Look-ahead climático** | usar dado meteorológico do dia `t` no dia `t` (a fonte só o publica dias depois); usar climatologia calculada com o período inteiro | Lag de publicação explícito (7d) + climatologia *expanding* + teste de sensibilidade ao lag |
 | **Look-ahead de reanálise** | NASA POWER/ERA5 **revisam** valores passados. O número que vemos hoje para 2015 pode não ser o que estava disponível em 2015 | Primário usa CHIRPS prelim arquivado. POWER fica somente em robustez térmica, com limitação de vintage declarada (D-023) |
-| **Look-ahead do mapa de produção** | ponderar a geografia pela safra corrente ou pela PAM ainda não divulgada | Pesos nacionais da safra CONAB anterior encerrada + PAM mais recente com data oficial de divulgação `≤t`; capturas datadas (D-023/R15) |
+| **Look-ahead do mapa de produção** | ponderar a geografia pela safra corrente, PAM ainda não divulgada ou fronteira futura | Pesos CONAB da safra anterior + PAM mais recente com `avail_date≤t` + malha IBGE 2013 fixa pré-amostra; capturas datadas (D-023/D-024/R15) |
 | **Survivorship / backfill do universo** | rodar 2013-2025 com o universo de hoje (só quem sobreviveu e já abriu capital) | **Universo dinâmico**: a ação entra na data de IPO + 60 dias e sai na data de deslistagem. Contagem de ativos plotada |
 | **Multiple testing** | culturas × regiões × janelas × lags × limiares = centenas de combinações; alguma vai parecer significativa por acaso | Benjamini-Hochberg (FDR) sobre toda a família de testes + um único conjunto primário pré-registrado (§5) |
 | **Escolha oportunista de período** | escolher 2013-2025 porque foi onde funcionou | Split declarado a priori (§6), holdout lacrado |

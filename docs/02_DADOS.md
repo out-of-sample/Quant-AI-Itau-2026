@@ -231,12 +231,35 @@ publicar?*
   4º lev grãos 2023/24 (04→10/jan), 1º lev cana 2021/22 (29/abr→18/mai), 3º lev cana 2022/23
   (22→27/dez). O calendário planejado sozinho **não** é confiável.
 
-**Para peso espacial por município**: IBGE **SIDRA** (PAM, tabela 1612), API pública sem
-chave, testada e funcional. É anual e divulgada no ano seguinte, portanto não gera o choque;
-entra apenas como máscara/peso espacial point-in-time (D-023). A implementação deve usar o ano
-mais recente cuja data oficial de divulgação seja conhecida em `t`, salvar captura + manifesto
-e reconhecer que a PAM revisa anos antigos. Para milho, a PAM municipal não separa 1ª e 2ª
-safra — limitação explícita do peso espacial.
+**Para peso espacial por município (implementado, D-024)**: IBGE **SIDRA** (PAM, tabela 1612),
+API pública sem chave. `ingest/pam.py` consulta nível municipal (`n6`), variável 214
+(`Quantidade produzida`, toneladas), soja 2713 e milho total 2711. Cada captura recebe hash e
+manifesto; o painel carrega `ref_date=31/12` e a data efetiva de divulgação de
+`ingest/pam_calendar.py`. O calendário curado, sem interpolação, é:
+
+```text
+PAM ref.  2014       2015       2016       2017       2018       2019
+publicada 05/11/2015 23/09/2016 21/09/2017 13/09/2018 05/09/2019 01/10/2020
+PAM ref.  2020       2021       2022       2023       2024
+publicada 22/09/2021 15/09/2022 14/09/2023 12/09/2024 11/09/2025
+```
+
+Em cada data `D`, `pam_weights_asof` usa somente a edição mais recente com
+`avail_date ≤ D`. O símbolo SIDRA `-` é zero verdadeiro; `...` é dado não disponível e
+permanece `NaN`, com contagem por cultura/UF — nunca é convertido em zero. Na captura integral
+2014–2024, 130 de 38.467 linhas vieram como `...`, concentradas em municípios urbanos; os pesos
+são normalizados sobre a tonelagem reportada e a incompletude fica visível no painel.
+
+**Geometria**: `ingest/ibge_geometry.py` usa a malha municipal IBGE **edição 2013** como suporte
+fixo. Seus artefatos foram gerados em 16/03/2015, antes da primeira janela operacional em
+dezembro/2015. Isso evita fronteira futura e mudança mecânica de suporte ao longo do teste. O
+arquivo arquivado por UF é lido com PyShp, em SIRGAS 2000, e serializado como GeoJSON compacto.
+Município com produção positiva sem polígono provoca erro e exige *crosswalk* explícito.
+
+Limitações residuais: o SIDRA atual reescreve anos antigos, de modo que `avail_date` não
+reconstrói os valores originalmente publicados; milho municipal não separa 1ª e 2ª safra; e a
+malha fixa ignora refinamentos posteriores de divisa. Captura, hash, sensibilidade com peso
+uniforme e declaração desses limites são a defesa — não existe vintage histórico perfeito.
 
 ---
 
@@ -557,7 +580,6 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 4. **Futuros agro da B3** — confirmar se há histórico gratuito, ou abandonar.
 5. **Magnitude da revisão do ComexStat** nas NCMs agro — quantificar via snapshot do Wayback
    vs. dado atual.
-6. ✅ **Especificação fenológica e regional do `Shock`** — **congelada** em D-023, sem
-   consultar retornos: soja + milho 2ª, UFs fixas, chuva CHIRPS, janelas por cultura × UF e
-   geografia PAM/IBGE. O CSV oficial do ZARC foi testado. Falta implementar a ingestão PIT da
-   PAM e as geometrias municipais antes de calcular C2.
+6. ✅ **Especificação fenológica e regional do `Shock`** — congelada em D-023, sem consultar
+   retornos; ingestão PIT da PAM e malha municipal fixa implementadas em D-024. Falta calcular
+   a interseção raster→município→UF em C2, depois da auditoria final da Fase 1.
