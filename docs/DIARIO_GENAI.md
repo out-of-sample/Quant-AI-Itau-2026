@@ -627,6 +627,32 @@ A ausência de evidência virou restrição do experimento, não número inventa
 
 ---
 
+## 2026-07-17 — Regionalização raster→município (primeira metade do C2 `Shock`)
+
+**Uso**: implementar a geografia congelada em D-023/D-024 — média de precipitação CHIRPS por
+polígono municipal da malha IBGE 2013 — sem GDAL, com ponto-em-polígono vetorizado em numpy,
+índice município→células cacheável e painel municipal diário.
+
+**Valor real**: a peça cara do C2 ficou pronta e barata: o índice das 7 UFs (2.634 municípios,
+110.489 células) calcula em ~12 s uma única vez, e cada raster diário agrega em 0,12 s. A regra
+even-odd cobre buracos e multipolígonos sem dependência nova. A validação ao vivo revelou dois
+fatos da malha que nenhum doc registrava: as lagoas Mirim e dos Patos entram como polígonos
+não-municipais no RS (excluídas do índice), e três municípios reais são menores que a célula
+p05 (fallback auditável pelo centroide). Ambos viraram teste, doc e decisão D-027.
+
+**Validação humana/mecânica**: aritmética sintética conferível no papel (grade 10×10 de 1°);
+contagem de células vs. área municipal oficial (Cuiabá ~3.500 km² → 118 células de ~30,25 km²;
+Acorizal ~840 km² → 27); revisão prelim→final visível no nível municipal no dia real de
+15/01/2024 (Cuiabá 2,67 → 3,05 mm); 2.634/2.634 municípios cobertos no raster global real.
+
+**O que a IA errou**: o filtro de polígonos de água (código de município `0000`) derrubou os
+próprios testes sintéticos — os geocódigos fictícios escolhidos antes ("5100001") caíam na
+regra recém-criada. A suíte pegou na hora; os testes passaram a usar geocódigos reais. Erro
+barato, mas ilustra o padrão: regra nova de validação precisa rodar contra tudo que já existia,
+não só contra o caso que a motivou.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

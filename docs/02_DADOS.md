@@ -256,6 +256,14 @@ dezembro/2015. Isso evita fronteira futura e mudança mecânica de suporte ao lo
 arquivo arquivado por UF é lido com PyShp, em SIRGAS 2000, e serializado como GeoJSON compacto.
 Município com produção positiva sem polígono provoca erro e exige *crosswalk* explícito.
 
+Dois fatos da malha verificados na regionalização (2026-07-17): (i) a malha do RS traz **dois
+polígonos de água não-municipais** — Lagoa Mirim (4300001) e Lagoa dos Patos (4300002), código
+de município `0000` — que `features/regionalize.py` exclui do índice de células (nunca têm
+produção PAM, mas contaminariam qualquer média não-ponderada); (ii) três municípios reais são
+menores que a célula p05 de ~5,5 km e não contêm nenhum centro de célula (Madre de Deus/BA,
+Albertina/MG, Esteio/RS) — recebem a célula mais próxima do centroide, com `cell_source`
+auditável (D-027).
+
 Limitações residuais: o SIDRA atual reescreve anos antigos, de modo que `avail_date` não
 reconstrói os valores originalmente publicados; milho municipal não separa 1ª e 2ª safra; e a
 malha fixa ignora refinamentos posteriores de divisa. Captura, hash, sensibilidade com peso

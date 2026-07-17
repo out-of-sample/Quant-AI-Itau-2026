@@ -162,6 +162,16 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
 Testar **H1a**: o choque climático prevê a revisão da CONAB? E **H1b**: prevê o volume
 exportado? Com BH-FDR e erros agrupados por ano-safra.
 
+Pré-requisito da fase: construir o C2 `Shock` (é ele que entra nas regressões). Andamento:
+- ✅ **Regionalização raster→município (D-027)** (`features/regionalize.py`): média de
+  precipitação CHIRPS por polígono municipal da malha IBGE 2013, sem GDAL (ponto-em-polígono
+  numpy sobre centros de célula p05). Índice município→células validado ao vivo nas 7 UFs
+  (2.634/2.634 municípios); fallback auditável para os 3 municípios menores que a célula;
+  polígonos de água não-municipais da malha (lagoas do RS) excluídos.
+- ⬜ Janela fenológica → acumulado até a data de corte → climatologia expanding (≥10 safras,
+  produto `final`) → `Shock = −z` → agregação UF (peso PAM *as-of*) → nacional (peso CONAB
+  da safra anterior encerrada).
+
 > **Portão**: se o clima **não** prevê a revisão de safra nem a exportação, o mecanismo
 > econômico postulado é falso. Nesse caso **paramos e reformulamos**, em vez de seguir para o
 > backtest e descobrir um alfa que seria coincidência. Um achado negativo aqui, documentado
