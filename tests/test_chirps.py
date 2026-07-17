@@ -45,6 +45,12 @@ class TestUrl:
         with pytest.raises(ValueError, match="kind desconhecido"):
             chirps_url("2024-01-15", "provisorio")
 
+    def test_prelim_antes_de_2015_falha_sem_tocar_na_rede(self):
+        with pytest.raises(ValueError, match="não existe antes"):
+            chirps_url("2013-01-15", "prelim")
+        # O produto final histórico existe e continua sendo válido para climatologia.
+        assert "/2013/" in chirps_url("2013-01-15", "final")
+
 
 class TestReadGrid:
     def test_le_recorte_e_geotransform(self):

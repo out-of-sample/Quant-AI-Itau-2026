@@ -8,6 +8,9 @@ point-in-time e permite **medir** o quanto a revisão contamina o sinal, em vez 
 que não contamine (docs/05_SUITE_ROBUSTEZ.md §2.4).
 
 Fatos da fonte, verificados ao vivo (2026-07-16):
+- O produto `final` cobre 1981-hoje; o arquivo `prelim` começa em 01/01/2015. Não há pasta
+  prelim em 2008/2013. Janeiro e início de fevereiro de 2015 foram carregados em bloco em
+  17/02, portanto o primeiro ano-safra operacional completo é 2015/16 (D-023/R16).
 - Grade global p05: 0.05° (~5 km), **2000 linhas × 7200 colunas**, canto superior-esquerdo em
   (lon −180, lat +50), cobrindo 50°S–50°N. `nodata = −9999` (oceano).
 - GeoTIFF **sem compressão**, float32 (`sampleformat=IEEE float`), gravado dentro de um `.tif.gz`.
@@ -21,8 +24,9 @@ Fatos da fonte, verificados ao vivo (2026-07-16):
   final datado 15/02) — dentro do lag congelado de 7 dias corridos (docs/01_TESE §5).
 
 Este módulo faz **só a ingestão**: baixa (com manifesto de vintage), decodifica o grid e agrega
-a precipitação em **caixas lat/lon nomeadas** por região produtora. A *escolha* das caixas é
-decisão de modelagem da camada de sinal — aqui elas entram como argumento explícito. O carimbo
+a precipitação em **caixas lat/lon nomeadas**. As caixas default são smoke tests; D-023 fixou
+polígonos municipais PAM/IBGE para o sinal primário. Aqui a geometria continua argumento
+explícito, sem contaminar o leitor de raster com uma decisão de modelagem. O carimbo
 `avail_date` (lag de 7 dias corridos) é aplicado a jusante por `quantagro.validate.pit`, com o
 vintage prelim/final preservado na coluna `kind`.
 """
@@ -42,6 +46,7 @@ import pandas as pd
 _BASE_URL = "https://data.chc.ucsb.edu/products/CHIRPS-2.0"
 
 KINDS = ("prelim", "final")
+PRELIM_FIRST_DATE = pd.Timestamp("2015-01-01")
 
 # Constantes da grade global p05 — usadas só para validar que a fonte não mudou o formato
 # por baixo dos nossos pés (o read em si lê o geotransform das tags do arquivo).
@@ -83,6 +88,10 @@ def chirps_url(date, kind: str) -> str:
     if kind not in KINDS:
         raise ValueError(f"kind desconhecido: {kind!r} (use {list(KINDS)})")
     d = pd.Timestamp(date)
+    if kind == "prelim" and d < PRELIM_FIRST_DATE:
+        raise ValueError(
+            f"CHIRPS prelim não existe antes de {PRELIM_FIRST_DATE.date()}: {d.date()}"
+        )
     stem = f"chirps-v2.0.{d.year:04d}.{d.month:02d}.{d.day:02d}.tif.gz"
     sub = "prelim/global_daily" if kind == "prelim" else "global_daily"
     return f"{_BASE_URL}/{sub}/tifs/p05/{d.year:04d}/{stem}"
