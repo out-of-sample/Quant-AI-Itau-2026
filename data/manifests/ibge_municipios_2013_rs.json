@@ -1,0 +1,12 @@
+{
+  "source": "IBGE-Malha-Municipal",
+  "edition": 2013,
+  "uf": "RS",
+  "ref_date": "2013-12-31",
+  "artifact_member_timestamp": "2015-03-16",
+  "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2013/RS/rs_municipios.zip",
+  "sha256": "7bf0cf10b787e3d19f48703af11dce49a55df834d3fed93de0059cea66c61920",
+  "bytes": 2423636,
+  "downloaded_at": "2026-07-17T02:02:12.114171+00:00",
+  "spatial_policy": "suporte fixo pre-amostra; geocódigo novo exige crosswalk explícito"
+}

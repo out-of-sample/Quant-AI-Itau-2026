@@ -37,6 +37,7 @@ data/processed/
 !tests/fixtures/*.csv
 *.parquet
 *.zip
+!tests/fixtures/*.zip
 
 # Exceção: os MANIFESTOS são versionados. São pequenos e são a prova de qual vintage de
 # cada fonte foi usado — sem eles o backtest não é auditável.

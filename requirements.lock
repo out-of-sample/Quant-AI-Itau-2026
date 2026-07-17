@@ -330,6 +330,10 @@ pyproject-hooks==1.2.0 \
     # via
     #   build
     #   pip-tools
+pyshp==3.1.4 \
+    --hash=sha256:0663762be72c67684c890decd888fb8e849e01a85ee6ef0346214b7329270453 \
+    --hash=sha256:5bdd39c8fe02a47fe8de9c3355c5efaa312ff5c7fc6b8156592df738246f6167
+    # via quantagro (pyproject.toml)
 pytest==9.1.1 \
     --hash=sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313 \
     --hash=sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c

@@ -1,0 +1,12 @@
+{
+  "source": "IBGE-Malha-Municipal",
+  "edition": 2013,
+  "uf": "MS",
+  "ref_date": "2013-12-31",
+  "artifact_member_timestamp": "2015-03-16",
+  "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2013/MS/ms_municipios.zip",
+  "sha256": "23031c3de52ef529c963bb4cb6ac45b98c2aac8d7468d996043c506e58a9dce2",
+  "bytes": 1319699,
+  "downloaded_at": "2026-07-17T02:02:12.303149+00:00",
+  "spatial_policy": "suporte fixo pre-amostra; geocódigo novo exige crosswalk explícito"
+}

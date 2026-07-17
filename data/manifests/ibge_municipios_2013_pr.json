@@ -1,0 +1,12 @@
+{
+  "source": "IBGE-Malha-Municipal",
+  "edition": 2013,
+  "uf": "PR",
+  "ref_date": "2013-12-31",
+  "artifact_member_timestamp": "2015-03-16",
+  "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2013/PR/pr_municipios.zip",
+  "sha256": "a472d2b7f1c182045a0c250ec203506e01ea6f461858ba16ae9b15957aa15aee",
+  "bytes": 3809203,
+  "downloaded_at": "2026-07-17T02:02:11.874743+00:00",
+  "spatial_policy": "suporte fixo pre-amostra; geocódigo novo exige crosswalk explícito"
+}
