@@ -271,6 +271,13 @@ o resultado vai para o relatório como achado negativo, não é escondido.
 Uma banca de gestora vai fazer exatamente essas duas perguntas. Rodá-las por conta própria,
 antes, e reportar o resultado honestamente, é o que separa um trabalho sério de um pitch.
 
+> **Resultado de H1 (2026-07-17, pré-registro D-030, resultado D-031).** **H1a confirmado**: o
+> choque climático prevê a revisão da CONAB — coeficiente agrupado **−0,067** por unidade de
+> `Shock` (estresse ⇒ revisão para baixo), `t(7)` p≈6e-4, bootstrap por cluster p≈0, sobrevive
+> ao BH-FDR; o efeito é consistente no desenvolvimento (−0,057) e no holdout (−0,072) e nas duas
+> culturas. **H1b** corrobora a soja ex post (3º e 6º mês pós-colheita); milho fraco (N=7). A
+> cadeia climático → revisão de safra é real. H2–H5 permanecem para as fases seguintes.
+
 ### Confundidor conhecido: ENSO (El Niño / La Niña)
 
 El Niño/La Niña afeta simultaneamente (i) o clima brasileiro, (ii) o clima dos outros

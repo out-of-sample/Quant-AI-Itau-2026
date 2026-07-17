@@ -1,0 +1,32 @@
+{
+  "source": "ComexStat-MDIC",
+  "query": {
+    "flow": "export",
+    "monthDetail": true,
+    "period": {
+      "from": "2014-01",
+      "to": "2025-12"
+    },
+    "filters": [
+      {
+        "filter": "ncm",
+        "values": [
+          "12019000",
+          "10059010"
+        ]
+      }
+    ],
+    "details": [
+      "ncm"
+    ],
+    "metrics": [
+      "metricFOB",
+      "metricKG"
+    ]
+  },
+  "vintage_updated": "2026-07-03",
+  "vintage_latest_month": "2026-06",
+  "sha256": "42136bb1a68e9b9319ed13ea1d830eab02898c826b99f0935e586b6dce94646d",
+  "bytes": 44343,
+  "downloaded_at": "2026-07-17T21:43:30.083092+00:00"
+}

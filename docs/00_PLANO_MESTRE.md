@@ -181,14 +181,18 @@ Andamento:
   estratégia e seus parâmetros, não os testes de mecanismo. H1a/H1b rodam no span cheio
   2015/16–2024/25 (N efetivo ~8 e ~9 anos-safra) com sub-amostras dev/holdout reportadas em
   separado. Decidido antes de qualquer resultado de H1.
-- ⬜ Rodadores de H1a (revisão CONAB) e H1b (exportação física) com BH-FDR e erros agrupados
-  por ano-safra — o portão da fase.
+- ✅ **Pré-registro das regressões (D-030)**: variável dependente, regressor, sinal esperado,
+  `climatology_first_year=2000` e família BH-FDR congelados antes de olhar qualquer coeficiente.
+- ✅ **Rodadores de H1a/H1b executados uma vez (D-031)** (`stats/h1a.py`, `stats/h1b.py`,
+  `stats/gate.py`, `scripts/run_gate.py`): H1a agrupado **β=−0,067**, `t(7)` p≈6e-4, bootstrap
+  por cluster p≈0, sobrevive ao BH-FDR; efeito consistente no desenvolvimento (−0,057) e no
+  holdout (−0,072) e nas duas culturas. H1b corrobora a soja ex post. **Portão ATRAVESSADO.**
 
-> **Portão**: se o clima **não** prevê a revisão de safra nem a exportação, o mecanismo
-> econômico postulado é falso. Nesse caso **paramos e reformulamos**, em vez de seguir para o
-> backtest e descobrir um alfa que seria coincidência. Um achado negativo aqui, documentado
-> com honestidade, ainda é um bom trabalho — e é infinitamente melhor do que um Sharpe bonito
-> construído sobre um mecanismo inexistente.
+> **Portão: ATRAVESSADO em 2026-07-17 (D-031).** O choque climático prevê a revisão da safra
+> CONAB, com o sinal certo e força dentro e fora da amostra — a cadeia causal postulada existe.
+> Seguimos para a Fase 3. (A regra permanece registrada: se o clima **não** previsse a revisão,
+> **pararíamos e reformularíamos** em vez de caçar um alfa que seria coincidência. O achado —
+> qualquer que fosse — iria para o relatório.)
 
 ### Fase 3 — Sinal e carteira
 Matriz de exposição `E`, score e construção da carteira. O ComexStat valida H1b *ex post* e
