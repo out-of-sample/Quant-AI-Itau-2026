@@ -1,0 +1,13 @@
+{
+  "source": "NOAA-CPC-ONI",
+  "dataset": "ERSST.v5",
+  "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
+  "methodology_url": "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php",
+  "latest_season": "AMJ",
+  "latest_year": 2026,
+  "latest_ref_date": "2026-05-31",
+  "revision_window_months": 2,
+  "sha256": "54ffcbf1339f334ee54bb14812033222cad86c4d0b3af59d6309e555614020fe",
+  "bytes": 22950,
+  "downloaded_at": "2026-07-17T00:54:30.679297+00:00"
+}
