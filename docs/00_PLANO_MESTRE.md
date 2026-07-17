@@ -123,8 +123,11 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   `_validate_ncms` falha alto antes da rede. Não preserva vintage (revisa até fev do ano seguinte)
   ⇒ o manifesto grava o `dates/updated` como prova de vintage; uso como confirmação mensal.
   Carimbo `avail_date` = ref (fim do mês) + lag (divulgação no início do mês seguinte).
-- ⬜ Ingestão das demais fontes da tese: ONI (controle El Niño), NEFIN (fatores H4) — cada uma
-  com carimbo de `avail_date` na entrada.
+- ✅ **Ingestão ONI (controle ENSO, D-021)** (`ingest/oni.py`): arquivo oficial NOAA/CPC,
+  parser da temporada trimestral centrada, captura datada + manifesto e carimbo conservador.
+  A NOAA publica até o dia 5 e pode revisar os dois valores mensais seguintes; o caso primário
+  só disponibiliza o valor após essa janela. A fonte não arquiva vintages, limitação declarada.
+- ⬜ Ingestão **NEFIN** (fatores de risco de H4), com carimbo de `avail_date` na entrada.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O

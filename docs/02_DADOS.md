@@ -138,8 +138,26 @@ exigir registro, chave e download assíncrono em fila. **Sem vantagem sobre CHIR
 
 ### 1.5 ONI — El Niño / La Niña — controle obrigatório
 
-Índice mensal público (NOAA). Entra como **controle** em todas as regressões e na *spanning
-regression*, porque é o confundidor macro mais óbvio da tese (`06_CRITICA_ADVERSARIAL.md` §4).
+Índice sazonal público da NOAA/CPC, atualizado mensalmente. É a média móvel de três meses
+da anomalia ERSST.v5 na região Niño 3.4, com períodos-base centrados de 30 anos atualizados a
+cada cinco anos. Entra como **controle** nas regressões e na *spanning regression*, porque é o
+confundidor macro mais óbvio da tese (`06_CRITICA_ADVERSARIAL.md` §4).
+
+**Fonte oficial**: `https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`. O arquivo traz
+`SEAS`, `YR`, temperatura total e anomalia. A temporada é datada pelo mês central: `DJF 2025`
+vira `ref_date = 31/01/2025`. A página oficial é atualizada até o dia 5; como DJF só termina
+em fevereiro, sua primeira publicação é 05/03.
+
+🔴 **Não preserva vintage.** A NOAA avisa que o filtro de alta frequência pode alterar os
+valores por até dois meses depois da primeira publicação; a atualização quinquenal do
+período-base pode reescrever o histórico mais antigo. Não existe consulta *as-of*. D-021 adota
+captura datada + hash e, no caso primário, `avail_date` no dia 5 quatro meses após o mês
+central: primeira publicação (dois meses) + janela declarada de estabilização (dois meses).
+Isso reduz a revisão recente, mas não recria o vintage histórico — limitação mantida.
+
+Em 2026 a NOAA passou a usar o **RONI** no monitoramento operacional, mas continua atualizando
+o ONI. Como o pré-registro nomeia ONI, ele permanece como controle primário; RONI poderá entrar
+como robustez, nunca como substituição silenciosa.
 
 ---
 
@@ -490,7 +508,7 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
 | **COTAHIST (B3)** | D+1 | ✅ (registro de pregão) | 🥇 preços + universo point-in-time |
 | yfinance | D+1 | 🔴 **apaga deslistados** | só conferência cruzada |
 | Futuros (yfinance) | D+1 | ✅ | preço de commodity |
-| ONI (NOAA) | mensal | ✅ | controle (El Niño) |
+| ONI (NOAA) | até dia 5; caso primário espera +2 meses | 🔴 não (revisão recente + base quinquenal) | controle (El Niño) |
 | NEFIN | mensal | ✅ | fatores de risco (H4) |
 
 ---
