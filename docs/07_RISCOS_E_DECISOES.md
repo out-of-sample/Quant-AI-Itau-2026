@@ -28,6 +28,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido** (residual: poucas datas com fonte única, anotadas no módulo) |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
+| R13 | **ONI histórico contaminado por revisão** — a NOAA sobrescreve valores recentes e atualiza a base centrada a cada cinco anos | Confirmada | Médio | Captura datada + hash; caso primário espera a janela declarada de 2 meses; sensibilidade com publicação inicial e RONI | Mitigado parcialmente. **Vintage histórico não é reconstruível** |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -359,6 +360,32 @@ reconfirmadas ao vivo, fixaram o desenho:
 datada + `dates/updated`, que permitem comparar snapshots no futuro). O dado semanal do MDIC
 continua inutilizável para backtest (não arquiva — `02_DADOS §3.4`), então a confirmação opera em
 frequência mensal, com ~poucas dezenas de observações — coerente com o N efetivo já pequeno da tese.
+
+---
+
+### D-021 — ONI: controle pré-registrado, disponibilidade após estabilização e RONI só como robustez
+**Data**: 2026-07-16
+O ONI é controle de ENSO para R6/H5, não componente direcional do sinal. A verificação da
+fonte oficial fixou quatro escolhas:
+- `ref_date` é o fim do **mês central** da temporada de três meses (`DJF 2025` → 31/01/2025),
+  evitando fingir que o rótulo sazonal é um mês de publicação;
+- `initial_avail_date` é o dia 5 dois meses depois do mês central: a janela precisa terminar
+  e a NOAA atualiza a página até o dia 5;
+- o caso primário usa `avail_date` **dois meses depois da primeira publicação**, pois a própria
+  NOAA avisa que os valores recentes podem mudar nesse intervalo. O caso sem espera existe
+  apenas como sensibilidade explícita;
+- a mudança operacional da NOAA para RONI em 2026 não altera retrospectivamente o
+  pré-registro. ONI permanece primário; RONI é uma futura robustez declarada.
+
+O arquivo oficial é sobrescrito e não oferece consulta *as-of*. `ingest/oni.py` salva uma
+captura por dia e manifesto com hash, última temporada e metodologia. Validação ao vivo em
+16/07/2026: 917 temporadas, de DJF/1950 a AMJ/2026; último ONI = 0,98, publicação inicial
+05/07/2026 e disponibilidade conservadora 05/09/2026.
+
+**Custo/limitação**: esperar estabilização reduz a atualidade do controle e não desfaz
+revisões históricas causadas pela atualização quinquenal dos períodos-base. A defesa é
+transparência + sensibilidade; não existe engenharia capaz de reconstruir um arquivo que a
+fonte não arquivou.
 
 ---
 

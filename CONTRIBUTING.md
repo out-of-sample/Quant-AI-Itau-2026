@@ -87,13 +87,16 @@ provavelmente são dois commits.
 
 ## 4. Pull Requests
 
-- **Todo PR precisa de aprovação de pelo menos 1 outra pessoa do time** antes do merge.
-  Isso não é burocracia: num projeto quant, um bug de lookahead que passa despercebido
-  invalida o resultado inteiro e a gente só descobre tarde demais. Segundo par de olhos é
-  a defesa mais barata que existe.
+- **Regra normal**: todo PR precisa de aprovação de pelo menos 1 outra pessoa do time antes do
+  merge. Num projeto quant, um bug de lookahead que passa despercebido invalida o resultado
+  inteiro; um segundo par de olhos é a defesa mais barata que existe.
+- **Exceção temporária enquanto o desenvolvimento estiver individual**: o autor pode mergear
+  o próprio PR sem review somente depois de a CI ficar verde e de executar localmente a suíte
+  relevante. A exigência de aprovação volta automaticamente quando o trabalho colaborativo
+  for retomado.
 - O PR só pode ser mergeado com a **CI verde** (lint + testes passando).
-- Merge na `main` via **squash** — mantém o histórico da `main` legível, uma entrada por
-  mudança lógica.
+- Merge na `main` via **merge commit** — preserva os commits intencionais da branch e deixa o
+  limite de cada PR explícito no histórico.
 - Descrição do PR: o que muda, por quê, e **o que foi feito para verificar** que está certo.
 
 ### Checklist de revisão para PRs que mexem em sinal ou backtest
@@ -145,7 +148,7 @@ git switch main && git pull                  # sempre partir do main atualizado
 git switch -c feat/minha-mudanca             # branch nova
 # ... trabalha, commita em pedaços pequenos ...
 git push -u origin feat/minha-mudanca        # sobe a branch
-# abre o PR no GitHub, pede review, CI roda sozinha
+# abre o PR no GitHub; CI roda sozinha; pede review quando a regra normal estiver vigente
 # depois do merge:
 git switch main && git pull
 git branch -d feat/minha-mudanca             # limpa

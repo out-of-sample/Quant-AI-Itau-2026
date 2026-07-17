@@ -472,6 +472,33 @@ duplicação real entre o download e o manifesto.
 
 ---
 
+## 2026-07-16 — Ingestão do controle ENSO (ONI/NOAA)
+
+**Uso**: transformar o controle pré-registrado de El Niño/La Niña em uma fonte point-in-time,
+sem tratar um arquivo histórico revisado como se fosse conhecido em tempo real.
+
+**Valor real**: a consulta à metodologia oficial revelou que o ONI não é uma observação
+mensal simples: é uma média sobreposta de três meses, atualizada até o dia 5, cujos valores
+recentes podem mudar por mais dois meses. Isso virou duas datas distintas no dado
+(`initial_avail_date` e `avail_date`) e uma regra conservadora verificável, em vez de um lag
+escolhido por conveniência. A pesquisa também detectou que a NOAA passou a usar RONI para
+monitoramento operacional em 2026. Como o pré-registro diz ONI, a troca foi rejeitada; RONI
+ficou reservado como robustez futura.
+
+**Validação humana/mecânica**: fixture com 11 linhas reais do arquivo oficial; testes de
+schema, temporadas, travessia de ano em NDJ, duplicatas, cache, manifesto e filtro *as-of*.
+O downloader real leu 917 temporadas (DJF/1950–AMJ/2026), reproduziu ONI 0,98 na cauda e
+gravou hash. Para AMJ/2026, o código distinguiu publicação inicial em 05/07 de disponibilidade
+conservadora em 05/09.
+
+**O que a IA errou**: o primeiro comando de validação ao vivo tinha aspas escapadas dentro de
+uma *f-string* passada a `python -c` e falhou com `SyntaxError`. Nenhum dado foi escrito no
+projeto; o comando foi refeito com argumentos simples no `print` e a validação passou. Mais
+importante, a hipótese inicial do catálogo dizia que ONI “preserva vintage”; a fonte oficial a
+falsificou. O resumo de dados foi corrigido para não carregar essa segurança inexistente.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
