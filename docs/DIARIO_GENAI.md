@@ -386,6 +386,35 @@ dúvida vale a mais tardia.
 
 ---
 
+## 2026-07-16 — Ingestão do clima primário (CHIRPS)
+
+**Uso**: desenhar e implementar a ingestão point-in-time da precipitação CHIRPS — a fonte que
+dispara a tese (choque climático) — com o vintage prelim/final preservado, sem depender de GDAL.
+
+**Valor real**: a IA de-riscou o desenho inteiro **por sondagem ao vivo antes de escrever
+código**, o que evitou dois becos. (1) Confirmou que o GeoTIFF do CHIRPS é *sem compressão* e
+tem geotransform auto-descrito → dá para ler só com `tifffile` (Python puro), sem rasterio/GDAL,
+que nem tem wheel para cp314. (2) Mediu que a revisão prelim→final é **material** (soja/MT
+15/01/2024: +23% num dia), o que valida empiricamente a decisão de usar o CHIRPS como primária
+justamente pelo vintage. Fixture de teste é um recorte real do grid global que reproduz
+exatamente os valores da extração global.
+
+**Validação humana/mecânica**: verificação ao vivo de ponta a ponta — `download_chirps` real
+baixou prelim e final, o raster global (2000×7200) passou na tripwire de formato e as caixas
+bateram exatamente com o recorte da fixture. 18 testes novos (URL, leitura, `nodata`, caixa fora
+do grid, painel, vintage prelim≠final, carimbo PIT, download com sessão fake). Suite 154/154.
+
+**O que a IA errou**: dois erros pegos na própria verificação. (1) Ao sondar o prelim, montou a
+URL com `.tif` e concluiu "prelim dá 404 → não é arquivado" — conclusão que, se aceita,
+mataria a premissa de vintage do CHIRPS. Só ao ler o **href real** do listing viu que os prelim
+são `.tif.gz` (o `.gz` tinha sido cortado); o arquivo existe e é histórico. (2) O primeiro
+leitor usava `tifffile.geotiff_metadata`, que só popula com `GeoKeyDirectoryTag` — funcionava no
+arquivo real, mas quebrava na fixture recortada. Corrigido para ler as tags 33550/33922 direto
+da página (robusto e independe de geokeys). A lição repetida: **conclusão de fetcher só vale
+depois do teste ao vivo** — inspeção de URL não basta.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

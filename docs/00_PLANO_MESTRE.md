@@ -103,8 +103,14 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   divulgação` em `ingest/conab_calendar.py`, ano a ano de fontes primárias, sem interpolação;
   carimbo `avail_date` integrado ao contrato PIT (`attach_avail_date` + `available_asof`).
   A verificação pegou o site oficial exibindo datas falsas para 2022/23 — ver D-017.
-- ⬜ Ingestão das demais fontes da tese: clima (CHIRPS/POWER), ComexStat, ONI, NEFIN —
-  cada uma com carimbo de `avail_date` na entrada.
+- ✅ **Ingestão CHIRPS (clima primário, D-018)** (`ingest/chirps.py`): precipitação diária com
+  vintage real — `prelim` e `final` arquivados separadamente pela fonte, baixados com manifesto
+  (hash) e agregados em caixas lat/lon nomeadas por região produtora. GeoTIFF lido sem GDAL
+  (`tifffile`, Python puro). Verificado ao vivo: a revisão prelim→final de 15/01/2024 no
+  médio-norte de MT foi +0,87 mm/dia (~+23%) — a contaminação que a fonte com vintage existe
+  para medir. Carimbo `avail_date` = ref + 7 dias corridos (lag congelado, `01_TESE §5`).
+- ⬜ Ingestão das demais fontes da tese: clima secundário (NASA POWER, temperatura),
+  ComexStat, ONI, NEFIN — cada uma com carimbo de `avail_date` na entrada.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O

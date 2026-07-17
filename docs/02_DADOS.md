@@ -56,6 +56,18 @@ torcer para que não contamine.
 
 Precipitação é, além disso, o canal físico dominante do estresse hídrico em soja e milho.
 
+**Ingestão implementada e verificada ao vivo (2026-07-16, `ingest/chirps.py`, D-018).** Fatos do
+produto p05 confirmados no arquivo real: grade **2000×7200** (0.05°), canto superior-esquerdo em
+(lon −180, lat +50), `nodata = −9999`; GeoTIFF **sem compressão**, float32, geotransform
+auto-descrito nas tags `ModelPixelScale`/`ModelTiepoint` — lido **sem GDAL** (só `tifffile`,
+Python puro; cp314 não tem wheel de rasterio). URLs por data são imutáveis (prelim sob
+`/prelim/`, final sob `/global_daily/`), ambos `.tif.gz` de ~3 MB. **Prelim e final permanecem
+arquivados** (não é produto *rolling*): o timestamp do diretório corrobora a latência (prelim de
+15/01/2024 datado 17/01; final 15/02) e confirma que o vintage é reconstruível. **A revisão foi
+medida**: prelim→final de 15/01/2024 no médio-norte de MT = +0,87 mm/dia (~+23%). A agregação é
+por **caixas lat/lon nomeadas** (a escolha das caixas é da camada de sinal); o carimbo
+`avail_date` = ref + 7 dias corridos preserva `kind` (prelim/final) como eixo de vintage.
+
 ### 1.2 NASA POWER — temperatura e demais variáveis — **fonte secundária**
 
 | | |
