@@ -75,7 +75,8 @@ das empresas — e essa agregação é cara o suficiente para não estar no pre�
 
 Seja:
 
-- `c ∈ C` — commodity (soja, milho, cana/açúcar, café, algodão, boi, celulose)
+- `c ∈ C_primário = {soja, milho 2ª safra}` — D-023; outras culturas são especificações
+  secundárias e não substituem o resultado primário
 - `i ∈ U_t` — empresa no universo elegível na data `t` (universo **dinâmico**, ver §7)
 - `Shock_{c,t}` — índice de estresse climático da cultura `c`, agregado nacionalmente,
   observável em `t` (respeitando o lag de publicação — ver `02_DADOS.md`)
@@ -100,16 +101,16 @@ mais comum e mais caro deste tipo de estratégia.
 ### 3.1 O componente climático `Shock_{c,t}`
 
 ```
-Shock_{c,t} = Σ_g  w_{g,c,t} · z_{g,t}(janela fenológica de c)
+Shock_{c,t} = Σ_u  w_{u,c,t} · Shock_{u,c,t}(janela fenológica de c)
 ```
 
-- `g` — célula da grade meteorológica (NASA POWER / ERA5)
-- `w_{g,c,t}` — **peso de produção**: participação da célula `g` na produção nacional da
-  cultura `c`, segundo a **última safra já divulgada** em `t` (nunca a safra corrente —
-  isso seria lookahead; ver §6.2)
-- `z_{g,t}` — anomalia climática padronizada na célula `g`: z-score da variável (déficit de
-  precipitação acumulada, dias com T_max acima de limiar de estresse térmico) contra a
-  **climatologia da própria célula**, calculada apenas com anos anteriores a `t`
+- `u` — UF do suporte primário congelado em D-023; dentro dela, o clima municipal é ponderado
+  pela PAM/IBGE mais recente já publicada
+- `w_{u,c,t}` — **peso de produção** da UF segundo a safra CONAB anterior já encerrada
+  (nunca a safra corrente cuja revisão queremos prever; ver §6.2)
+- `Shock_{u,c,t}` — anomalia climática padronizada na UF. O caso primário é déficit de
+  precipitação CHIRPS; temperatura é robustez. A normalização usa a
+  **climatologia do mesmo trecho da janela**, calculada apenas com anos anteriores a `t`
   (climatologia expanding, nunca a média do período inteiro — isso também é lookahead)
 - **Janela fenológica**: a anomalia só é contada durante a fase crítica da cultura
   (floração/enchimento de grão), que é quando o estresse hídrico de fato destrói
@@ -287,9 +288,10 @@ combinações testadas — que é a forma mais comum de auto-engano em backtest.
 
 | Parâmetro | Valor primário | Justificativa (**não** derivada de retorno) |
 |---|---|---|
-| Variável climática | déficit de precipitação acumulada + dias de estresse térmico (`T_max > limiar`) na janela fenológica | Agronomia: são os dois canais físicos documentados de perda de produtividade |
+| Variável climática | **déficit de precipitação acumulada CHIRPS** na janela fenológica; temperatura é secundária | Canal dominante e única fonte climática com vintage reconstruível; D-023 reduz graus de liberdade e a contaminação POWER |
 | Climatologia base | z-score vs. média/desvio **expanding** dos anos anteriores (mín. 10 anos) | Único jeito de não usar o futuro. Descarta a climatologia fixa 1991-2020, que é lookahead |
-| Janela fenológica | por cultura e por região, do calendário agrícola CONAB/Embrapa | Fonte externa, definida a priori |
+| Culturas e UFs | soja (MT, GO, PR, RS, MS, MG, BA) + milho 2ª (MT, PR, GO, MS) | Menor suporte acima de 80% da produção no 12º lev. 2024/25, congelado sem consultar retornos (D-023) |
+| Janela fenológica | fixa por cultura × UF em `features/shock_spec.py` | CONAB/ZARC/Embrapa; datas e custo documentados em `09_FENOLOGIA_E_LIMIARES.md` |
 | Lag de publicação do clima | **7 dias corridos** | Conservador vs. a latência real da fonte (ver `02_DADOS.md`); sensibilidade testada em 3/7/14 dias |
 | Lag de publicação do ComexStat | data real de divulgação Secex + 1 dia útil | Calendário oficial de divulgação |
 | Exposição `E_{i,c}` | Método A (fundamentalista) | Auditável, não circular |
@@ -314,6 +316,9 @@ resposta:
 
 - **Todo** o desenvolvimento — escolha de variável climática, calibração de limiares,
   decisões de desenho — acontece **exclusivamente** em 2013-2019.
+- O produto CHIRPS `prelim` só existe a partir de 2015 e seu início foi carregado em bloco;
+  portanto o sinal point-in-time começa na safra **2015/16**. 2013-2014 permanecem no recorte
+  de preços/universo, mas não recebem `Shock` primário (R16).
 - O período 2020-2025 é **lacrado**. Ninguém do time roda backtest nele até o desenho
   estar congelado. Rodamos **uma única vez**, e o resultado — qualquer que seja — vai para
   o relatório.
@@ -345,8 +350,8 @@ o problema em vez de escondê-lo.
 | Viés | Como ele entraria aqui | Mitigação implementada |
 |---|---|---|
 | **Look-ahead climático** | usar dado meteorológico do dia `t` no dia `t` (a fonte só o publica dias depois); usar climatologia calculada com o período inteiro | Lag de publicação explícito (7d) + climatologia *expanding* + teste de sensibilidade ao lag |
-| **Look-ahead de reanálise** | NASA POWER/ERA5 **revisam** valores passados. O número que vemos hoje para 2015 pode não ser o que estava disponível em 2015 | **Não é totalmente removível com dado gratuito.** Assumido como limitação. Mitigamos usando variáveis robustas a revisão (acumulados mensais, não picos diários) e declaramos isso no relatório |
-| **Look-ahead do mapa de produção** | ponderar as células de grade pela produção da safra **corrente** (só conhecida no fim) | Usar sempre a **última safra já divulgada** em `t` |
+| **Look-ahead de reanálise** | NASA POWER/ERA5 **revisam** valores passados. O número que vemos hoje para 2015 pode não ser o que estava disponível em 2015 | Primário usa CHIRPS prelim arquivado. POWER fica somente em robustez térmica, com limitação de vintage declarada (D-023) |
+| **Look-ahead do mapa de produção** | ponderar a geografia pela safra corrente ou pela PAM ainda não divulgada | Pesos nacionais da safra CONAB anterior encerrada + PAM mais recente com data oficial de divulgação `≤t`; capturas datadas (D-023/R15) |
 | **Survivorship / backfill do universo** | rodar 2013-2025 com o universo de hoje (só quem sobreviveu e já abriu capital) | **Universo dinâmico**: a ação entra na data de IPO + 60 dias e sai na data de deslistagem. Contagem de ativos plotada |
 | **Multiple testing** | culturas × regiões × janelas × lags × limiares = centenas de combinações; alguma vai parecer significativa por acaso | Benjamini-Hochberg (FDR) sobre toda a família de testes + um único conjunto primário pré-registrado (§5) |
 | **Escolha oportunista de período** | escolher 2013-2025 porque foi onde funcionou | Split declarado a priori (§6), holdout lacrado |

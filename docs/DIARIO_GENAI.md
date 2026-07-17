@@ -525,6 +525,42 @@ SHA completo da API oficial e substituiu o valor pela sequência correta
 
 ---
 
+## 2026-07-16 — Congelamento fenológico e regional do `Shock`
+
+**Uso**: reconciliar a formulação ampla da tese com o que as fontes realmente permitem e
+transformar culturas, UFs, janelas e geografia numa especificação testável antes de consultar
+retornos.
+
+**Valor real**: a leitura conjunta do painel CONAB e das fontes oficiais reduziu o caso
+primário a soja + milho 2ª safra e chuva CHIRPS. O CSV oficial do ZARC, antes marcado como não
+testado, foi baixado e inspecionado: cerca de 202 MB, 36 decêndios, município, grupo de ciclo,
+solo, manejo e níveis de risco. Isso permitiu separar fonte agronômica de validação de um
+seletor de parâmetros. A geografia também mudou: caixas lat/lon úteis para testar ingestão não
+são uma base científica suficiente para o sinal; o contrato agora usa PAM/IBGE municipal,
+agregação por UF e peso CONAB da safra anterior.
+
+**Validação humana/mecânica**: participações físicas foram recalculadas diretamente no
+`LevantamentoGraos.txt` real (12º lev. 2024/25), sem abrir séries de retorno; calendário e
+fisiologia foram conferidos em CONAB, MAPA/ZARC e Embrapa. O contrato em
+`features/shock_spec.py` tem testes para escopo, UFs, direção do estresse, safra bissexta,
+janela tardia do RS, janela estreita da safrinha e falha alta em ano-safra ambíguo.
+
+**O que a IA errou**: a primeira reação foi expandir manualmente as duas caixas existentes
+para mais regiões produtoras. A auditoria cética mostrou que isso apenas multiplicaria
+retângulos escolhidos pelo pesquisador e não resolveria o alinhamento com a CONAB por UF. A
+segunda hipótese — usar o ZARC dinamicamente por município — também foi rebaixada: sem saber
+solo, cultivar e data real de semeadura, a granularidade oficial pode virar falsa precisão e
+abre dezenas de escolhas. Ambas foram substituídas por um primário menor e por uma geografia
+baseada em pesos físicos auditáveis.
+
+Uma segunda checagem derrubou uma afirmação herdada da ingestão: “CHIRPS cobre desde 1981” é
+verdade para o produto final, mas não para o prelim operacional. Consultas oficiais retornaram
+404 em 2008/2013 e 200 em 2015; o índice de 2015 mostrou janeiro/início de fevereiro carregados
+em bloco em 17/02. O primeiro ano-safra primário foi então movido para 2015/16 e a redução de
+amostra entrou como R16, em vez de preencher os anos faltantes com dados revisados.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

@@ -21,9 +21,9 @@ ano de seca não são três eventos, são um. Qualquer Sharpe, t-stat ou interva
 calculado sobre retornos diários está **inflando o N em uma ou duas ordens de grandeza**.
 
 **A defesa.** Parcial, e é honesto reconhecer isso:
-- Aumentamos o N cruzando culturas com ciclos **fenologicamente distintos** (soja: nov-mar;
-  milho safrinha: fev-jun; cana: abr-nov; café: florada em set-out e geada em jun-ago).
-  Isso dá vários eventos por ano civil, e não é o mesmo choque contado várias vezes.
+- O primário cruza soja e milho 2ª safra, com fases distintas, num painel de UFs. D-023
+  deliberadamente não adiciona cana, café e algodão apenas para inflar o N; essas culturas têm
+  mecanismos ou vintages diferentes e ficam secundárias.
 - Reportamos o **N efetivo** (eventos independentes), não o N nominal (linhas), e agrupamos
   os erros-padrão por ano-safra.
 - Usamos *block bootstrap* em vez de inferência i.i.d.
@@ -32,6 +32,7 @@ calculado sobre retornos diários está **inflando o N em uma ou duas ordens de 
 safras, **não temos poder estatístico para detectar um efeito pequeno.** Só conseguiríamos
 detectar um efeito grande. Se o efeito verdadeiro for modesto, nosso teste vai ser
 inconclusivo, e a resposta correta é dizer "inconclusivo", não espremer significância.
+O CHIRPS prelim só começa em 2015/16 (R16), reduzindo ainda mais a janela operacional.
 
 > **Esta é a limitação nº 1 do projeto.** Não tem solução dentro do escopo. Vai para o
 > relatório, na seção de limitações, escrita por nós — não descoberta pela banca.
@@ -81,10 +82,11 @@ meses depois). Nossa resposta:
 - Usar variáveis **robustas a revisão** (acumulados de precipitação ao longo de semanas, não
   picos diários).
 
-**Onde a defesa é fraca.** Para a **temperatura** (relevante no estresse térmico da soja e na
-geada do café) não encontramos fonte gratuita que preserve vintage. Essa parte do sinal
-**permanece contaminada por revisão**, em grau que precisamos medir. Se a magnitude for
-material, teremos de restringir o sinal à precipitação.
+**Onde a defesa é fraca.** Para a **temperatura** não encontramos fonte gratuita que preserve
+vintage. Por isso D-023 retirou o POWER do caso primário antes de observar retornos: temperatura
+é apenas robustez, com contaminação declarada. Ainda resta risco de vintage nos pesos espaciais
+da PAM, que revisa anos antigos (R15); captura datada não reconstrói versões anteriores que o
+IBGE já sobrescreveu.
 
 ---
 

@@ -105,6 +105,8 @@ esse paper, quando citado, entra com o mesmo cuidado dos §1-3.
 | ComexStat / Secex-MDIC | Confirmação por comércio exterior | `02_DADOS` §3 | fonte oficial (sem paper) |
 | COTAHIST (B3) | Preços + universo point-in-time | `02_DADOS` §4.2 | fonte oficial (sem paper) |
 | ONI (NOAA/CPC) | Controle El Niño/La Niña | `02_DADOS` §1.5; arquivo oficial `cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`; metodologia `ONI_v5.php` (verificados em 2026-07-16) | Huang et al. (2017), *Journal of Climate*, citado pela NOAA para ERSST.v5 — `[A CONFIRMAR: referência completa/DOI antes de citar]` |
+| ZARC / MAPA — Tábua de Risco | Validação externa das janelas de plantio | `09_FENOLOGIA_E_LIMIARES.md` §5; CSV 2024/25 + dicionário oficial verificados em 16/07/2026 | fonte oficial (sem paper) |
+| PAM / IBGE — SIDRA tabela 1612 | Peso espacial municipal point-in-time | `02_DADOS` §2.3; `09_FENOLOGIA_E_LIMIARES.md` §4 | fonte oficial; datas anuais de divulgação ainda precisam de mapa curado |
 
 ---
 
