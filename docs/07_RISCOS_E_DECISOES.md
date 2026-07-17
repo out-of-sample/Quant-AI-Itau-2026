@@ -696,6 +696,75 @@ ou parâmetro de sizing é calculado sobre 2020–2025 antes do portão do holdo
 
 ---
 
+### D-030 — Pré-registro das regressões de H1a e H1b (congelado antes de qualquer ajuste)
+**Data**: 2026-07-17
+
+Esta decisão **congela a especificação exata** dos dois testes do portão da Fase 2 **antes de
+observar qualquer coeficiente**. É a âncora anti-*p-hacking*: o que estiver aqui é o que roda,
+uma vez; qualquer variante posterior é robustez sob BH-FDR, nunca o resultado principal
+re-escolhido. O commit desta seção precede na história do git a geração dos resultados.
+
+**Parâmetros compartilhados (herdados e agora fechados).**
+- `Shock` = contrato primário congelado (D-023/D-028): soja + milho 2ª, sinal CHIRPS `prelim`,
+  climatologia expanding `final` (mín. 10 safras), `Shock = −z(chuva)`.
+- **`climatology_first_year = 2000`** — último parâmetro livre do `Shock`, fixado aqui. A
+  densidade de estações do CHIRPS no Brasil melhora a partir de ~2000 (antes é mais
+  satélite-only); a âncora dá à safra 2015/16 uma base de 15 anos, folga sobre o mínimo de 10.
+  Justificativa de **qualidade de dado**, não de resultado.
+- Perímetro do holdout: **D-029** — H1a/H1b rodam no span cheio, com sub-amostras
+  desenvolvimento (safras ≤ 2019/20) e holdout (2020/21–2024/25) reportadas em separado. A
+  decisão do portão usa o span cheio.
+- Inferência: erros agrupados por ano-safra (H1a); Newey–West HAC (H1b); *block bootstrap* como
+  robustez; **BH-FDR sobre a família primária** de 11 testes (abaixo).
+
+**H1a — o choque prevê a revisão da estimativa de safra da CONAB.**
+- Dado: painel de *vintages* `LevantamentoGraos` (safras **2017/18+**), soja (SOJA/UNICA) nas
+  UFs {MT,GO,PR,RS,MS,MG,BA} e milho 2ª (MILHO/2ª SAFRA) em {MT,PR,GO,MS}.
+- Observação: `(cultura c, UF u, safra s, levantamento n)`, com `n ≥ 2`.
+- **Variável dependente** (revisão): `y = log(prod_{s,u,n} / prod_{s,u,base})`, com `base` = o
+  primeiro levantamento presente de `(c,u,s)` (normalmente o 1º). Revisão log acumulada.
+- **Regressor**: `Shock_{c,u}` avaliado em `t = avail_date(lev n)` — o `Shock` da UF acumulado
+  até a publicação do levantamento (`uf_shock_asof`; linhas com `status ≠ ok`, i.e. janela não
+  iniciada, são descartadas). `t` fixo no corte de cada levantamento (D-028).
+- **Modelo**: OLS agrupado `y ~ α + β·Shock`, erros agrupados por safra; também por cultura.
+- **Sinal esperado: `β < 0`** (estresse ⇒ revisão para baixo). Este é o **motor do veto**.
+- **Falsificação**: `β ≥ 0` **ou** não-significativo após BH-FDR.
+
+**H1b — o choque prevê a exportação física (ex post, D-026; corroboração).**
+- Dado: ComexStat mensal, kg líquido (`metricKG`). Soja = NCM `12019000` (grão; farelo/óleo só
+  robustez); milho = `10059010`. Base **final**, ex post — sem *vintage*, por isso apenas
+  corrobora, nunca dimensiona (R18/D-026).
+- **Regressor**: `Shock_{c,s}` **nacional** da safra (janela plenamente decorrida,
+  `avail_date` do último levantamento).
+- **Desfecho**: variação log ano-contra-ano do volume exportado no `h`-ésimo mês após o fim da
+  janela fenológica da cultura, `h ∈ {3,4,5,6}`:
+  `Δ_h = log(kg_{mês(fim)+h, ano}) − log(kg_{mesmo mês, ano−1})`. Uma observação por
+  `(cultura, safra, h)`.
+- **Modelo**: por cultura e por `h`: `Δ_h ~ α + β·Shock`, erros Newey–West. Sinal esperado
+  `β < 0`.
+- **Adaptação declarada**: o `Shock` congelado (D-023) é por **ano-safra**, não uma série
+  mensal; a forma `h ∈ {3,4,5,6}` de `01_TESE` §4 é aplicada como o deslocamento do **mês de
+  exportação** em relação à colheita. Registrado aqui como parte de D-030.
+- **Papel**: corroboração física. Poder baixo (~8–9 safras); H1a é o motor do veto.
+
+**Família primária sob BH-FDR** (11 testes): H1a {agrupado, soja, milho} (3) + H1b {soja, milho}
+× `h∈{3,4,5,6}` (8).
+
+**Regra do portão (pré-registrada).** O portão **passa** se o `β` agrupado de H1a for `< 0` e
+significativo após BH-FDR sobre a família; H1b corrobora fisicamente. Se H1a falhar (sinal
+errado ou não-significativo), **paramos e reformulamos** — o achado negativo vai para o
+relatório, não é escondido. As sub-amostras dev/holdout são reportadas para transparência; a
+decisão usa o span cheio (D-029).
+
+**Custo/limitação**: N efetivo pequeno por construção (H1a ~8 safras-cluster; H1b ~8–9). O
+teste tem pouco poder para efeito pequeno — declarado desde já (`00_PLANO_MESTRE` §6, limitação
+nº 1). A revisão log acumulada e o `Shock` acumulado crescem ambos ao longo da safra; o
+agrupamento por safra trata a dependência serial intra-safra, mas o sinal não é mero
+co-tendência (o `z` de déficit sobe e desce conforme a chuva). Robustez à forma incremental
+(Δ entre levantamentos consecutivos) fica para a suíte, não para o primário.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
