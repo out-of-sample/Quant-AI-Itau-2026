@@ -17,6 +17,7 @@ dependencies = [
     "pyarrow>=17",   # parquet dos intermediários
     "requests>=2.32", # ingestão das APIs públicas
     "tifffile==2026.7.14", # leitura dos GeoTIFF do CHIRPS (Python puro, sem GDAL — cp314 ok)
+    "pyshp==3.1.4", # leitura da malha municipal histórica IBGE sem GDAL/GeoPandas
 ]
 
 [project.optional-dependencies]

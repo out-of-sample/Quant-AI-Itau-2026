@@ -131,7 +131,8 @@ continuam como **smoke tests de ingestão**, mas não definem a geografia do sin
 
 O procedimento congelado é:
 
-1. Obter a média CHIRPS diária dentro do polígono oficial de cada município do IBGE.
+1. Obter a média CHIRPS diária dentro da malha municipal IBGE **edição 2013**, fixa para todo
+   o teste e gerada antes da primeira janela operacional (D-024).
 2. Dentro de cada UF, ponderar municípios pela quantidade produzida na PAM/SIDRA tabela 1612,
    usando o ano mais recente cuja **data oficial de divulgação** seja `≤ D`.
 3. Para H1a, manter o painel por UF. Para o sinal nacional, agregar as UFs pelos pesos CONAB
@@ -150,14 +151,17 @@ Essa composição separa dois papéis:
 
 ### Limitações declaradas da geografia
 
-- A PAM é anual, sai tipicamente em setembro do ano seguinte e pode revisar anos antigos.
-  O pipeline precisa de capturas datadas + manifesto e de um mapa de datas de divulgação; usar
-  simplesmente a tabela atual para todo o passado criaria viés de vintage.
+- A PAM é anual e pode revisar anos antigos. O calendário efetivo 2014–2024 está curado em
+  `pam_calendar.py`; capturas e manifestos provam a versão usada, mas não reconstroem valores
+  originalmente publicados. Os 130 símbolos `...` da captura integral permanecem `NaN` e são
+  contabilizados por cultura/UF.
 - A PAM não separa milho 1ª e 2ª safra por município. Nos quatro estados selecionados, o peso
   municipal de milho total é um proxy espacial para o milho 2ª safra; essa aproximação entra
   como risco, não como precisão fictícia.
 - Média municipal não é máscara de talhão. Ela é mais defensável do que uma caixa arbitrária,
   mas ainda dilui microclimas e heterogeneidade dentro de municípios grandes.
+- A malha 2013 evita fronteiras futuras e quebra estrutural do suporte, ao custo de ignorar
+  refinamentos de limites posteriores. Geocódigo positivo ausente falha alto; não é descartado.
 - O ZARC identifica municípios e decêndios aptos, mas não informa onde e quando cada produtor
   efetivamente semeou. Usá-lo para mover a janela safra a safra fingiria precisão inexistente.
 

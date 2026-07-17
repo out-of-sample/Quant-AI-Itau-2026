@@ -561,6 +561,39 @@ amostra entrou como R16, em vez de preencher os anos faltantes com dados revisad
 
 ---
 
+## 2026-07-16 — Regionalização PIT com PAM e malha municipal IBGE
+
+**Uso**: transformar a geografia congelada em D-023 numa ingestão reproduzível, sem usar
+fronteiras futuras, valores PAM ainda não publicados ou decisões orientadas por retorno.
+
+**Valor real**: a pesquisa reuniu as datas efetivas de divulgação da PAM 2014–2024 e separou
+os dois relógios (`ref_date` e `avail_date`). Também testou a API de malhas com `periodo`: ela
+entregou 2019–2022, mas retornou erro 500 para 2014–2018 e 2023–2024. Em vez de misturar
+vintages e *fallbacks*, foi localizada a edição municipal IBGE 2013 arquivada, cujos membros
+foram gerados em março/2015. Isso levou à decisão de suporte fixo pré-amostra. A solução usa
+PyShp puro e mantém geocódigo, bbox, GeoJSON, versão, hash e datas auditáveis.
+
+**Validação humana/mecânica**: fixtures reais preservam resposta SIDRA e dois polígonos sem
+simplificação do ZIP oficial. A captura integral somou 38.467 linhas PAM; as sete malhas foram
+parseadas e casaram com toda produção positiva nos estados/culturas do primário em três cortes
+*as-of* (2015, 2020 e 2025). Testes cobrem calendário, códigos de produto/unidade, símbolos,
+pesos, schema geográfico, SIRGAS, bbox, cache, manifestos e falha de cobertura. Nenhum retorno
+foi consultado. A data interna 16/03/2015, igual nos sete ZIPs oficiais, também virou tripwire
+contra substituição silenciosa do artefato pré-amostra.
+
+**O que a IA errou**: a primeira implementação supôs que qualquer símbolo diferente de `-`
+deveria bloquear os pesos. O teste integral revelou 130 ocorrências de `...`, que no SIDRA
+significam dado indisponível e se concentram em municípios urbanos. Bloquear toda a série era
+excessivo; convertê-las em zero seria cientificamente errado. A regra foi corrigida para
+preservar `NaN`, normalizar apenas a tonelagem reportada e carregar a contagem de ausentes por
+cultura/UF. A suposição inicial de que `periodo` cobriria toda a API de malhas também foi
+falsificada antes de entrar no código.
+Uma revisão posterior pegou ainda um erro de cache antes do PR: o nome inicial da captura
+identificava produto e anos, mas não as UFs. O escopo estadual passou a fazer parte do nome,
+impedindo que consultas diferentes reutilizem silenciosamente o mesmo arquivo.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
