@@ -1,7 +1,7 @@
 # Catálogo de dados, latências e regras point-in-time
 
-> Todas as fontes abaixo foram **testadas ao vivo** (requisição real ao endpoint) em
-> 2026-07-13/14. O que não foi possível confirmar está marcado como **NÃO CONFIRMADO** —
+> Todas as fontes abaixo foram **testadas ao vivo** (requisição real ao endpoint) entre
+> 2026-07-13 e 2026-07-17. O que não foi possível confirmar está marcado como **NÃO CONFIRMADO** —
 > nada aqui é assumido por plausibilidade.
 >
 > Este é o documento mais importante do projeto depois do pré-registro. A maior parte dos
@@ -204,7 +204,7 @@ publicar?*
 |---|---|
 | 🔴 **O painel de vintages só começa em 2017/18** (~9 safras) | Limita severamente o poder estatístico desta camada. A série longa (1976/77) só tem o número final |
 | ✅ **O arquivo NÃO traz a data de publicação de cada levantamento** — só o número (1-12) | **Resolvido (R10, D-017)**: mapa `(ano_agricola, id_levantamento) → data` curado ano a ano de fontes primárias em `ingest/conab_calendar.py` — grãos 2017/18→2025/26 completo, café 2017→2026, cana 2017/18→2026/27. Ver §2.3 |
-| 🟡 Granularidade **por UF**, não município | Aceitável: a grade meteorológica (~55 km) também não sustenta resolução municipal |
+| 🟡 O desfecho CONAB tem granularidade **por UF**, não município | O clima primário é CHIRPS p05 (~5 km), agregado primeiro por município e ponderado pela PAM (D-027/D-028). A regressão H1a continua no nível UF e não localiza fazendas individuais; isso é ruído de medida, não justificativa para usar a grade POWER de ~55 km |
 | 🟡 **O TXT do portal atrasa dias em relação ao boletim** | Verificado ao vivo: 10º lev de grãos 2025/26 divulgado em 14/07/2026, mas em 16/07 o `LevantamentoGraos.txt` ainda só continha até o 9º. O número é público na data do boletim (é ela o `avail_date`); o TXT é só o canal de captura, e o manifesto prova qual vintage baixamos |
 
 ### 2.3 Fatos do arquivo e do calendário (verificados em 2026-07-16)
@@ -336,9 +336,9 @@ Havia a expectativa de que o dado semanal do MDIC desse frequência semanal ao s
 - Os dados são **acumulados month-to-date** (não semana isolada) e fortemente revisados
   semana a semana.
 
-**Decisão**: a camada de confirmação opera em **frequência mensal**. O dado semanal entra no
-relatório como *"o que passaríamos a coletar em produção"* (próximo passo), não como base do
-backtest. Coletar a partir de hoje renderia ~5 observações até a entrega — inútil.
+**Decisão**: a camada de confirmação opera em **frequência mensal**. O dado semanal pode ser
+mencionado como extensão hipotética de produção, mas está fora do experimento e **não é uma
+pendência ativa**. Coletar a partir de hoje renderia ~5 observações até a entrega — inútil.
 
 ### 3.5 NCMs verificados (contra a tabela oficial)
 
@@ -495,11 +495,13 @@ completo de dinheiro segue no `GetListedCashDividends`.
 > contém COVID, o pico de commodities de 21/22 e o bear market de grãos de 23/24. Um Sharpe
 > bonito aí é quase certamente sorte.
 
-**Como resolvemos**: o backtest **primário** é o de **histórico longo** (2008-2025), e o
+**Como resolvemos**: o backtest **primário** preserva o núcleo histórico de empresas, mas o
+`Shock` negociável começa somente na safra **2015/16** (R16), e o
 universo é ampliado para **~14 nomes** incluindo os *adjacentes* — empresas que compram
 insumo agrícola (MDIA3 compra trigo; KEPL3 vende silos; CAML3 processa arroz) e que, pela
 lógica da tese, têm exposição líquida **negativa** bem definida. Isso recupera o lado short
-sem depender dos IPOs de 2021, e dá 18 anos de histórico.
+sem depender dos IPOs de 2021. Preços anteriores permanecem úteis para histórico, liquidez e
+eventos corporativos, mas não fabricam anos de sinal climático point-in-time.
 
 O universo amplo pós-2021 vira o **backtest secundário**, com a limitação declarada.
 
@@ -616,6 +618,10 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 5. ✅ **Revisão do ComexStat** — magnitude histórica não reconstruível: API/CSVs só expõem o
    vintage atual e o Wayback não preservou os artefatos consultados. O gate sai do sizing;
    ComexStat fica em H1b *ex post* e os snapshots medem revisões futuras (D-026/R18).
-6. ✅ **Especificação fenológica e regional do `Shock`** — congelada em D-023, sem consultar
-   retornos; ingestão PIT da PAM e malha municipal fixa implementadas em D-024. Falta calcular
-   a interseção raster→município→UF em C2. A auditoria da Fase 1 foi fechada em D-025/D-026.
+6. ✅ **Especificação e cálculo do `Shock`** — contrato congelado em D-023, ingestão PIT da
+   PAM/malha municipal em D-024, regionalização raster→município em D-027 e cálculo as-of
+   município→UF→nacional em D-028, todos sem consultar retornos. A auditoria da Fase 1 foi
+   fechada em D-025/D-026; os rodadores H1a/H1b são o portão da Fase 2.
+
+Pendências que atravessam fases e não pertencem a uma camada futura são controladas em
+`12_PENDENCIAS_TRANSVERSAIS.md`.

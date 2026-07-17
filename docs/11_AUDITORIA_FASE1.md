@@ -126,6 +126,7 @@ Fontes:
 
 A Fase 1 está encerrada porque as fontes centrais têm contrato explícito, os riscos de vintage
 que podem ser mitigados foram tratados e o único uso historicamente impossível — o gate
-ComexStat — foi retirado do sinal, em vez de ser aproximado silenciosamente. O próximo passo é
-construir C2 `Shock` (raster CHIRPS → município → UF → painel CONAB) e testar H1a/H1b antes de
-qualquer backtest de ações.
+ComexStat — foi retirado do sinal, em vez de ser aproximado silenciosamente. C2 `Shock` foi
+construído em D-027/D-028 (raster CHIRPS → município → UF → painel CONAB). O próximo portão é
+testar H1a/H1b antes de qualquer backtest de ações, após resolver PT-001. Dívidas legadas que
+não pertencem às fases futuras estão centralizadas em `12_PENDENCIAS_TRANSVERSAIS.md`.

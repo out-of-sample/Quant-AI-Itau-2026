@@ -214,11 +214,11 @@ forma que uma regressão de retornos diários não consegue.
    limita severamente o poder estatístico desta camada específica (ver `05_SUITE_ROBUSTEZ.md`
    §6 sobre N efetivo).
 2. **O arquivo não traz a data de publicação de cada levantamento** — só o número (1 a 12).
-   Precisamos mapear `(safra, nº do levantamento) → data de divulgação` manualmente, a
-   partir dos calendários oficiais. Errar essa data por poucos dias contamina o estudo de
-   evento, então o mapeamento tem que ser conferido ano a ano, não interpolado.
-3. **Granularidade é por UF, não por município.** Aceitável, porque a grade meteorológica
-   utilizável (0.5°, ~55 km) também não sustenta resolução municipal.
+   R10/D-017 resolveram o carimbo com calendário curado ano a ano, sem interpolação. As poucas
+   datas antigas com evidência única continuam como dívida de proveniência PT-005.
+3. **O desfecho é por UF, não por município.** O clima primário usa CHIRPS p05 (~5 km),
+   agregado por município e ponderado pela PAM antes de chegar à UF (D-027/D-028). Isso reduz
+   a aproximação espacial, mas não identifica a localização exata das fazendas das empresas.
 
 ### 3.4 A camada de confirmação: comércio exterior (ComexStat)
 
@@ -318,7 +318,8 @@ resposta:
 ```
 
 - **Todo** o desenvolvimento — escolha de variável climática, calibração de limiares,
-  decisões de desenho — acontece **exclusivamente** em 2013-2019.
+  decisões de desenho — acontece **exclusivamente** até 2019. O recorte declarado começa em
+  2013, mas o `Shock` primário point-in-time só produz observações desde 2015/16 (R16).
 - O produto CHIRPS `prelim` só existe a partir de 2015 e seu início foi carregado em bloco;
   portanto o sinal point-in-time começa na safra **2015/16**. 2013-2014 permanecem no recorte
   de preços/universo, mas não recebem `Shock` primário (R16).
@@ -334,7 +335,7 @@ resposta:
 existe *depois* de 2020. Ou seja, o período com universo rico é justamente o holdout. Não
 há solução limpa para isso. Nossa resposta é rodar **dois backtests declarados desde já**:
 
-- **Backtest A — "núcleo histórico" (2013-2025)**: universo restrito às empresas listadas
+- **Backtest A — "núcleo histórico" (sinal 2015/16–2025)**: universo restrito às empresas listadas
   desde ~2012 (SLCE3, SMTO3, JBSS3, BRFS3, MRFG3, BEEF3, SUZB3, KLBN11, AGRO3, RAIL3).
   Menos nomes, mas histórico longo e split in-sample/holdout íntegro.
 - **Backtest B — "universo amplo" (2021-2025)**: todos os nomes, incluindo os IPOs de
@@ -355,9 +356,9 @@ o problema em vez de escondê-lo.
 | **Look-ahead climático** | usar dado meteorológico do dia `t` no dia `t` (a fonte só o publica dias depois); usar climatologia calculada com o período inteiro | Lag de publicação explícito (7d) + climatologia *expanding* + teste de sensibilidade ao lag |
 | **Look-ahead de reanálise** | NASA POWER/ERA5 **revisam** valores passados. O número que vemos hoje para 2015 pode não ser o que estava disponível em 2015 | Primário usa CHIRPS prelim arquivado. POWER fica somente em robustez térmica, com limitação de vintage declarada (D-023) |
 | **Look-ahead do mapa de produção** | ponderar a geografia pela safra corrente, PAM ainda não divulgada ou fronteira futura | Pesos CONAB da safra anterior + PAM mais recente com `avail_date≤t` + malha IBGE 2013 fixa pré-amostra; capturas datadas (D-023/D-024/R15) |
-| **Survivorship / backfill do universo** | rodar 2013-2025 com o universo de hoje (só quem sobreviveu e já abriu capital) | **Universo dinâmico**: a ação entra na data de IPO + 60 dias e sai na data de deslistagem. Contagem de ativos plotada |
+| **Survivorship / backfill do universo** | rodar o histórico com o universo de hoje (só quem sobreviveu e já abriu capital) | **Universo dinâmico**: a ação entra na data de IPO + 60 dias e sai na data de deslistagem. Contagem de ativos plotada |
 | **Multiple testing** | culturas × regiões × janelas × lags × limiares = centenas de combinações; alguma vai parecer significativa por acaso | Benjamini-Hochberg (FDR) sobre toda a família de testes + um único conjunto primário pré-registrado (§5) |
-| **Escolha oportunista de período** | escolher 2013-2025 porque foi onde funcionou | Split declarado a priori (§6), holdout lacrado |
+| **Escolha oportunista de período** | escolher o período porque foi onde funcionou | Split declarado a priori (§6), holdout lacrado; perímetro de H1 será fechado em PT-001 antes do teste |
 | **Autocorrelação inflando t-stats** | o sinal climático é altamente persistente; retornos sobrepostos violam independência | Newey-West + *block bootstrap* para inferência |
 | **Viés de sobrevivência do sinal** | testar 21 teses e reportar a que funcionou | As 20 teses descartadas estão documentadas em `05_Ideacao_Tese/teses_candidatas.md` com a justificativa da escolha, feita **antes** de qualquer backtest |
 | **Ilusão de liquidez** | assumir que dá para operar R$ 10 mi em JALL3 | Filtro de ADTV mínimo + modelo de slippage proporcional à participação no volume |

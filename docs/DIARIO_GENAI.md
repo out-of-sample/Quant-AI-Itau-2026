@@ -686,6 +686,34 @@ precisa fixar `t` nos cortes dos levantamentos (documentado em D-028).
 
 ---
 
+## 2026-07-17 — Auditoria documental e registro único de pendências
+
+**Uso**: varrer documentação e código em busca de estados defasados, marcadores de pendência e
+contradições entre decisões já implementadas e textos antigos; separar dívida legada de trabalho
+normal de fases futuras; criar um registro público com prioridade e critério de encerramento.
+
+**Valor real**: a auditoria corrigiu a descrição do repositório como “Fase 0 sem implementação”,
+marcadores que ainda tratavam PAM/regionalização/`Shock` e o cross-check de preços como abertos,
+e o gate ComexStat que permanecia no protocolo apesar de ter sido removido em D-026. Também
+encontrou uma superestimação científica mais séria: alguns textos ainda prometiam 18 anos de
+sinal ou aproximadamente 12–18 safras, embora o CHIRPS operacional comece em 2015/16 e H1a
+dependa do painel CONAB iniciado em 2017/18. O projeto passa a reportar N efetivo por teste.
+
+**Validação humana/mecânica**: busca global por `TODO`, `a definir`, `a confirmar`, “pendente”,
+checkboxes e frases de próximo passo; reconciliação com D-017–D-028, estado dos módulos em
+`03_ARQUITETURA.md` e checklist do plano mestre. Cada resultado foi classificado como: dívida
+transversal (`12_PENDENCIAS_TRANSVERSAIS.md`), entrega de fase futura, limitação aceita em R-NNN
+ou registro histórico já encerrado por decisão posterior.
+
+**O que a IA errou**: a primeira leitura tratou todas as ocorrências textuais de “pendente” como
+backlog potencial. Isso misturava checklists de revisão, decisões históricas preservadas e
+trabalho corretamente alocado a fases futuras. A classificação foi refeita pelo **critério de
+propriedade**: só entra no registro transversal o que já deveria ter sido resolvido, cruza fases
+ou não tem outro lugar canônico. Essa correção evitou transformar o novo arquivo numa segunda
+cópia do plano mestre.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

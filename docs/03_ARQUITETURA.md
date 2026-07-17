@@ -184,7 +184,6 @@ concretos. Alimenta o relatório de 5 páginas.
 
 ```
 .
-├── CLAUDE.md                    convenções técnicas do repositório
 ├── CONTRIBUTING.md              branches, commits, PRs, checklist de revisão
 ├── README.md
 ├── docs/
@@ -194,18 +193,20 @@ concretos. Alimenta o relatório de 5 páginas.
 │   ├── 03_ARQUITETURA.md        (este arquivo)
 │   ├── 04_PROTOCOLO_BACKTEST.md
 │   ├── 05_SUITE_ROBUSTEZ.md
-│   ├── 06_CRITICA_ADVERSARIAL.md  o projeto atacado pelas personas céticas
+│   ├── 06_CRITICA_ADVERSARIAL.md  crítica hostil do próprio projeto
 │   ├── 07_RISCOS_E_DECISOES.md    risk register + log de decisões
-│   ├── 08_IDENTIDADE_ROBO.md      nome + identidade visual (5% da nota)
+│   ├── 08_IDENTIDADE.md           nome + identidade visual (5% da nota)
 │   ├── 09_FENOLOGIA_E_LIMIARES.md  janelas e limiares agronômicos por cultura/UF
 │   ├── 10_REFERENCIAS.md          referências acadêmicas, métodos e fontes (com proveniência)
+│   ├── 11_AUDITORIA_FASE1.md      evidências do fechamento da ingestão
+│   ├── 12_PENDENCIAS_TRANSVERSAIS.md  dívidas sem fase proprietária
 │   ├── DIARIO_GENAI.md            registro contínuo de uso de IA (15% da nota)
 │   └── adr/                       Architecture Decision Records
 ├── pyproject.toml               empacotamento + config de ruff/pytest
 ├── requirements.lock            stack pinado com hashes (reprodutível)
 ├── scripts/                     guards determinísticos (check_lookahead, check_secrets)
 ├── src/quantagro/
-│   ├── ingest/              C0 — cotahist (preço/universo), events_b3 (proventos)
+│   ├── ingest/              C0 — preços, eventos, safra, clima, comércio e controles
 │   ├── validate/            C1 — schemas e carimbo PIT
 │   ├── prices/             C0–C1 — COTAHIST + eventos → retorno total point-in-time
 │   ├── features/            C2 — shock, exposure, context
@@ -241,7 +242,7 @@ regenerável pelo código. O manifesto é pequeno e é a **prova** de qual vinta
 | Interpretador | **3.14** (única versão na máquina) | verificado: pandas 3.0.3 / numpy 2.5.1 / scipy 1.18 / statsmodels 0.14.6 têm wheels e funcionam |
 | pandas | **3.x** | consequência do 3.14 — pandas 2.x não tem wheel para cp314. **Atenção: pandas 3 tem breaking changes vs. 2.x** (Copy-on-Write por padrão); tutoriais antigos podem não funcionar. Registrado em ADR |
 | Formato intermediário | Parquet | tipado, comprimido, rápido; CSV perde tipo e é fonte de bug silencioso |
-| Loops | vetorizar com pandas/numpy | já é convenção do `CLAUDE.md` |
+| Loops | vetorizar com pandas/numpy | reduz custo e evita estados implícitos em séries/painéis |
 | Reprodutibilidade | dependências pinadas + lockfile + seed fixa | um backtest que não roda igual duas vezes não é evidência de nada |
 
 ---
@@ -270,7 +271,7 @@ Hooks e CI existem para tornar impossível o erro que mais custa neste projeto.
 
 ---
 
-## 6. Estado de implementação (atualizado em 2026-07-16)
+## 6. Estado de implementação (atualizado em 2026-07-17)
 
 O que já existe em `src/quantagro/` e obedece ao contrato acima. O restante permanece
 especificação (§2) até ser construído — e cada peça construída entra com teste e CI verde.
