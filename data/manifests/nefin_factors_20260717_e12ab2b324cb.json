@@ -1,0 +1,17 @@
+{
+  "source": "NEFIN-FEA-USP",
+  "page_url": "https://nefin.com.br/data/risk-factors/",
+  "public_url": "https://nefin.com.br/resources/risk_factors/nefin_factors.csv",
+  "repository": "nefin/nefin.github.io",
+  "file_path": "static/resources/risk_factors/nefin_factors.csv",
+  "commit_sha": "e12ab2b324cbd0d26e300477949349711598bccc",
+  "commit_date": "2026-06-19T20:31:52Z",
+  "commit_message": "Weekly partial update",
+  "pinned_url": "https://raw.githubusercontent.com/nefin/nefin.github.io/e12ab2b324cbd0d26e300477949349711598bccc/static/resources/risk_factors/nefin_factors.csv",
+  "first_ref_date": "2001-01-02",
+  "last_ref_date": "2026-06-02",
+  "rows": 6299,
+  "sha256": "da80260e1a67e6860a90db7b10a61964f9ebe209bf3234e3a8e0b11e91a5ec23",
+  "bytes": 879162,
+  "downloaded_at": "2026-07-17T01:10:51.616328+00:00"
+}
