@@ -29,6 +29,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
 | R13 | **ONI histórico contaminado por revisão** — a NOAA sobrescreve valores recentes e atualiza a base centrada a cada cinco anos | Confirmada | Médio | Captura datada + hash; caso primário espera a janela declarada de 2 meses; sensibilidade com publicação inicial e RONI | Mitigado parcialmente. **Vintage histórico não é reconstruível** |
+| R14 | **NEFIN reescreve fatores históricos** — HML mudou materialmente entre dois snapshots oficiais | Confirmada | Alto para H4 | URL presa ao SHA, manifesto e comparação de vintages; fatores restritos à atribuição ex post | Mitigado. **Não usar NEFIN para gerar posição** |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -386,6 +387,34 @@ captura por dia e manifesto com hash, última temporada e metodologia. Validaç�
 revisões históricas causadas pela atualização quinquenal dos períodos-base. A defesa é
 transparência + sensibilidade; não existe engenharia capaz de reconstruir um arquivo que a
 fonte não arquivou.
+
+---
+
+### D-022 — NEFIN: snapshot preso ao commit e uso exclusivamente ex post em H4
+**Data**: 2026-07-16
+Os fatores NEFIN são observações diárias, mas a fonte publica o CSV inteiro em lotes. A
+frequência do dado não autoriza supor disponibilidade D+1. O repositório oficial GitHub Pages
+permite prender cada captura ao commit que publicou o arquivo; esse SHA, e não a branch
+mutável, é a unidade de vintage de `ingest/nefin.py`.
+
+A comparação empírica dos dois commits disponíveis desde a migração do site derrubou a
+hipótese de atualização apenas por *append*. Entre os snapshots de 01/06 e 19/06/2026:
+- ambos têm 6.218 datas sobrepostas; o novo acrescenta observações até 02/06;
+- HML mudou em 4.484 datas acima de `1e-10`, sendo 3.889 por mais de 1 bp;
+- a maior revisão do HML foi 2,759 p.p.; WML teve 21 mudanças acima de 1 bp;
+- `Risk_Free` ficou idêntico.
+
+Todas as linhas do painel recebem `avail_date` igual à data do commit do snapshot. Não se
+inventa um calendário histórico por linha. Essa aparente perda de granularidade não prejudica
+o desenho porque NEFIN entra somente na regressão de *spanning* H4, executada **ex post** para
+atribuir os retornos já realizados; os fatores nunca alimentam sinal, *sizing* ou execução.
+
+Validação ao vivo: snapshot `e12ab2b324cbd0d26e300477949349711598bccc`, publicado em
+19/06/2026, com 6.299 pregões de 02/01/2001 a 02/06/2026.
+
+**Custo/limitação**: o histórico de commits do site atual começa em junho de 2026; vintages
+anteriores não são reconstruíveis por esse canal. H4 descreve a atribuição segundo a
+metodologia e o snapshot registrados, não o fator que teria sido baixado em cada data passada.
 
 ---
 

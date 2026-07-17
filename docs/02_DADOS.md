@@ -491,6 +491,27 @@ longo e gratuito. **Item em aberto.**
 Fatores Mercado, SMB, HML, WML, IML (iliquidez), públicos e gratuitos. Usados na *spanning
 regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fatores caseiros.
 
+**Fonte oficial**: `https://nefin.com.br/resources/risk_factors/nefin_factors.csv`, servida
+pelo repositório público `nefin/nefin.github.io`. O arquivo tem retornos **diários em decimal**
+desde 02/01/2001, nas colunas `Rm_minus_Rf`, `SMB`, `HML`, `WML`, `IML` e `Risk_Free`.
+
+🔴 **Frequência do dado ≠ frequência de publicação.** O site informa atualizações
+periódicas, mas publica o histórico inteiro em lote. Na captura de 16/07/2026, o último pregão
+era 02/06 e o commit que publicou o snapshot era de 19/06. Não existe evidência para assumir
+`avail_date = ref_date + 1`.
+
+🔴 **Revisão retroativa material, medida.** O repositório oficial preserva dois commits do
+CSV desde a migração do site. Comparando 01/06/2026 (6.218 linhas até 02/02) com 19/06/2026
+(6.299 linhas até 02/06), na sobreposição:
+- HML mudou acima de `1e-10` em **4.484/6.218** datas e mais de 1 bp em **3.889**;
+- maior revisão absoluta do HML: **2,759 p.p.** (05/11/2001);
+- WML mudou mais de 1 bp em 21 datas; `Risk_Free` não mudou.
+
+D-022 baixa o arquivo pela URL *raw* presa ao SHA do commit, não pela branch mutável, e
+grava SHA, timestamp, hash e cobertura no manifesto. Todas as linhas recebem `avail_date`
+igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN entra na H4 como
+**atribuição ex post**, depois que os retornos ocorreram; nunca alimenta o sinal ou a carteira.
+
 ---
 
 ## 6. Resumo: latência e vintage por fonte
@@ -509,7 +530,7 @@ regression* (H4) — é o padrão acadêmico brasileiro, e evita improvisar fato
 | yfinance | D+1 | 🔴 **apaga deslistados** | só conferência cruzada |
 | Futuros (yfinance) | D+1 | ✅ | preço de commodity |
 | ONI (NOAA) | até dia 5; caso primário espera +2 meses | 🔴 não (revisão recente + base quinquenal) | controle (El Niño) |
-| NEFIN | mensal | ✅ | fatores de risco (H4) |
+| NEFIN | diário, publicado em lotes irregulares | parcial (commits desde jun/2026; revisão histórica material) | fatores ex post (H4) |
 
 ---
 

@@ -499,6 +499,32 @@ falsificou. O resumo de dados foi corrigido para não carregar essa segurança i
 
 ---
 
+## 2026-07-16 — Ingestão dos fatores de risco NEFIN
+
+**Uso**: implementar os controles brasileiros da regressão de *spanning* H4 sem confundir
+observação diária com disponibilidade diária nem assumir que a fonte era append-only.
+
+**Valor real**: a investigação identificou que o site oficial é servido por um repositório
+GitHub Pages público. Isso permitiu substituir a URL mutável por uma URL presa ao SHA do commit
+e, principalmente, comparar dois vintages oficiais. O teste mostrou revisão material do HML:
+4.484 de 6.218 datas sobrepostas mudaram acima de `1e-10`, 3.889 por mais de 1 bp e a maior
+mudança foi 2,759 p.p. O achado mudou o contrato: NEFIN virou snapshot de atribuição ex post,
+nunca dado D+1 para a carteira.
+
+**Validação humana/mecânica**: dois commits oficiais baixados por SHA e comparados; fixtures
+reais preservam cinco datas na sobreposição e uma data nova. O downloader real obteve 6.299
+pregões (02/01/2001–02/06/2026), commit de 19/06/2026, e reproduziu a revisão de 05/11/2001.
+Testes cobrem schema, decimais, nulos, duplicatas, SHA, resposta da API, cache, manifesto,
+revisão de vintage e filtro *as-of*.
+
+**O que a IA errou**: ao montar inicialmente o teste, completou o prefixo observado do commit
+com um sufixo não verificado. Antes da validação ao vivo, a checagem de proveniência exigiu o
+SHA completo da API oficial e substituiu o valor pela sequência correta
+`e12ab2b324cbd0d26e300477949349711598bccc`. O episódio reforça a regra de
+`10_REFERENCIAS.md`: identificador plausível não é proveniência; copiar somente da fonte.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

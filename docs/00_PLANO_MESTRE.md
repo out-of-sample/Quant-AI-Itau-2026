@@ -127,7 +127,14 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
   parser da temporada trimestral centrada, captura datada + manifesto e carimbo conservador.
   A NOAA publica até o dia 5 e pode revisar os dois valores mensais seguintes; o caso primário
   só disponibiliza o valor após essa janela. A fonte não arquiva vintages, limitação declarada.
-- ⬜ Ingestão **NEFIN** (fatores de risco de H4), com carimbo de `avail_date` na entrada.
+- ✅ **Ingestão NEFIN (fatores de risco de H4, D-022)** (`ingest/nefin.py`): fatores diários
+  presos ao SHA do commit oficial, manifesto e carimbo pelo snapshot. A comparação de dois
+  vintages provou revisão histórica material do HML; por isso os fatores são controles de
+  atribuição **ex post**, nunca informação para gerar posição.
+
+> **Portão (fontes centrais): ATRAVESSADO em 2026-07-16.** Preços, safra, clima, exportação
+> e controles ONI/NEFIN têm ingestão reproduzível e contrato PIT. A Fase 1 permanece aberta
+> apenas para o fechamento das pendências de congelamento do dataset e do desenho fenológico.
 
 > **Portão (lado preços): ATRAVESSADO em 2026-07-16.** A série de preços delisting-aware e
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. O
