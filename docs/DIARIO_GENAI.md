@@ -739,6 +739,39 @@ desenho não se justifica por conveniência estatística sem o custo declarado.
 
 ---
 
+## 2026-07-17 — Rodadores do portão da Fase 2 (D-030 pré-registro, D-031 resultado)
+
+**Uso**: pré-registrar em D-030 a especificação exata de H1a/H1b (variável dependente, regressor,
+sinal esperado, `climatology_first_year=2000`, família BH-FDR) e implementar a maquinaria — módulo
+`stats` (cluster-robust, Newey–West, cluster/block bootstrap, BH-FDR), rodadores H1a/H1b,
+orquestrador do portão, e o builder do painel municipal CHIRPS (streaming de 6.197 rasters).
+A spec foi commitada **antes** dos resultados (história do git prova a ordem).
+
+**Valor real**: o portão foi atravessado com evidência forte — H1a agrupado β=−0,067, sinal
+correto (estresse ⇒ revisão para baixo), consistente no desenvolvimento e no holdout. O
+pipeline inteiro (regionalização, `Shock` as-of, regressão agrupada, BH-FDR) rodou de ponta a
+ponta com dados reais, e o BH-FDR foi conferido linha a linha contra o statsmodels.
+
+**O que a IA errou, e como a verificação pegou** (três erros, todos apanhados por execução, não
+por inspeção):
+1. **Explosão de desempenho**: o painel municipal tem ~16M linhas e `_stretch_sum` refiltra a
+   cada ano de climatologia × spec × corte. A primeira rodada travou. Só um teste de tempo (não
+   a leitura do código) revelou o custo real; a correção foi memoizar por corte + split por UF.
+2. **Bug de memoização sutil**: a primeira chave usou o `vis_max` cru do prelim, mas depois do
+   fim da janela o `vis_max` cresce enquanto o **corte fica preso em `window_end`** — então todo
+   levantamento tardio era cache-miss recomputando o mesmo `Shock`. Só o benchmark de 2 safras
+   (112s, não 300s+) confirmou que a chave certa é o **corte clamado**, não o `vis_max`.
+3. **Carimbo faltando**: `shock_asof` chama `available_asof(conab, t)` por dentro (pesos
+   nacionais), que exige `avail_date`; H1b passava o CONAB cru. Peguei antes de rodar ao ler o
+   contrato de `conab_uf_weights`, não depois de um traceback.
+
+**Disciplina anti-p-hacking**: a inferência foi reportada com honestidade cética — com apenas 8
+clusters, o p normal-assintótico (2,6e-9) é otimista; o honesto `t(7)` (~6e-4) e o bootstrap por
+cluster (p≈0) são os que valem, e ambos passam com folga. O achado seria reportado igual se
+tivesse falhado (a regra do portão em D-030 previa parar e reformular).
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

@@ -35,6 +35,11 @@ def load_municipal() -> pd.DataFrame:
         raise SystemExit("painel municipal ausente — rode scripts/build_municipal_panel.py")
     panel = pd.concat((pd.read_parquet(p) for p in parts), ignore_index=True)
     panel = panel.drop_duplicates(["ref_date", "kind", "municipality_code"])
+    # Só municípios com produção PAM entram no cálculo (os pesos ignoram o resto); encolher o
+    # painel acelera os scans de _stretch_sum sem mudar nenhum resultado.
+    producing = set(load_pam()["municipality_code"].unique())
+    panel = panel[panel["municipality_code"].isin(producing)].copy()
+    panel = panel.sort_values(["kind", "ref_date"]).reset_index(drop=True)
     return stamp_municipal_panel(panel)
 
 
@@ -55,10 +60,11 @@ def main() -> None:
     pam = load_pam()
     export = load_export()
     cfy = CLIMATOLOGY_FIRST_YEAR
-    print(f"climatology_first_year={cfy}")
+    print(f"climatology_first_year={cfy}", flush=True)
     print(
         f"painel municipal: {municipal['ref_date'].nunique()} datas × "
-        f"{municipal['municipality_code'].nunique()} municípios"
+        f"{municipal['municipality_code'].nunique()} municípios produtores",
+        flush=True,
     )
 
     print("\n=== construindo painel H1a ===", flush=True)

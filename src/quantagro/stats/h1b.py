@@ -18,7 +18,7 @@ import pandas as pd
 
 from ..features.shock import shock_asof
 from ..features.shock_spec import PRIMARY_WINDOWS
-from ..ingest.conab_calendar import conab_calendar
+from ..ingest.conab_calendar import attach_avail_date, conab_calendar
 from .inference import moving_block_bootstrap, ols_hac
 
 HORIZONS = (3, 4, 5, 6)
@@ -26,12 +26,32 @@ DEV_LAST_BASE = 2019  # safras ≤ 2019/20 = desenvolvimento; ≥ 2020/21 = hold
 
 # NCM primário por cultura (D-030): grão. Farelo/óleo ficam para robustez.
 CROP_NCM = {"soy": "12019000", "corn_second": "10059010"}
+# Safras com painel de vintages CONAB (para os pesos nacionais da safra anterior).
+_WEIGHT_BASES = range(2017, 2025)
 
 
 def _anchor_month(crop: str) -> int:
     """Mês modal de fim de janela da cultura (soja=fev; milho 2ª=mai) — âncora da colheita."""
     ends = [s.end_month for s in PRIMARY_WINDOWS if s.crop == crop]
     return Counter(ends).most_common(1)[0][0]
+
+
+def _stamp_grains(conab: pd.DataFrame) -> pd.DataFrame:
+    """Carimba ``avail_date`` na fração soja/milho 2ª do painel — pesos nacionais de shock_asof.
+
+    ``shock_asof`` filtra o CONAB por ``avail_date ≤ t`` por dentro (``conab_uf_weights``), então
+    o painel precisa estar carimbado. Filtra a levs 1–12 e às safras cobertas pelo calendário.
+    """
+    anos = {f"{b}/{(b + 1) % 100:02d}" for b in _WEIGHT_BASES}
+    sub = conab[
+        (
+            ((conab["produto"] == "SOJA") & (conab["safra"] == "UNICA"))
+            | ((conab["produto"] == "MILHO") & (conab["safra"] == "2ª SAFRA"))
+        )
+        & conab["id_levantamento"].between(1, 12)
+        & conab["ano_agricola"].isin(anos)
+    ].copy()
+    return attach_avail_date(sub, "graos")
 
 
 def _last_survey_avail(dataset: str = "graos") -> pd.DataFrame:
@@ -49,6 +69,7 @@ def national_shocks(
     bases: range,
 ) -> pd.DataFrame:
     """``Shock`` nacional por ``(crop, safra)`` em ``t`` = ``avail_date`` do último levantamento."""
+    conab = _stamp_grains(conab)
     last = _last_survey_avail().set_index("ano_agricola")["avail_date"]
     rows = []
     for base in bases:

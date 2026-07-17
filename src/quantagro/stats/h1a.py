@@ -15,8 +15,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from ..features.shock import uf_shock_asof
-from ..features.shock_spec import PRIMARY_WINDOWS
+from ..features.shock import PRELIM_LAG_DAYS, PRIMARY_SIGNAL_KIND, uf_shock_asof
+from ..features.shock_spec import PRIMARY_WINDOWS, critical_period
 from ..ingest.conab_calendar import attach_avail_date
 from ..ingest.pam import pam_weights_asof
 from ..validate.pit import available_asof
@@ -87,13 +87,43 @@ def _shocks(
     pam_panel: pd.DataFrame,
     climatology_first_year: int,
 ) -> pd.DataFrame:
-    """``Shock`` de UF em cada ``(safra, avail_date)`` — uma chamada por corte cobre as UFs."""
+    """``Shock`` de UF em cada ``(safra, avail_date)``, memoizado por ``(spec, ano, corte, PAM)``.
+
+    Levantamentos tardios de uma safra veem a janela plenamente decorrida ⇒ mesmo corte ⇒ mesmo
+    ``Shock``. O corte é ``min(window_end, último ref prelim visível)``; a edição PAM as-of ``t``
+    também entra na chave (pesos mudam quando uma nova PAM é divulgada no meio da safra, D-028). O
+    ``available_asof`` grande do painel municipal só roda em cache-miss.
+    """
+    prelim_refs = np.sort(
+        municipal_stamped.loc[municipal_stamped["kind"] == PRIMARY_SIGNAL_KIND, "ref_date"].unique()
+    )
+    # Pré-split por UF: cada spec só toca os municípios da sua UF, então `uf_shock_asof` varre
+    # ~1/7 do painel em vez dos 16M — sem mudar nenhum resultado (os pesos já são por UF).
+    by_uf = {uf: sub for uf, sub in municipal_stamped.groupby("uf", sort=False)}
     rows = []
+    cache: dict[tuple, dict] = {}
     for (ano, t), _ in rev.groupby(["ano_agricola", "avail_date"], sort=False):
-        visible = available_asof(municipal_stamped, t)
-        weights = pam_weights_asof(pam_panel, t)
+        ts = pd.Timestamp(t)
+        weights = pam_weights_asof(pam_panel, ts)
+        pam_year = int(weights["ref_year"].max())
+        cutoff = (ts - pd.Timedelta(days=PRELIM_LAG_DAYS)).to_datetime64()
+        pos = int(np.searchsorted(prelim_refs, cutoff, side="right"))
+        vis_max = pd.Timestamp(prelim_refs[pos - 1]) if pos > 0 else None
+        visible_by_uf: dict[str, pd.DataFrame] = {}
         for spec in PRIMARY_WINDOWS:
-            r = uf_shock_asof(t, ano, spec, visible, weights, climatology_first_year)
+            # Chave pelo CORTE efetivo (não pelo vis_max cru): depois do fim da janela o corte
+            # fica preso em window_end e o Shock é idêntico entre levantamentos tardios.
+            w_start, w_end = critical_period(spec, ano)
+            cut_eff = min(w_end, vis_max) if vis_max is not None and vis_max >= w_start else None
+            key = (spec.key, ano, cut_eff, pam_year)
+            r = cache.get(key)
+            if r is None:
+                if spec.uf not in visible_by_uf:
+                    visible_by_uf[spec.uf] = available_asof(by_uf[spec.uf], ts)
+                r = uf_shock_asof(
+                    ts, ano, spec, visible_by_uf[spec.uf], weights, climatology_first_year
+                )
+                cache[key] = r
             if r["status"] != "ok":
                 continue
             rows.append(
@@ -101,7 +131,7 @@ def _shocks(
                     "crop": spec.crop,
                     "uf": spec.uf,
                     "ano_agricola": ano,
-                    "avail_date": pd.Timestamp(t),
+                    "avail_date": ts,
                     "shock": float(r["shock"]),
                     "cut_date": r["cut_date"],
                     "elapsed_days": r["elapsed_days"],

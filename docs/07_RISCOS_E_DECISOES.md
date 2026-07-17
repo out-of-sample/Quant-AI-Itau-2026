@@ -765,6 +765,55 @@ co-tendência (o `z` de déficit sobe e desce conforme a chuva). Robustez à for
 
 ---
 
+### D-031 — Resultado do portão da Fase 2: mecanismo confirmado, seguimos para a Fase 3
+**Data**: 2026-07-17
+
+Rodada **única** dos rodadores pré-registrados em D-030, sobre o painel municipal CHIRPS
+completo (6.197 rasters, 2015/16–2024/25 prelim + 2000–2023 final; manifesto
+`chirps_h1_bulk`). Artefatos em `data/processed/` (`h1a_results.csv`, `h1b_results.csv`,
+`gate_family_fdr.csv`).
+
+**H1a — o choque prevê a revisão da CONAB. CONFIRMADO.** 729 observações
+`(cultura×UF×safra×levantamento)`, 8 safras (2017/18–2024/25):
+
+| Escopo | β (revisão log por unidade de `Shock`) | t (cluster) | N | clusters |
+|---|---|---|---|---|
+| Agrupado (span cheio) | **−0,0672** | −5,96 | 729 | 8 |
+| Desenvolvimento (≤2019/20) | −0,0567 | −6,02 | 276 | 3 |
+| Holdout (2020/21–2024/25) | −0,0715 | −4,21 | 453 | 5 |
+| Só soja | −0,0674 | −4,50 | 539 | 8 |
+| Só milho 2ª | −0,0664 | −3,76 | 190 | 8 |
+
+Sinal **negativo** como pré-registrado (estresse ⇒ safra revisada para baixo). Magnitude
+econômica material: +1 unidade de `Shock` (≈1 desvio mais seco que a climatologia) ⇒ ~6,7% de
+revisão para baixo da estimativa — coerente com as revisões de ~15% (≈2σ) observadas em anos de
+seca. **O efeito aparece igual no desenvolvimento e no holdout, e nas duas culturas** — não é
+artefato do período lacrado (o reporte separado de D-029 serviu exatamente para checar isso).
+
+**Inferência honesta com poucos clusters**: o p-valor assintótico normal (2,6e-9) é otimista
+com apenas 8 clusters. O honesto é `t(G−1=7)` **p ≈ 5,7e-4**, e o **pairs cluster bootstrap dá
+p ≈ 0** com IC [−0,084; −0,050] inteiramente negativo. As três formas de H1a (agrupado, soja,
+milho) sobrevivem ao BH-FDR da família de 11 testes com folga.
+
+**H1b — exportação física (ex post, corroboração, 7 safras).** Soja responde ao choque no 3º e
+no 6º mês após a colheita (β=−0,32 e −0,35; ambos sobrevivem ao BH-FDR); milho 2ª tem todos os
+coeficientes no sinal esperado exceto um, nenhum significativo. Corroboração **parcial**,
+coerente com o poder baixíssimo (N=7) e com o ruído de exportação — H1b nunca foi o motor do
+veto (D-030).
+
+**Veredito (regra de D-030): PORTÃO ATRAVESSADO.** A cadeia causal postulada — choque climático
+→ revisão da safra CONAB — existe e é forte, dentro e fora da amostra. **Seguimos para a Fase
+3** (matriz de exposição e construção da carteira). Isto **não** é um retorno de estratégia:
+nenhum preço de ação foi tocado; o holdout de retornos (Fase 6) permanece lacrado.
+
+**Custo/limitação declarado**: N efetivo pequeno (8 safras-cluster) — o poder vem da magnitude
+grande e da consistência dev/holdout, não de N. A revisão e o `Shock` acumulam ambos na safra;
+o bootstrap por cluster e a consistência entre sub-amostras endereçam o risco de co-tendência,
+mas a robustez à forma incremental e ao lag do `Shock` fica para a Fase 5. H1b permanece ex
+post e nunca dimensiona (R18/D-026).
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
