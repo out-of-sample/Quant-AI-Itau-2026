@@ -192,6 +192,7 @@ numpy==2.5.1 \
     #   quantagro (pyproject.toml)
     #   scipy
     #   statsmodels
+    #   tifffile
 packaging==26.2 \
     --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e \
     --hash=sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661
@@ -526,6 +527,10 @@ statsmodels==0.14.6 \
     --hash=sha256:f1c08befa85e93acc992b72a390ddb7bd876190f1360e61d10cf43833463bc9c \
     --hash=sha256:f4ff0649a2df674c7ffb6fa1a06bffdb82a6adf09a48e90e000a15a6aaa734b0 \
     --hash=sha256:fe76140ae7adc5ff0e60a3f0d56f4fffef484efa803c3efebf2fcd734d72ecb5
+    # via quantagro (pyproject.toml)
+tifffile==2026.7.14 \
+    --hash=sha256:4eb20372e76edf2c9fed922b1e3a0a0567be3560bd2008336115763bb1f3c034 \
+    --hash=sha256:ce2703e5ef22c868f1528d5f5b4ef75eefb019cf628a1c9ec0d17e0afeca8ef5
     # via quantagro (pyproject.toml)
 urllib3==2.7.0 \
     --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \

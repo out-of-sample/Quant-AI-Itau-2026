@@ -272,6 +272,40 @@ de café de 2020 não tem 2º levantamento (suspenso na pandemia) — buraco da 
 
 ---
 
+### D-018 — Ingestão CHIRPS: GeoTIFF sem GDAL (`tifffile`), agregação por caixas, vintage prelim/final preservado
+**Data**: 2026-07-16
+O CHIRPS é a fonte climática **primária** (`02_DADOS §1.1`) porque é a única testada que
+preserva vintage. A verificação ao vivo confirmou o mecanismo e fixou o desenho da ingestão:
+- **Prelim e final são arquivados separadamente e permanecem no servidor** (não é produto
+  *rolling*): o prelim de 15/01/2024 segue lá em 2026, datado 17/01 no diretório (latência
+  ~2 dias); o final, datado 15/02. O vintage é reconstruível retroativamente — ao contrário do
+  ComexStat semanal (`02_DADOS §3.4`) e da reanálise. **A revisão é material**: prelim→final de 15/01/2024
+  no médio-norte de MT = +0,87 mm/dia (~+23%); no oeste da BA, −0,33 mm. É exatamente essa
+  contaminação que a fonte com vintage nos deixa **medir** em vez de supor ausente.
+- **GeoTIFF lido sem GDAL**. O ambiente cp314 não tem wheel de rasterio/GDAL, mas o tif do
+  CHIRPS é **sem compressão**, float32, com geotransform auto-descrito nas tags
+  `ModelPixelScale`/`ModelTiepoint` — `tifffile` (Python puro sobre numpy) basta. Nova
+  dependência de runtime travada em `pyproject.toml`/`requirements.lock`. `imagecodecs` foi
+  avaliado e **descartado** (nenhuma compressão a decodificar).
+- **Agregação por caixas lat/lon nomeadas** (decisão escolhida sobre máscara por polígono):
+  média de precipitação numa bounding-box por região produtora, ignorando `nodata`, sem
+  dependência de geometria/shapefile. A grade de ~5 km agregada não justifica recorte por
+  polígono de UF; a *escolha* das caixas fica na camada de sinal, não na ingestão (entram como
+  argumento explícito). Uma caixa sem célula válida devolve `nan` — nunca zero espúrio de chuva.
+- **Carimbo `avail_date` = ref + 7 dias corridos** (lag congelado em `01_TESE §5`), aplicado a
+  jusante por `validate.pit`, com `kind` (prelim/final) preservado como o eixo de vintage. Os
+  7 dias cobrem com folga a latência real observada do prelim (2 dias).
+- **Fixture de teste**: recorte real do grid global (Brasil central, 160×320), com as tags geo
+  do recorte — exercita o mesmo caminho de leitura auto-descrita e reproduz **exatamente** os
+  valores extraídos do raster global (prova cruzada rodada ao vivo). O leitor lê as tags direto
+  da página (não de `geotiff_metadata`, que o `tifffile` só popula com `GeoKeyDirectoryTag`).
+**Custo/limitação**: baixar o histórico completo (prelim+final, ~3 MB/dia × ~18 anos × 2) é
+volume real — mitigado pelo cache local (não rebaixa) e por só se materializar quando o backtest
+exigir. A grade de ~5 km e a agregação por caixa não resolvem município. NASA POWER (temperatura,
+sem vintage) fica para o próximo passo com a limitação de revisão declarada.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
