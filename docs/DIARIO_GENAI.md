@@ -714,6 +714,31 @@ cópia do plano mestre.
 
 ---
 
+## 2026-07-17 — Perímetro do holdout para os testes de mecanismo (D-029, PT-001)
+
+**Uso**: estruturar a decisão de PT-001 — se o holdout 2020–2025 lacra também os desfechos
+físicos de H1a/H1b — antes de qualquer resultado; levantar o N efetivo por perímetro a partir
+das fontes já ingeridas e articular o custo metodológico de cada opção.
+
+**Valor real**: a IA aterrissou o trade-off em números verificáveis sem tocar em resultado —
+contou anos-safra disponíveis cruzando o calendário de vintages CONAB (grãos começam em
+2017/18) com o Shock prelim (2015/16). Isso expôs que lacrar os desfechos físicos deixaria H1a
+com ~2–3 anos-safra (clusters), tornando o portão mais importante do projeto estatisticamente
+intestável. A decisão ratificada (lacre veda a estratégia, não o mecanismo; span cheio com
+sub-amostras dev/holdout reportadas em separado) ficou em D-029.
+
+**Validação humana/mecânica**: a contagem de N efetivo saiu do `conab_calendar.py` (12
+levantamentos/safra, painel 2017/18→2025/26), não de estimativa. A escolha do perímetro foi
+decidida pelo time (ratificação humana) antes de rodar qualquer regressão — o critério de
+encerramento de PT-001 exige exatamente isso. Nenhum resultado de H1 foi consultado.
+
+**O que a IA acertou por construção**: recusou o caminho de decidir o perímetro silenciosamente.
+Por ser decisão congelada-antes-de-resultado e com poder de veto, foi tratada como ratificação
+explícita do time, não como default do agente — coerente com a disciplina de que parâmetro de
+desenho não se justifica por conveniência estatística sem o custo declarado.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
