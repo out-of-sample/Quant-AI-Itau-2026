@@ -583,6 +583,54 @@ material e abriria uma dependência de rasterização fracionária que o stack n
 
 ---
 
+### D-028 — Implementação do `Shock` as-of: mesmo trecho por deslocamento, pesos em `t` e carimbo por produto
+**Data**: 2026-07-17
+
+Segunda metade do C2 (`features/shock.py`), implementada sem consultar retornos. O contrato de
+D-023 deixava quatro pontos em aberto que precisavam de decisão explícita:
+
+1. **"Mesmo trecho" da climatologia = deslocamento em dias.** O acumulado parcial até `d`
+   dias após o início da janela é comparado com o acumulado dos mesmos `d` dias nas safras
+   anteriores — trechos de comprimento idêntico, sempre. A alternativa (casar por dia do
+   calendário) criaria trechos de comprimentos diferentes em ano bissexto e complicaria a
+   comparação sem ganho agronômico.
+2. **Pesos espaciais únicos, *as-of* `t`.** A PAM disponível em `t` pondera tanto o trecho
+   corrente quanto todos os anos da climatologia. Antes de 2015 não existe PAM com
+   `avail_date` reconstruído, então pesos por época são impossíveis para a climatologia
+   longa; usar o mesmo vetor de pesos nos dois lados mantém a comparação espacialmente
+   idêntica e só usa informação disponível em `t`.
+3. **Carimbo por produto CHIRPS.** `prelim` mantém o lag congelado de 7 dias corridos
+   (`01_TESE` §5); `final` recebe lag conservador de **60 dias** (a fonte publica ~1 mês
+   depois; 15/01/2024 saiu em 15/02). Um lag único de 7 dias superestimaria a disponibilidade
+   do `final`. Na prática o `final` só alimenta climatologia de safras ≥ 1 ano no passado, mas
+   a regra fica correta por construção, não por sorte.
+4. **Nacional renormalizado sobre janelas já iniciadas.** Antes de todas as UFs entrarem na
+   janela (soja RS/BA começa um mês depois de MT/GO/PR/MS/MG), o índice usa as que já
+   entraram e reporta `uf_coverage_weight` — a composição é visível para o rodador de H1a,
+   nunca imputada. O peso entre UFs é a produção da safra CONAB **anterior** já divulgada
+   (último levantamento disponível em `t`), nunca a corrente, cuja revisão é o que se quer
+   prever.
+
+Guardas que falham alto (todas testadas): buraco de cobertura diária no trecho, município com
+peso PAM ausente do painel municipal, menos de 10 safras de climatologia, climatologia
+degenerada (desvio zero), UF do suporte sem produção CONAB e painel sem `avail_date`.
+
+Validação: álgebra sintética conferível no papel (climatologia 1..10 mm ⇒ média 5,5, desvio
+3,0277; z e sinal verificados nos dois lados) e execução de ponta a ponta com dados 100%
+reais (soja/MT, trecho 1–10/dez, `t`=20/12/2024, 110 rasters CHIRPS baixados com manifesto):
+acumulado 71,1 mm vs. climatologia 96,3 ± 25,7 mm (safras 2014–2023) ⇒ `z = −0,98`,
+`Shock = +0,98` — início de dezembro mais seco que o normal, estresse positivo, convenção
+correta. A PAM *as-of* escolheu sozinha a edição 2023 (a última com `avail_date ≤ t`) e os
+três maiores pesos municipais são Sorriso, Diamantino e Campo Novo do Parecis — exatamente a
+geografia real da soja de MT. O peso nacional veio do 12º levantamento CONAB 2023/24.
+
+**Custo/limitação**: o proxy espacial do milho 2ª continua sendo o milho total da PAM (R15);
+os pesos *as-of* únicos significam que o `Shock` recalculado em `t'` > `t` pode diferir do
+calculado em `t` se uma edição PAM entrou no meio — é o comportamento correto de um sinal
+point-in-time, mas exige que H1a fixe `t` nos cortes dos levantamentos, não recicle valores.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

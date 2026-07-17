@@ -70,8 +70,10 @@ admitido no primário é **2015/16** (R16). **A revisão foi
 medida**: prelim→final de 15/01/2024 no médio-norte de MT = +0,87 mm/dia (~+23%). A ingestão
 aceita **caixas lat/lon nomeadas**; as duas caixas default são somente smoke tests. O sinal
 primário usa média por polígono municipal ponderada pela PAM/IBGE (D-023), não regiões
-escolhidas à mão. O carimbo `avail_date` = ref + 7 dias corridos preserva `kind`
-(prelim/final) como eixo de vintage.
+escolhidas à mão. O carimbo `avail_date` é **por produto** (`features/shock.py`, D-028):
+`prelim` = ref + 7 dias corridos (lag primário congelado); `final` = ref + 60 dias corridos
+(conservador vs. a publicação ~1 mês depois). `kind` (prelim/final) permanece como eixo de
+vintage — um lag único superestimaria a disponibilidade do `final`.
 
 ### 1.2 NASA POWER — temperatura e demais variáveis — **fonte secundária**
 
