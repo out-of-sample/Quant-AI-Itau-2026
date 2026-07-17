@@ -168,9 +168,14 @@ Pré-requisito da fase: construir o C2 `Shock` (é ele que entra nas regressões
   numpy sobre centros de célula p05). Índice município→células validado ao vivo nas 7 UFs
   (2.634/2.634 municípios); fallback auditável para os 3 municípios menores que a célula;
   polígonos de água não-municipais da malha (lagoas do RS) excluídos.
-- ⬜ Janela fenológica → acumulado até a data de corte → climatologia expanding (≥10 safras,
-  produto `final`) → `Shock = −z` → agregação UF (peso PAM *as-of*) → nacional (peso CONAB
-  da safra anterior encerrada).
+- ✅ **Cálculo do `Shock` as-of (D-028)** (`features/shock.py`): acumulado `prelim` da janela
+  fenológica até a data de corte, climatologia expanding do **mesmo trecho** (produto `final`,
+  ≥10 safras, cobertura diária obrigatória — buraco falha alto), `Shock = −z`; agregação
+  UF (peso municipal PAM *as-of* `t`) → nacional (peso CONAB da safra **anterior** encerrada,
+  nunca a corrente), renormalizada sobre janelas já iniciadas com composição visível.
+  Validado com álgebra sintética conferível no papel e de ponta a ponta com dados reais.
+- ⬜ Rodadores de H1a (revisão CONAB) e H1b (exportação física) com BH-FDR e erros agrupados
+  por ano-safra — o portão da fase.
 
 > **Portão**: se o clima **não** prevê a revisão de safra nem a exportação, o mecanismo
 > econômico postulado é falso. Nesse caso **paramos e reformulamos**, em vez de seguir para o

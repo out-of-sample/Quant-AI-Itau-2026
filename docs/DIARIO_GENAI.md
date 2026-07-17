@@ -653,6 +653,39 @@ não só contra o caso que a motivou.
 
 ---
 
+## 2026-07-17 — Cálculo do `Shock` as-of (segunda metade do C2)
+
+**Uso**: implementar `features/shock.py` — acumulado da janela fenológica até a data de corte,
+climatologia expanding do mesmo trecho, `Shock = −z`, agregação UF (PAM *as-of*) e nacional
+(CONAB da safra anterior) — resolvendo os quatro pontos que o contrato D-023 deixava em aberto
+(mesmo trecho por deslocamento, pesos espaciais únicos em `t`, carimbo por produto CHIRPS,
+renormalização nacional sobre janelas iniciadas), registrados em D-028.
+
+**Valor real**: o sinal da tese existe e é uma função pura de `t`: cada painel de entrada é
+filtrado por `avail_date ≤ t` dentro da própria função — o lookahead é morto por construção,
+não por disciplina do chamador. Seis guardas falham alto (buraco de cobertura, peso PAM sem
+painel, <10 safras, climatologia degenerada, UF sem CONAB, painel sem carimbo). O desenho
+separou o custo: o caro (raster→município) é cacheável e independe de `t`; o barato (pesos,
+janela, z) roda por data de decisão.
+
+**Validação humana/mecânica**: 16 testes com álgebra conferível no papel (climatologia 1..10
+⇒ média 5,5/desvio 3,0277; PIT movendo o corte com o `avail_date`; safra CONAB corrente
+proibida de pesar) e execução de ponta a ponta com dados 100% reais (110 rasters CHIRPS +
+PAM/SIDRA + CONAB + malha IBGE): soja/MT em 20/12/2024 deu `Shock = +0,98` (71 mm vs.
+96 ± 26 mm), a PAM *as-of* escolheu sozinha a edição 2023 e os maiores pesos municipais
+saíram Sorriso, Diamantino e Campo Novo do Parecis — a geografia real da soja de MT emergiu
+do pipeline sem nenhuma coordenada escolhida à mão.
+
+**O que a IA errou**: nada foi derrubado na verificação desta etapa — os 16 testes passaram na
+primeira execução e a validação ao vivo confirmou a álgebra. O registro honesto é o contrário
+do habitual: a ausência de erro aqui deve-se ao custo pago antes (contrato congelado em D-023,
+fixtures reais das etapas anteriores e a álgebra desenhada nos testes antes do primeiro run ao
+vivo), não a sorte. Ponto de atenção deixado para H1a: `Shock` recalculado em `t' > t` pode
+diferir se uma edição PAM entrou no meio — comportamento point-in-time correto, mas o rodador
+precisa fixar `t` nos cortes dos levantamentos (documentado em D-028).
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
