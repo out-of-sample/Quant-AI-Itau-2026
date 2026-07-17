@@ -58,6 +58,8 @@ Detalhes em `01_TESE_E_PRE_REGISTRO.md` §2.
 | **`06_CRITICA_ADVERSARIAL.md`** | O projeto atacado por um avaliador hostil. Onde a defesa é fraca, está escrito que é fraca |
 | **`07_RISCOS_E_DECISOES.md`** | Riscos vivos + **log de todas as decisões de desenho, com data** |
 | **`08_IDENTIDADE.md`** | Nome e identidade visual da estratégia |
+| **`09_FENOLOGIA_E_LIMIARES.md`** | Quando o clima importa, por cultura e estado — janelas e limiares agronômicos |
+| **`10_REFERENCIAS.md`** | Referências acadêmicas, métodos e fontes de dados usados, com proveniência e lacunas marcadas |
 | **`DIARIO_GENAI.md`** | Registro contínuo do uso de IA generativa no processo |
 | `../CONTRIBUTING.md` | Branches, commits, PRs, checklist de revisão |
 | `../05_Ideacao_Tese/` | As 21 teses avaliadas e por que esta foi escolhida |
