@@ -229,6 +229,19 @@ embarque)** — testado, retorna `PORTO DE SANTOS`, `PORTO DE PARANAGUÁ` etc.
 
 **Endpoint de vintage**: `GET /general/dates/updated` informa o último mês disponível.
 
+**Ingestão implementada e verificada ao vivo (2026-07-16, `ingest/comexstat.py`, D-020).** Schema
+do `POST /general` confirmado: corpo JSON (`flow`, `period.from/to` em "AAAA-MM", `filters` por
+`ncm`, `details`, `metrics`), resposta `{"data":{"list":[...]},"success":true}` com `coNcm`,
+`year`, `monthNumber`, `metricFOB` (US$) e `metricKG` (kg) — **as métricas vêm como string**,
+convertidas para int na ingestão. O **gotcha do NCM foi reconfirmado**: café `"09011110"` (string)
+= 2 linhas; `9011110` (int) = 0 linhas com `success:true`. O guardrail `_validate_ncms` (string de
+8 dígitos, senão erro alto) bloqueia isso antes da rede. O `dates/updated` (verificado:
+`updated=2026-07-03`, último mês `2026-06`) vai para o manifesto como prova de vintage — a fonte
+sobrescreve o passado, então cada captura é datada no nome (um vintage por captura). 🔴 **Rate
+limit observado ao vivo**: consultas seguidas retornaram **HTTP 429 Too Many Requests** — o
+ComexStat também limita requisição, o que reforça a decisão de cache local agressivo (não rebaixa
+se o arquivo do dia já existe).
+
 ### 3.2 Calendário de publicação — confirmado
 
 Divulgação consolidada nos **primeiros dias úteis do mês seguinte** (dia 3 a 7). A leitura ao
