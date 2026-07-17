@@ -548,6 +548,41 @@ claramente sinal negociável de validação causal.
 
 ---
 
+### D-027 — Regionalização raster→município: centro de célula, fallback e exclusão de água
+**Data**: 2026-07-17
+
+Primeira metade do C2 `Shock` (`features/regionalize.py`), implementada sem consultar retornos.
+A "média climática por polígono municipal" de D-023 foi materializada como **média das células
+p05 cujo centro cai dentro do polígono** (regra even-odd, numpy puro, sem GDAL — mesma decisão
+de stack de D-018/D-024). O índice município→células é função apenas da malha 2013 e da grade
+CHIRPS, ambas congeladas: calcula-se uma vez, carrega as constantes da grade e **recusa** um
+raster de grade diferente.
+
+Três escolhas de implementação com efeito observável:
+
+1. **Município sub-célula**: Madre de Deus/BA, Albertina/MG e Esteio/RS não contêm nenhum
+   centro de célula (~5,5 km). Descartá-los distorceria o peso PAM; falhar alto bloquearia o
+   pipeline por geometria conhecida. Eles recebem a célula cujo centro é o mais próximo do
+   centroide do polígono, com `cell_source="nearest_centroid"` auditável.
+2. **Polígonos de água não-municipais** (RS: Lagoas Mirim e dos Patos, código de município
+   `0000`) ficam fora do índice — nunca têm produção PAM, mas contaminariam médias
+   não-ponderadas.
+3. **Seleção por centro de célula** ignora frações de célula na divisa municipal; o efeito
+   máximo é de meia célula por borda e desaparece na agregação UF ponderada por produção.
+
+Validação por execução (raster global real de 15/01/2024 + 7 malhas UF completas): 2.634/2.634
+municípios cobertos com 110.489 células (~12 s, uma vez); painel municipal em 0,12 s/raster;
+contagem de células coerente com a área municipal oficial (Cuiabá ~3.500 km² → 118 células de
+~30,25 km²); a revisão prelim→final aparece no nível municipal (Cuiabá 15/01/2024:
+2,67 → 3,05 mm).
+
+**Custo/limitação**: o clima do município minúsculo é o da célula do centroide (aceitável —
+peso PAM ínfimo e erro espacial < 1 célula); a fronteira municipal é tratada como corte duro
+de células, não como máscara de área fracionária. Refinar isso não muda a UF agregada de forma
+material e abriria uma dependência de rasterização fracionária que o stack não tem.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
