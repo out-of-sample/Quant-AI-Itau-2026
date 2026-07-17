@@ -196,6 +196,8 @@ concretos. Alimenta o relatório de 5 páginas.
 │   ├── 06_CRITICA_ADVERSARIAL.md  o projeto atacado pelas personas céticas
 │   ├── 07_RISCOS_E_DECISOES.md    risk register + log de decisões
 │   ├── 08_IDENTIDADE_ROBO.md      nome + identidade visual (5% da nota)
+│   ├── 09_FENOLOGIA_E_LIMIARES.md  janelas e limiares agronômicos por cultura/UF
+│   ├── 10_REFERENCIAS.md          referências acadêmicas, métodos e fontes (com proveniência)
 │   ├── DIARIO_GENAI.md            registro contínuo de uso de IA (15% da nota)
 │   └── adr/                       Architecture Decision Records
 ├── pyproject.toml               empacotamento + config de ruff/pytest
