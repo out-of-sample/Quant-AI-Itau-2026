@@ -140,11 +140,13 @@ Shock_{c,t} = Σ_u  w_{u,c,t} · Shock_{u,c,t}(janela fenológica de c)
 Estimado por **dois métodos independentes**, que se cruzam:
 
 **Método A — fundamentalista (prior, "de baixo para cima")**
-Composição de receita e de custo divulgada pela própria empresa (releases trimestrais,
-Formulário de Referência CVM). Ex.: São Martinho é ~100% cana → `E = +1` em açúcar/etanol.
-BRF tem ~30-40% do CPV em milho e farelo → `E` negativo relevante nessas duas.
-*Vantagem*: interpretável, estável, defensável na banca. *Custo*: trabalho manual, baixa
-frequência de atualização.
+Direção causal, materialidade ordinal e composição por cultura, extraídas de divulgações da
+própria empresa (CVM/SEC, documentos de oferta e RI). A regra exata está congelada em
+`13_MATRIZ_EXPOSICAO.md`: `E = direção × materialidade × peso da cultura`. Os pesos usam
+receita/custo por cultura; volume ou área são o fallback; cesta soja+milho não separável usa
+divisão igual explicitamente marcada. Cada vintage carrega `ref_date` e `avail_date` e nunca é
+preenchido para trás. *Vantagem*: interpretável, estável, auditável e não circular. *Custo*:
+baixa frequência, escala ordinal e exclusão conservadora de empresas ambíguas.
 
 **Método B — estatístico (validação, "de cima para baixo")**
 Beta rolling da ação contra o retorno do futuro da commodity, **controlando por Ibovespa e
@@ -164,7 +166,7 @@ mas o mercado a precifica como consumidora (ou vice-versa), isso vai para o rela
 achado. Registramos a matriz de discordância explicitamente.
 
 **Decisão pré-registrada**: o resultado **primário** usa o Método A (exposição
-fundamentalista, fixa e auditável). O Método B entra como **teste de robustez**, não como
+fundamentalista, point-in-time e auditável). O Método B entra como **teste de robustez**, não como
 o resultado principal. Motivo: `E` estimado por regressão dos próprios retornos cria uma
 dependência circular entre o sinal e o alvo que enfraquece a interpretação causal.
 
@@ -307,7 +309,7 @@ combinações testadas — que é a forma mais comum de auto-engano em backtest.
 | Exposição `E_{i,c}` | Método A (fundamentalista) | Auditável, não circular |
 | Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a hipótese de difusão lenta e declarado antes de consultar retornos |
 | Execução | no **close de D+1** após o sinal de D | Nunca no mesmo close que gerou o sinal |
-| Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`, cap de 20% por nome | Neutralidade a mercado é consequência direta da tese (§2) |
+| Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`; cap de 20% exige ratificação pré-carteira | D-033 mostrou, sem retornos, que o mínimo é 50% do bruto no único long até 03/2018 e 25% por long depois |
 | Custos | corretagem+emolumentos B3 + slippage proporcional à participação no ADTV | Ver `04_PROTOCOLO_BACKTEST.md` |
 | Benchmark | Ibovespa **e** CDI, ambos declarados a priori | Não escolher depois qual "ganhou" |
 
@@ -338,20 +340,17 @@ resposta:
   diferente. Se a estratégia sobreviver a ele, o resultado é forte. Se não sobreviver,
   isso também é um resultado, e vamos reportá-lo.
 
-**Tensão real, assumida com honestidade** (ver §7): boa parte do universo agro da B3 só
-existe *depois* de 2020. Ou seja, o período com universo rico é justamente o holdout. Não
-há solução limpa para isso. Nossa resposta é rodar **dois backtests declarados desde já**:
+**Tensão real, assumida com honestidade** (ver §7): a auditoria D-033 mostrou que o problema
+não é apenas a data de IPO. Dos 21 candidatos, somente AGRO3, SLCE3, BRFS3 e JBSS3 têm canal
+direto soja/milho admissível no Método A; os demais são indiretos, ambíguos ou de outra
+cultura. O backtest primário usa esse núcleo com entrada PIT gradual. Isso preserva o split
+in-sample/holdout, mas cria concentração severa e bloqueia o cap original de 20% (R19).
 
-- **Backtest A — "núcleo histórico" (sinal 2015/16–2025)**: universo restrito às empresas listadas
-  desde ~2012 (SLCE3, SMTO3, JBSS3, BRFS3, MRFG3, BEEF3, SUZB3, KLBN11, AGRO3, RAIL3).
-  Menos nomes, mas histórico longo e split in-sample/holdout íntegro.
-- **Backtest B — "universo amplo" (2021-2025)**: todos os nomes, incluindo os IPOs de
-  2020-21 (SOJA3, TTEN3, JALL3, RAIZ4, VITT3...). Mais nomes, histórico curto, e
-  **inteiramente dentro do holdout** — portanto não pode ser usado para calibrar nada.
-
-Reportamos os dois lado a lado, com a limitação explicada. Um gráfico da **contagem de
-ativos elegíveis ao longo do tempo** entra no relatório: é a prova visual de que tratamos
-o problema em vez de escondê-lo.
+O antigo **Backtest B — universo amplo (2021–2025)** deixa de ser uma promessa: só será
+materializado se nova fonte primária provar canal direto para nomes pós-IPO, ou como
+diagnóstico do Método B claramente separado. Ele está inteiro no holdout e não calibra nada.
+Um gráfico da **contagem de ativos elegíveis ao longo do tempo** permanece obrigatório; agora
+ele também torna visível a escassez de exposição fundamental, em vez de escondê-la.
 
 ---
 
