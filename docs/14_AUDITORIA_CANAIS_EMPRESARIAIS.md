@@ -161,3 +161,49 @@ A Fase 3.1 só termina quando todos forem atendidos:
 Se a evidência não permitir resolver o sinal líquido de produtores, o portão falha. O projeto
 deve então usar uma ponta long economicamente identificável, reduzir a tese a processadores ou
 reportar que o mecanismo físico não foi traduzido em estratégia investível.
+
+## 9. Resultado da auditoria dos quatro nomes (D-035)
+
+Auditoria conduzida nas fontes primárias datáveis, sem consultar nenhum retorno de ação. O
+registro estruturado por nome, vintage, fonte, localizador e **lacuna declarada** está em
+`data/reference/corporate_audit_v1.json`. Fontes efetivamente lidas: 20-F da BrasilAgro
+(FY2014 e FY2019, SEC CIK 1499849), 20-F da BRF (FY2017, CIK 1122491) e 10-K da Pilgrim's
+Pride (FY2018, CIK 802481, subsidiária de aves da JBS nos EUA); SLCE3 e a JBS consolidada
+apoiam-se na âncora datada de D-033 e em geografia pública, com os números finos declarados
+como lacuna a fechar na fonte primária CVM.
+
+### 9.1 Achados por nome (todos sem retornos)
+
+| Nome | Papel | Canal | Achado material da auditoria |
+|---|---|---|---|
+| **AGRO3** | produtor (+) | `P`, `Q` | Grão é **minoria e declinante**: cana passou de 29% (FY2014) a **48%** (FY2019) da receita operacional; ganho na venda de fazendas domina o lucro; algodão entrou. `Q` **parcialmente fora do Shock** (Cremaq/PI + Paraguai/Cresca). Hedge multi-cultura (% não divulgado). |
+| **SLCE3** | produtor (+) | `P`, `Q` | Algodão dilui o canal grão (soja+milho = 47,5% da receita, já em D-033). Fazendas em MT/MS/GO/MG/BA **+ MA/PI/PA fora do Shock**. Pré-venda/hedge intensos atenuam `P` (% = lacuna declarada). |
+| **BRFS3** | processador (−) | `C` | Milho+farelo/grão de soja = **28,5% do custo** (2017), **de origem brasileira** ⇒ `C` dentro do Shock. Repasse parcial ao preço de venda + hedge **atenuam** o `C` líquido; direção de curto prazo permanece −1. |
+| **JBSS3** | processador (−) | `C` | Processador **mais diluído**: bovino (maior segmento) pouco intensivo em grão; insumo **geograficamente partido** — Pilgrim's/EUA (feed = 28,5% do custo US, milho americano, **fora** do Shock) + Seara/BR (dentro) + Moy Park/Europa (trigo, fora). Só a fatia Seara é co-localizada. |
+
+### 9.2 Decisão (critério de saída §8, itens 1 e 2)
+
+1. **As direções de D-033 são defensáveis** na evidência PIT: produtores vendem o grão
+   (price-taker), processadores o compram como ração.
+2. **`P` e `Q` não são PIT-separáveis** com as fontes disponíveis — área plantada por
+   cultura×UF×vintage e percentuais de hedge são lacunas declaradas. Por §3 deste documento e
+   por `13_MATRIZ_EXPOSICAO.md` §7, a ausência é **limite de identificação**, não preenchida.
+   ⇒ **mantém-se a matriz D-033 (opção 1)**; não se constrói um termo `Q` separado nem um
+   score `P/Q/C` explícito.
+3. **A materialidade efetiva é atenuada** em todos os nomes (culturas não-primárias, hedge,
+   geografia parcialmente fora do Shock). Isso **não reescreve** D-033 (registro congelado sob
+   regra própria), mas entra como **haircut candidato** e como eixo de sensibilidade a ser
+   decidido no congelamento do score, apenas no desenvolvimento.
+4. **O lado long fica condicionado a H2a**: como `Q` está parcialmente fora do Shock, `P`
+   tende a dominar, mas o sinal líquido do produtor **não é resolvível só pelo fundamento**.
+   Se H2a (transmissão de preço) falhar, o long é reformulado. Isso **endereça R20 por
+   evidência, não por presunção**.
+5. **O universo não muda**: nenhum novo nome direto emergiu; os vetos de D-033 se mantêm. A
+   concentração (R19) **não pode ser diluída adicionando nomes diretos** — permanece aberta
+   para a decisão de carteira.
+
+**Custo/limitação declarado.** Optar por não decompor `P/Q` é assumir um limite de
+identificação: o sinal permanece o canal de preço/insumo de D-033, agora com a ressalva
+explícita de que a ponta long depende de H2a e que a materialidade real é menor que a
+participação de receita sugere. Fechar as lacunas de área-por-UF e de hedge exigiria vintage
+CVM que as fontes lidas não entregaram de forma datável.

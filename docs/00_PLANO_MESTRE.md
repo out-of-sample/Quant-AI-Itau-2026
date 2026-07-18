@@ -211,11 +211,12 @@ não dimensiona o experimento primário (D-026). Calibração
   diretos, entrada PIT gradual)
 - ✅ inserido o portão **Fase 3.1 — auditoria dos canais empresariais** antes de score e
   carteira (D-034; `14_AUDITORIA_CANAIS_EMPRESARIAIS.md`)
-- ⬜ auditar, em fontes PIT, mix, geografia produtiva, canal de preço/insumo, hedge e mudanças
-  de perímetro das quatro empresas
-- ⬜ separar benefício de preço (`P`), dano de volume próprio regional (`Q`) e custo de insumo
-  (`C`); só então congelar a definição final de `E` e do score
-- ⬜ pré-registrar e executar H2a no desenvolvimento; manter H2b como diagnóstico de evento
+- ✅ auditoria PIT de mix, geografia, preço/insumo, hedge e perímetro dos quatro nomes
+  concluída, com lacunas declaradas (D-035; `14` §9; `data/reference/corporate_audit_v1.json`)
+- ✅ decisão do fork `P/Q/C`: `P`/`Q` **não são PIT-separáveis** ⇒ mantém-se a matriz D-033
+  (opção 1), materialidade atenuada como sensibilidade, **long condicionado a H2a** (D-035)
+- ⬜ pré-registrar e executar H2a no desenvolvimento (portão do lado long); manter H2b como
+  diagnóstico de evento
 - ⬜ substituir o H3/Fama–MacBeth por teste compatível com apenas três a quatro ações
 - ⬜ resolver R19 sem consultar retornos e construir carteira dollar-neutral, sem presumir
   neutralidade a beta, fatores ou commodities

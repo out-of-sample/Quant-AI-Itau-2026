@@ -209,3 +209,17 @@ A Fase 3.1 decidirá, sem olhar retornos acionários, entre:
 
 Se as fontes PIT não permitirem distinguir esses canais, a ausência será tratada como limite
 de identificação, não preenchida por informação atual nem calibrada pelo retorno.
+
+### 7.1 Resolução do fork (D-035, 2026-07-18)
+
+A auditoria da Fase 3.1 (`14_AUDITORIA_CANAIS_EMPRESARIAIS.md` §9;
+`data/reference/corporate_audit_v1.json`) escolheu a **opção 1 — promover o registro atual**,
+porém condicionada: `P` e `Q` **não são PIT-separáveis** (área plantada por cultura×UF×vintage
+e percentuais de hedge são lacunas declaradas), então **não se constrói um termo `Q` separado
+nem um score `P/Q/C` explícito**. A matriz D-033 permanece o sinal operacional, com três
+ressalvas registradas em D-035: (i) a materialidade efetiva é **atenuada** (culturas
+não-primárias, hedge, geografia parcialmente fora do Shock) e entra como haircut candidato e
+eixo de sensibilidade no congelamento do score — **sem reescrever** este registro congelado;
+(ii) o **lado long fica condicionado a H2a**, pois `Q` está parcialmente fora do Shock e o
+líquido do produtor não é resolvível só pelo fundamento; (iii) o **universo não muda** — nenhum
+nome direto novo emergiu e a concentração (R19) não é diluível por nomes diretos.
