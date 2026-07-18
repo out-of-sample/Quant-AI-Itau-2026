@@ -32,9 +32,9 @@ Vai no relatório. É a prova visual de que o universo é dinâmico.
 | | **A — Núcleo histórico** (primário) | **B — Universo amplo** (secundário) |
 |---|---|---|
 | Período | sinal 2015/16–2025; preços anteriores só como histórico auxiliar | 2021-2025 (~5 anos) |
-| Universo | ~14 nomes listados desde ~2007 (inclui os deslistados, via COTAHIST, e os *adjacentes* que compram insumo agrícola) | + IPOs de 2020-21 (SOJA3, TTEN3, VITT3, JALL3, RAIZ4, AGXY3, HBSA3) |
-| Papel | **resultado principal** — tem histórico para sustentar afirmação | ilustra o cross-section rico; **não calibra nada** |
-| Limitação | menos nomes "agro puro" | está **inteiramente dentro do holdout** ⇒ não pode ser usado para desenvolver |
+| Universo | Método A PIT: AGRO3, BRFS3 e JBSS3 em 2015; SLCE3 entra em 2018 (D-033) | não materializado no Método A; nomes indiretos/pós-2021 só entram se fonte primária futura provar canal direto |
+| Papel | **resultado principal** — tem histórico para sustentar afirmação | diagnóstico condicionado à existência de evidência direta; **não calibra nada** |
+| Limitação | só dois nomes por ponta a partir de 2018; concentração é risco central | está **inteiramente dentro do holdout** e pode não existir sob o critério fundamentalista conservador |
 
 ---
 
@@ -66,7 +66,7 @@ errado é o projeto inteiro.
 |---|---|---|
 | Estrutura | **dollar-neutral long/short** | consequência direta da tese: produtores e processadores se movem em direções opostas sob o mesmo choque |
 | Peso | proporcional ao score `S_{i,t}`, normalizado | sizing ∝ convicção, não binário |
-| Cap por nome | 20% do bruto | impede que o resultado seja uma aposta única disfarçada de estratégia |
+| Cap por nome | 20% do bruto, **pendente de ratificação antes da carteira** | incompatível: um único long até 03/2018 exige 50% do bruto; depois, dois longs exigem 25% cada (D-033) |
 | Rebalanceamento | mensal, com holding de 21 pregões | compatível com a hipótese pré-registrada de difusão lenta; ComexStat é apenas H1b *ex post* (D-026) |
 | Cap de turnover | a definir na calibração (in-sample) | turnover alto come o alfa em nomes ilíquidos |
 | Alavancagem | 1.0× bruto (0.5 long + 0.5 short) | sem alavancagem — não é onde está a contribuição |

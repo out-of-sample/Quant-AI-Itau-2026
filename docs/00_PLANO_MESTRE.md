@@ -202,13 +202,15 @@ não dimensiona o experimento primário (D-026). Calibração
 
 - ✅ método fundamentalista point-in-time pré-registrado antes da classificação (D-032;
   `13_MATRIZ_EXPOSICAO.md`)
-- ⬜ aplicar a regra ao universo, versionar e validar a matriz `E`
+- ✅ regra aplicada ao universo, matriz `E` versionada e validada (D-033; quatro nomes
+  diretos, entrada PIT gradual)
 - ⬜ construir o score `S = Σ E·Shock`
-- ⬜ calibrar os parâmetros operacionais permitidos e construir a carteira dollar-neutral
+- ⬜ resolver o conflito concentração × cap de 20% sem consultar retornos, calibrar os demais
+  parâmetros permitidos e construir a carteira dollar-neutral
 
 ### Fase 4 — Backtest
-Backtest A (núcleo histórico, primário) e B (universo amplo, secundário). Custos, capacidade,
-atribuição.
+Backtest A (núcleo histórico, primário); B amplo permanece condicionado a evidência direta
+admissível (D-033). Custos, capacidade, atribuição.
 
 ### Fase 5 — Robustez
 Suíte completa. **Os três testes existenciais primeiro** (spanning, placebo, sensibilidade ao

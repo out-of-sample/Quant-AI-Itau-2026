@@ -495,15 +495,32 @@ completo de dinheiro segue no `GetListedCashDividends`.
 > contém COVID, o pico de commodities de 21/22 e o bear market de grãos de 23/24. Um Sharpe
 > bonito aí é quase certamente sorte.
 
-**Como resolvemos**: o backtest **primário** preserva o núcleo histórico de empresas, mas o
-`Shock` negociável começa somente na safra **2015/16** (R16), e o
-universo é ampliado para **~14 nomes** incluindo os *adjacentes* — empresas que compram
-insumo agrícola (MDIA3 compra trigo; KEPL3 vende silos; CAML3 processa arroz) e que, pela
-lógica da tese, têm exposição líquida **negativa** bem definida. Isso recupera o lado short
-sem depender dos IPOs de 2021. Preços anteriores permanecem úteis para histórico, liquidez e
-eventos corporativos, mas não fabricam anos de sinal climático point-in-time.
+**Resultado da auditoria fundamentalista (D-032/D-033)**: a ampliação para cerca de 14 nomes
+foi rejeitada antes de consultar retornos. MDIA3 compra principalmente trigo, KEPL3 vende
+equipamentos e CAML3 tem direção líquida ambígua; esses canais não autorizam tratá-las como
+consumidoras diretas de soja/milho. O Método A ficou com AGRO3/SLCE3 na ponta positiva e
+BRFS3/JBSS3 na negativa, com entrada point-in-time gradual. A matriz, as fontes e todos os
+vetos estão em `13_MATRIZ_EXPOSICAO.md` e
+`data/reference/exposure_fundamental_v1.json`.
 
-O universo amplo pós-2021 vira o **backtest secundário**, com a limitação declarada.
+Preços anteriores e dos nomes recusados continuam úteis para histórico, liquidez e para o
+Método B de robustez, mas não criam exposição fundamental retroativa. Um universo secundário
+mais amplo só existirá se nova fonte primária demonstrar canal direto ou como diagnóstico
+estatístico explicitamente separado — nunca como solução oportunista para a concentração.
+
+### 4.4 Fontes da matriz fundamentalista
+
+| Ticker/vintage | Fonte primária | `avail_date` usada | Fato extraído |
+|---|---|---|---|
+| BRFS3 2013 | Form 20-F/SEC | 31/03/2014 | milho e farelo de soja como insumos recorrentes de ração |
+| AGRO3 2014 | Form 20-F/SEC | 31/10/2014 | grãos = 69,8% da receita; área por soja/milho |
+| JBSS3 2014 | relatório anual JBS | 01/07/2015, limite conservador | JBS Foods = 10,7% da receita consolidada; canal de ração |
+| SLCE3 2017 | release anual/RI | 07/03/2018 | soja 41,0% e milho 6,5% da receita líquida |
+| BRFS3 2017 | Form 20-F/SEC | 27/04/2018 | milho+soja = 28,5% do custo de produção |
+
+As URLs, localizadores, contas e resumos factuais ficam no JSON versionado, junto do valor
+consumido pelo código. Para JBSS3, a data original de publicação do relatório de 2014 não foi
+provada com precisão suficiente; o limite posterior de 01/07/2015 é deliberadamente tardio.
 
 ---
 

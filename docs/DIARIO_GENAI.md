@@ -772,6 +772,37 @@ tivesse falhado (a regra do portão em D-030 previa parar e reformular).
 
 ---
 
+## 2026-07-17 — Matriz fundamentalista point-in-time de exposição (D-032/D-033)
+
+**Uso**: dividir em pesquisas delimitadas a auditoria econômica dos 21 candidatos e a busca de
+fontes primárias históricas; transformar a regra pré-registrada em um registro versionado e em
+validação automatizada. A regra foi commitada antes de a matriz ser materializada, deixando no
+histórico a ordem regra → resultado.
+
+**Valor real**: a auditoria derrubou a hipótese conveniente de um núcleo com cerca de 14 nomes.
+Logística, sementes, equipamentos, açúcar, celulose e alimentos sem canal soja/milho comprovado
+não viraram exposição só para engrossar o cross-section. O resultado conservador tem quatro
+empresas e cinco vintages PIT: AGRO3/SLCE3 positivos, BRFS3/JBSS3 negativos. A verificação
+também encontrou uma incompatibilidade matemática anterior ao backtest: há um único produtor
+até março de 2018 (50% do bruto para neutralidade) e dois depois (25% cada), ambos incompatíveis
+com cap de 20%.
+
+**Validação humana/mecânica**: cada inclusão foi refeita a partir de CVM/SEC ou RI, com conta,
+localizador, `ref_date` e `avail_date`; data incerta recebeu limite posterior conservador. O
+código falha para fonte sem HTTPS, vintage incompleto, data invertida, duplicata, escala fora
+do pré-registro ou pesos que não somam 1. O teste-canário acrescenta uma divulgação futura e
+prova que a matriz histórica não muda.
+
+**O que a IA errou ou divergiu**: a classificação paralela inicial tratou JBSS3 como ambígua
+por causa da diversificação global. A fonte primária mostrou um segmento direto de aves/suínos
+com 10,7% da receita consolidada; a decisão final não ignorou a objeção, mas limitou a
+materialidade a 0,50 e marcou a cesta soja/milho como não resolvida. Em sentido oposto, a ideia
+anterior de usar MDIA3, KEPL3 e CAML3 como shorts foi rejeitada: trigo, equipamentos e direção
+agrícola ambígua não satisfazem o canal causal congelado. A divergência serviu para estreitar a
+regra, não para escolher a versão com mais ativos.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

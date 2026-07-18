@@ -117,15 +117,15 @@ longo com o universo de hoje é **survivorship + backfill bias** puro. E um back
 ao período em que todos existem tem 4-5 anos — curto demais para qualquer afirmação séria.
 
 **A defesa.** Universo **dinâmico** (a ação entra na data efetiva de IPO + 60 dias, sai na
-deslistagem) e **dois backtests declarados a priori**: núcleo histórico com sinal desde
-2015/16 e
-universo restrito, e universo amplo 2021-2025. Publicamos a contagem de ativos elegíveis ao
-longo do tempo como gráfico.
+deslistagem) e, após D-033, exposição fundamental igualmente PIT. O primário contém somente
+os quatro nomes com canal direto comprovado; um universo amplo não é fabricado com empresas
+indiretas. Publicamos a contagem de elegíveis ao longo do tempo como gráfico.
 
-**Onde a defesa é fraca.** Não há saída limpa. O período com universo rico é justamente o
-período de holdout, o que significa que a parte mais interessante do cross-section **não
-pode ser usada para desenvolver nada** sem queimar o holdout. É um custo real que estamos
-pagando conscientemente, e é a razão de o backtest primário ser o de universo restrito.
+**Onde a defesa é fraca.** A defesa contra survivorship ficou mais rigorosa, mas a defesa
+econômica revelou concentração: há um único produtor até março de 2018 e apenas dois depois.
+O antigo universo amplo pode nem existir no Método A. Isso reduz poder cross-seccional,
+fragiliza a neutralidade e torna o cap original inviável (R19); não há saída limpa sem mudar
+uma restrição antes do backtest e declarar seu custo.
 
 ---
 

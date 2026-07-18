@@ -126,5 +126,64 @@ observável no passado permanece idêntica.
 
 ## 6. Resultado da aplicação
 
-Esta seção será preenchida somente depois de a regra acima estar registrada no histórico do
-git. Ela mostrará tanto os nomes incluídos quanto todos os candidatos recusados, com o motivo.
+A regra das seções 1–5 foi registrada no commit anterior à materialização abaixo. A aplicação
+não consultou retorno de ação, Sharpe, drawdown nem qualquer resultado de carteira.
+
+### 6.1 Vintages elegíveis
+
+O registro canônico é `data/reference/exposure_fundamental_v1.json`; o módulo
+`features/exposure.py` valida e materializa suas linhas. Os valores exibidos são `E`, não os
+pesos de cultura isolados.
+
+| Disponível desde | Ticker | Direção | Materialidade | `E_soja` | `E_milho2` | Evidência determinante |
+|---|---|---:|---:|---:|---:|---|
+| 31/03/2014 | BRFS3 | −1 | 0,25 | −0,125 | −0,125 | milho e farelo de soja como insumos recorrentes; percentual consolidado não separável |
+| 31/10/2014 | AGRO3 | +1 | 1,00 | +0,840 | +0,160 | grãos = 69,8% da receita; área soja/milho = 52.457/9.965 ha |
+| 01/07/2015¹ | JBSS3 | −1 | 0,50 | −0,250 | −0,250 | JBS Foods = 10,7% da receita consolidada e tem custo direto de ração |
+| 07/03/2018 | SLCE3 | +1 | 0,50 | +0,432 | +0,068 | soja+milho = 47,5% da receita; abertura 41,0%/6,5% |
+| 27/04/2018 | BRFS3 | −1 | 0,50 | −0,250 | −0,250 | milho+farelo/grão de soja = 28,5% do custo de produção |
+
+¹ Limite posterior conservador porque a data original de publicação do relatório de 2014 não
+foi recuperada com prova suficiente. Não se usa a data-base do relatório como disponibilidade.
+
+As fontes primárias, localizadores, contas e bases de disponibilidade estão dentro do próprio
+registro. Em 2015, o universo fundamental disponível contém AGRO3, BRFS3 e JBSS3; SLCE3 só
+entra em 2018. A atualização de BRFS3 altera sua magnitude para frente, sem reescrever 2014–17.
+
+### 6.2 Auditoria do universo considerado
+
+| Grupo | Ticker | Resultado primário | Motivo do veto ou da inclusão |
+|---|---|---|---|
+| Produtor | AGRO3 | **incluído (+)** | venda direta de soja/milho e materialidade consolidada comprovada |
+| Produtor | SLCE3 | **incluído (+)** | venda direta e abertura de receita por cultura |
+| Sementes | SOJA3 | excluído | vende sementes; não vende o grão cujo preço é o canal causal da tese |
+| Proteína | BRFS3 | **incluído (−)** | milho e soja são insumos diretos recorrentes de ração |
+| Proteína | JBSS3 | **incluído (−)** | segmento direto de aves/suínos material no consolidado; diversificação limitada pela escala ordinal |
+| Proteína bovina | BEEF3, MRFG3 | excluídos | não foi comprovado canal consolidado direto e líquido para soja/milho no recorte auditado |
+| Açúcar/etanol | SMTO3, JALL3, RAIZ4 | excluídos | exposição direta é cana, fora das duas culturas do experimento primário |
+| Conglomerado | CSAN3 | excluído | direção líquida ambígua entre energia, logística e participações |
+| Insumos/sementes | TTEN3, VITT3, AGXY3 | excluídos | beneficiários indiretos do ciclo agrícola, não compradores/vendedores do grão-alvo |
+| Celulose | SUZB3, KLBN11 | excluídos | cultura e canal econômico fora do escopo |
+| Logística | RAIL3, HBSA3 | excluídos | volume transportado é canal indireto, com direção líquida não demonstrada |
+| Equipamentos | KEPL3 | excluído | vende armazenagem; exposição indireta a investimento/capacidade do agro |
+| Alimentos | MDIA3 | excluído | principal grão comprado é trigo, fora do escopo; soja/milho não comprovados como canal material |
+| Alimentos | CAML3 | excluído | compra e vende categorias agrícolas; direção líquida soja/milho não demonstrada |
+
+O veto não afirma que o retorno dessas empresas seja insensível ao clima. Afirma apenas que a
+evidência disponível não autoriza atribuir o **canal causal primário** sem usar o próprio
+retorno para descobri-lo. Essas empresas podem reaparecer no Método B como diagnóstico de
+robustez, mas não são promovidas retroativamente ao Método A.
+
+### 6.3 Consequência para a construção da carteira
+
+O núcleo ficou com dois produtores e dois processadores a partir de março de 2018 — menor que
+os cerca de 14 nomes imaginados na ideação. Com neutralidade 0,5/0,5, o cap prévio de 20% do
+bruto por nome é matematicamente incompatível com a matriz: o mínimo é 50% do bruto no único
+produtor entre 2015 e março de 2018 e 25% por produtor depois da entrada de SLCE3. Isso é uma
+restrição descoberta **antes de qualquer retorno**.
+
+Este documento não resolve o conflito por conveniência. Antes de construir a carteira, uma
+decisão separada deve escolher entre iniciar o portfólio apenas quando as duas pontas forem
+minimamente diversificadas, aceitar caps de 50%/25%, adotar um hedge externo ou reformular o
+universo com nova evidência direta. Reduzir o bruto sozinho não resolve um cap medido como
+porcentagem do próprio bruto. O custo de concentração será declarado em qualquer opção.

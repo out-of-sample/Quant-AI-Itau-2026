@@ -27,7 +27,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
-| R7 | **Universo agro puro só existe pós-2021** | **Confirmada** | Médio | Backtest primário usa universo ampliado com *adjacentes* (MDIA3, KEPL3, CAML3) para recuperar histórico longo e o lado short | Mitigado |
+| R7 | **Universo fundamental direto é estreito** — a auditoria rejeitou os adjacentes indiretos e deixou quatro nomes | **Confirmada** | Alto | Não fabricar exposição; matriz PIT conservadora (D-032/D-033); Método B apenas como robustez. Resolver carteira antes de retorno | 🔴 Materializado; concentração aberta |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
 | R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | Reportar a capacidade estimada explicitamente | Aceito |
 | R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido operacionalmente**; reforço das poucas datas com fonte única em PT-005 |
@@ -39,6 +39,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R16 | **CHIRPS prelim começa em 2015** — não há vintage operacional para 2013-14; jan/início de fev de 2015 foi backfill | Confirmada | Alto para poder estatístico | Primeiro ano-safra primário = 2015/16; ausência antes disso, nunca substituir silenciosamente por `final`; reportar redução do desenvolvimento | Aceito — limitação irremovível da fonte |
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
+| R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Confirmada | Alto | Decisão pré-carteira sem retornos: início posterior, cap maior, hedge externo ou nova evidência direta; declarar concentração | 🔴 Aberto — bloqueia a construção da carteira |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -846,6 +847,35 @@ de modelagem. Serão submetidos a sensibilidade, mas não escolhidos por retorno
 reduzir o núcleo histórico abaixo dos ~14 nomes imaginados na ideação e expor concentração
 maior que a prevista; se isso ocorrer, o protocolo de carteira será ajustado antes de qualquer
 backtest, com nova decisão explícita — nunca com inclusão oportunista de nomes indiretos.
+
+---
+
+### D-033 — Resultado da matriz fundamentalista: quatro nomes diretos e concentração material
+**Data**: 2026-07-17
+
+A regra D-032 foi aplicada depois de sua pré-especificação no histórico e sem consultar
+retornos. O registro versionado contém cinco vintages para quatro empresas:
+
+- produtores: AGRO3 (`E>0`, desde 31/10/2014) e SLCE3 (`E>0`, desde 07/03/2018);
+- processadores: BRFS3 (`E<0`, desde 31/03/2014; magnitude atualizada em 27/04/2018) e
+  JBSS3 (`E<0`, desde limite conservador de 01/07/2015).
+
+Todos os demais 17 candidatos foram recusados no primário por cultura fora do escopo, canal
+indireto, direção líquida ambígua ou ausência de evidência admissível. A auditoria completa e
+as fontes estão em `13_MATRIZ_EXPOSICAO.md`; o registro consumido pelo código está em
+`data/reference/exposure_fundamental_v1.json`.
+
+**Consequência.** A mitigação anterior de R7 — ampliar o núcleo para cerca de 14 adjacentes —
+era incompatível com o critério causal que acabamos de congelar e foi retirada. Com
+neutralidade 0,5/0,5, o único produtor até março de 2018 exige 50% do bruto; depois, dois
+produtores exigem ao menos 25% cada. O cap de 20% não fecha a carteira em nenhum trecho e
+reduzir o bruto não resolve um limite expresso como porcentagem do próprio bruto. R19 passa a
+bloquear o próximo passo de construção até uma decisão separada, ainda sem retornos.
+
+**Custo/limitação.** O Método A ganha auditabilidade e perde diversificação. JBSS3 usa a
+participação do segmento JBS Foods como limite de materialidade e uma data conservadora de
+disponibilidade; as cestas agregadas de BRFS3/JBSS3 usam 50%/50% e exigem sensibilidade. O
+Método B poderá medir discordâncias, mas não corrigirá retroativamente o Método A.
 
 ---
 

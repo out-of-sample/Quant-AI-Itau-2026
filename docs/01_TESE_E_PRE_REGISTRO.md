@@ -309,7 +309,7 @@ combinações testadas — que é a forma mais comum de auto-engano em backtest.
 | Exposição `E_{i,c}` | Método A (fundamentalista) | Auditável, não circular |
 | Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a hipótese de difusão lenta e declarado antes de consultar retornos |
 | Execução | no **close de D+1** após o sinal de D | Nunca no mesmo close que gerou o sinal |
-| Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`, cap de 20% por nome | Neutralidade a mercado é consequência direta da tese (§2) |
+| Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`; cap de 20% exige ratificação pré-carteira | D-033 mostrou, sem retornos, que o mínimo é 50% do bruto no único long até 03/2018 e 25% por long depois |
 | Custos | corretagem+emolumentos B3 + slippage proporcional à participação no ADTV | Ver `04_PROTOCOLO_BACKTEST.md` |
 | Benchmark | Ibovespa **e** CDI, ambos declarados a priori | Não escolher depois qual "ganhou" |
 
@@ -340,20 +340,17 @@ resposta:
   diferente. Se a estratégia sobreviver a ele, o resultado é forte. Se não sobreviver,
   isso também é um resultado, e vamos reportá-lo.
 
-**Tensão real, assumida com honestidade** (ver §7): boa parte do universo agro da B3 só
-existe *depois* de 2020. Ou seja, o período com universo rico é justamente o holdout. Não
-há solução limpa para isso. Nossa resposta é rodar **dois backtests declarados desde já**:
+**Tensão real, assumida com honestidade** (ver §7): a auditoria D-033 mostrou que o problema
+não é apenas a data de IPO. Dos 21 candidatos, somente AGRO3, SLCE3, BRFS3 e JBSS3 têm canal
+direto soja/milho admissível no Método A; os demais são indiretos, ambíguos ou de outra
+cultura. O backtest primário usa esse núcleo com entrada PIT gradual. Isso preserva o split
+in-sample/holdout, mas cria concentração severa e bloqueia o cap original de 20% (R19).
 
-- **Backtest A — "núcleo histórico" (sinal 2015/16–2025)**: universo restrito às empresas listadas
-  desde ~2012 (SLCE3, SMTO3, JBSS3, BRFS3, MRFG3, BEEF3, SUZB3, KLBN11, AGRO3, RAIL3).
-  Menos nomes, mas histórico longo e split in-sample/holdout íntegro.
-- **Backtest B — "universo amplo" (2021-2025)**: todos os nomes, incluindo os IPOs de
-  2020-21 (SOJA3, TTEN3, JALL3, RAIZ4, VITT3...). Mais nomes, histórico curto, e
-  **inteiramente dentro do holdout** — portanto não pode ser usado para calibrar nada.
-
-Reportamos os dois lado a lado, com a limitação explicada. Um gráfico da **contagem de
-ativos elegíveis ao longo do tempo** entra no relatório: é a prova visual de que tratamos
-o problema em vez de escondê-lo.
+O antigo **Backtest B — universo amplo (2021–2025)** deixa de ser uma promessa: só será
+materializado se nova fonte primária provar canal direto para nomes pós-IPO, ou como
+diagnóstico do Método B claramente separado. Ele está inteiro no holdout e não calibra nada.
+Um gráfico da **contagem de ativos elegíveis ao longo do tempo** permanece obrigatório; agora
+ele também torna visível a escassez de exposição fundamental, em vez de escondê-la.
 
 ---
 

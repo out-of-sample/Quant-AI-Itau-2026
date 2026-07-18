@@ -118,7 +118,7 @@ que o resultado não desmorona na vizinhança. Tabela no relatório.
 | Horizonte de holding | 21 dias úteis | 5, 10, 42, 63 | alfa só existe num horizonte específico |
 | Lag de publicação | 7 dias | 0, 3, 14, 21 | ver §2.3 |
 | Método de exposição `E` | fundamentalista (A) | estatístico (B) | os dois discordam completamente |
-| Cap por nome | 20% | 10%, 30% | resultado depende de uma única posição concentrada |
+| Cap por nome | a ratificar antes da carteira (R19/D-033) | vizinhos simétricos do valor escolhido | resultado depende de uma única posição concentrada |
 | Filtro de liquidez (ADTV) | a definir | ±50% | alfa só existe nos nomes ilíquidos ⇒ não é operável |
 
 > **Interpretação correta de uma tabela de sensibilidade**: não estamos procurando o melhor
@@ -133,7 +133,7 @@ que o resultado não desmorona na vizinhança. Tabela no relatório.
 |---|---|---|
 | **Subperíodos** | quebrar o backtest em blocos (pré-2016, 2016-2019, 2020-2022, 2023-2025) | ver se o alfa vem de um único episódio (ex.: a seca de 2021) |
 | **Anos de El Niño vs. La Niña** | condicionar por regime ENSO | a estratégia só funciona num regime climático? |
-| **Universo alternativo** | Backtest A (núcleo histórico) vs. Backtest B (universo amplo pós-IPOs) | ver `01_TESE_E_PRE_REGISTRO.md` §6 |
+| **Universo alternativo** | Método A direto vs. diagnóstico Método B; universo amplo só se houver evidência admissível | ver D-033 e `01_TESE_E_PRE_REGISTRO.md` §6 |
 | **Custos dobrados** | 2× o custo estimado | margem de segurança contra otimismo de execução |
 | **Exclusão de um nome por vez** (*leave-one-out*) | remover cada ação e re-rodar | o alfa depende de uma única empresa? |
 | **Exclusão da maior janela de retorno** | remover o melhor mês | o resultado é um evento único? |
