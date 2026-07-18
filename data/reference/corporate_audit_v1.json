@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "decision": "D-035",
+  "built_on": "2026-07-18",
+  "note": "Registro PIT da auditoria dos canais empresariais da Fase 3.1 (docs/14). Nenhum retorno de acao foi consultado. As datas de disponibilidade (avail_date) sao datas de arquivamento comprovaveis (SEC EDGAR) ou bounds conservadores declarados. Este artefato e um registro de proveniencia e de lacunas; NAO reescreve a matriz congelada D-033 (data/reference/exposure_fundamental_v1.json). As materialidades efetivas candidatas abaixo alimentam a futura decisao de score, nao a implementam.",
+  "shock_uf_scope": {
+    "soy": ["MT", "GO", "PR", "RS", "MS", "MG", "BA"],
+    "corn_second": ["MT", "PR", "GO", "MS"]
+  },
+  "names": [
+    {
+      "ticker": "AGRO3",
+      "company": "BrasilAgro",
+      "role": "producer",
+      "net_channel_direction": 1,
+      "d033_materiality": 1.00,
+      "audit_effective_materiality_candidate": 0.50,
+      "channels_present": ["P", "Q"],
+      "sec_cik": "1499849",
+      "vintages": [
+        {
+          "ref_date": "2014-06-30",
+          "avail_date": "2014-10-31",
+          "availability_basis": "exact_filing",
+          "source": {"form": "20-F FY2014", "cik": "1499849", "accession": "0001193125-14-391641", "locator": "Item 5 revenue by activity; Item 4 property table; risk-management policy"},
+          "findings": {
+            "revenue_mix": {"grain_operating_share": 0.706, "sugarcane_operating_share": 0.294, "farm_sale_gain_RS_thousand": 21800, "note": "grain R$91,645k vs sugarcane R$38,235k operating; sugarcane = 29.1% of total revenue, sold to ETH Bioenergia at CONSECANA/ATR"},
+            "geography_landbank_ha": {"PI": 27807, "BA": 86588, "MT": 5186, "GO": 8124, "MG": 24247, "total": 151952, "paraguay_via_cresca_ha": 81231},
+            "geography_in_shock_note": "PI (Cremaq) and Paraguay (Cresca) are OUTSIDE the Shock UF scope; BA/MT/GO in-scope; MG native reserve/low relevance",
+            "hedge": "commodity price risk hedged via OTC options/futures within pre-established limits; percent/horizon NOT disclosed",
+            "price_channel": "soybean 100% sold to trading companies, priced on CBOT (USD price-taker)"
+          }
+        },
+        {
+          "ref_date": "2019-06-30",
+          "avail_date": "2019-10-29",
+          "availability_basis": "exact_filing",
+          "source": {"form": "20-F FY2019", "cik": "1499849", "accession": "0001615774-19-013572", "locator": "Item 5 revenue by activity; gain-on-sale-of-farms; derivatives table"},
+          "findings": {
+            "revenue_mix": {"grain_operating_RS_thousand": 171735, "sugarcane_operating_RS_thousand": 160476, "grain_operating_share": 0.517, "sugarcane_operating_share": 0.483, "farm_sale_gain_RS_thousand": 177200},
+            "perimeter": "sold Jatoba (BA) and Alto Taquari (MT) in FY2019; Cremaq (PI) sold in 2015; owned soy footprint in Shock UFs shrank over the dev period",
+            "crop_expansion": "cotton added (derivatives on cotton); sugarcane grew to ~48% of operating revenue",
+            "hedge": "active derivatives on soybean/corn/cotton; percent not tabulated"
+          }
+        }
+      ],
+      "declared_gaps": [
+        "planted area by crop x UF x vintage (precise Q) not extracted from source",
+        "exact hedge/forward-sale percent by crop-year not disclosed in extracted sections"
+      ],
+      "conclusion": "Long P-positive; primary-crop materiality is a minority of the business and DECLINING over the dev period (sugarcane 29%->48% of operating revenue; farm-trading gains dominate income; cotton added). Own-volume Q partly OUTSIDE the Shock (PI + Paraguay). Net P>Q plausible by diversified geography + hedge, but not resolvable by fundamentals alone -> conditioned on H2a."
+    },
+    {
+      "ticker": "SLCE3",
+      "company": "SLC Agricola",
+      "role": "producer",
+      "net_channel_direction": 1,
+      "d033_materiality": 0.50,
+      "audit_effective_materiality_candidate": 0.50,
+      "channels_present": ["P", "Q"],
+      "sec_cik": null,
+      "vintages": [
+        {
+          "ref_date": "2017-12-31",
+          "avail_date": "2018-03-07",
+          "availability_basis": "d033_anchor",
+          "source": {"form": "IR/CVM 2018 (D-033 anchor)", "locator": "revenue by crop: soy+corn = 47.5% of revenue; split 41.0%/6.5%"},
+          "findings": {
+            "revenue_mix": {"soy_plus_corn_share": 0.475, "note": "cotton is central and >90% exported; dilutes primary-crop materiality"},
+            "geography_states": ["MT", "MS", "GO", "MG", "BA", "MA", "PI", "PA"],
+            "geography_in_shock_note": "MT/MS/GO/MG/BA in Shock soy scope; MA/PI/PA OUTSIDE (MATOPIBA/North)",
+            "hedge": "SLC pre-sells (locks price/FX on) a relevant share of soybean and cotton before harvest via forwards/NDF -> attenuates P; exact percent is a declared gap"
+          }
+        }
+      ],
+      "declared_gaps": [
+        "planted soy/corn area by UF by vintage not pulled from primary CVM source",
+        "exact hedge/forward-sale percent by crop-year NOT filled from memory (pista != citacao)"
+      ],
+      "conclusion": "Long P-positive; materiality already 0.50 (soy+corn ~47.5% revenue, diluted by cotton). P attenuated by heavy pre-sale/hedge. Q partly OUTSIDE the Shock (MA/PI/PA). Same P/Q structure as AGRO3: net depends on price transmission (H2a)."
+    },
+    {
+      "ticker": "BRFS3",
+      "company": "BRF S.A.",
+      "role": "processor",
+      "net_channel_direction": -1,
+      "d033_materiality": 0.50,
+      "audit_effective_materiality_candidate": 0.50,
+      "channels_present": ["C"],
+      "sec_cik": "1122491",
+      "vintages": [
+        {
+          "ref_date": "2017-12-31",
+          "avail_date": "2018-04-30",
+          "availability_basis": "exact_filing",
+          "source": {"form": "20-F FY2017", "cik": "1122491", "accession": "0001292814-18-001481", "locator": "risk factors: raw materials cost of production"},
+          "findings": {
+            "input_cost_share": {"corn_soymeal_soybean_pct_of_cost_2017": 0.285, "pct_2016": 0.325},
+            "input_geography": "corn/soy sourced domestically in Brazil (references 'average corn price in Brazil') -> C is INSIDE the Shock geography",
+            "output_passthrough": "selling prices of many products are highly sensitive to and fluctuate with commodity prices -> partial pass-through attenuates net C; short-run direction stays -1 (cost rises first, pass-through lags)",
+            "hedge": "commodity derivatives on corn/soy; coverage percent not tabulated"
+          }
+        }
+      ],
+      "declared_gaps": ["exact input-hedge coverage percent and horizon not tabulated in extracted sections"],
+      "conclusion": "Short C-negative; ~28.5% of cost of production, Brazilian-sourced -> cleanest processor channel, co-located with the Shock. Net C attenuated by output pass-through + hedge (magnitude undisclosed -> conservative sensitivity, not zero). Direction -1 confirmed; materiality 0.50 coherent with D-033."
+    },
+    {
+      "ticker": "JBSS3",
+      "company": "JBS S.A.",
+      "role": "processor",
+      "net_channel_direction": -1,
+      "d033_materiality": 0.50,
+      "audit_effective_materiality_candidate": 0.50,
+      "channels_present": ["C"],
+      "sec_cik": null,
+      "vintages": [
+        {
+          "ref_date": "2015-06-30",
+          "avail_date": "2015-07-01",
+          "availability_basis": "conservative_bound",
+          "source": {"form": "IR/CVM 2015 (D-033 anchor)", "locator": "JBS Foods = 10.7% of consolidated revenue; direct feed cost"},
+          "findings": {
+            "segment_dilution": "largest segment is BEEF (JBS Beef NA, JBS Brasil, JBS Australia), low grain intensity -> grain cost is a minority of consolidated cost",
+            "input_geography_split": "Pilgrim's Pride (US/Mexico) uses US corn+soymeal; Seara (Brazil) uses Brazilian corn+soymeal; Moy Park (Europe) uses wheat+soymeal -> only the Seara (BR) share is co-located with the Brazilian Shock"
+          }
+        },
+        {
+          "ref_date": "2018-12-30",
+          "avail_date": "2019-02-13",
+          "availability_basis": "exact_filing",
+          "source": {"form": "Pilgrim's Pride 10-K FY2018", "cik": "802481", "accession": "0000802481-19-000015", "locator": "Business: feed ingredient costs"},
+          "findings": {
+            "us_feed_cost_share": {"feed_pct_of_US_cost_of_sales_2018": 0.285, "note": "single largest component of US cost of sales, but US corn -> OUTSIDE the Brazilian Shock"},
+            "attenuation": "'as further processing is performed, feed ingredient costs become a decreasing percentage' -> value-added processing + pass-through dilute the raw grain cost"
+          }
+        }
+      ],
+      "declared_gaps": [
+        "consolidated percent of cost in BRAZILIAN corn/soy (Seara share) not extracted from primary CVM source",
+        "JBS was B3-only in the dev period; datable consolidated feed-cost figure requires CVM DFP/Formulario de Referencia"
+      ],
+      "conclusion": "Short C-negative; the most DILUTED processor: grain cost minority of consolidated (beef-heavy) and geographically split (US Pilgrim's + Europe Moy Park OUTSIDE the Shock; only Seara/BR inside). The conservative 0.50 / 2015 bound of D-033 is adequate; do not lower without a datable figure."
+    }
+  ],
+  "cross_cutting_findings": {
+    "signs_defensible": "All four D-033 direction signs (producers +, processors -) are defensible on PIT evidence.",
+    "P_Q_not_separable": "A separate own-volume Q term is NOT PIT-reproducible: planted area by crop x UF x vintage and hedge percents are declared gaps. Per docs/14 sec.3 and docs/13 sec.7, absence is treated as an identification limit, not filled. -> keep D-033 matrix (option 1), do not decompose into an explicit P/Q/C score.",
+    "materiality_attenuated": "Effective grain materiality is attenuated for every name by non-primary crops (cane/cotton/beef), hedging/pre-sale, and geography partly outside the Shock (PI/Paraguay for AGRO3; MA/PI/PA for SLC; US/Europe feed for JBS).",
+    "producer_net_conditioned_on_H2a": "Own-volume Q is partly outside the Shock, so P tends to dominate for producers, but the net sign is not resolvable by fundamentals -> the long side is conditioned on H2a (price transmission). If H2a fails, the long side is reformulated. This addresses R20 by evidence, not presumption.",
+    "universe_unchanged": "No new direct name emerged; D-033 vetoes hold. The universe is genuinely 2 longs / 2 shorts (1 long before 03/2018). R19 (concentration/cap) is NOT resolved by the audit and remains open for the portfolio decision; the audit confirms concentration cannot be diluted by adding direct names."
+  }
+}

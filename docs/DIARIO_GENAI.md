@@ -830,6 +830,39 @@ nota; adotou apenas as críticas que sobreviveram ao confronto com os artefatos 
 
 ---
 
+## 2026-07-18 — Auditoria PIT dos canais empresariais (D-035)
+
+**Uso**: conduzir a auditoria corporativa point-in-time dos quatro nomes diretos (AGRO3,
+SLCE3, BRFS3, JBSS3) exigida pelo portão da Fase 3.1 — mix, geografia produtiva, canal de
+preço/insumo, hedge e perímetro por vintage — sem consultar nenhum retorno de ação, e
+formalizar a decisão do fork `P/Q/C`.
+
+**Valor real**: a IA localizou e leu as fontes primárias datáveis direto do EDGAR (submissions
+JSON + documentos): enumerou os 13 vintages 20-F da BrasilAgro com data de arquivamento =
+`avail_date`, extraiu o mix de receita e a geografia de fazendas do FY2014 e do FY2019,
+confirmou os 28,5% de custo de insumo da BRF (FY2017) e achou que a Pilgrim's Pride (aves da
+JBS nos EUA) é SEC-listed, fornecendo uma âncora datável para o custo de ração em milho
+**americano**. Isso transformou uma ambiguidade conceitual (produtor: preço maior vs. volume
+próprio menor) em achados concretos: para AGRO3 a cana subiu a 48% da receita operacional e o
+grão caiu; `Q` de produtores está parcialmente **fora** do Shock (PI/Paraguai; MA/PI/PA); o
+custo da JBS é diluído por bovino e partido entre EUA/BR/Europa.
+
+**Validação humana/mecânica**: cada número foi extraído do texto cru do próprio arquivo
+(download + strip de HTML + grep de contexto), não de resumo de terceiros; as datas de
+disponibilidade vêm do campo `filingDate` do EDGAR. O que não pôde ser lido numa fonte datável
+— área plantada por cultura×UF×vintage e percentuais exatos de hedge — foi **declarado como
+lacuna** em `data/reference/corporate_audit_v1.json`, não preenchido. A decisão resultante
+(manter D-033; `P/Q` não separáveis; long condicionado a H2a) segue `14` §3 e `13` §7.
+
+**O que a IA errou ou o processo pegou**: a tentação de preencher o % de hedge da SLC "de
+memória" foi barrada pela própria regra do projeto (pista ≠ citação) — registrou-se a lacuna.
+O WebFetch levou 403 da SEC (proteção anti-bot); o caminho correto foi `curl` com User-Agent
+de contato, como a SEC exige. A materialidade de D-033 **não** foi reescrita apesar de a
+auditoria sugerir atenuação: reabrir um registro congelado por argumento qualitativo seria
+erro; a atenuação entra como sensibilidade no futuro congelamento do score, não como rewrite.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

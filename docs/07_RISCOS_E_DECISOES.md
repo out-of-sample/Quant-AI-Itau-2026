@@ -40,8 +40,8 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 | R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Confirmada | Alto | Decisão pré-carteira sem retornos: início posterior, cap maior, hedge externo ou nova evidência direta; declarar concentração | 🔴 Aberto — bloqueia a construção da carteira |
-| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | Fase 3.1 separa `P`, `Q` regional e `C`; sem evidência, produtor não recebe direção líquida por presunção | 🔴 Aberto — bloqueia score |
-| R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria CVM/SEC/RI por vintage; ausência não é preenchida; hedge só entra com evidência PIT | 🔴 Aberto — Fase 3.1 |
+| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | Auditoria (D-035) mostrou `Q` **parcialmente fora do Shock** (PI/Paraguai; MA/PI/PA) ⇒ `P` tende a dominar, mas o líquido não é resolvível só pelo fundamento; o long fica **condicionado a H2a**. `P/Q` não são PIT-separáveis ⇒ mantém-se D-033, sem termo `Q` | 🟡 Endereçado por evidência (D-035); depende de H2a passar |
+| R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
 
@@ -908,6 +908,47 @@ protocolo está em `14_AUDITORIA_CANAIS_EMPRESARIAIS.md` e exige:
 menor do que transformar uma matriz auditável, porém economicamente incompleta, em um Sharpe
 sem interpretação causal. A matriz D-033 não é reescrita: permanece como registro do canal de
 preço/insumo e só será promovida ou decomposta após o novo portão.
+
+---
+
+### D-035 — Resultado da auditoria dos canais empresariais: manter D-033, long condicionado a H2a
+**Data**: 2026-07-18
+
+A auditoria PIT dos quatro nomes (protocolo `14_AUDITORIA_CANAIS_EMPRESARIAIS.md`) foi
+concluída **sem consultar nenhum retorno de ação**. Registro estruturado por nome/vintage/
+fonte/localizador/lacuna em `data/reference/corporate_audit_v1.json`; resultado narrado em
+`14` §9. Fontes primárias lidas: 20-F BrasilAgro FY2014/FY2019 (SEC CIK 1499849), 20-F BRF
+FY2017 (CIK 1122491), 10-K Pilgrim's Pride FY2018 (CIK 802481); SLCE3 e a JBS consolidada
+sobre a âncora datada de D-033 + geografia pública, com números finos declarados como lacuna.
+
+**O que foi decidido.**
+1. As **direções de D-033 são defensáveis** (produtores +, processadores −).
+2. **`P` e `Q` não são PIT-separáveis**: área plantada por cultura×UF×vintage e % de hedge são
+   lacunas declaradas. Por `14` §3 e `13` §7, a ausência é limite de identificação, não
+   preenchida ⇒ **mantém-se a matriz D-033 (opção 1)**, sem termo `Q` separado nem score
+   `P/Q/C` explícito.
+3. A **materialidade efetiva é atenuada** em todos (cana na AGRO3 subiu a 48% da receita
+   operacional em FY2019; algodão na SLC; bovino + insumo US/Europa na JBS; hedge; geografia
+   fora do Shock — PI/Paraguai, MA/PI/PA). Entra como **haircut candidato e eixo de
+   sensibilidade** no congelamento do score (só no desenvolvimento), **sem reescrever** o
+   registro congelado D-033.
+4. O **lado long fica condicionado a H2a**: `Q` parcialmente fora do Shock faz `P` tender a
+   dominar, mas o líquido do produtor não é resolvível só pelo fundamento. Se H2a falhar, o
+   long é reformulado.
+5. **Nenhum novo nome direto**: os vetos de D-033 se mantêm; a concentração não é diluível por
+   nomes diretos.
+
+**Por quê.** O objetivo do portão (D-034) era impedir que uma direção econômica ambígua
+virasse posição por uma fórmula simples demais. A auditoria mostrou que a ambiguidade do
+produtor se resolve **por evidência de geografia (Q parcial) + dependência de H2a**, não por
+presunção — e que a granularidade para um `Q` próprio não existe de forma PIT-reproduzível.
+Manter D-033 com essas ressalvas é mais honesto que fabricar um `Q` sem fonte.
+
+**Custo/limitação.** Não decompor `P/Q` é assumir um limite de identificação: o sinal segue
+sendo o canal de preço/insumo de D-033, com a ponta long dependente de H2a e a materialidade
+real abaixo da participação de receita. R20 passa a **endereçado** (por evidência, condicionado
+a H2a), R21 a **mitigado com lacunas declaradas**; R19 (concentração) permanece **aberto** —
+a auditoria confirma que não há como diluí-lo adicionando nomes diretos.
 
 ---
 
