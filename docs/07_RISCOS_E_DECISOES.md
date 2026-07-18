@@ -814,6 +814,41 @@ post e nunca dimensiona (R18/D-026).
 
 ---
 
+### D-032 — Operacionalização point-in-time da matriz fundamentalista antes da classificação
+**Data**: 2026-07-17
+
+O Método A de D-007 passa a ter uma regra mecânica, registrada **antes de materializar a
+matriz** e sem consultar retornos:
+
+```text
+E(i,c) = direction(i) * materiality(i) * crop_weight(i,c)
+```
+
+- `direction` vale `+1` para venda direta recorrente do grão e `-1` para compra direta como
+  insumo produtivo; canais indiretos ou de direção líquida ambígua são inelegíveis;
+- `materiality` é ordinal: `1` para canal ≥50% do consolidado, `0,5` para 10%–50%, `0,25`
+  para canal direto <10% ou sem percentual separável, e `0` para indireto/ambíguo;
+- `crop_weight` usa abertura por receita/custo, depois volume/área; cesta soja+milho sem
+  abertura recebe divisão igual marcada e vai à sensibilidade.
+
+Cada vintage carrega `ref_date`, `avail_date` e fonte. O último vintage integral disponível em
+`t` é usado; não existe preenchimento para trás. A matriz e a auditoria de candidatos ficam em
+`13_MATRIZ_EXPOSICAO.md` e no registro versionado consumido pelo código.
+
+**Por quê.** Percentuais contábeis de empresas diferentes não são diretamente comparáveis:
+receita de cultura para produtor e custo de ração para processador medem objetos distintos. A
+faixa ordinal preserva materialidade sem fabricar precisão; a composição dentro da empresa
+mantém a informação de soja versus milho. A exclusão conservadora impede que logística,
+sementes ou insumos recebam sinal só para aumentar o número de ações.
+
+**Custo/limitação.** Os degraus 0,25/0,50/1 e a divisão igual de cesta agregada são hipóteses
+de modelagem. Serão submetidos a sensibilidade, mas não escolhidos por retorno. A regra pode
+reduzir o núcleo histórico abaixo dos ~14 nomes imaginados na ideação e expor concentração
+maior que a prevista; se isso ocorrer, o protocolo de carteira será ajustado antes de qualquer
+backtest, com nova decisão explícita — nunca com inclusão oportunista de nomes indiretos.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

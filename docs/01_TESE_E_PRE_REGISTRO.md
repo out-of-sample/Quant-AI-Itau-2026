@@ -140,11 +140,13 @@ Shock_{c,t} = Σ_u  w_{u,c,t} · Shock_{u,c,t}(janela fenológica de c)
 Estimado por **dois métodos independentes**, que se cruzam:
 
 **Método A — fundamentalista (prior, "de baixo para cima")**
-Composição de receita e de custo divulgada pela própria empresa (releases trimestrais,
-Formulário de Referência CVM). Ex.: São Martinho é ~100% cana → `E = +1` em açúcar/etanol.
-BRF tem ~30-40% do CPV em milho e farelo → `E` negativo relevante nessas duas.
-*Vantagem*: interpretável, estável, defensável na banca. *Custo*: trabalho manual, baixa
-frequência de atualização.
+Direção causal, materialidade ordinal e composição por cultura, extraídas de divulgações da
+própria empresa (CVM/SEC, documentos de oferta e RI). A regra exata está congelada em
+`13_MATRIZ_EXPOSICAO.md`: `E = direção × materialidade × peso da cultura`. Os pesos usam
+receita/custo por cultura; volume ou área são o fallback; cesta soja+milho não separável usa
+divisão igual explicitamente marcada. Cada vintage carrega `ref_date` e `avail_date` e nunca é
+preenchido para trás. *Vantagem*: interpretável, estável, auditável e não circular. *Custo*:
+baixa frequência, escala ordinal e exclusão conservadora de empresas ambíguas.
 
 **Método B — estatístico (validação, "de cima para baixo")**
 Beta rolling da ação contra o retorno do futuro da commodity, **controlando por Ibovespa e
@@ -164,7 +166,7 @@ mas o mercado a precifica como consumidora (ou vice-versa), isso vai para o rela
 achado. Registramos a matriz de discordância explicitamente.
 
 **Decisão pré-registrada**: o resultado **primário** usa o Método A (exposição
-fundamentalista, fixa e auditável). O Método B entra como **teste de robustez**, não como
+fundamentalista, point-in-time e auditável). O Método B entra como **teste de robustez**, não como
 o resultado principal. Motivo: `E` estimado por regressão dos próprios retornos cria uma
 dependência circular entre o sinal e o alvo que enfraquece a interpretação causal.
 

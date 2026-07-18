@@ -200,6 +200,12 @@ não dimensiona o experimento primário (D-026). Calibração
 **exclusivamente** no desenvolvimento até 2019; o `Shock` operacional começa em 2015/16
 (R16), embora preços e universo preservem o recorte anterior como histórico auxiliar.
 
+- ✅ método fundamentalista point-in-time pré-registrado antes da classificação (D-032;
+  `13_MATRIZ_EXPOSICAO.md`)
+- ⬜ aplicar a regra ao universo, versionar e validar a matriz `E`
+- ⬜ construir o score `S = Σ E·Shock`
+- ⬜ calibrar os parâmetros operacionais permitidos e construir a carteira dollar-neutral
+
 ### Fase 4 — Backtest
 Backtest A (núcleo histórico, primário) e B (universo amplo, secundário). Custos, capacidade,
 atribuição.
