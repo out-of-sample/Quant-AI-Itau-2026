@@ -9,11 +9,14 @@ como ele está organizado e em que ordem as coisas acontecem.
 
 Choques climáticos nas regiões produtoras brasileiras carregam informação sobre a oferta
 futura de commodities agrícolas. Essa informação chega ao preço das ações da B3 **com
-defasagem e de forma heterogênea entre empresas** — porque uma seca é *boa* para quem vende
-a commodity (o preço sobe) e *ruim* para quem a compra como insumo (a margem cai). A
-estratégia explora essa heterogeneidade com uma carteira **market-neutral long/short dentro
-do próprio setor agro**: comprada em produtores, vendida em processadores, dimensionada pela
-exposição líquida de cada empresa a cada commodity.
+defasagem e de forma heterogênea entre empresas** — porque uma seca pode elevar o preço para
+quem vende a commodity, reduzir o volume do produtor atingido e encarecer o insumo de quem a
+compra. A
+estratégia pretende explorar essa heterogeneidade com uma carteira **dollar-neutral
+long/short dentro do próprio setor agro**: comprada em produtores, vendida em processadores,
+dimensionada pela exposição líquida de cada empresa a cada commodity. Neutralidade em reais
+não implica neutralidade a mercado, fatores ou commodities; essas exposições precisam ser
+medidas e testadas explicitamente.
 
 O elo causal é testado em etapas, não assumido:
 
@@ -62,6 +65,8 @@ Detalhes em `01_TESE_E_PRE_REGISTRO.md` §2.
 | **`10_REFERENCIAS.md`** | Referências acadêmicas, métodos e fontes de dados usados, com proveniência e lacunas marcadas |
 | **`11_AUDITORIA_FASE1.md`** | Evidências do fechamento da ingestão: cross-check dos preços, decisões sobre preços de commodities e limite de vintage do ComexStat |
 | **`12_PENDENCIAS_TRANSVERSAIS.md`** | Fonte única das dívidas legadas/transversais que não pertencem a uma fase futura |
+| **`13_MATRIZ_EXPOSICAO.md`** | Regra, fontes e registro point-in-time da matriz fundamentalista empresa × cultura |
+| **`14_AUDITORIA_CANAIS_EMPRESARIAIS.md`** | Portão econômico entre a matriz PIT e a carteira: efeito-preço, volume próprio, insumo, geografia, hedge e redesenho de H2/H3 |
 | **`DIARIO_GENAI.md`** | Registro contínuo do uso de IA generativa no processo |
 | `../CONTRIBUTING.md` | Branches, commits, PRs, checklist de revisão |
 | `../05_Ideacao_Tese/` | As 21 teses avaliadas e por que esta foi escolhida |
@@ -204,9 +209,16 @@ não dimensiona o experimento primário (D-026). Calibração
   `13_MATRIZ_EXPOSICAO.md`)
 - ✅ regra aplicada ao universo, matriz `E` versionada e validada (D-033; quatro nomes
   diretos, entrada PIT gradual)
-- ⬜ construir o score `S = Σ E·Shock`
-- ⬜ resolver o conflito concentração × cap de 20% sem consultar retornos, calibrar os demais
-  parâmetros permitidos e construir a carteira dollar-neutral
+- ✅ inserido o portão **Fase 3.1 — auditoria dos canais empresariais** antes de score e
+  carteira (D-034; `14_AUDITORIA_CANAIS_EMPRESARIAIS.md`)
+- ⬜ auditar, em fontes PIT, mix, geografia produtiva, canal de preço/insumo, hedge e mudanças
+  de perímetro das quatro empresas
+- ⬜ separar benefício de preço (`P`), dano de volume próprio regional (`Q`) e custo de insumo
+  (`C`); só então congelar a definição final de `E` e do score
+- ⬜ pré-registrar e executar H2a no desenvolvimento; manter H2b como diagnóstico de evento
+- ⬜ substituir o H3/Fama–MacBeth por teste compatível com apenas três a quatro ações
+- ⬜ resolver R19 sem consultar retornos e construir carteira dollar-neutral, sem presumir
+  neutralidade a beta, fatores ou commodities
 
 ### Fase 4 — Backtest
 Backtest A (núcleo histórico, primário); B amplo permanece condicionado a evidência direta

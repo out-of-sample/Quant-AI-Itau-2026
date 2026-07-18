@@ -803,6 +803,33 @@ regra, não para escolher a versão com mais ativos.
 
 ---
 
+## 2026-07-17 — Crítica externa e criação do portão econômico da Fase 3.1 (D-034)
+
+**Uso**: submeter a documentação do projeto a uma segunda avaliação crítica, com foco na
+qualidade potencial da entrega final, e reconciliar cada observação com o estado real do
+repositório antes de aceitá-la.
+
+**Valor real**: a leitura externa destacou geografia corporativa, hedge e a ambiguidade entre
+preço maior e volume próprio menor para produtores. A reconciliação interna revelou dois
+problemas ainda mais objetivos: H3/Fama–MacBeth era incompatível com uma cross-section de
+três a quatro ações, e uma carteira dollar-neutral vinha sendo chamada incorretamente de
+market-neutral. Isso levou à D-034: score e carteira ficam bloqueados até uma auditoria PIT
+dos canais `P/Q/C`, H2 ser separado em teste preditivo e diagnóstico de evento, e H3 receber
+um desenho compatível com o N real.
+
+**Validação humana/mecânica**: as afirmações foram comparadas com D-032/D-033, a matriz
+versionada, o protocolo de backtest e o pré-registro. A equipe separou sugestões novas de
+afirmações desatualizadas: a matriz `E` já existia e era PIT, mas ainda não representava o
+efeito líquido completo; a identidade visual continuava pendente. O novo protocolo foi
+registrado antes de consultar retornos acionários.
+
+**O que a IA errou ou excedeu**: a projeção numérica de nota tratou partes planejadas como se
+já estivessem implementadas e chamou Veranico de descrição exata sem conferir que o sinal usa
+déficit acumulado, não necessariamente uma estiagem curta. A equipe não adotou a previsão de
+nota; adotou apenas as críticas que sobreviveram ao confronto com os artefatos do projeto.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

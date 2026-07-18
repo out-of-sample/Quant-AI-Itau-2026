@@ -6,17 +6,19 @@
 
 ---
 
-## Recomendação: **VERANICO**
+## Candidato recomendado: **VERANICO**
 
 **Veranico** é o termo agronômico brasileiro para uma **estiagem curta no meio da estação
 chuvosa** — dias de sol forte e sem chuva justamente quando a lavoura mais precisa de água.
-É, literalmente, o fenômeno que a estratégia detecta.
+O nome é coerente com a tese, mas sua precisão ainda precisa ser ratificada: o sinal primário
+mede déficit acumulado na janela fenológica e pode capturar uma seca mais persistente, não
+necessariamente um veranico curto.
 
 **Por que é o nome certo:**
 
 | | |
 |---|---|
-| **Precisão** | Não é uma metáfora aproximada. É o **nome técnico exato** do choque que o modelo captura: anomalia seca de curta duração dentro da janela fenológica crítica |
+| **Precisão** | Nomeia um caso agronomicamente importante do choque; só será chamado de termo exato se a duração efetiva do sinal primário for compatível com um veranico |
 | **Origem** | Termo brasileiro, do vocabulário de quem trabalha com safra. Sinaliza domínio do assunto, não erudição decorativa |
 | **Coerência com a tese** | O veranico é perigoso justamente por ser **curto e localizado** — passa despercebido numa média mensal e numa leitura macro. É exatamente a informação que o mercado não agrega, que é a nossa hipótese de ineficiência |
 | **Memorável** | Uma palavra, sonora, sem sigla forçada nem acrônimo torturado |
@@ -40,8 +42,10 @@ que o modelo conecta.
 
 ## Decisão
 
-Pendente do time. A recomendação é **VERANICO**, pelo argumento de precisão: é o único dos
-quatro cujo nome **é** o fenômeno modelado, em vez de uma alusão ao setor.
+Pendente do time. A recomendação provisória é **VERANICO**, por ser brasileiro, memorável e
+coerente com estresse hídrico em janela crítica. A decisão final deve ocorrer depois da Fase
+3.1, quando a semântica econômica e temporal do score estiver congelada; se o sinal representar
+seca sazonal acumulada, a identidade deve evitar afirmar que detecta apenas estiagens curtas.
 
 Se o nome mudar, o pacote de código é renomeado junto — hoje ele usa um nome técnico neutro
 justamente para não travar essa decisão.

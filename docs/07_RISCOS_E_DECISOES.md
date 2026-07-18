@@ -22,7 +22,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | # | Risco | Prob. | Impacto | Mitigação | Status |
 |---|---|---|---|---|---|
 | R1 | **N efetivo pequeno** — o sinal operacional começa em 2015/16 e H1a depende do painel iniciado em 2017/18; linhas UF×cultura não viram eventos independentes. Sem poder estatístico para efeito pequeno | Alta | Alto | Primário combina soja e milho 2ª em painel de UFs, mas inferência continua agrupada por ano-safra; block bootstrap; **reportar N efetivo por teste**. Outras culturas não são adicionadas só para fabricar N | 🔴 **Sem solução. É a limitação nº 1 e vai declarada no relatório** |
-| R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Construção dollar-neutral long/short cancela boa parte da exposição líquida; teste formal de *spanning* pré-registrado | Aberto — decide-se no teste |
+| R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Dollar-neutral não garante cancelamento; medir betas residuais e executar o *spanning* pré-registrado | Aberto — decide-se no teste |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS prelim arquivado é o único canal primário (D-023); comparar prelim/final. POWER só em robustez térmica | ✅ Mitigado no primário. **Temperatura secundária segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
@@ -40,6 +40,10 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 | R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Confirmada | Alto | Decisão pré-carteira sem retornos: início posterior, cap maior, hedge externo ou nova evidência direta; declarar concentração | 🔴 Aberto — bloqueia a construção da carteira |
+| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | Fase 3.1 separa `P`, `Q` regional e `C`; sem evidência, produtor não recebe direção líquida por presunção | 🔴 Aberto — bloqueia score |
+| R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria CVM/SEC/RI por vintage; ausência não é preenchida; hedge só entra com evidência PIT | 🔴 Aberto — Fase 3.1 |
+| R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
+| R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -876,6 +880,34 @@ bloquear o próximo passo de construção até uma decisão separada, ainda sem 
 participação do segmento JBS Foods como limite de materialidade e uma data conservadora de
 disponibilidade; as cestas agregadas de BRFS3/JBSS3 usam 50%/50% e exigem sensibilidade. O
 Método B poderá medir discordâncias, mas não corrigirá retroativamente o Método A.
+
+---
+
+### D-034 — Fase 3.1 audita canais empresariais antes de score e carteira
+**Data**: 2026-07-17
+
+A matriz D-033 é point-in-time e auditável, mas ainda representa exposição ao encarecimento do
+grão, não o efeito líquido completo sobre lucro. Para produtores, o benefício de preço e a
+perda de volume próprio têm sinais opostos; geografia e hedge podem decidir qual domina. Além
+disso, quatro ações não sustentam o H3/Fama–MacBeth originalmente descrito, e dollar-neutral
+não equivale a market-neutral.
+
+Por isso, uma **Fase 3.1** passa a bloquear score, carteira e qualquer retorno de ação. Seu
+protocolo está em `14_AUDITORIA_CANAIS_EMPRESARIAIS.md` e exige:
+
+1. auditoria PIT de mix, geografia produtiva, canal de preço/insumo, hedge e perímetro;
+2. decomposição candidata entre benefício de preço (`P`), dano de volume próprio regional
+   (`Q`) e custo de insumo (`C`), sem fabricar granularidade ausente;
+3. H2a preditivo em futuros como portão econômico, executado apenas no desenvolvimento;
+4. H2b de reação à divulgação da CONAB como diagnóstico, não veto isolado;
+5. substituição do H3/Fama–MacBeth por desenho compatível com três a quatro ações;
+6. resolução de R19 e correção da linguagem de neutralidade antes de construir a carteira.
+
+**Custo/limitação.** A Fase 3 fica mais longa e pode concluir que o canal líquido do produtor
+é indeterminado ou que o universo não comporta uma estratégia investível. Esse é um custo
+menor do que transformar uma matriz auditável, porém economicamente incompleta, em um Sharpe
+sem interpretação causal. A matriz D-033 não é reescrita: permanece como registro do canal de
+preço/insumo e só será promovida ou decomposta após o novo portão.
 
 ---
 

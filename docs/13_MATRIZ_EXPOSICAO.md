@@ -187,3 +187,25 @@ decisão separada deve escolher entre iniciar o portfólio apenas quando as duas
 minimamente diversificadas, aceitar caps de 50%/25%, adotar um hedge externo ou reformular o
 universo com nova evidência direta. Reduzir o bruto sozinho não resolve um cap medido como
 porcentagem do próprio bruto. O custo de concentração será declarado em qualquer opção.
+
+## 7. Limite econômico da matriz e promoção condicionada (D-034)
+
+A matriz acima é o registro PIT do **canal de encarecimento do grão**: venda direta recebe
+direção positiva e compra direta como insumo recebe direção negativa. Ela permanece válida,
+versionada e auditável. D-034 não altera retroativamente sua regra nem suas fontes.
+
+O artefato, porém, ainda não representa necessariamente o efeito líquido sobre lucro. Para
+produtores, a mesma seca que eleva o preço nacional pode reduzir o volume nas próprias áreas;
+geografia, hedge e mudanças de perímetro podem alterar qual canal domina. Por isso, a matriz
+não será convertida em score ou peso antes da auditoria definida em
+`14_AUDITORIA_CANAIS_EMPRESARIAIS.md`.
+
+A Fase 3.1 decidirá, sem olhar retornos acionários, entre:
+
+1. promover o registro atual, se houver evidência de que o canal de preço domina no desenho
+   primário; ou
+2. decompor a exposição em benefício de preço (`P`), dano regional de volume próprio (`Q`) e
+   custo de insumo (`C`).
+
+Se as fontes PIT não permitirem distinguir esses canais, a ausência será tratada como limite
+de identificação, não preenchida por informação atual nem calibrada pelo retorno.
