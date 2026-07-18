@@ -67,7 +67,7 @@ um alerta para investigação, nunca autorização automática para alterar a s�
 
 ---
 
-## 2. Preço da commodity para H2
+## 2. Preço da commodity para H2a/H2b
 
 ### CEPEA/ESALQ
 
@@ -89,8 +89,9 @@ resolve a dúvida de acesso, mas não entrega uma série contínua: é preciso d
 tratar vencimentos e distinguir ajuste observado de ajuste calculado pela metodologia da
 bolsa.
 
-**Decisão**: robustez brasileira. H2 primário usa futuros internacionais em janelas de evento
-com datas de rolagem excluídas, evitando interpretar salto de contrato como preço econômico.
+**Decisão**: robustez brasileira. Futuros internacionais são a fonte primária de H2a/H2b;
+fonte, regra de rolagem e horizonte exatos serão congelados na Fase 3.1 antes da execução,
+evitando interpretar salto de contrato como preço econômico.
 
 Fonte: `https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/`
 

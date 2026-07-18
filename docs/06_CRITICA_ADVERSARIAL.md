@@ -52,15 +52,67 @@ estratégia contra IBOV, USDBRL, os futuros das quatro commodities, o índice El
 fatores de risco brasileiros (NEFIN). **Se o alfa não sobreviver a isso, dizemos que não
 sobreviveu.**
 
-Há uma razão *a priori* para acreditar que sobrevive: a estratégia é **dollar-neutral e
+Há uma razão *a priori* para testar se sobrevive: a estratégia é **dollar-neutral e
 long/short dentro do setor**. O componente comprado (produtores) e o vendido (processadores)
-têm exposição de sinais opostos à commodity, então a exposição líquida ao futuro é
-**estruturalmente próxima de zero por construção**. O que sobra não é o movimento do preço
-da soja — é a **dispersão** entre quem ganha e quem perde com ele.
+tem canais econômicos de sinais opostos. Isso cria uma hipótese de dispersão, mas **não**
+zera por construção o beta ao futuro nem os demais fatores.
 
 **Onde a defesa é fraca.** As exposições não se cancelam perfeitamente. Se o beta líquido à
 commodity for materialmente diferente de zero, parte do retorno é, sim, beta. Vamos medir e
 reportar o beta líquido residual, não afirmar que é zero.
+
+---
+
+### 🔴 2A. "Seca pode destruir a produção da empresa que vocês querem comprar."
+
+**A objeção.** A direção positiva dos produtores colapsa dois efeitos opostos: preço maior
+para o grão vendido e menor quantidade produzida nas fazendas atingidas. Uma produtora
+concentrada exatamente na região seca pode perder receita mesmo com a commodity em alta.
+Geografia, hedge e produtividade própria podem dominar a classificação genérica de
+"produtor".
+
+**A defesa.** D-034 criou a Fase 3.1 antes de qualquer retorno acionário. A auditoria separa
+benefício de preço (`P`), dano regional de volume próprio (`Q`) e custo de insumo (`C`), usando
+apenas divulgações corporativas PIT. H2a precisa confirmar no desenvolvimento que o choque
+antecipa preço antes de esse canal ser usado no score.
+
+**Onde a defesa é fraca.** A geografia histórica pode não existir com granularidade suficiente
+e hedge pode ser divulgado de forma agregada. Se não houver evidência para assinar o efeito
+líquido do produtor, a saída correta é reduzir o escopo ou declarar o portão reprovado — não
+presumir direção positiva.
+
+---
+
+### 🔴 2B. "Fama–MacBeth com quatro ações é teatro estatístico."
+
+**A objeção.** O H3 original exigia regressões cross-sectionais, mas a matriz fundamentalista
+tem três ações no início e quatro após 2018. Uma inclinação diária estimada com esse N não
+produz uma cross-section informativa; repetir o procedimento em muitos dias não cria novas
+empresas independentes.
+
+**A defesa.** D-034 suspendeu o Fama–MacBeth antes de consultar retornos acionários. A Fase
+3.1 escolherá e pré-registrará um único desenho compatível com o dado, entre spread de evento
+e painel com interação empresa × canal, com inferência agrupada por ano-safra.
+
+**Onde a defesa é fraca.** Trocar o estimador não fabrica poder estatístico. Mesmo o desenho
+substituto pode ser inconclusivo; a contribuição pode terminar como evidência do mecanismo
+físico sem alfa acionário demonstrável.
+
+---
+
+### 🔴 2C. "Dollar-neutral não é market-neutral."
+
+**A objeção.** R$ 0,50 comprado e R$ 0,50 vendido zeram notional, não beta. Com produtores
+menores e processadores maiores, as pontas podem carregar diferenças de mercado, tamanho,
+liquidez, dólar e commodity. Chamar a carteira de market-neutral antes de medir essas
+exposições superestima o desenho.
+
+**A defesa.** A linguagem foi corrigida para dollar-neutral. Betas e fatores serão medidos,
+eventuais restrições serão declaradas e H4 continua sendo teste existencial de *spanning*.
+
+**Onde a defesa é fraca.** Com quatro nomes, neutralizar muitos fatores pode tornar a carteira
+inviável ou eliminar o próprio sinal. A prioridade será transparência sobre exposições
+residuais, não prometer neutralidade que o universo não suporta.
 
 ---
 

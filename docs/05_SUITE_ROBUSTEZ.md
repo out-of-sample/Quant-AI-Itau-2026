@@ -4,6 +4,10 @@
 > **resultado esperado declarado antes de rodar**. Um teste cujo resultado a gente aceita
 > qualquer que seja ele não é um teste — é uma ilustração.
 
+> **Estado após D-034:** H2 foi separado em H2a preditivo, que funciona como portão econômico
+> antes da carteira, e H2b de evento, que é diagnóstico. O H3/Fama–MacBeth está suspenso até
+> ser substituído por desenho compatível com o N de três a quatro ações. Nenhum teste de
+> robustez abaixo autoriza pular a Fase 3.1.
 
 ---
 
@@ -16,7 +20,9 @@ Nem todo teste tem o mesmo poder de destruição. Ordenados por gravidade:
 | 🔴 **Existencial** | **H4 — Spanning regression** | a estratégia é beta de commodity reembalado. O projeto perde a razão de existir como estratégia, e vira um estudo (ainda publicável, mas temos que dizer isso) |
 | 🔴 **Existencial** | **H5 — Placebo espacial** | o sinal não vem da agronomia. Estamos capturando outra coisa (ENSO, FX, risco global) e a narrativa está errada |
 | 🔴 **Existencial** | **Sensibilidade ao lag de publicação** | se o alfa só existe com lag curto e some com lag realista, o alfa era lookahead |
+| 🔴 **Existencial** | **H2a — transmissão preditiva ao preço** | se o choque não antecipa o futuro da commodity no desenvolvimento, o canal de preço usado para assinar `P` não se sustenta |
 | 🟡 **Grave** | H1 — mecanismo físico (clima → safra/exportação) | o elo causal postulado não existe; qualquer alfa seria coincidência |
+| 🟡 **Grave** | **H3 — desenho compatível com N** | se a inferência depender de uma cross-section inexistente, a evidência acionária não é identificada |
 | 🟡 **Grave** | Sensibilidade a hiperparâmetros | resultado é um pico isolado no espaço de parâmetros = garimpado |
 | 🟢 **Saudável** | Subperíodos, custos dobrados, universo alternativo | degradação é esperada e aceitável; colapso não |
 

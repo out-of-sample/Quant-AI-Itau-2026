@@ -44,21 +44,29 @@ quanto do agregado global foi atingido. Um produtor cuja lavoura escapou da seca
 resto do país secou é o grande vencedor: vende o mesmo volume a um preço muito maior.
 
 Já para uma empresa que **compra** a commodity como insumo — um frigorífico (JBS, BRF,
-Marfrig, Minerva) compra milho e farelo de soja para ração — a seca é **inequivocamente
-ruim**: o custo do insumo sobe e a margem é comprimida. Não há canal compensatório.
+Marfrig, Minerva) compra milho e farelo de soja para ração — o canal bruto é negativo: o
+custo do insumo sobe e comprime a margem. Hedge, repasse de preço e diversificação podem
+atenuar esse efeito; por D-034, eles não são presumidos nem ignorados sem fonte PIT.
 
 ### A consequência: onde está o alfa
 
 O alfa **não** está em prever a direção do setor agro como bloco. Está na **dispersão
-cross-seccional** que o choque cria dentro do setor: o mesmo evento climático deveria
-empurrar produtores e processadores em direções opostas. Um índice setorial agregado
+cross-seccional** que o choque pode criar dentro do setor: o mesmo evento climático tem
+canais diferentes para produtores e processadores. A direção líquida dos produtores é o
+objeto da Fase 3.1, não uma premissa já resolvida. Um índice setorial agregado
 mistura os dois e cancela o efeito — que é exatamente a razão pela qual essa informação
 pode continuar não-arbitrada.
 
 Isso transforma a estratégia de uma **aposta direcional** (frágil, fácil de estar errada,
 correlacionada com o mercado) em uma **estratégia de valor relativo dentro do setor**
 (long produtores / short processadores num choque negativo de oferta, e o inverso numa
-supersafra), que é neutra a mercado por construção e muito mais defensável.
+supersafra), que é dollar-neutral por construção e mais defensável do que uma aposta
+direcional no setor.
+
+Essa carteira é **dollar-neutral por construção**, não neutra a mercado. Beta, tamanho,
+liquidez, câmbio e commodity podem permanecer diferentes entre as pontas; serão medidos e,
+quando viável, neutralizados explicitamente. H4 testa se o retorno residual ainda é apenas
+exposição reembalada.
 
 > **Formalmente**: não modelamos `E[retorno do agro | clima]`. Modelamos
 > `E[retorno da empresa i | clima] = f(exposição líquida da empresa i à commodity c)`.
@@ -90,13 +98,19 @@ Seja:
 S_{i,t} = Σ_c  E_{i,c} · Shock_{c,t}
 ```
 
+> **Estado após D-034.** Esta é a formulação-base do canal de preço/insumo, não o score já
+> liberado para carteira. Para produtores, a alta da commodity (`P`) e a perda regional de
+> volume próprio (`Q`) têm sinais opostos; custo de insumo (`C`), geografia e hedge também
+> podem alterar o efeito líquido. A Fase 3.1, descrita em
+> `14_AUDITORIA_CANAIS_EMPRESARIAIS.md`, bloqueia qualquer retorno de ação até decidir, sem
+> olhar retornos, se `E` pode ser promovido ou precisa ser decomposto em `P`, `Q` e `C`.
+
 **Nota de sinal (importante):** `Shock` é definido como **estresse** — valores positivos
-significam condição climática *ruim* para a lavoura (seca/calor), que implica **preço da
-commodity subindo**. Logo `S_{i,t} > 0` ⇒ esperamos retorno positivo para a empresa `i`.
-O produtor (`E > 0`) sob estresse (`Shock > 0`) recebe score positivo; o frigorífico
-(`E < 0`) sob o mesmo estresse recebe score negativo. Essa convenção de sinal está
-codificada em teste unitário (`tests/test_signal_sign.py`) porque inverter sinal é o bug
-mais comum e mais caro deste tipo de estratégia.
+significam condição climática ruim para a lavoura (seca/calor). A hipótese H2a, ainda sujeita
+ao portão, é que esse estresse antecipa alta da commodity. Na álgebra-base, `E > 0` recebe
+score positivo e `E < 0`, negativo. Essa convenção está codificada em
+`tests/test_signal_sign.py` para impedir inversão acidental, mas o teste unitário garante a
+consistência do sinal declarado — não prova que o efeito econômico ou o retorno existam.
 
 ### 3.1 O componente climático `Shock_{c,t}`
 
@@ -264,8 +278,9 @@ o resultado vai para o relatório como achado negativo, não é escondido.
 |---|---|---|---|
 | **H1a** (mecanismo — o elo central) | O choque climático prevê a **revisão da estimativa de safra da CONAB** antes de ela ser publicada | Regressão `revisão_{lev n} ~ Shock` acumulado até a data de corte do levantamento, painel (safra × UF × cultura), erros agrupados por ano-safra | Coeficiente sem o sinal esperado ou não-significativo após BH-FDR |
 | **H1b** (mecanismo físico) | O choque prevê a produção/exportação física da cultura | Regressão preditiva `Δ log(volume exportado)_{t+h} ~ Shock_t`, `h ∈ {3,4,5,6}` meses, erros-padrão Newey-West | idem |
-| **H2** (transmissão a preço) | O choque se transmite ao preço do futuro da commodity, e a **publicação do levantamento** move o preço | (i) regressão preditiva sobre o futuro; (ii) **estudo de evento** na janela ao redor da divulgação da CONAB | ausência de retorno anormal na janela do evento, condicionado ao sinal |
-| **H3** (defasagem no equity) | O choque prevê retorno **cross-seccional** das ações via exposição líquida `E` | Fama-MacBeth: `r_{i,t+1..t+h} ~ a + b·S_{i,t} + controles`; `b > 0` significativo | `b ≤ 0` ou não-significativo |
+| **H2a** (transmissão preditiva a preço) | O choque disponível antes do mercado prevê o retorno subsequente do futuro da commodity | Regressão preditiva em futuros, com fonte, regra de rolagem e horizonte congelados antes da execução; desenho e teste somente no desenvolvimento até 2019 | coeficiente sem o sinal esperado ou economicamente irrelevante no desenho primário ⇒ o canal econômico não sustenta o score |
+| **H2b** (reação à CONAB) | A publicação do levantamento pode concentrar incorporação de informação já parcialmente observável | Estudo de evento na janela pré-registrada ao redor da divulgação da CONAB | ausência de retorno anormal é diagnóstico compatível com antecipação; não falsifica H2a isoladamente |
+| **H3** (defasagem no equity) | O choque prevê retorno relativo das ações por meio da exposição empresarial líquida | O Fama–MacBeth originalmente proposto está **suspenso por D-034**: três a quatro ações não formam cross-section suficiente. A Fase 3.1 pré-registrará um único desenho primário compatível, entre spread de evento e painel com interação | critério de falsificação será congelado junto ao desenho substituto, antes de qualquer retorno acionário |
 | **H4** (a que mata o projeto) | O retorno da estratégia **não é apenas beta de commodity reembalado** | *Spanning regression*: `r_strat ~ α + IBOV + USDBRL + futuros (soja, milho, açúcar, café) + fatores NEFIN (SMB, HML, WML, IML)` | **α ≤ 0** ou não-significativo ⇒ a estratégia é uma forma cara de comprar o futuro da soja, e temos que dizer isso |
 | **H5** (especificidade / placebo) | O sinal vem da agronomia, não de um confundidor macro | Placebo espacial: recalcular `Shock` usando células de grade **sem produção agrícola relevante** (Amazônia central, litoral) | Se o alfa **sobrevive** ao placebo, o sinal está capturando outra coisa (ENSO, risco global, FX) e não o que dizemos que captura |
 
@@ -278,7 +293,8 @@ antes, e reportar o resultado honestamente, é o que separa um trabalho sério d
 > `Shock` (estresse ⇒ revisão para baixo), `t(7)` p≈6e-4, bootstrap por cluster p≈0, sobrevive
 > ao BH-FDR; o efeito é consistente no desenvolvimento (−0,057) e no holdout (−0,072) e nas duas
 > culturas. **H1b** corrobora a soja ex post (3º e 6º mês pós-colheita); milho fraco (N=7). A
-> cadeia climático → revisão de safra é real. H2–H5 permanecem para as fases seguintes.
+> cadeia climático → revisão de safra é real. H2a, H2b e H3–H5 permanecem para as fases
+> seguintes, sujeitos ao portão econômico D-034 antes de qualquer retorno acionário.
 
 ### Confundidor conhecido: ENSO (El Niño / La Niña)
 
@@ -306,10 +322,10 @@ combinações testadas — que é a forma mais comum de auto-engano em backtest.
 | Janela fenológica | fixa por cultura × UF em `features/shock_spec.py` | CONAB/ZARC/Embrapa; datas e custo documentados em `09_FENOLOGIA_E_LIMIARES.md` |
 | Lag de publicação do clima | **7 dias corridos** | Conservador vs. a latência real da fonte (ver `02_DADOS.md`); sensibilidade testada em 3/7/14 dias |
 | Uso do ComexStat | H1b *ex post*; **não entra no sizing primário** | Vintages históricos da primeira publicação não são recuperáveis; usar a base final como gate criaria lookahead (D-026) |
-| Exposição `E_{i,c}` | Método A (fundamentalista) | Auditável, não circular |
+| Exposição `E_{i,c}` | Método A (fundamentalista), condicionado à auditoria D-034 | Auditável e não circular; a Fase 3.1 decide se o canal líquido exige decomposição `P/Q/C` |
 | Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a hipótese de difusão lenta e declarado antes de consultar retornos |
 | Execução | no **close de D+1** após o sinal de D | Nunca no mesmo close que gerou o sinal |
-| Construção do portfólio | dollar-neutral long/short, peso ∝ `S_{i,t}`; cap de 20% exige ratificação pré-carteira | D-033 mostrou, sem retornos, que o mínimo é 50% do bruto no único long até 03/2018 e 25% por long depois |
+| Construção do portfólio | bloqueada até a saída da Fase 3.1; candidata dollar-neutral long/short, sem neutralidade fatorial presumida | D-033 mostrou concentração incompatível com o cap; D-034 exige resolver canal líquido, H2/H3 e R19 sem retornos |
 | Custos | corretagem+emolumentos B3 + slippage proporcional à participação no ADTV | Ver `04_PROTOCOLO_BACKTEST.md` |
 | Benchmark | Ibovespa **e** CDI, ambos declarados a priori | Não escolher depois qual "ganhou" |
 
@@ -381,5 +397,7 @@ ele também torna visível a escassez de exposição fundamental, em vez de esco
 - **Não** usa machine learning para decidir direção. ML, se entrar, entra só na camada de
   execução (padrão KernelNet) e é opcional. Complexidade não pontua por si só, e um sinal
   economicamente interpretável é mais defensável do que um que não conseguimos explicar.
-- **Não** promete bater o Ibovespa sempre. É posicionada como estratégia **market-neutral
-  de valor relativo dentro do agro** — o benchmark honesto é CDI + prêmio, não o índice.
+- **Não** promete bater o Ibovespa sempre. É posicionada como estratégia **dollar-neutral
+  de valor relativo dentro do agro**; neutralidade a mercado é uma hipótese a testar, não
+  uma propriedade do notional. O benchmark honesto inclui CDI e Ibovespa, além da atribuição
+  a fatores e commodities em H4.

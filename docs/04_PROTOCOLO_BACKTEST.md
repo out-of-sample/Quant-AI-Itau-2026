@@ -62,14 +62,22 @@ errado é o projeto inteiro.
 
 ## 3. Construção da carteira
 
+> **Estado após D-034:** esta seção é especificação candidata, não implementação liberada.
+> A Fase 3.1 precisa resolver o canal líquido das empresas, H2a/H2b, o desenho de H3 e R19
+> antes de qualquer score, peso ou retorno de ação.
+
 | Regra | Valor | Motivo |
 |---|---|---|
-| Estrutura | **dollar-neutral long/short** | consequência direta da tese: produtores e processadores se movem em direções opostas sob o mesmo choque |
-| Peso | proporcional ao score `S_{i,t}`, normalizado | sizing ∝ convicção, não binário |
+| Estrutura | **dollar-neutral long/short** | zera o notional líquido; não garante neutralidade a beta, fatores, câmbio, liquidez ou commodity |
+| Peso | candidato: proporcional ao score `S_{i,t}`, normalizado | só será congelado depois que a auditoria `P/Q/C` definir o score líquido |
 | Cap por nome | 20% do bruto, **pendente de ratificação antes da carteira** | incompatível: um único long até 03/2018 exige 50% do bruto; depois, dois longs exigem 25% cada (D-033) |
 | Rebalanceamento | mensal, com holding de 21 pregões | compatível com a hipótese pré-registrada de difusão lenta; ComexStat é apenas H1b *ex post* (D-026) |
 | Cap de turnover | a definir na calibração (in-sample) | turnover alto come o alfa em nomes ilíquidos |
 | Alavancagem | 1.0× bruto (0.5 long + 0.5 short) | sem alavancagem — não é onde está a contribuição |
+
+Exposições residuais a mercado, fatores e commodities serão reportadas e testadas. O termo
+*market-neutral* só poderá ser usado como resultado empírico se esses betas forem de fato
+pequenos; a construção, por si, é apenas dollar-neutral.
 
 ---
 

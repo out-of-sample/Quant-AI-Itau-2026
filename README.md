@@ -8,18 +8,18 @@ Projeto para o Desafio Itaú Asset Quant AI 2026.
 
 Choques climáticos nas regiões produtoras brasileiras carregam informação sobre a oferta
 futura de commodities agrícolas. Essa informação chega ao preço das ações da B3 **com
-defasagem e de forma heterogênea entre empresas**: uma seca é *boa* para quem **vende** a
-commodity (o preço internacional sobe) e *ruim* para quem a **compra** como insumo (a margem
-é comprimida).
+defasagem e de forma heterogênea entre empresas**: uma seca pode elevar o preço da
+commodity, reduzir o volume do produtor atingido e comprimir a margem de quem compra o grão
+como insumo.
 
 O Brasil é um dos maiores exportadores mundiais dessas commodities — logo, uma quebra de safra
 brasileira é um **choque de oferta global**, e **eleva** o preço. É por isso que a leitura
 intuitiva ("detectou seca ⇒ vende agro") está economicamente errada, e por que o alfa não está
 na direção do setor, mas na **dispersão dentro dele**.
 
-A estratégia é, portanto, **market-neutral long/short dentro do agro**: comprada em
-produtores, vendida em processadores, dimensionada pela exposição líquida de cada empresa a
-cada commodity.
+A estratégia candidata é **dollar-neutral long/short dentro do agro**. A direção líquida dos
+produtores ainda depende da separação entre preço e volume próprio; neutralidade a mercado,
+fatores e commodities será testada, não presumida a partir do notional.
 
 **A ineficiência explorada é de agregação, não de acesso.** O dado é público e gratuito; caro
 é cruzar grade meteorológica × mapa de produção agrícola × composição de receita e custo das
@@ -60,6 +60,8 @@ Comece por **[`docs/00_PLANO_MESTRE.md`](docs/00_PLANO_MESTRE.md)**.
 | [`10_REFERENCIAS.md`](docs/10_REFERENCIAS.md) | Referências acadêmicas, métodos e fontes usados — só o rastreável, lacunas marcadas |
 | [`11_AUDITORIA_FASE1.md`](docs/11_AUDITORIA_FASE1.md) | Evidências e decisões que fecharam a ingestão point-in-time |
 | [`12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md) | Fonte única das dívidas legadas e transversais ainda abertas |
+| [`13_MATRIZ_EXPOSICAO.md`](docs/13_MATRIZ_EXPOSICAO.md) | Matriz fundamentalista point-in-time e auditoria do universo |
+| [`14_AUDITORIA_CANAIS_EMPRESARIAIS.md`](docs/14_AUDITORIA_CANAIS_EMPRESARIAIS.md) | Portão econômico entre a matriz e a carteira: preço, volume, custo, H2/H3 e neutralidade |
 | [`DIARIO_GENAI.md`](docs/DIARIO_GENAI.md) | Registro do uso de IA — acertos **e erros** |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branches, commits, PRs, checklist de revisão |
 
@@ -75,19 +77,21 @@ Três compromissos que estruturam tudo o mais:
    ComexStat —, isso está identificado, medido e declarado, não ignorado.
 
 2. **Holdout lacrado.** O recorte de desenvolvimento é 2013–2019, mas o `Shock` primário só
-   existe point-in-time desde a safra 2015/16. O período 2020–2025 é rodado **uma única vez**,
-   com o desenho já congelado. O perímetro do lacre nos testes físicos H1 ainda exige a
-   decisão explícita PT-001 antes de executar esses testes.
+   existe point-in-time desde a safra 2015/16. O período 2020–2025 de retornos da estratégia
+   é rodado **uma única vez**, com o desenho já congelado. H1 testou o mecanismo no span cheio,
+   com desenvolvimento e holdout reportados separadamente, conforme D-029.
 
-3. **Os achados negativos são reportados.** Há três coisas que podem matar a tese (N efetivo
-   pequeno; a estratégia ser apenas beta de commodity; o sinal ser El Niño disfarçado). Estão
-   escritas no documento de entrada, não escondidas no rodapé.
+3. **Os achados negativos são reportados.** N efetivo pequeno, transmissão de preço ausente,
+   canal líquido do produtor não identificado, beta de commodity e placebo ENSO podem impedir
+   a estratégia. Esses vetos estão escritos antes do backtest, não escondidos no rodapé.
 
 ---
 
 ## Estado atual
 
-**Fase 2 — validação do mecanismo.** A Fase 1 de ingestão point-in-time foi encerrada. O
-`Shock` climático as-of já foi implementado e validado (D-027/D-028); o próximo portão são
-H1a/H1b, antes de qualquer backtest de ações. Dívidas que não pertencem a uma fase futura são
-controladas em [`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).
+**Fase 3.1 — auditoria dos canais empresariais.** H1 confirmou o mecanismo clima → revisão
+de safra (D-031), e a matriz fundamentalista PIT foi construída sem retornos (D-032/D-033).
+Antes de qualquer score ou backtest de ações, D-034 exige auditar geografia, hedge e perímetro,
+separar preço/volume próprio/custo, testar H2a no desenvolvimento, substituir H3 por desenho
+compatível com três a quatro ações e resolver a concentração R19. Dívidas sem fase proprietária
+ficam em [`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).

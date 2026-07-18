@@ -566,8 +566,9 @@ apreçamento/interpolação da B3.
 
 Transformar esses arquivos em retorno contínuo exige regra de rolagem declarada, controle de
 vencimento e validação dos ajustes — uma camada de modelagem adicional. **Decisão:** futuros
-internacionais são a fonte primária reproduzível de H2, em janelas de evento com datas de
-rolagem excluídas; contratos B3 e CEPEA entram como robustez brasileira. Fonte:
+internacionais são a fonte primária reproduzível de H2a/H2b; fonte, regra de rolagem e
+horizonte exatos serão congelados na Fase 3.1 antes da execução. Contratos B3 e CEPEA entram
+como robustez brasileira. Fonte:
 `b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/`.
 
 ### 5.4 Fatores de risco brasileiros — NEFIN/FEA-USP
@@ -631,7 +632,7 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 3. ✅ **CEPEA** — planilha histórica e licença acadêmica confirmadas; sem API estável.
    Classificado como robustez manual, não dependência do pipeline (D-026).
 4. ✅ **Futuros agro da B3** — ajustes diários por vencimento confirmados; exigem construção
-   e validação de rolagem. Robustez, não fonte primária de H2 (D-026).
+   e validação de rolagem. Robustez, não fonte primária de H2a/H2b (D-026/D-034).
 5. ✅ **Revisão do ComexStat** — magnitude histórica não reconstruível: API/CSVs só expõem o
    vintage atual e o Wayback não preservou os artefatos consultados. O gate sai do sizing;
    ComexStat fica em H1b *ex post* e os snapshots medem revisões futuras (D-026/R18).

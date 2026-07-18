@@ -52,12 +52,12 @@ agora instanciado para a tese Clima + ComexStat.
                                  ▼
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ C3  TESTE DE SIGNIFICÂNCIA     ← PORTÃO. O sinal só passa se sobreviver. │
-│     H1 mecanismo · H2 preço · H5 placebo · BH-FDR · block bootstrap      │
+│     H1 mecanismo · H2a preço · H2b evento · H5 placebo · BH-FDR          │
 └────────────────────────────────┬─────────────────────────────────────────┘
                                  ▼
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ C4  SINAL → POSIÇÃO                                                      │
-│     S = E·Shock · sizing ∝ convicção · ComexStat valida H1b ex post      │
+│     score final condicionado à auditoria P/Q/C · ComexStat = H1b ex post │
 │     dollar-neutral · caps de nome e de turnover · filtro de liquidez     │
 └────────────────────────────────┬─────────────────────────────────────────┘
                                  ▼
@@ -124,15 +124,16 @@ Kairos — features em categorias, não lista ad-hoc, é o que dá estrutura ao 
 | Bloco | O que é | Papel |
 |---|---|---|
 | **(a) Sinal da tese** | `Shock_{c,t}` — anomalia climática ponderada por produção, dentro da janela fenológica | é a tese |
-| **(b) Exposição** | `E_{i,c}` — matriz empresa × commodity, de `[-1,+1]` | traduz o choque agregado em cross-section |
+| **(b) Exposição** | matriz empresa × commodity point-in-time | D-033 registra preço/insumo; D-034 bloqueia o score até separar preço, volume próprio, custo, geografia e hedge |
 | **(c) Contexto/controle** | IBOV, USDBRL, ONI (El Niño), vol realizada, ADTV, momentum | separa o efeito da tese de movimento de mercado amplo — **sem isso não há como afirmar que é alfa** |
 
 ### C3 — Teste de significância (PORTÃO)
 
 **Esta camada tem poder de veto.** Não é decorativa.
 
-Roda as hipóteses `H1` (o choque prevê a exportação física?), `H2` (prevê o futuro da
-commodity?) e `H5` (placebo espacial) **antes** de qualquer backtest de retorno de ações.
+Roda as hipóteses `H1` (mecanismo físico), `H2a` (transmissão preditiva ao futuro da
+commodity) e `H5` (placebo espacial) **antes** do backtest de retorno de ações. H2b, reação à
+publicação CONAB, é diagnóstico complementar; sua nulidade isolada não veta H2a.
 
 - Correção de múltiplas comparações (**Benjamini-Hochberg/FDR**) sobre toda a família de
   testes `(cultura × horizonte × região)` — sem isso, testando dezenas de combinações,
@@ -289,13 +290,13 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C0 controle | `ingest/oni.py` | ✅ | ONI NOAA/CPC sazonal: parser da temporada centrada, captura datada + manifesto; fonte sobrescreve o histórico e revisa os valores recentes. `initial_avail_date` no dia 5 após o fim da janela; caso primário espera mais 2 meses para estabilização (D-021). RONI fica para robustez, sem troca silenciosa do pré-registro |
 | C0 controle | `ingest/nefin.py` | ✅ | fatores brasileiros para H4, em decimal. Download preso ao SHA do commit oficial + manifesto; snapshot inteiro recebe a data do commit. Revisão HML material comprovada entre dois vintages; uso exclusivamente ex post, nunca no sinal (D-022) |
 | C0 geografia | `ingest/pam.py`, `ingest/pam_calendar.py`, `ingest/ibge_geometry.py` | ✅ | PAM/SIDRA 1612 municipal com calendário efetivo 2014–2024, captura datada e pesos *as-of*; malha IBGE 2013 fixa pré-amostra, lida sem GDAL. Cobertura positiva sem polígono falha alto (D-024) |
-| C4 sinal | `signal/convention.py` | ✅ | convenção de sinal `S = E·Shock` travada por teste (R11) |
+| C4 sinal | `signal/convention.py` | 🟡 | convenção algébrica `S = E·Shock` travada por teste (R11), mas score econômico ainda bloqueado pela auditoria `P/Q/C` da Fase 3.1 (D-034) |
 | C1 validação | `validate/pit.py`, `validate/universe.py` | ✅ | carimbo `avail_date` + filtro as-of; universo dinâmico validado nas 4 deslistagens reais de 2025. Cross-check dos 19 papéis vivos concluído, com divergências classificadas contra COTAHIST oficial (`scripts/crosscheck_yahoo.py`, D-025) |
 | C2 features | `features/shock_spec.py` | ✅ | contrato do `Shock` primário congelado e testado (D-023): soja + milho 2ª, UFs/janelas, chuva CHIRPS, mínimo 10 safras e geografia PAM/IBGE→UF→CONAB |
 | C2 features | `features/shock.py` | ✅ | cálculo do `Shock` as-of `t` (D-028): acumulado `prelim` até a data de corte, climatologia expanding do mesmo trecho (produto `final`, ≥10 safras, cobertura diária obrigatória), `Shock = −z`; UF pondera municípios pela PAM as-of e o nacional pondera UFs pela safra CONAB anterior encerrada (nunca a corrente), renormalizando sobre janelas já iniciadas com `uf_coverage_weight` visível. Carimbo por produto: `prelim` +7d, `final` +60d |
 | C2 features | `features/regionalize.py` | ✅ | raster CHIRPS → município IBGE 2013 (D-027): ponto-em-polígono even-odd sobre centros de célula p05 (numpy puro), índice município→células cacheável que carrega e valida as constantes da grade, painel municipal diário ignorando `nodata`. Fallback auditável para município sub-célula; polígonos de água não-municipais excluídos. Validado ao vivo nas 7 UFs (2.634 municípios, 110.489 células) |
 | C2 features | `features/panel.py` + `scripts/build_municipal_panel.py` | ✅ | painel municipal diário CHIRPS por **streaming** (baixa em memória → regionaliza → descarta), índice de células cacheável, manifesto consolidado `chirps_h1_bulk` (url+sha256/raster) como prova de vintage; enumera exatamente as janelas primárias (prelim 2015/16–2024/25 + climatologia final 2000–2023) |
-| C2 features | `features/exposure.py` + `data/reference/exposure_fundamental_v1.json` | ✅ | matriz fundamentalista PIT (D-032/D-033), sem retornos: valida fonte, datas, direção, materialidade e composição; seleciona o último vintage integral disponível por ticker. Quatro nomes diretos; teste-canário prova que divulgação futura não reescreve o passado |
+| C2 features | `features/exposure.py` + `data/reference/exposure_fundamental_v1.json` | 🟡 | matriz fundamentalista PIT do canal preço/insumo (D-032/D-033), sem retornos: valida fonte, datas, direção, materialidade e composição. Quatro nomes diretos; teste-canário prova que divulgação futura não reescreve o passado. O artefato é válido, mas não está promovido a score até concluir D-034 |
 | C3 stats | `stats/inference.py` | ✅ | OLS **cluster-robust** e **HAC/Newey–West** (statsmodels), **pairs cluster bootstrap**, **moving-block bootstrap** e **BH-FDR** (conferido contra statsmodels). Pensado para N efetivo pequeno |
 | C3 stats | `stats/h1a.py`, `stats/h1b.py`, `stats/gate.py` | ✅ | rodadores de H1a (revisão CONAB ~ `Shock` de UF, memoizado por corte) e H1b (Δlog exportação ~ `Shock` nacional, Newey–West); orquestrador aplica BH-FDR na família de 11 testes e emite o veredito. **Portão da Fase 2 atravessado (D-031)** |
 | C6 backtest · C7 robustez · C8 report | idem | ⬜ | especificados nos docs `04`/`05` |
