@@ -40,7 +40,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 | R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Confirmada | Alto | Decisão pré-carteira sem retornos: início posterior, cap maior, hedge externo ou nova evidência direta; declarar concentração | 🔴 Aberto — bloqueia a construção da carteira |
-| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | Auditoria (D-035) mostrou `Q` **parcialmente fora do Shock** (PI/Paraguai; MA/PI/PA) ⇒ `P` tende a dominar, mas o líquido não é resolvível só pelo fundamento; o long fica **condicionado a H2a**. `P/Q` não são PIT-separáveis ⇒ mantém-se D-033, sem termo `Q` | 🟡 Endereçado por evidência (D-035); depende de H2a passar |
+| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | Auditoria (D-035) mostrou `Q` parcialmente fora do Shock ⇒ `P` tenderia a dominar, mas **H2a (D-037) NÃO confirmou** a transmissão forward ao preço mundial (β<0, inconclusivo). A dominância de `P` não está empiricamente sustentada; decidir reformular o long, pré-registrar diagnóstico contemporâneo/BRL, ou reduzir a tese ao processador | 🔴 Reaberto — H2a não sustentou `P` (D-037) |
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
@@ -949,6 +949,103 @@ sendo o canal de preço/insumo de D-033, com a ponta long dependente de H2a e a 
 real abaixo da participação de receita. R20 passa a **endereçado** (por evidência, condicionado
 a H2a), R21 a **mitigado com lacunas declaradas**; R19 (concentração) permanece **aberto** —
 a auditoria confirma que não há como diluí-lo adicionando nomes diretos.
+
+---
+
+### D-036 — Pré-registro de H2a: transmissão do Shock ao preço mundial (portão do lado long)
+**Data**: 2026-07-19
+
+Especificação **congelada antes de qualquer resultado** (a ordem é provada no histórico do
+git: este commit precede o commit do resultado). Implementação em `stats/h2a.py`,
+`ingest/fred_prices.py`, `scripts/run_h2a.py`, testes em `tests/test_h2a.py`.
+
+**Hipótese.** O `Shock` brasileiro já disponível em `t` antecipa a valorização do preço mundial
+da commodity, no sinal esperado `β>0` (estresse ⇒ menos oferta ⇒ preço sobe — oposto de
+H1a/H1b). Sustenta o canal de preço `P` do lado long; se falhar, o long é reformulado.
+
+**Fonte do desfecho.** Preço-referência mundial (FRED/IMF Primary Commodity Prices), USD/t,
+mensal: soja `PSOYBUSDM`, milho `PMAIZMTUSDM`. Escolha justificada economicamente: o produtor
+é *price-taker* desse preço (o 20-F da BrasilAgro declara a soja precificada na CBOT; D-035).
+Preço é vintage-estável (não reescrito como CONAB/NEFIN); captura datada + manifesto por
+disciplina. Não gera posição/sizing — só desfecho de H2a.
+
+**Regressor.** `Shock` **nacional** as-of `t` (contrato D-028, pesos da safra CONAB anterior),
+computado em **cada fim de mês dentro da janela** fenológica — por isso só de 2018/19 em diante.
+
+**Desfecho e timing PIT.** Para observação no fim do mês `m`, retorno forward
+`r = log(P[m+h]/P[m])`, inteiramente posterior a `t`. Ressalva declarada: o IMF publica `P[m]`
+~3 semanas depois ⇒ lag de **execução**, não look-ahead (o `Shock` usa só chuva ≤ `t`; o
+retorno é todo futuro). Horizonte primário `h=3`; `h∈{1,2,3}` como robustez.
+
+**Perímetro (aplica o princípio de D-029/PT-001).** H2a é teste de **mecanismo** físico-
+econômico, como H1: roda no **span cheio 2018/19–2024/25** com sub-amostras dev (≤2019/20) e
+holdout reportadas em separado. O veredito do portão olha o agregado; o desenho da carteira
+permanece calibrado só no desenvolvimento. Isto **reconcilia** `14` §5, que originalmente
+restringia H2a a dev — mudança de desenho registrada aqui, com custo declarado.
+
+**Inferência.** OLS com erros agrupados por `ano-safra × cultura`; pooled com efeito fixo de
+cultura (demeaning intra-cultura); *pairs cluster bootstrap*. N efetivo reportado. Span cheio
+≈ 14 clusters; dev ≈ 4 (consistência, não motor).
+
+**Regra do portão (direcional + ressalva; ratificada com o usuário).** No `h` primário, span
+cheio, pooled: `β>0` e p unilateral (bootstrap) < 0,10 ⇒ **PASSA**; `β>0` sem significância ⇒
+**INCONCLUSIVO** (o long segue com ressalva explícita, a confirmar no holdout); `β<0`
+significativo ⇒ **REPROVA** (reformula o lado long).
+
+**Custo/limitação.** Poder baixo por N pequeno (safra é anual): um `β>0` fraco não distingue
+"efeito ausente" de "amostra curta" — por isso a regra é direcional, não veto por significância.
+Usar span cheio dá poder mas deixa o comportamento de preço do período de holdout informar a
+decisão do portão; aceito porque é mecanismo físico, não retorno da estratégia, e o desenho da
+carteira segue lacrado ao holdout. FRED mensal ≠ preço diário; o lag de execução é declarado.
+
+---
+
+### D-037 — Resultado de H2a: transmissão ao preço mundial NÃO confirmada (inconclusivo-negativo)
+**Data**: 2026-07-19
+
+Rodada única do spec pré-registrado D-036, sem mudar nada após ver o número. Artefatos em
+`data/processed/h2a_{panel.parquet,results.csv}`. 147 obs, 7 safras, 14 clusters (dev 42 obs /
+4 clusters; holdout 105 / 10).
+
+**Resultado primário (h=3, span cheio, pooled): β = −0,0166; INCONCLUSIVO.** p unilateral do
+lado esperado (β>0, bootstrap por cluster) = 0,887; p do lado negativo = 0,113 — negativo, mas
+não significativo ao nível pré-registrado de 0,10. Pela regra congelada (β<0 **não**
+significativo ⇒ inconclusivo), o portão **não reprova**, mas também **não confirma** o canal de
+preço.
+
+**O ponto estimado é do sinal ERRADO.** Esperávamos β>0 (estresse ⇒ preço sobe). Quase todas as
+especificações dão β<0: full pooled h1 = −0,0136 (lado negativo p≈0,002, **significativo**),
+h2 = −0,0149, h3 = −0,0166; soja full h3 = −0,041; milho full h3 = −0,010. A exceção é soja
+**dev** (β>0), mas com N=8 e 2 clusters o bootstrap é não confiável e não sobrevive ao span
+cheio.
+
+**Duas leituras não excludentes (declaradas, não resolvidas):**
+1. a transmissão do choque brasileiro ao preço **mundial em USD** é fraca/ausente — o preço
+   global responde a oferta/demanda mundial, câmbio e safra dos EUA, e o Brasil é um driver
+   entre muitos;
+2. o preço reage de forma **contemporânea/antecipada** ao choque e depois reverte à média, o
+   que torna um teste **forward** (a partir da data do choque) cego a um efeito real já
+   incorporado ao nível de preço em `t`. Isto foi antecipado no custo/limitação de D-036.
+
+Distinguir (1) de (2) exige um diagnóstico **contemporâneo** (variação do preço **dentro** da
+janela vs. Shock), que **não foi rodado** para não virar um resgate post-hoc do resultado.
+
+**Limitação da fonte (não é resgate).** O preço mundial em USD ≠ receita do produtor em BRL
+(câmbio + base brasileira). Um teste com preço brasileiro (CEPEA/B3, BRL) pode mostrar
+transmissão que o USD esconde, mas **só como robustez pré-registrada** (D-025), com sua própria
+justificativa — nunca substituindo o primário depois de ver que o primário não deu o esperado.
+
+**Consequência.** O canal de preço `P` do lado long **não recebeu suporte empírico** do teste
+pré-registrado; o estimador aponta para o lado contrário. Pela regra, o long só poderia seguir
+com ressalva forte e confirmação obrigatória no holdout — mas um ponto de sinal errado é um
+alerta, não um sinal verde. A decisão de reformular o lado long, pré-registrar os diagnósticos
+contemporâneo/BRL, ou reduzir a tese ao lado processador fica para o próximo passo, com novo
+go-ahead. **R20 volta a preocupar**: sem transmissão forward comprovada, a dominância de `P`
+sobre `Q` no produtor não está sustentada.
+
+**Custo/honestidade.** Este é o resultado que o pré-registro existe para proteger: a fonte,
+o horizonte e a regra foram fixados antes; o número veio contrário à tese e é reportado como
+veio. Nenhuma troca de fonte ou horizonte foi feita para melhorá-lo.
 
 ---
 

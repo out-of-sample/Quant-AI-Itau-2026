@@ -1,0 +1,14 @@
+{
+  "source": "FRED/IMF-Primary-Commodity-Prices",
+  "series_id": "PMAIZMTUSDM",
+  "crop": "corn_second",
+  "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PMAIZMTUSDM",
+  "unit": "USD per metric ton, monthly average",
+  "publication_lag_days": 21,
+  "latest_ref_date": "2026-06-30",
+  "latest_price": 195.7818789965986,
+  "n_obs": 414,
+  "sha256": "9947e13628bed2ea4136f5acb73f16af8f9e01bad3a500a7ab10835e37974240",
+  "bytes": 12373,
+  "downloaded_at": "2026-07-19T05:27:52.454541+00:00"
+}

@@ -863,6 +863,32 @@ erro; a atenuação entra como sensibilidade no futuro congelamento do score, n�
 
 ---
 
+## 2026-07-19 — H2a: portão do lado long, pré-registro e resultado (D-036/D-037)
+
+**Uso**: desenhar, pré-registrar e executar o teste de transmissão do `Shock` ao preço da
+commodity (portão do canal de preço `P` do lado long), incluindo achar uma fonte de preço
+gratuita, vintage-estável e sem chave.
+
+**Valor real**: a IA verificou ao vivo que yfinance não estava no ambiente e que Stooq bloqueia
+por JS, e encontrou o FRED/IMF (soja PSOYBUSDM, milho PMAIZMTUSDM) como fonte mensal sem chave,
+com histórico até 1992 — evitando adicionar dependência pip. Implementou a ingestão datada, o
+rodador (Shock nacional as-of fim de mês na janela → retorno forward do preço) e reaproveitou a
+memoização de H1a quando a primeira execução estourou o timeout (~49 chamadas de `shock_asof`).
+
+**Validação humana/mecânica**: pré-registro (D-036) commitado **antes** do resultado — a ordem
+é provada no git. A memoização foi introduzida como otimização que **não muda o número** (mesmo
+`uf_shock_asof` + pesos CONAB, só sem revarrer o painel). Resultado rodado uma vez e reportado
+como veio: β=−0,017 no spec primário, **inconclusivo-negativo** — o oposto da tese.
+
+**O que a IA NÃO fez (a parte importante)**: não trocou a fonte (para CEPEA/BRL) nem o horizonte
+para "melhorar" o resultado depois de vê-lo desfavorável. O pré-registro existe exatamente para
+barrar esse resgate post-hoc; a troca de fonte só é admissível como robustez pré-registrada, com
+justificativa própria. O achado negativo foi registrado (D-037) e reabriu R20, em vez de ser
+suavizado. A leitura honesta (transmissão fraca ao USD **ou** reação contemporânea invisível a um
+teste forward) foi declarada sem escolher a mais conveniente.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
