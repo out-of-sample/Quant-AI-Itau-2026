@@ -102,13 +102,20 @@ recebe limite posterior conservador; ausência permanece ausência.
 Pergunta: usando apenas o `Shock` que já estava disponível em `t`, o estresse brasileiro
 antecipa retorno da commodity com o sinal esperado no horizonte pré-especificado?
 
-- roda somente no desenvolvimento até 2019 nesta fase;
-- usa a fonte e a regra de rolagem congeladas antes do resultado;
-- agrupa inferência por ano-safra e declara N efetivo;
+Especificação congelada em **D-036** (pré-registrada antes do resultado):
+
+- **mecanismo, não estratégia** ⇒ roda no **span cheio 2018/19–2024/25** com sub-amostras
+  dev/holdout em separado (princípio de D-029; reconcilia a restrição dev-only escrita antes);
+- fonte do desfecho = preço mundial FRED/IMF (soja `PSOYBUSDM`, milho `PMAIZMTUSDM`), de que o
+  produtor é *price-taker* (D-035); regressor = `Shock` nacional as-of fim de mês na janela;
+- retorno forward `log(P[m+h]/P[m])`, primário `h=3`, `h∈{1,2,3}` robustez; sinal esperado `β>0`;
+- inferência agrupada por ano-safra × cultura + bootstrap; N efetivo declarado;
 - não escolhe futuro, horizonte ou janela pelo melhor resultado.
 
-Se H2a não sustentar o canal de preço, não se presume `P>0` para produtores. A ponta long é
-reformulada antes de qualquer backtest de ações.
+**Regra do portão (direcional + ressalva)**: `β>0` e p unilateral < 0,10 ⇒ passa; `β>0` fraco
+⇒ inconclusivo (long segue com ressalva, confirmar no holdout); `β<0` significativo ⇒ reprova.
+Se H2a reprovar, não se presume `P>0` para produtores; a ponta long é reformulada antes de
+qualquer backtest de ações.
 
 ### H2b — reação à publicação CONAB — diagnóstico
 

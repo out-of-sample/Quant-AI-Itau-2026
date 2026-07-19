@@ -952,6 +952,54 @@ a auditoria confirma que não há como diluí-lo adicionando nomes diretos.
 
 ---
 
+### D-036 — Pré-registro de H2a: transmissão do Shock ao preço mundial (portão do lado long)
+**Data**: 2026-07-19
+
+Especificação **congelada antes de qualquer resultado** (a ordem é provada no histórico do
+git: este commit precede o commit do resultado). Implementação em `stats/h2a.py`,
+`ingest/fred_prices.py`, `scripts/run_h2a.py`, testes em `tests/test_h2a.py`.
+
+**Hipótese.** O `Shock` brasileiro já disponível em `t` antecipa a valorização do preço mundial
+da commodity, no sinal esperado `β>0` (estresse ⇒ menos oferta ⇒ preço sobe — oposto de
+H1a/H1b). Sustenta o canal de preço `P` do lado long; se falhar, o long é reformulado.
+
+**Fonte do desfecho.** Preço-referência mundial (FRED/IMF Primary Commodity Prices), USD/t,
+mensal: soja `PSOYBUSDM`, milho `PMAIZMTUSDM`. Escolha justificada economicamente: o produtor
+é *price-taker* desse preço (o 20-F da BrasilAgro declara a soja precificada na CBOT; D-035).
+Preço é vintage-estável (não reescrito como CONAB/NEFIN); captura datada + manifesto por
+disciplina. Não gera posição/sizing — só desfecho de H2a.
+
+**Regressor.** `Shock` **nacional** as-of `t` (contrato D-028, pesos da safra CONAB anterior),
+computado em **cada fim de mês dentro da janela** fenológica — por isso só de 2018/19 em diante.
+
+**Desfecho e timing PIT.** Para observação no fim do mês `m`, retorno forward
+`r = log(P[m+h]/P[m])`, inteiramente posterior a `t`. Ressalva declarada: o IMF publica `P[m]`
+~3 semanas depois ⇒ lag de **execução**, não look-ahead (o `Shock` usa só chuva ≤ `t`; o
+retorno é todo futuro). Horizonte primário `h=3`; `h∈{1,2,3}` como robustez.
+
+**Perímetro (aplica o princípio de D-029/PT-001).** H2a é teste de **mecanismo** físico-
+econômico, como H1: roda no **span cheio 2018/19–2024/25** com sub-amostras dev (≤2019/20) e
+holdout reportadas em separado. O veredito do portão olha o agregado; o desenho da carteira
+permanece calibrado só no desenvolvimento. Isto **reconcilia** `14` §5, que originalmente
+restringia H2a a dev — mudança de desenho registrada aqui, com custo declarado.
+
+**Inferência.** OLS com erros agrupados por `ano-safra × cultura`; pooled com efeito fixo de
+cultura (demeaning intra-cultura); *pairs cluster bootstrap*. N efetivo reportado. Span cheio
+≈ 14 clusters; dev ≈ 4 (consistência, não motor).
+
+**Regra do portão (direcional + ressalva; ratificada com o usuário).** No `h` primário, span
+cheio, pooled: `β>0` e p unilateral (bootstrap) < 0,10 ⇒ **PASSA**; `β>0` sem significância ⇒
+**INCONCLUSIVO** (o long segue com ressalva explícita, a confirmar no holdout); `β<0`
+significativo ⇒ **REPROVA** (reformula o lado long).
+
+**Custo/limitação.** Poder baixo por N pequeno (safra é anual): um `β>0` fraco não distingue
+"efeito ausente" de "amostra curta" — por isso a regra é direcional, não veto por significância.
+Usar span cheio dá poder mas deixa o comportamento de preço do período de holdout informar a
+decisão do portão; aceito porque é mecanismo físico, não retorno da estratégia, e o desenho da
+carteira segue lacrado ao holdout. FRED mensal ≠ preço diário; o lag de execução é declarado.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

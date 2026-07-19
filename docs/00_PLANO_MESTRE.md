@@ -215,8 +215,8 @@ não dimensiona o experimento primário (D-026). Calibração
   concluída, com lacunas declaradas (D-035; `14` §9; `data/reference/corporate_audit_v1.json`)
 - ✅ decisão do fork `P/Q/C`: `P`/`Q` **não são PIT-separáveis** ⇒ mantém-se a matriz D-033
   (opção 1), materialidade atenuada como sensibilidade, **long condicionado a H2a** (D-035)
-- ⬜ pré-registrar e executar H2a no desenvolvimento (portão do lado long); manter H2b como
-  diagnóstico de evento
+- 🔄 H2a pré-registrado (D-036): transmissão do `Shock` ao preço mundial FRED, span cheio com
+  dev/holdout separados, portão direcional `β>0`; resultado pendente. Manter H2b diagnóstico
 - ⬜ substituir o H3/Fama–MacBeth por teste compatível com apenas três a quatro ações
 - ⬜ resolver R19 sem consultar retornos e construir carteira dollar-neutral, sem presumir
   neutralidade a beta, fatores ou commodities
