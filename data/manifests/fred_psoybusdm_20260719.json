@@ -1,0 +1,14 @@
+{
+  "source": "FRED/IMF-Primary-Commodity-Prices",
+  "series_id": "PSOYBUSDM",
+  "crop": "soy",
+  "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PSOYBUSDM",
+  "unit": "USD per metric ton, monthly average",
+  "publication_lag_days": 21,
+  "latest_ref_date": "2026-06-30",
+  "latest_price": 414.542332960393,
+  "n_obs": 414,
+  "sha256": "23eb43d15b70cf49b65f5b0fb23a22dca96bc7de7b96795e4f59bdc2a83fee2a",
+  "bytes": 12033,
+  "downloaded_at": "2026-07-19T05:27:52.404645+00:00"
+}

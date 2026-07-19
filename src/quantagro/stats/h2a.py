@@ -28,9 +28,16 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from ..features.shock import shock_asof
-from ..features.shock_spec import PRIMARY_WINDOWS, critical_period
+from ..features.shock import (
+    PRELIM_LAG_DAYS,
+    PRIMARY_SIGNAL_KIND,
+    conab_uf_weights,
+    uf_shock_asof,
+)
+from ..features.shock_spec import PRIMARY_WINDOWS, critical_period, windows_for_crop
 from ..ingest.conab_calendar import attach_avail_date
+from ..ingest.pam import pam_weights_asof
+from ..validate.pit import available_asof
 from .inference import cluster_bootstrap, ols_cluster
 
 HORIZONS = (1, 2, 3)
@@ -95,6 +102,63 @@ def _fwd_return(price: pd.Series, obs_month_end: pd.Timestamp, h: int) -> float:
     return float(np.log(p1 / p0))
 
 
+def _national_shocks(
+    obs_points: list[tuple[str, str, pd.Timestamp]],
+    municipal_stamped: pd.DataFrame,
+    pam_panel: pd.DataFrame,
+    conab_stamped: pd.DataFrame,
+    climatology_first_year: int,
+) -> dict[tuple[str, str, pd.Timestamp], float]:
+    """``Shock`` nacional em cada ``(crop, safra, t)``, memoizado como em H1a (``_shocks``).
+
+    Pré-split por UF + cache do ``uf_shock_asof`` por ``(spec, ano, corte clampado, PAM)``:
+    numericamente idêntico ao caminho de ``shock_asof``, só sem revarrer o painel municipal a
+    cada data. A agregação nacional usa ``conab_uf_weights`` (pesos da safra anterior, D-028),
+    recalculados por data porque mudam nas fronteiras de divulgação CONAB.
+    """
+    prelim_refs = np.sort(
+        municipal_stamped.loc[municipal_stamped["kind"] == PRIMARY_SIGNAL_KIND, "ref_date"].unique()
+    )
+    by_uf = {uf: sub for uf, sub in municipal_stamped.groupby("uf", sort=False)}
+    cache: dict[tuple, dict] = {}
+    out: dict[tuple[str, str, pd.Timestamp], float] = {}
+    for crop, ano, t in obs_points:
+        ts = pd.Timestamp(t)
+        weights_pam = pam_weights_asof(pam_panel, ts)
+        pam_year = int(weights_pam["ref_year"].max())
+        cutoff = (ts - pd.Timedelta(days=PRELIM_LAG_DAYS)).to_datetime64()
+        pos = int(np.searchsorted(prelim_refs, cutoff, side="right"))
+        vis_max = pd.Timestamp(prelim_refs[pos - 1]) if pos > 0 else None
+        specs = windows_for_crop(crop)
+        ufs = [s.uf for s in specs]
+        ok_shocks: dict[str, float] = {}
+        visible_by_uf: dict[str, pd.DataFrame] = {}
+        for spec in specs:
+            w_start, w_end = critical_period(spec, ano)
+            cut_eff = min(w_end, vis_max) if vis_max is not None and vis_max >= w_start else None
+            key = (spec.key, ano, cut_eff, pam_year)
+            r = cache.get(key)
+            if r is None:
+                if spec.uf not in visible_by_uf:
+                    visible_by_uf[spec.uf] = available_asof(by_uf[spec.uf], ts)
+                r = uf_shock_asof(
+                    ts, ano, spec, visible_by_uf[spec.uf], weights_pam, climatology_first_year
+                )
+                cache[key] = r
+            if r["status"] == "ok":
+                ok_shocks[spec.uf] = float(r["shock"])
+        if not ok_shocks:
+            continue
+        cweights = conab_uf_weights(conab_stamped, specs[0], ufs, ano, ts)
+        w = cweights.loc[list(ok_shocks.keys())]
+        coverage = float(w.sum())
+        if coverage <= 0:
+            continue
+        national = float(sum(cweights.loc[uf] * s for uf, s in ok_shocks.items()) / coverage)
+        out[(crop, ano, ts)] = national
+    return out
+
+
 def build_h2a_panel(
     prices: pd.DataFrame,
     municipal_stamped: pd.DataFrame,
@@ -104,39 +168,37 @@ def build_h2a_panel(
     bases: range = range(2018, 2025),
 ) -> pd.DataFrame:
     """Painel de H2a: ``(crop, safra, obs_month, h)`` com ``Shock`` nacional e retorno forward."""
-    conab = _stamp_grains(conab)
+    conab_stamped = _stamp_grains(conab)
+    obs_points = [
+        (crop, f"{base}/{(base + 1) % 100:02d}", t)
+        for crop in CROPS
+        for base in bases
+        for t in _obs_month_ends(crop, f"{base}/{(base + 1) % 100:02d}")
+    ]
+    shocks = _national_shocks(
+        obs_points, municipal_stamped, pam_panel, conab_stamped, climatology_first_year
+    )
+    price_by_crop = {crop: _price_lookup(prices, crop) for crop in CROPS}
     rows = []
-    for crop in CROPS:
-        price = _price_lookup(prices, crop)
-        for base in bases:
-            ano = f"{base}/{(base + 1) % 100:02d}"
-            for t in _obs_month_ends(crop, ano):
-                panel = shock_asof(
-                    t, ano, municipal_stamped, pam_panel, conab, climatology_first_year
-                )
-                nat = panel[
-                    (panel["level"] == "national")
-                    & (panel["crop"] == crop)
-                    & (panel["status"] == "ok")
-                ]
-                if nat.empty:
-                    continue
-                shock = float(nat["shock"].iloc[0])
-                for h in HORIZONS:
-                    r = _fwd_return(price, t, h)
-                    rows.append(
-                        {
-                            "crop": crop,
-                            "ano_agricola": ano,
-                            "base_year": base,
-                            "obs_month": t.strftime("%Y-%m"),
-                            "h": h,
-                            "target_month": (t + pd.offsets.MonthEnd(h)).strftime("%Y-%m"),
-                            "shock": shock,
-                            "fwd_ret": r,
-                            "cluster": f"{crop}:{ano}",
-                        }
-                    )
+    for crop, ano, t in obs_points:
+        shock = shocks.get((crop, ano, t))
+        if shock is None:
+            continue
+        base = int(ano[:4])
+        for h in HORIZONS:
+            rows.append(
+                {
+                    "crop": crop,
+                    "ano_agricola": ano,
+                    "base_year": base,
+                    "obs_month": t.strftime("%Y-%m"),
+                    "h": h,
+                    "target_month": (t + pd.offsets.MonthEnd(h)).strftime("%Y-%m"),
+                    "shock": shock,
+                    "fwd_ret": _fwd_return(price_by_crop[crop], t, h),
+                    "cluster": f"{crop}:{ano}",
+                }
+            )
     panel = pd.DataFrame(rows).dropna(subset=["fwd_ret"])
     if panel.empty:
         raise ValueError("nenhuma observação H2a computável (Shock nacional / preço ausente?)")

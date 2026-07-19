@@ -117,6 +117,14 @@ Especificação congelada em **D-036** (pré-registrada antes do resultado):
 Se H2a reprovar, não se presume `P>0` para produtores; a ponta long é reformulada antes de
 qualquer backtest de ações.
 
+**Resultado (D-037, 2026-07-19): INCONCLUSIVO-negativo.** No spec primário (h=3, span cheio,
+pooled) β=−0,017 (p lado negativo=0,113): sinal **oposto** ao esperado, não significativo — o
+portão não reprova, mas **não confirma** o canal de preço; no h=1 o pooled é significativamente
+negativo. Duas leituras não resolvidas: transmissão fraca ao preço **mundial USD**, ou reação
+**contemporânea** + reversão que um teste forward não capta. O canal `P` do lado long fica sem
+suporte empírico; a decisão de reformular o long / pré-registrar diagnóstico contemporâneo ou em
+BRL (CEPEA) / reduzir ao processador é o próximo passo. Detalhe em `07` D-037.
+
 ### H2b — reação à publicação CONAB — diagnóstico
 
 Pergunta: a surpresa do levantamento move o preço ao redor da divulgação?
