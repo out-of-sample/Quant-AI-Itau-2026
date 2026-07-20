@@ -38,7 +38,7 @@ Estados: `ABERTA`, `EM ANDAMENTO`, `BLOQUEADA` ou `ENCERRADA`.
 | Item | Onde é controlado | Por que não é pendência transversal |
 |---|---|---|
 | Rodadores H1a/H1b e escolha da inferência final | `00_PLANO_MESTRE.md` §4, Fase 2 | entrega da fase atual |
-| Motor, fricções e diagnósticos do backtest | Fase 4.1–4.3 e `04_PROTOCOLO_BACKTEST.md` | entregas futuras com fase proprietária; o contrato operacional que as governa foi fechado em D-055 |
+| Fricções e diagnósticos do backtest | Fase 4.2–4.3 e `04_PROTOCOLO_BACKTEST.md` | entregas futuras com fase proprietária; o motor 4.1 e sua contabilidade foram fechados em D-056. A cobertura restrita do dev é risco R26, não dívida transversal |
 | H4–H5, CEPEA, futuros B3, CAR e demais robustezes | Fases 4–5 e `05_SUITE_ROBUSTEZ.md` | extensões/testes futuros já localizados |
 | Rodada única do holdout | Fase 6 | portão futuro, não dívida legada |
 | Nome e identidade visual | Fase 7 e `08_IDENTIDADE.md` | decisão futura do time |
