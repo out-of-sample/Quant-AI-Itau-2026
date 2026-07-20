@@ -111,6 +111,23 @@ PRIMARY_WINDOWS: tuple[CropRegionWindow, ...] = (
     ),
 )
 
+# Canal de expansão — algodão (D-046/D-047). Contrato à parte do primário de grãos, mesmo
+# mecanismo (preço global, seca prejudica o produtor sob H′). Suporte mínimo >80%: MT+BA
+# (MT ~68%, BA ~17% da produção 2023/24). Fase crítica hídrica = floração + formação do capulho
+# (~60-100 dias após a emergência; 50-60% da necessidade hídrica), fonte MAPA/ZARC + Embrapa.
+# Plantio MT ~jan-fev (após a soja) ⇒ janela mar-mai; BA ~dez-jan ⇒ janela fev-abr. Ambos no
+# ano base+1. CONAB: "ALGODAO EM PLUMA", safra "UNICA".
+COTTON_WINDOWS: tuple[CropRegionWindow, ...] = (
+    CropRegionWindow(
+        "cotton", "ALGODAO EM PLUMA", "UNICA", "MT", "flowering_boll", 3, 15, 1, 5, 31, 1
+    ),
+    CropRegionWindow(
+        "cotton", "ALGODAO EM PLUMA", "UNICA", "BA", "flowering_boll", 2, 1, 1, 4, 30, 1
+    ),
+)
+
+ALL_WINDOWS: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS + COTTON_WINDOWS
+
 
 def crop_year_start(ano_agricola: str) -> int:
     """Extrai o primeiro ano de ``AAAA/AA`` e falha alto em formatos ambíguos."""
@@ -137,19 +154,19 @@ def critical_period(spec: CropRegionWindow, ano_agricola: str) -> tuple[pd.Times
 
 
 def windows_for_crop(crop: str) -> tuple[CropRegionWindow, ...]:
-    """Retorna as janelas primárias da cultura, falhando para cultura fora do pré-registro."""
-    out = tuple(spec for spec in PRIMARY_WINDOWS if spec.crop == crop)
+    """Retorna as janelas da cultura (grão primário ou algodão), falhando fora do pré-registro."""
+    out = tuple(spec for spec in ALL_WINDOWS if spec.crop == crop)
     if not out:
-        raise KeyError(f"cultura fora da especificação primária: {crop!r}")
+        raise KeyError(f"cultura fora da especificação: {crop!r}")
     return out
 
 
 def validate_primary_spec() -> None:
-    """Tripwires contra duplicata ou mudança silenciosa do contrato congelado."""
-    keys = [spec.key for spec in PRIMARY_WINDOWS]
+    """Tripwires contra duplicata ou mudança silenciosa dos contratos congelados."""
+    keys = [spec.key for spec in ALL_WINDOWS]
     if len(keys) != len(set(keys)):
-        raise ValueError("duplicata (cultura, UF) na especificação primária")
-    for spec in PRIMARY_WINDOWS:
+        raise ValueError("duplicata (cultura, UF) na especificação")
+    for spec in ALL_WINDOWS:
         critical_period(spec, "2023/24")
 
 
