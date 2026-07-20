@@ -4,12 +4,10 @@
 > seja um teste da tese, e não um retrato do quanto conseguimos ajustar as regras até o
 > gráfico ficar bonito.
 
-> **Estado após D-053/D-054:** a hipótese H′, o universo econômico, a direção, o sizing, os
-> caps, o lag D+1 e o horizonte de 21 pregões estão congelados em
-> `backtest/strategy_spec.py`. A auditoria de transição para a Fase 4 mostrou que a mecânica
-> operacional ainda não está completamente especificada. Calendário de decisões, composição
-> dos scores, casos de universo incompleto, inferência por permutação, custos e fronteiras
-> temporais serão fechados na **Fase 4.0**, sem consultar P&L, antes de implementar o motor.
+> **Estado após D-055:** a especificação econômica de D-053 e a mecânica operacional estão
+> congeladas, sem consulta a P&L, em `backtest/strategy_spec.py` e
+> `backtest/operational_spec.py`. A Fase 4.0 está encerrada. A implementação do motor deve
+> executar literalmente estes contratos; não pode completar parâmetros olhando resultados.
 
 ---
 
@@ -20,7 +18,8 @@ Uma ação só pode receber posição em `t` se, simultaneamente:
 1. pertence ao universo econômico congelado em D-053;
 2. estava sendo negociada na B3 segundo o COTAHIST;
 3. já completou 60 pregões desde a primeira negociação observada;
-4. seu ADTV dos 21 pregões anteriores supera o piso de liquidez ainda a congelar na Fase 4.0;
+4. seu ADTV da janela de 21 pregões encerrada em D é de ao menos **R$ 8 milhões**, com dia sem
+   negócio contado como zero;
 5. sua exposição e seu score estavam disponíveis em `t`.
 
 O universo econômico é:
@@ -39,7 +38,8 @@ porque nomes adicionais melhoraram o resultado.
 **Regra de deslistagem:** a ação permanece no histórico até o último pregão efetivo; não é
 apagada retroativamente. A elegibilidade de uma ordem executada em D+1 usa apenas informação
 conhecida até D — o volume ou o status final de D+1 não podem decidir retrospectivamente a
-ordem.
+ordem. Se faltar close de execução ou saída sem evento terminal auditado, o bloco falha; não se
+usa o próximo preço nem se descarta o nome silenciosamente.
 
 **Entregável obrigatório:** gráfico da contagem de ativos elegíveis ao longo do tempo, junto
 da razão de cada entrada/saída. É a prova visual contra survivorship e backfill.
@@ -60,12 +60,26 @@ da razão de cada entrada/saída. É a prova visual contra survivorship e backfi
 - A execução acontece no close desse pregão; nunca no mesmo fechamento que gerou o sinal.
 - O retorno começa depois de incorporado o preço de execução, sem contar o mesmo close duas
   vezes.
-- O horizonte primário é de **21 pregões**.
+- O horizonte primário é de **21 intervalos de pregão close-to-close**.
 
-A Fase 4.0 ainda precisa tornar executável o calendário de geração do sinal: datas de decisão,
-efeito de nova informação durante uma posição, vencimento e tratamento de posições
-sobrepostas. “Mensal” não é especificação suficiente e não pode ser completado depois de ver
-o P&L.
+### 2.1 Grade operacional congelada em D-055
+
+Para cada safra `Y/Y+1`:
+
+1. a âncora é **7 de janeiro de `Y+1`**, quando dezembro completo já venceu o lag climático de
+   sete dias;
+2. `D₀` é o primeiro pregão B3 em ou após a âncora; `X₀`, o pregão seguinte, é a execução;
+3. `Xₖ₊₁` é o 21º pregão posterior a `Xₖ`; `Dₖ₊₁` é o pregão imediatamente anterior;
+4. o close de `Xₖ₊₁` encerra o bloco anterior e inicia o próximo. O retorno dessa transição é
+   contado uma única vez; não há *cohorts* sobrepostos;
+5. o primeiro `Dₖ` da grade em ou após **7 de setembro** é a última decisão da safra. Seu bloco
+   termina 21 pregões depois e a carteira fica zerada até janeiro seguinte;
+6. informação publicada entre D e X não altera a ordem já formada.
+
+A grade cobre, em sequência única, soja, milho safrinha e a maturação da cana. Ela não depende
+de retorno, fechamento de mês de mercado ou data de divulgação da CONAB. O painel estatístico
+de 21 pregões e a carteira negociável usam os mesmos blocos; isso impede que sobreposição
+fabrique observações ou alavancagem.
 
 ---
 
@@ -87,37 +101,100 @@ O algoritmo de water-filling e os invariantes acima vivem em `backtest/strategy_
 são travados por testes. Exposições residuais a mercado, fatores e commodities são resultados
 diagnósticos: não alteram os pesos congelados.
 
-### 3.1 Graus de liberdade que a Fase 4.0 precisa fechar
+### 3.1 Composição executável do score
 
-| Tema | Decisão ainda necessária — sempre sem P&L |
-|---|---|
-| Calendário | datas de decisão, encerramento, nova informação e sobreposição de horizontes |
-| Score | combinação soja+milho; escala comum com cana; ausências; conjunto usado no demean |
-| Universo incompleto | zerar, reduzir bruto ou manter posição relativa quando falta um lado econômico |
-| Liquidez | piso numérico de ADTV e convenção de janela, escolhidos por operabilidade observável |
-| Custos | patrimônio de referência, taxas, slippage, aluguel e capacidade, com fontes/cenários |
-| Inferência | estatística, unidade permutada, enumeração/semente, p-valor e dados ausentes |
-| Partição temporal | datas exatas de dev/holdout e eventos que cruzam a fronteira |
-| Segurança | motor nega o holdout por padrão; somente a Fase 6 pode liberá-lo deliberadamente |
+Para cada grão e nome elegível em D:
 
-Esses itens pertencem à Fase 4, não ao registro de pendências transversais. Nenhuma escolha
-pode ser feita para aumentar Sharpe, significância ou retorno.
+`G_i(D) = −[E_i,soja(D)·Shock_soja(D) + E_i,milho(D)·Shock_milho(D)]`.
+
+- cultura cuja janela ainda não começou contribui zero, **sem renormalizar** `E`;
+- depois do fim da janela, usa-se o choque final da safra;
+- `NaN`, buraco de cobertura, vintage ausente ou erro técnico nunca vira zero: falha alto;
+- o choque nacional usa pesos CONAB da safra anterior disponível, como em D-028.
+
+Para a SMTO3, o choque de maturação é a média das cinco UFs de D-050 ponderada pelos mesmos
+pesos CONAB anteriores. Exigem-se GO, MG, MS, PR e SP válidos. A escala é **1:1 em z-score**, sem
+normalização por volatilidade ou coeficiente estimado. O cap de 15% é o único *haircut*: não há
+multiplicador adicional. Antes do primeiro prefixo junho–agosto disponível, SMTO3 fica fora do
+score e do *demean*; não recebe zero artificial.
+
+O teste primário faz *demean* somente nos quatro grãos válidos/elegíveis. A carteira usa esses
+grãos e acrescenta SMTO3 quando seu canal está ativo. Em ambos os casos, é obrigatório haver ao
+menos um produtor (AGRO3/SLCE3) e um processador (BRFS3/JBSS3). Se faltar qualquer lado, o bloco
+inteiro fica zerado; SMTO3 não substitui o núcleo. Caps insuficientes reduzem o bruto dos dois
+lados simetricamente pelo *water-filling* já testado.
+
+### 3.2 Inferência primária exata
+
+Em cada bloco, score e retorno forward são demeanados na seção transversal dos quatro grãos.
+Para cada ano-safra `k`, calcula-se uma inclinação:
+
+`β_k = Σ(x·y) / Σ(x²)`, usando todos os blocos válidos daquele ano.
+
+A estatística é a média com **peso igual** dos cinco `β_k` de 2020/21–2024/25. Sob a nula,
+enumeram-se exatamente os `2⁵ = 32` *sign flips* dos clusters ano-safra. O p-valor unilateral é
+a fração de estatísticas permutadas maiores ou iguais à observada; não há semente, aproximação
+assintótica nem “+1” de Monte Carlo. H′ passa somente se média `>0` e `p≤0,10`.
+
+As cinco safras são obrigatórias e todo bloco pré-declarado precisa de score e preços válidos.
+Falta não é descartada: bloqueia o veredito até a fonte ou evento terminal ser auditado. A
+dependência dentro da safra, inclusive por sinais persistentes, é preservada ao inverter o
+cluster inteiro.
 
 ---
 
 ## 4. Custos de transação e capacidade
 
-Custos são parte do resultado, não um desconto decorativo aplicado no fim. O modelo deve
-separar:
+O patrimônio de referência é **R$ 500 mil** e a exposição bruta, 1,0×. O piso de ADTV de R$ 8
+milhões não veio de retorno: ele garante que a pior reversão permitida de um grão, de +40% para
+−40% (`|Δw|=0,80`), negocie no máximo 5% do ADTV (`400 mil / 8 milhões`).
 
-| Componente | Tratamento exigido |
-|---|---|
-| Corretagem, emolumentos e demais taxas | taxa por notional negociado, com valor e fonte congelados na Fase 4.0 |
-| Slippage | função explícita da participação da ordem no ADTV; patrimônio/notional declarado |
-| Aluguel da ponta short | cenário histórico quando houver fonte válida; na ausência, cenários conservadores declarados, nunca taxa atual retroaplicada como se fosse PIT |
-| Indisponibilidade de aluguel | política determinística congelada antes do P&L; não remover apenas operações perdedoras |
-| Robustez | caso-base, custo zero como decomposição e custo 2× como stress |
-| Capacidade | capital máximo compatível com o limite pré-fixado de participação no ADTV |
+O custo à vista por ordem no cenário-base, em bps do notional, é:
+
+`c(p) = 3,5 + 2 + 5 + 10·sqrt(p/1%)`, para `0 < p ≤ 5%`,
+
+onde `p=|Δw|·AUM/ADTV21`. Os 3,5 bps arredondam para cima a tarifa vigente de ações da B3
+(3,0 bps em operação regular de baixo volume; 3,2 no leilão de fechamento); 2 bps são hipótese
+conservadora de corretagem histórica; 5 bps representam spread/execução e a raiz quadrada é a
+hipótese de impacto. O COTAHIST não traz livro de ofertas, logo slippage é modelo declarado,
+não dado observado. Fontes: [tarifas de ações B3](https://www.b3.com.br/pt_br/produtos-e-servicos/tarifas/listados-a-vista-e-derivativos/renda-variavel/tarifas-de-acoes-e-fundos-de-investimento/a-vista/)
+e [cotações históricas B3](https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/cotacoes-historicas/).
+
+### 4.1 Ponta short
+
+Em D, usa-se somente o Boletim Diário da B3 já público. Cada short precisa ter:
+
+1. contrato/negócio positivo em alguma modalidade nos cinco pregões anteriores;
+2. posição limitada a 1% do estoque total alugado observado;
+3. taxa-base igual a `max(taxa PIT observada, 5% a.a.)`, acrescida da tarifa B3
+   `clip(20%·taxa, 2,5 bps, 70 bps a.a.)` e de 1% a.a. de intermediação.
+
+Sem evidência PIT para qualquer short necessário, **não se abre o bloco inteiro**. Não se
+redistribui para outro short nem se transforma o cenário de custo zero em operação possível.
+O estoque é proxy de profundidade, não prova de oferta na corretora; recalls e garantias seguem
+como limitação. Fontes: [regras do empréstimo B3](https://www.b3.com.br/pt_br/produtos-e-servicos/emprestimo-de-ativos/informacoes.htm)
+e [tarifas do empréstimo B3](https://www.b3.com.br/pt_br/produtos-e-servicos/tarifas/tarifas-de-emprestimo-de-ativos/).
+
+### 4.2 Cenários e capacidade
+
+| Cenário | Custos monetários | Regras de investibilidade |
+|---|---|---|
+| zero | zero | ADTV, participação, estoque e disponibilidade continuam valendo |
+| base | fórmulas acima | contrato primário |
+| 2× | dobra custo à vista e aluguel all-in | mesmos sinais e elegibilidade |
+
+Não há cap de turnover: toda mudança de peso é executada, medida e paga. O portfólio é tratado
+como long/short autofinanciado; remuneração de caixa, margem e spread de financiamento não são
+modelados e serão declarados.
+
+Por bloco, a capacidade é o menor entre:
+
+- vista: `min_i 0,05·ADTV_i/|Δw_i|`;
+- aluguel: `min_short 0,01·estoque_alugado_i/|w_i|`.
+
+Reportam-se mínimo, percentil 10 e mediana. A estratégia só será chamada de investível no
+patrimônio de referência se a capacidade for de ao menos R$ 500 mil em todos os blocos
+operados. A tabela de tarifas atual é hipótese uniforme, não reconstrução das regras históricas.
 
 A antiga proposta de uma carteira long-only com hedge de índice **não é substituto automático**:
 é uma estratégia diferente e não pode ser promovida depois de observar que o short foi ruim.
@@ -145,28 +222,37 @@ de retornos diários. Retornos sobrepostos não fabricam novas observações ind
 
 ## 6. Reprodutibilidade e testes obrigatórios do motor
 
-1. semente fixa em bootstrap e permutações;
+1. teste primário exato com 32 permutações, sem semente; sementes fixas nos bootstraps de
+   robustez;
 2. dependências pinadas e manifestos de dados versionados;
 3. um comando reproduz cada artefato a partir das entradas locais;
 4. teste-canário de D+1, inclusive feriado e fim de semana;
 5. teste de fronteira para não duplicar o close de execução;
 6. teste de elegibilidade usando informação somente até D;
-7. teste de caps, bruto, dollar-neutralidade e redução de bruto quando um lado é inviável;
-8. teste de custo zero, custo conhecido e turnover por mudança de pesos;
-9. teste de deslistagem, ausência de preço e evento que cruza a fronteira temporal;
+7. teste de caps, bruto, dollar-neutralidade e carteira zerada sem produtor+processador;
+8. teste de custo zero, base, 2×, participação, aluguel, capacidade e turnover;
+9. teste de deslistagem, ausência de preço e bloco que cruza a fronteira temporal;
 10. bloqueio técnico do holdout por padrão.
 
 ---
 
 ## 7. Disciplina do desenvolvimento e do holdout
 
-O desenvolvimento termina em 2019 e está **queimado para a direção** por D-043. Na Fase 4,
-ele serve para validar mecânica, invariantes, custos, turnover e atribuição — seu P&L não
-confirma H′ nem autoriza alterar direção, score ou parâmetros.
+O desenvolvimento operacional compreende as safras **2015/16–2018/19**, com todas as
+execuções e saídas até 31/12/2019, e está **queimado para a direção** por D-043. Na Fase 4, ele
+serve para validar mecânica, invariantes, custos, turnover e atribuição — seu P&L não confirma
+H′ nem autoriza alterar direção, score ou parâmetros.
+
+A safra **2019/20 é uma zona de transição excluída**: seus retornos cairiam em 2020, mas ela não
+pertence às cinco safras congeladas do holdout. Bloco que cruza 31/12/2019 é rejeitado por
+inteiro, nunca truncado.
 
 O holdout de retornos 2020–2025 permanece lacrado mesmo após D-053. “Desenho econômico
 congelado” não significa “permissão para olhar”: a abertura só ocorre na Fase 6, depois de
 fechar a Fase 4.0, implementar e testar o motor e pré-registrar a suíte de robustez.
 
-O motor deve falhar alto ao receber datas do holdout sem uma autorização explícita e exclusiva
-da Fase 6. A rodada ocorre **uma vez** e o resultado, qualquer que seja, vai para o relatório.
+O holdout é exclusivamente 2020/21–2024/25, com decisões/execuções não anteriores a
+01/01/2020 e saídas até 31/12/2025. O motor deve falhar **antes de ler retornos** sem uma
+autorização explícita e exclusiva da Fase 6. A liberação não inclui 2019/20 nem 2025/26. A
+rodada ocorre uma vez, com hash da especificação e manifestos, e o resultado, qualquer que
+seja, vai para o relatório.

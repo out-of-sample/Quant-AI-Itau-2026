@@ -159,8 +159,9 @@ Converte o score contínuo em uma carteira observável e replicável.
   removido em D-026 porque a fonte não preserva o vintage da primeira publicação
 - **Sizing proporcional ao score demeanado**, não binário; water-filling por lado.
 - **Dollar-neutral** long/short, bruto 1,0×; não presumir neutralidade fatorial.
-- Caps congelados em 0,40 por grão e 0,15 para a SMTO3. ADTV, custos, calendário e casos de
-  universo incompleto são o gate operacional D-054 da Fase 4.0.
+- Caps congelados em 0,40 por grão e 0,15 para a SMTO3. Calendário, score multicanal, universo
+  incompleto, inferência, ADTV, custos e fronteiras foram fechados sem P&L em D-055 e vivem em
+  `backtest/operational_spec.py`.
 
 ### C5 — Execução (opcional)
 
@@ -306,7 +307,7 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C3 stats | `stats/cotton_h1.py`, `scripts/run_cotton_h1.py`, `data/reference/cotton_h1_result_v1.json` | ✅ | validação isolada do algodão, sem retornos: painel de 3 safras, OLS agrupado, UFs/anos/LOO e veredito literal de D-048. Critério não corroborado, com sinal positivo em todos os diagnósticos desta amostra; registro imutável contém hashes das entradas e da primeira execução (D-049) |
 | C2/C3 cana | `features/cane_panel.py`, `features/cane_shock.py`, `stats/cane_h1.py`, scripts e `data/reference/cane_h1_result_v1.json` | ✅ | submodelo mensal separado: crescimento/produção e maturação/ATR nunca se misturam. 198 rasters com manifesto, painel SP+MG+GO+MS+PR e portão direcional reproduzível. Maturação passou D-050 (8/8 LOO, 5/5 UFs), mas sem significância; R24 bloqueia tradução automática em ação (D-051) |
 | C4 estratégia | `backtest/strategy_spec.py` | ✅ | contrato congelado da estratégia reformulada (D-053), anterior ao holdout e return-agnóstico: universo de 5 nomes, direção H′ (grãos = negativo de `E·Shock`; cana +1), sizing dollar-neutral proporcional ao sinal com cap 0,40/0,15 (B1, resolve R19), execução D+1, pesos CONAB, e o teste primário spread produtor–processador só nos grãos (A1). Travado em `tests/test_strategy_spec.py` |
-| C6 backtest | `backtest/strategy_spec.py` | 🔄 | estratégia econômica congelada; auditoria D-054 abriu a Fase 4.0 para fechar calendário, score, universo incompleto, inferência, custos e partição temporal antes do motor. Holdout negado até a Fase 6 |
+| C6 backtest | `backtest/strategy_spec.py`, `backtest/operational_spec.py` | 🔄 | contratos econômico (D-053) e operacional (D-055) congelados e testados, ainda sem P&L: blocos de 21 pregões, composição dos scores, política de universo incompleto, permutação exata, custos/capacidade e partição temporal. Falta implementar o motor; holdout negado até a Fase 6 |
 | C7 robustez · C8 report | — | ⬜ | suíte será atualizada para H′ na Fase 5; relatório na Fase 7 |
 
 > A camada **`prices/`** não estava no esqueleto original de 8 camadas: ela nasceu na Fase 1
