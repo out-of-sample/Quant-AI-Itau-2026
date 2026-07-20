@@ -1,0 +1,62 @@
+[
+  {
+    "NC": "Nível Territorial (Código)",
+    "NN": "Nível Territorial",
+    "MC": "Unidade de Medida (Código)",
+    "MN": "Unidade de Medida",
+    "V": "Valor",
+    "D1C": "Município (Código)",
+    "D1N": "Município",
+    "D2C": "Variável (Código)",
+    "D2N": "Variável",
+    "D3C": "Ano (Código)",
+    "D3N": "Ano",
+    "D4C": "Produto das lavouras temporárias (Código)",
+    "D4N": "Produto das lavouras temporárias"
+  },
+  {
+    "NC": "6",
+    "NN": "Município",
+    "MC": "1017",
+    "MN": "Toneladas",
+    "V": "418",
+    "D1C": "3100104",
+    "D1N": "Abadia dos Dourados - MG",
+    "D2C": "214",
+    "D2N": "Quantidade produzida",
+    "D3C": "2023",
+    "D3N": "2023",
+    "D4C": "2696",
+    "D4N": "Cana-de-açúcar"
+  },
+  {
+    "NC": "6",
+    "NN": "Município",
+    "MC": "1017",
+    "MN": "Toneladas",
+    "V": "807039",
+    "D1C": "3500105",
+    "D1N": "Adamantina - SP",
+    "D2C": "214",
+    "D2N": "Quantidade produzida",
+    "D3C": "2023",
+    "D3N": "2023",
+    "D4C": "2696",
+    "D4N": "Cana-de-açúcar"
+  },
+  {
+    "NC": "6",
+    "NN": "Município",
+    "MC": "1017",
+    "MN": "Toneladas",
+    "V": "1275",
+    "D1C": "5200050",
+    "D1N": "Abadia de Goiás - GO",
+    "D2C": "214",
+    "D2N": "Quantidade produzida",
+    "D3C": "2023",
+    "D3N": "2023",
+    "D4C": "2696",
+    "D4N": "Cana-de-açúcar"
+  }
+]

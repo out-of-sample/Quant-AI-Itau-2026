@@ -20,6 +20,7 @@ from quantagro.ingest.pam_calendar import PAM_RELEASES, pam_avail_map, pam_relea
 
 FIXTURE = Path(__file__).parent / "fixtures" / "pam_mt_sample.json"
 FIXTURE_COTTON = Path(__file__).parent / "fixtures" / "pam_cotton_sample.json"
+FIXTURE_SUGARCANE = Path(__file__).parent / "fixtures" / "pam_sugarcane_sample.json"
 
 
 class TestCalendar:
@@ -92,6 +93,13 @@ class TestParse:
         assert set(df["uf"]) == {"MT", "BA"}
         sao_desiderio = df.query("municipality_code == '2928901' and ref_year == 2023")
         assert sao_desiderio.iloc[0]["quantity_tonnes"] == 543_506
+
+    def test_cana_real_inclui_sp_mg_go(self):
+        df = parse_pam(FIXTURE_SUGARCANE)
+        assert set(df["crop"]) == {"sugarcane"}
+        assert set(df["uf"]) == {"SP", "MG", "GO"}
+        adamantina = df.query("municipality_code == '3500105'")
+        assert adamantina.iloc[0]["quantity_tonnes"] == 807_039
 
     def test_zero_sidra_nao_vira_missing(self):
         df = parse_pam(FIXTURE)
