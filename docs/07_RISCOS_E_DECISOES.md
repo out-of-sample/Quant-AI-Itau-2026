@@ -39,7 +39,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R16 | **CHIRPS prelim começa em 2015** — não há vintage operacional para 2013-14; jan/início de fev de 2015 foi backfill | Confirmada | Alto para poder estatístico | Primeiro ano-safra primário = 2015/16; ausência antes disso, nunca substituir silenciosamente por `final`; reportar redução do desenvolvimento | Aceito — limitação irremovível da fonte |
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
-| R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Confirmada | Alto | Decisão pré-carteira sem retornos: início posterior, cap maior, hedge externo ou nova evidência direta; declarar concentração | 🔴 Aberto — bloqueia a construção da carteira |
+| R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Resolvida (D-053) | Baixo | Artefato da estrutura antiga (long produtor). Sob H′ a carteira é balanceada nos dois sentidos e o holdout (2020/21+) tem os 5 nomes vivos ⇒ concentração de "um nome só" não ocorre; cap 0,40 declara o teto | 🟢 Resolvido — sizing dollar-neutral congelado em `strategy_spec.py` |
 | R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | **Resolvido empiricamente como NEGATIVO (D-043)**: a reação das ações no dev deu β=−0,09 (t=−3,6; correlações por nome todas negativas) — a seca **prejudica** o produtor (`Q>P`, coerente com D-035/D-041). A ponta long tem o sinal invertido e a estratégia como desenhada perde. **Não inverter post-hoc** (p-hacking); reformular com hipótese nova pré-registrada | 🔴 Materializado — long invertido; estratégia atual não traduz |
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
@@ -1770,6 +1770,58 @@ por vintage, % de hedge) vêm de síntese de imprensa setorial/RI e ficam como *
 declarada**. A decisão, porém, **não depende deles**: apoia-se na data de IPO (fato público
 robusto) e na geografia/cana-própria (corroboradas em múltiplas fontes). O timing do
 surpreendimento de ATR vs. o momento do hedge não é PIT-separável — lacuna de identificação.
+
+---
+
+### D-053 — Congelamento da estratégia reformulada (Fase 3.5), anterior ao holdout
+**Data**: 2026-07-20
+
+Especificação executável e imutável da estratégia sob H′ (D-044), **num commit anterior ao
+primeiro contato com o holdout**. Contrato em `src/quantagro/backtest/strategy_spec.py`
+(return-agnóstico; travado em `tests/test_strategy_spec.py`). O objetivo é que a rodada única do
+holdout 2020/21–2024/25 não tenha **nenhum grau de liberdade ajustável**.
+
+**Prioridades declaradas pelo time**: (1) força estatística, (2) resultado (lucro), sob a trava
+de rigor. O desenho foi escolhido sob a verdade dura de que a força é **limitada pelos 5
+anos-safra** do holdout (re-análise D-045) e nenhuma escolha aqui levanta esse teto — só evita
+desperdiçá-lo.
+
+**Camadas de sinal (não confundir).** `signal/convention.py::raw_signal=E·Shock` é o mecanismo
+(canal de preço, produtor sobe sob estresse), **falsificado em D-043** e **intacto** (segue
+travado em `test_signal_sign.py`). A estratégia H′ é uma camada operacional por cima: para
+grãos, toma o **negativo** de `E·Shock` (a seca prejudica o produtor, `Q>P`); para a cana
+(SMTO3), um canal próprio de maturação com direção +1 (seca→ATR↑→long). `test_strategy_spec.py`
+trava a garantia cruzada de que H′ não altera a convenção de mecanismo.
+
+**Forks resolvidos com o time:**
+- **A1 — cana satélite**: o **teste estatístico primário usa só os 4 grãos** (spread
+  produtor–processador), para o mecanismo fraco da cana (p=0,12) não diluir o sinal forte e
+  baixar o t-stat — é a escolha que **protege a força** (prioridade 1). A **carteira negociável**
+  inclui a SMTO3 mas com `|peso| ≤ 0,15` (D-052 põe a SMTO3 "no score"); a contribuição dela é
+  reportada à parte.
+- **B1 — sizing proporcional ao sinal, dollar-neutral (Σw=0, Σ|w|=1), cap 0,40 por grão**. Água
+  por lado (long e short recebem o mesmo bruto ⇒ neutralidade e caps por construção). O sizing
+  **não afeta o teste primário** (regressão não-ponderada); é uma escolha de P&L/Sharpe
+  (prioridade 2), onde o mais simples e robusto vence sob a trava de rigor.
+- **Pesos do choque nacional = contrato CONAB da safra anterior (D-028)**, não o equal-weight que
+  foi simplificação de diagnóstico no dev.
+- **Teste primário (substitui H3/Fama–MacBeth)**: painel/spread `Shock×exposição` demeanado na
+  seção transversal, cluster por ano-safra, **inferência por permutação** (melhor com 5 clusters)
+  e **unilateral** α=0,10 (direção dada por H′). Fecha o item de docs/14 §6.
+- **Execução D+1; horizonte forward de 21 pregões.**
+
+**R19 resolvido.** A concentração que definia o R19 era artefato da estrutura antiga (long
+produtor forçava 50% do bruto num nome antes de 03/2018). Sob H′ não há long-produtor forçado
+(carteira balanceada nos dois sentidos) e o **holdout começa em 2020/21 com os 5 nomes vivos** —
+a concentração de "um nome só" não ocorre no período de teste. O cap de 0,40 declara o teto e no
+holdout raramente ativa. R19 passa a **resolvido**.
+
+**Custo/limitação declarado.** (a) A força continua limitada pelos 5 anos-safra — este
+congelamento não a aumenta, só a preserva; o holdout pode voltar inconclusivo e isso será
+reportado. (b) A cana é satélite de mecanismo fraco: pode não somar nada ao P&L. (c) Dollar-
+neutral **não é market-neutral**: exposições residuais a fatores/beta/commodity não são
+neutralizadas — declaradas, não presumidas. (d) O dev está queimado para a direção; o desempenho
+de H′ no dev **não** vale como evidência (Fase 4 é return-agnóstica). O holdout roda **uma vez**.
 
 ---
 
