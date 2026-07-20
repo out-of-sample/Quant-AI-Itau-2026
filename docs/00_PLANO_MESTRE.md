@@ -8,38 +8,36 @@ como ele está organizado e em que ordem as coisas acontecem.
 ## 1. O projeto em um parágrafo
 
 Choques climáticos nas regiões produtoras brasileiras carregam informação sobre a oferta
-futura de commodities agrícolas. Essa informação chega ao preço das ações da B3 **com
-defasagem e de forma heterogênea entre empresas** — porque uma seca pode elevar o preço para
-quem vende a commodity, reduzir o volume do produtor atingido e encarecer o insumo de quem a
-compra. A
-estratégia pretende explorar essa heterogeneidade com uma carteira **dollar-neutral
-long/short dentro do próprio setor agro**: comprada em produtores, vendida em processadores,
-dimensionada pela exposição líquida de cada empresa a cada commodity. Neutralidade em reais
-não implica neutralidade a mercado, fatores ou commodities; essas exposições precisam ser
-medidas e testadas explicitamente.
+futura de commodities agrícolas. O mecanismo físico foi confirmado para soja e milho: o
+`Shock` antecipa revisões para baixo da CONAB. A tradução financeira originalmente proposta —
+comprar produtores e vender processadores —, porém, **falhou no desenvolvimento**: o canal de
+preço não teve suporte e a reação das ações veio no sentido contrário. O projeto foi então
+reformulado, com registro completo, para testar a hipótese nova e pré-registrada de que o dano
+de volume próprio domina o benefício de preço (`Q>P`). O holdout de retornos 2020–2025 continua
+lacrado; nenhuma estratégia reformulada está aprovada ainda.
 
 O elo causal é testado em etapas, não assumido:
 
 ```
-choque climático  →  revisão da estimativa de safra da CONAB  →  preço da commodity  →  ação
-   (CHIRPS)            (painel de vintages, data conhecida)        (futuro/CEPEA)      (B3)
-                                        ↑
-                    confirmação independente: volume exportado (ComexStat)
+choque climático  →  revisão CONAB  →  preço da commodity  →  ação
+   (CHIRPS)             ✅ H1              ❌ H2              ❌ direção original
+                            ↑
+             ComexStat corroborou soja ex post
 ```
 
 ---
 
 ## 2. Por que a tese não é o óbvio
 
-A leitura ingênua seria "detectou seca ⇒ vende agro". **Isso está errado.** O Brasil é um dos
-maiores exportadores mundiais dessas commodities, então uma quebra de safra brasileira é um
-**choque de oferta global** e *empurra o preço para cima*. O produtor tem dois efeitos de
-sinais opostos (vende menos, a preço maior); o frigorífico, que compra milho e farelo para
-ração, só tem o efeito ruim.
+A leitura ingênua original seria "detectou seca ⇒ vende agro". O desenho econômico postulou
+que uma quebra brasileira, como choque de oferta global, elevaria o preço e criaria dois
+efeitos opostos no produtor: menos volume e preço maior. Os testes D-037–D-041, porém, **não
+deram suporte estatístico ao canal de preço**, e D-043 mostrou que o dano de volume dominou
+nos produtores da amostra.
 
-O alfa, portanto, não está em prever a direção do setor — está na **dispersão dentro dele**.
-Um índice setorial agregado mistura ganhadores e perdedores e cancela o efeito, que é
-justamente por que essa informação pode continuar não-arbitrada.
+A hipótese reformulada ainda busca **dispersão dentro do setor**, mas não presume ganhadores:
+cada canal de cultura precisa primeiro passar sua validação física e depois ser congelado antes
+do holdout. O mecanismo plausível não é tratado como evidência já demonstrada.
 
 **A ineficiência explorada é de agregação, não de acesso**: o dado é público e gratuito; caro
 é cruzar grade meteorológica × mapa de produção agrícola × composição de receita e custo das
@@ -239,9 +237,10 @@ não dimensiona o experimento primário (D-026). Calibração
   validação H1 por cultura, sem tocar retorno.
   - ✅ **algodão — contrato congelado** (D-047): MT+BA, janela floração/capulho, fonte ZARC/Embrapa
     (`COTTON_WINDOWS`, travado em teste).
-  - 🔒 algodão — validação H1 pré-registrada (D-048): PAM municipal 2689, revisão da pluma
-    CONAB em 2022/23–2024/25, β esperado negativo e estabilidade *leave-one-safra-out*;
-    execução ainda pendente.
+  - ❌ **algodão — não corroborado e excluído (D-048/D-049)**: PAM municipal 2689 e revisão da pluma
+    CONAB em 2022/23–2024/25. O β agrupado foi **+0,042**, contrário ao esperado; BA, MT, as
+    três safras e as três estimativas *leave-one-safra-out* também foram positivas. O critério
+    congelado exigia β<0 e ao menos 2/3 LOO<0; o algodão fica fora do score.
   - ⬜ **cana** — contrato de choque próprio (sinal invertido, regiões SP/Centro-Sul) + validação.
 - ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
   sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.

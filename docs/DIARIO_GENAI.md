@@ -967,6 +967,35 @@ estrutural (poder), **antes** de ver o β, e declarou a simplificação.
 
 ---
 
+## 2026-07-20 (noite) — Algodão: teste H1 pré-registrado e canal rejeitado (D-048/D-049)
+
+**Uso**: auditar a cobertura histórica, congelar e executar o teste que decidiria se o
+algodão poderia reforçar o score Q-dominante, sem consultar retorno de ação.
+
+**Valor real**: a IA generalizou o rodador H1a para contratos de janela explícitos, integrou
+o produto 2689 da PAM/SIDRA e construiu um rodador isolado com painel, inferência agrupada,
+diagnósticos por UF/safra e *leave-one-safra-out*. A auditoria anterior ao teste corrigiu uma
+estimativa otimista: apesar de a série CONAB citar algodão desde 2017/18, só 2022/23–2024/25
+têm múltiplos vintages numerados e datáveis. O critério foi congelado com N=3 antes do primeiro
+`Shock` de algodão.
+
+**Validação humana/mecânica**: a captura oficial do SIDRA foi versionada por manifesto
+(6.138 linhas, 558 municípios, BA+MT, 2014–2024) e uma resposta real mínima virou fixture. O
+teste executado uma vez produziu β agrupado `+0,0421`, BA e MT positivos, três safras positivas
+e 0/3 LOO negativos. Como D-048 exigia β<0 e ao menos 2/3 LOO<0, o canal foi rejeitado sem
+trocar janela, cultura, desfecho ou direção. A decomposição posterior em área e produtividade
+foi rotulada apenas como explicação: área positiva e produtividade nula não resgatam o teste.
+
+**O que a IA errou**: a primeira carga ao vivo filtrou a PAM para municípios com produção
+positiva. Isso violou o contrato da regionalização, que exige o universo municipal completo —
+inclusive pesos zero — para detectar qualquer município do painel climático fora da base de
+pesos. O pipeline falhou alto antes de estimar coeficientes. A correção preservou todos os
+municípios e mudou somente a preparação do dado, não o pré-registro. A estimativa inicial de
+quatro a nove safras úteis também estava errada e foi substituída pelo inventário efetivo de
+três safras **antes** do teste.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
