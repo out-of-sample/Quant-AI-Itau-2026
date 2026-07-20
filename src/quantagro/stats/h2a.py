@@ -108,13 +108,16 @@ def _national_shocks(
     pam_panel: pd.DataFrame,
     conab_stamped: pd.DataFrame,
     climatology_first_year: int,
+    weighting: str = "conab",
 ) -> dict[tuple[str, str, pd.Timestamp], float]:
     """``Shock`` nacional em cada ``(crop, safra, t)``, memoizado como em H1a (``_shocks``).
 
     Pré-split por UF + cache do ``uf_shock_asof`` por ``(spec, ano, corte clampado, PAM)``:
     numericamente idêntico ao caminho de ``shock_asof``, só sem revarrer o painel municipal a
-    cada data. A agregação nacional usa ``conab_uf_weights`` (pesos da safra anterior, D-028),
-    recalculados por data porque mudam nas fronteiras de divulgação CONAB.
+    cada data. ``weighting="conab"`` (default, contrato D-028): pesos da safra anterior,
+    recalculados por data — exige a safra CONAB anterior (só de 2017/18 em diante).
+    ``weighting="equal"``: média simples das UFs com Shock observável — sem CONAB, cobre o
+    desenvolvimento inteiro (2015/16+); simplificação declarada para diagnóstico (D-042).
     """
     prelim_refs = np.sort(
         municipal_stamped.loc[municipal_stamped["kind"] == PRIMARY_SIGNAL_KIND, "ref_date"].unique()
@@ -148,6 +151,9 @@ def _national_shocks(
             if r["status"] == "ok":
                 ok_shocks[spec.uf] = float(r["shock"])
         if not ok_shocks:
+            continue
+        if weighting == "equal":
+            out[(crop, ano, ts)] = float(np.mean(list(ok_shocks.values())))
             continue
         cweights = conab_uf_weights(conab_stamped, specs[0], ufs, ano, ts)
         w = cweights.loc[list(ok_shocks.keys())]

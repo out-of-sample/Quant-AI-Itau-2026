@@ -21,6 +21,14 @@ from quantagro.prices.adjust import CorporateEvent
 
 _MANUAL_EVENTS: dict[str, list[CorporateEvent]] = {
     "SLCE3": [
+        # Desdobramento 1:2 (cada 1 ON → 2 ON) aprovado na AGE de 30/04/2019; data-com
+        # 30/04/2019, negociação ex a partir de 02/05/2019 (capital passa a 190.595.000 ON).
+        # Confirmado pelo close bruto do COTAHIST (41,10 em 30/04 → 20,10 em 02/05, fator ~2,0)
+        # e detectado pelo tripwire de retorno suspeito (−46,5% em 02/05/2019) no build dos
+        # retornos de desenvolvimento — ausente do supplement da B3 (endpoint fora do ar).
+        # Fonte: AGE SLC Agrícola de 30/04/2019 (ri.slcagricola.com.br) e cobertura
+        # Reuters/Investing de 30/04–02/05/2019.
+        CorporateEvent(cum_date=pd.Timestamp("2019-04-30"), share_ratio=2.0),
         # Bonificação de 10% (1 ON nova para cada 10) aprovada na AGO/E de 27/04/2023;
         # data-base (com) 08/05/2023, negociação ex-direito a partir de 09/05/2023,
         # 21.242.259 novas ações. Fonte: RI SLC Agrícola (ri.slcagricola.com.br/bonificacao)

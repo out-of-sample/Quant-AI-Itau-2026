@@ -40,7 +40,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 | R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Confirmada | Alto | Decisão pré-carteira sem retornos: início posterior, cap maior, hedge externo ou nova evidência direta; declarar concentração | 🔴 Aberto — bloqueia a construção da carteira |
-| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | Auditoria (D-035) mostrou `Q` parcialmente fora do Shock ⇒ `P` tenderia a dominar, mas **H2a (D-037) NÃO confirmou** a transmissão forward ao preço mundial (β<0, inconclusivo). A dominância de `P` não está empiricamente sustentada; decidir reformular o long, pré-registrar diagnóstico contemporâneo/BRL, ou reduzir a tese ao processador | 🔴 Reaberto — H2a não sustentou `P` (D-037) |
+| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | **Resolvido empiricamente como NEGATIVO (D-043)**: a reação das ações no dev deu β=−0,09 (t=−3,6; correlações por nome todas negativas) — a seca **prejudica** o produtor (`Q>P`, coerente com D-035/D-041). A ponta long tem o sinal invertido e a estratégia como desenhada perde. **Não inverter post-hoc** (p-hacking); reformular com hipótese nova pré-registrada | 🔴 Materializado — long invertido; estratégia atual não traduz |
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
@@ -1212,6 +1212,103 @@ leitura de "sem transmissão".
 
 **Custo/honestidade.** Seis medidas de preço pré-registradas, todas reportadas como vieram;
 nenhuma trocada ou re-especificada. A regra de parada foi respeitada: o teste local era o último.
+
+---
+
+### D-042 — Roteiro pós-preço e pré-registro do teste de reação das ações (Fase 3.2)
+**Data**: 2026-07-20
+
+**Contexto.** A família de testes de preço (D-036–D-041) fechou sem transmissão significativa; a
+força testada da tese é clima→revisão CONAB (H1). Antes de reformular ou expandir, falta testar o
+elo que nunca foi tocado: **as ações expostas reagem?** Decisão de roteiro acordada:
+
+1. **agora (barato)**: testar a reação das ações na versão soja+milho / 4 nomes, **só no
+   desenvolvimento** — retorno de ação é o que o holdout protege;
+2. **expandir por cultura** (algodão, cana) **só se** o teste mostrar sinal de vida — cada
+   cultura é um canal independente pré-registrado (janela, sinal, UFs, nomes), motor reaproveitado;
+3. **congelar uma vez** e rodar o **holdout uma vez**. Adiar a decisão de expandir é permitido;
+   adiar para **depois** do holdout, não (seria segundo olhar no holdout). R7/R19/R22 (N pequeno)
+   permanecem; a expansão por cultura é a única forma *de princípio* de crescer (não afrouxar a
+   régua de nomes nem minerar betas — isso seria seleção pelo resultado).
+
+**Pré-registro do teste (congelado antes do resultado; ordem provada no git).** Implementação em
+`scripts/build_equity_returns.py`, `stats/equity_reaction.py`, `scripts/run_equity_reaction.py`.
+
+- **Universo**: os 4 nomes diretos, com entrada PIT pelos vintages da matriz (`exposure_asof`).
+- **Sinal**: score `S_i(t) = Σ_c E_i,c(t) · Shock_c(t)` — matriz de exposição as-of `t` × Shock
+  nacional as-of `t` (cultura com janela não iniciada contribui 0). Observado em fins de mês
+  dentro das janelas das culturas, nas safras de desenvolvimento (2015/16–2019/20). O Shock
+  nacional aqui é **equal-weighted** entre as UFs primárias (não a ponderação D-028 por safra
+  CONAB anterior, que só existe de 2017/18 e reduziria o dev a 2 safras): simplificação
+  **declarada** para o diagnóstico cobrir o desenvolvimento inteiro (5 safras); a ponderação de
+  produção D-028 fica para o backtest congelado.
+- **Desfecho**: retorno total forward do nome sobre os próximos `H=21` pregões, com execução em
+  **D+1** (motor de retorno total PIT, D-014).
+- **Teste primário**: painel pooled com retorno **demeanado na seção transversal por data**
+  (remove o componente comum/mercado) regredido no score demeanado; OLS agrupado por ano-safra +
+  bootstrap. Sinal esperado `β>0` (nome com score maior rende mais que os pares na mesma data).
+  Neutro a mercado por construção.
+- **Secundário**: retorno médio forward da carteira dollar-neutral ponderada pelo score (o P&L) e
+  por nome.
+- **Perímetro**: **desenvolvimento apenas** (≤2019/20); holdout 2020-2025 lacrado.
+- **Regra de leitura (direcional, amostra pequena)**: `β>0` com p unilateral < 0,10 ⇒ o sinal
+  ordena os nomes ⇒ o mecanismo chega ao equity ⇒ vale congelar e considerar a expansão por
+  cultura. Nulo/negativo ⇒ a reação não aparece nem no desenvolvimento ⇒ reconsiderar antes de
+  gastar o holdout.
+
+**Custo/limitação.** Dev tem ~2-5 safras e 4 nomes (SLCE3 só a partir de 2018) ⇒ baixo poder; é
+diagnóstico direcional, não veredito de lucro. Eventos B3 vêm de endpoint frágil (retentativa no
+build). Nenhuma medida será trocada após ver o resultado.
+
+---
+
+### D-043 — Resultado da reação das ações: sinal ANTI-preditivo no dev; a estratégia não traduz
+**Data**: 2026-07-20
+
+Rodada única do spec pré-registrado D-042. Artefato em `data/processed/equity_reaction_panel.parquet`.
+81 obs (data×nome), 24 datas, **4 safras** (2015/16–2018/19; 2019/20 sai por falta de retorno
+forward — os preços de dev terminam em 12/2019), 4 clusters.
+
+**Resultado primário (painel demeanado, β>0 esperado):**
+
+| Métrica | Valor |
+|---|---|
+| β (score→retorno) | **−0,091** |
+| t | −3,60 |
+| IC 90% | [−0,141, −0,042] — **exclui zero pelo lado negativo** |
+| p unilateral (esperado) | 1,000 |
+| P&L carteira dollar-neutral | **−3,97%/período**, hit-rate **12%** |
+| corr score×retorno por nome | AGRO3 −0,27 · BRFS3 −0,16 · JBSS3 −0,46 · SLCE3 −0,82 (**todas negativas**) |
+
+**Veredito: reage=False — e pior, o sinal é significativamente ANTI-preditivo no desenvolvimento.**
+A carteira long-produtor/short-processador com o sinal do choque climático **perde** (ganha em só
+12% dos períodos) e a relação score→retorno é **do sinal contrário** ao pré-registrado, consistente
+nos quatro nomes.
+
+**Leitura econômica (coerente com tudo).** O sinal negativo é economicamente plausível e bate com
+a auditoria (D-035) e com a família de preço (D-041): para o **produtor**, o dano de volume próprio
+`Q` (a seca corta a colheita dele) **domina** o benefício de preço `P` — que mostramos ser fraco.
+Logo a seca **prejudica** o produtor, e a ponta long perde. R20 se resolve empiricamente: o líquido
+do produtor é **negativo**, não positivo.
+
+**Disciplina — o que NÃO se faz.** Inverter o sinal ("então short produtor / long processador,
+que aí ganha") depois de ver o resultado do dev é **exatamente** o p-hacking discutido: um sinal
+escolhido pela amostra de dev pareceria ótimo em dev por construção e provavelmente falharia fora
+dela. O resultado é reportado como veio. "A seca prejudica o produtor (Q>P)" vira uma **hipótese
+nova a pré-registrar e testar de forma independente** (idealmente confirmada em dado não usado),
+nunca um gatilho para inverter e backtestar.
+
+**Consequência.** A estratégia, como desenhada (long/short pelo choque climático), **não se traduz
+em retorno de ação** no desenvolvimento — o mecanismo clima→revisão CONAB é real (H1), mas não
+produz o payoff acionário previsto. Por D-042, **não** se congela nem se gasta o holdout com este
+sinal. Ponto de decisão do projeto: reformular a tese com hipótese nova pré-registrada (ex.: a
+direção Q-dominante, testada de forma limpa), reduzir o escopo, ou reportar o achado negativo com
+rigor. A expansão por cultura **não** deve ser paga sobre um sinal que perde no dev. R2 sai do
+centro para a periferia: não é "só beta de commodity" — é que a ponta long tem o sinal invertido.
+
+**Custo/honestidade.** Amostra pequena (4 clusters) ⇒ sem p-valor preciso, mas a direção, a
+magnitude (t=−3,6) e a consistência nos 4 nomes rejeitam decisivamente o "reage positivamente"
+pré-registrado. Nenhuma medida trocada após ver o número; o sinal não foi invertido.
 
 ---
 
