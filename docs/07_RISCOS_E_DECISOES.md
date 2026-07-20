@@ -1138,6 +1138,41 @@ economicamente distinta (base local), não uma quinta tentativa da mesma coisa �
 
 ---
 
+### D-040 — Pré-registro do último teste de preço: transmissão ao preço LOCAL brasileiro
+**Data**: 2026-07-20
+
+Especificação **congelada antes do resultado** (ordem provada no git). Implementação em
+`ingest/ipea_prices.py`, `stats/h2a_local.py`, `scripts/run_h2a_local.py`. É o **último** teste
+de preço da tese (regra de parada declarada), não uma quinta tentativa da mesma medida: o preço
+**local** brasileiro é economicamente distinto do mundial (embute a base doméstica) e é o preço
+que o produtor de fato recebe e o processador de fato paga.
+
+**Fonte e substituição declarada.** A referência de preço local (CEPEA/ESALQ) está atrás de
+Cloudflare, sem acesso programático reproduzível (D-025) — confirmado nesta sessão. Uso, no lugar,
+o **IPEADATA** (IPEA, governo federal), que espelha com API OData aberta e sem chave a série da
+**Seab-PR/DERAL** do **preço recebido pelo agricultor** (soja `DERAL12_PRSO12`, milho
+`DERAL12_PRMI12`, R$/60kg, mensal). Para o lado produtor é ainda mais direto que o CEPEA: é a
+receita realizada, não o FOB porto. A escolha foi feita e commitada **antes** de ver o resultado.
+
+**Desenho.** Idêntico a H2a/D-038 mudando só a fonte de preço: regressor = `Shock` nacional
+as-of fim de mês na janela; desfechos = contemporâneo `log(P[m]/P[base])` (base = mês anterior à
+janela) e forward `log(P[m+3]/P[m])`; sinal esperado `β>0`. Inferência cluster por ano-safra ×
+cultura + bootstrap; pooled com efeito fixo de cultura; span cheio com dev/holdout separados.
+
+**Regra de leitura (regra de parada).** Se algum desfecho pooled span-cheio tiver `β>0` com p
+unilateral < 0,10 ⇒ o choque **transmite ao preço local** ⇒ o canal de preço vive no mercado
+brasileiro (favorece o lado **processador**, canal `C`, e valida a receita realizada do
+produtor); a estratégia segue com esse canal. Se **todos** forem nulos/negativos ⇒ soma-se aos
+quatro nulos de D-037/D-039 e o **mecanismo de preço da tese está morto** ⇒ reformular o gatilho
+(ex.: usar o corte da CONAB como sinal direto) ou reduzir/abandonar. **Nenhum outro teste de
+preço será rodado depois deste**, para não virar busca por especificação.
+
+**Custo/limitação.** É preço do **Paraná** (Seab-PR), não nacional — mas PR é UF primária e o
+mercado brasileiro é integrado por arbitragem/exportação. Pode sofrer revisão modesta (captura
+datada + manifesto; `avail_date` = fim de mês + 30 dias). N pequeno ⇒ leitura direcional.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
