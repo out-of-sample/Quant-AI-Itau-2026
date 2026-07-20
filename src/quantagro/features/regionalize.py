@@ -287,3 +287,13 @@ def municipal_daily_precip(
     return (
         out[cols_out].sort_values(["ref_date", "kind", "municipality_code"]).reset_index(drop=True)
     )
+
+
+def municipal_monthly_precip(
+    files: list[tuple[object, str, str | Path | bytes]], index: pd.DataFrame
+) -> pd.DataFrame:
+    """Agrega rasters mensais oficiais; ``ref_date`` é sempre o último dia do mês."""
+    normalized = [
+        (pd.Timestamp(date) + pd.offsets.MonthEnd(0), kind, source) for date, kind, source in files
+    ]
+    return municipal_daily_precip(normalized, index)

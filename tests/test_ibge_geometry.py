@@ -29,8 +29,9 @@ class TestUrl:
     def test_outra_edicao_e_uf_falham(self):
         with pytest.raises(ValueError, match="edição congelada"):
             geometry_url("MT", edition=2022)
+        assert geometry_url("SP").endswith("/municipio_2013/SP/sp_municipios.zip")
         with pytest.raises(ValueError, match="UF fora"):
-            geometry_url("SP")
+            geometry_url("RJ")
 
 
 class TestParse:

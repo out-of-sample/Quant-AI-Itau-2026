@@ -996,6 +996,34 @@ três safras **antes** do teste.
 
 ---
 
+## 2026-07-20 — Cana: dois mecanismos separados e portão físico corroborado (D-050/D-051)
+
+**Uso**: transformar a extensão de cana em um teste reproduzível sem consultar retorno de ação,
+desde a auditoria agronômica e de cobertura até a captura climática, inferência e veredito.
+
+**Valor real**: a IA identificou que um único índice de seca seria biologicamente incoerente e
+formalizou dois contratos incapazes de se substituir: maturação jun–ago→ATR como portão e
+crescimento dez–fev→tonelagem como diagnóstico. Também encontrou o produto mensal arquivado do
+CHIRPS, acrescentou SP — 51,5% da produção nacional no recorte — e construiu streaming com 198
+rasters, manifesto por hash, PAM 2696, malha 2013 e um registro imutável da primeira execução.
+O teste passou a regra congelada (β `+0,0134`, 8/8 LOO, 5/5 UFs), mas a leitura foi mantida
+fraca porque p convencional `0,12` e bootstrap `0,27` não rejeitam zero.
+
+**Validação humana/mecânica**: as fontes oficiais da Embrapa e CONAB foram conferidas antes do
+resultado; o SIDRA confirmou que 2696 é cana-de-açúcar; o painel materializado contém cinco UFs,
+439.956 linhas município×mês e zero precipitação ausente. Dois commits anteriores ao cálculo
+preservam a hipótese e o contrato executável. Testes travam fases, meses, UFs, critério de
+aprovação e o registro de resultado; hashes ligam as entradas e saídas à primeira execução.
+
+**O que a IA errou**: a tentativa de auditoria por subagente não concluiu e foi encerrada; ela
+não foi apresentada como segunda opinião. A proposta inicial também tratava o passe físico como
+quase suficiente para adicionar SMTO3/JALL3. A revisão cética separou ATR por tonelada de
+receita total e abriu R24: a exposição empresarial PIT ainda pode matar o canal. A frequência
+mensal foi adotada somente após verificar que as janelas congeladas usam meses civis completos;
+não foi uma troca motivada pelo coeficiente.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

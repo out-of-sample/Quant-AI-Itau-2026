@@ -74,8 +74,8 @@ class CropRegionWindow:
     def __post_init__(self) -> None:
         if not re.fullmatch(r"[A-Z]{2}", self.uf):
             raise ValueError(f"UF inválida: {self.uf!r}")
-        if self.start_year_offset not in (0, 1) or self.end_year_offset not in (0, 1):
-            raise ValueError("offset do ano-safra deve ser 0 ou 1")
+        if self.start_year_offset not in (-1, 0, 1) or self.end_year_offset not in (-1, 0, 1):
+            raise ValueError("offset do ano-safra deve ser -1, 0 ou 1")
         # Datas não-bissextas bastam para validar mês/dia; fim de fevereiro usa None.
         pd.Timestamp(2001, self.start_month, self.start_day)
         if self.end_day is not None:
@@ -126,6 +126,21 @@ COTTON_WINDOWS: tuple[CropRegionWindow, ...] = (
     ),
 )
 
+# Canal de expansão — cana (D-046/D-050). Os dois contratos nunca são combinados: seca no
+# crescimento é adversa à tonelagem, enquanto seca na maturação pode favorecer ATR. O suporte
+# SP+MG+GO+MS+PR cobre 87,8% da produção CONAB 2024/25.
+_CANE_UFS = ("SP", "MG", "GO", "MS", "PR")
+CANE_GROWTH_WINDOWS: tuple[CropRegionWindow, ...] = tuple(
+    CropRegionWindow(
+        "sugarcane", "CANA DE ACUCAR", "UNICA", uf, "vegetative_growth", 12, 1, -1, 2, None, 0
+    )
+    for uf in _CANE_UFS
+)
+CANE_MATURATION_WINDOWS: tuple[CropRegionWindow, ...] = tuple(
+    CropRegionWindow("sugarcane", "CANA DE ACUCAR", "UNICA", uf, "maturation", 6, 1, 0, 8, None, 0)
+    for uf in _CANE_UFS
+)
+
 ALL_WINDOWS: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS + COTTON_WINDOWS
 
 
@@ -161,6 +176,15 @@ def windows_for_crop(crop: str) -> tuple[CropRegionWindow, ...]:
     return out
 
 
+def cane_windows(phase: str) -> tuple[CropRegionWindow, ...]:
+    """Contrato da cana por fase; misturar fases de sinais opostos é proibido (D-050)."""
+    if phase == "growth":
+        return CANE_GROWTH_WINDOWS
+    if phase == "maturation":
+        return CANE_MATURATION_WINDOWS
+    raise KeyError(f"fase da cana fora do pré-registro: {phase!r}")
+
+
 def validate_primary_spec() -> None:
     """Tripwires contra duplicata ou mudança silenciosa dos contratos congelados."""
     keys = [spec.key for spec in ALL_WINDOWS]
@@ -168,6 +192,12 @@ def validate_primary_spec() -> None:
         raise ValueError("duplicata (cultura, UF) na especificação")
     for spec in ALL_WINDOWS:
         critical_period(spec, "2023/24")
+    for windows in (CANE_GROWTH_WINDOWS, CANE_MATURATION_WINDOWS):
+        keys = [spec.key for spec in windows]
+        if len(keys) != len(set(keys)):
+            raise ValueError("duplicata (cultura, UF) no contrato da cana")
+        for spec in windows:
+            critical_period(spec, "2023/24")
 
 
 validate_primary_spec()

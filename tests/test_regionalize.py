@@ -19,6 +19,7 @@ import tifffile
 
 from quantagro.features.regionalize import (
     municipal_daily_precip,
+    municipal_monthly_precip,
     municipality_cell_index,
     points_in_geometry,
 )
@@ -194,6 +195,14 @@ class TestMunicipalDailyPrecip:
         other["grid_pixel_deg"] = 0.05
         with pytest.raises(ValueError, match="mistura grades"):
             municipal_daily_precip([], pd.concat([idx, other], ignore_index=True))
+
+    def test_mensal_normaliza_referencia_para_fim_do_mes(self):
+        arr = np.full(SHAPE, 90.0, dtype=np.float32)
+        panel = municipal_monthly_precip(
+            [("2024-02-01", "prelim", _tif_bytes(arr, GT))], self._index()
+        )
+        assert panel.iloc[0]["ref_date"] == pd.Timestamp("2024-02-29")
+        assert panel.iloc[0]["precip_mm"] == pytest.approx(90.0)
 
 
 class TestFixturaRealMT:

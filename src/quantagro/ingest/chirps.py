@@ -97,6 +97,54 @@ def chirps_url(date, kind: str) -> str:
     return f"{_BASE_URL}/{sub}/tifs/p05/{d.year:04d}/{stem}"
 
 
+def chirps_monthly_url(date, kind: str) -> str:
+    """URL do acumulado mensal oficial; ``date`` é normalizada ao mês civil (D-050)."""
+    if kind not in KINDS:
+        raise ValueError(f"kind desconhecido: {kind!r} (use {list(KINDS)})")
+    d = pd.Timestamp(date)
+    if kind == "prelim" and d < PRELIM_FIRST_DATE:
+        raise ValueError(
+            f"CHIRPS prelim não existe antes de {PRELIM_FIRST_DATE.date()}: {d.date()}"
+        )
+    stem = f"chirps-v2.0.{d.year:04d}.{d.month:02d}.tif"
+    if kind == "final":
+        stem += ".gz"
+        sub = "global_monthly"
+    else:
+        sub = "prelim/global_monthly"
+    return f"{_BASE_URL}/{sub}/tifs/{stem}"
+
+
+def download_chirps_monthly(
+    date,
+    kind: str,
+    dest_dir: str | Path = "data/raw/chirps_monthly",
+    manifest_dir: str | Path = "data/manifests",
+    session=None,
+    timeout: int = 300,
+) -> Path:
+    """Baixa o acumulado mensal oficial, preservando produto prelim/final e hash."""
+    url = chirps_monthly_url(date, kind)
+    d = pd.Timestamp(date)
+    dest = Path(dest_dir)
+    dest.mkdir(parents=True, exist_ok=True)
+    suffix = ".tif.gz" if kind == "final" else ".tif"
+    out = dest / f"chirps-v2.0.{d.year:04d}.{d.month:02d}.{kind}{suffix}"
+    if out.exists():
+        return out
+    if session is None:
+        import requests
+
+        session = requests
+    resp = session.get(url, timeout=timeout)
+    resp.raise_for_status()
+    out.write_bytes(resp.content)
+    # O mês inteiro é a unidade de referência: último dia do mês.
+    ref = d + pd.offsets.MonthEnd(0)
+    _write_manifest(ref, f"monthly_{kind}", url, resp.content, manifest_dir)
+    return out
+
+
 def _write_manifest(date, kind: str, url: str, content: bytes, manifest_dir) -> Path:
     """Grava manifesto de vintage: prelim vs. final é a distinção de vintage do CHIRPS, e o
     sha256 + a data de captura são a prova de qual produto alimentou o backtest."""

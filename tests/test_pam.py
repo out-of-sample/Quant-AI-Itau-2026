@@ -20,6 +20,7 @@ from quantagro.ingest.pam_calendar import PAM_RELEASES, pam_avail_map, pam_relea
 
 FIXTURE = Path(__file__).parent / "fixtures" / "pam_mt_sample.json"
 FIXTURE_COTTON = Path(__file__).parent / "fixtures" / "pam_cotton_sample.json"
+FIXTURE_SUGARCANE = Path(__file__).parent / "fixtures" / "pam_sugarcane_sample.json"
 
 
 class TestCalendar:
@@ -52,6 +53,9 @@ class TestUrl:
     def test_algodao_herbaceo_em_caroco_explicito(self):
         assert pam_url("cotton", [2023], ["MT", "BA"]).endswith("/c81/2689?formato=json")
 
+    def test_cana_e_sp_explicitos(self):
+        assert pam_url("sugarcane", [2023], ["SP"]).endswith("/c81/2696?formato=json")
+
     def test_ano_sem_calendario_barra_antes_da_rede(self):
         with pytest.raises(KeyError):
             pam_url("soy", [2025], ["MT"])
@@ -60,7 +64,7 @@ class TestUrl:
         with pytest.raises(ValueError, match="produto PAM"):
             pam_url("corn_second", [2023], ["MT"])
         with pytest.raises(ValueError, match="UF fora"):
-            pam_url("soy", [2023], ["SP"])
+            pam_url("soy", [2023], ["RJ"])
         with pytest.raises(TypeError, match="sequências"):
             pam_url("soy", "2023", ["MT"])
 
@@ -89,6 +93,13 @@ class TestParse:
         assert set(df["uf"]) == {"MT", "BA"}
         sao_desiderio = df.query("municipality_code == '2928901' and ref_year == 2023")
         assert sao_desiderio.iloc[0]["quantity_tonnes"] == 543_506
+
+    def test_cana_real_inclui_sp_mg_go(self):
+        df = parse_pam(FIXTURE_SUGARCANE)
+        assert set(df["crop"]) == {"sugarcane"}
+        assert set(df["uf"]) == {"SP", "MG", "GO"}
+        adamantina = df.query("municipality_code == '3500105'")
+        assert adamantina.iloc[0]["quantity_tonnes"] == 807_039
 
     def test_zero_sidra_nao_vira_missing(self):
         df = parse_pam(FIXTURE)

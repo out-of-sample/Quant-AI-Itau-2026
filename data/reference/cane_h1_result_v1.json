@@ -1,0 +1,59 @@
+{
+  "decision": "D-051",
+  "preregistration_commit": "9b7e5050cb8122c046bbc29d98027fe27c23b6bf",
+  "executable_contract_commit": "51d52c1a8e7d0fccf462ad8cbb33713c5f7f5eb7",
+  "executed_at": "2026-07-20",
+  "equity_returns_loaded": false,
+  "sample": {
+    "crop_years": [
+      "2018/19",
+      "2019/20",
+      "2020/21",
+      "2021/22",
+      "2022/23",
+      "2023/24",
+      "2024/25",
+      "2025/26"
+    ],
+    "ufs": ["GO", "MG", "MS", "PR", "SP"],
+    "observations_per_phase": 120
+  },
+  "primary_maturation_atr": {
+    "passed": true,
+    "pooled_beta": 0.013392915296726735,
+    "cluster_se": 0.00864052678904943,
+    "tstat": 1.550010303540891,
+    "pvalue_two_sided": 0.12113914723342331,
+    "cluster_bootstrap_pvalue_two_sided": 0.2732,
+    "positive_leave_one_out": 8,
+    "total_leave_one_out": 8,
+    "positive_ufs": 5,
+    "total_ufs": 5,
+    "verdict": "corroborated_by_preregistered_directional_rule"
+  },
+  "secondary_growth_production": {
+    "pooled_beta": -0.006140046699731273,
+    "cluster_se": 0.010423068023185388,
+    "tstat": -0.5890345970740094,
+    "pvalue_two_sided": 0.5558378695611964,
+    "cluster_bootstrap_pvalue_two_sided": 0.6148,
+    "interpretation": "expected_sign_but_weak_and_unstable_diagnostic_only"
+  },
+  "input_sha256": {
+    "conab_cane": "164b9842e2db658db9a11da2bd26bd822fd9c697fc122a11f72578d818951181",
+    "pam_sugarcane": "fcfbb884af45d5b7f3f3d957a90f493e679532d80bc9b24b0d4852c4b58ae25c",
+    "chirps_monthly_manifest": "7398991452cb9ae80e4b107221dde1d6fa58fd43a57b446b961928c8a82a67e3"
+  },
+  "output_sha256": {
+    "maturation_panel": "ae5ac85c16154bc6836f7a0c2642e8f177b6e02c88faba28b84dff764e759476",
+    "maturation_results": "818f45d8fe64865e20407d18943c576f2af08f7d689f9c39cfb53b018834a876",
+    "growth_panel": "c4ca27db249d4f87dc11cdc3c0b7fd3a4d9fdee9df28d612fc690e7f7cf3735c",
+    "growth_results": "55e634adcf72cd40468ef9f4dd3a7ae52e9009f38e7229531561e9e0d3bab1fd",
+    "verdict": "81da0f6265df3b71e78157f05d23b82822bb4d0e89a1be52e55f4472b4a81fe6"
+  },
+  "limitations": [
+    "directional criterion passed, but conventional and bootstrap p-values are not significant",
+    "ATR is quality per tonne and does not establish total revenue or equity return",
+    "monthly fixed windows simplify local planting and harvest heterogeneity"
+  ]
+}

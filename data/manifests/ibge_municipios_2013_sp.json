@@ -1,0 +1,12 @@
+{
+  "source": "IBGE-Malha-Municipal",
+  "edition": 2013,
+  "uf": "SP",
+  "ref_date": "2013-12-31",
+  "artifact_member_timestamp": "2015-03-16",
+  "url": "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2013/SP/sp_municipios.zip",
+  "sha256": "13783f71d2ec30b8ce88e74dbdb57a7ae51fbafea1aa9ca6e829cfbe6ee96ba6",
+  "bytes": 9706824,
+  "downloaded_at": "2026-07-20T18:47:38.322582+00:00",
+  "spatial_policy": "suporte fixo pre-amostra; geocódigo novo exige crosswalk explícito"
+}
