@@ -1505,6 +1505,48 @@ timing/geografia parcialmente distintos da soja, não de muitas UFs.
 
 ---
 
+### D-048 — Pré-registro da validação H1 do algodão: três safras e critério direcional
+**Data**: 2026-07-20
+
+Antes de calcular o primeiro `Shock` de algodão, fica congelado o teste que decide se o canal
+D-047 pode entrar na estratégia reformulada H′. Ele testa somente o mecanismo físico
+clima→revisão de safra; não consulta retorno de ação.
+
+**Correção de cobertura descoberta antes do teste.** O painel CONAB traz `ALGODAO EM PLUMA`
+desde 2017/18, mas 2017/18 possui apenas o 12º levantamento e 2018/19–2021/22 usam o código
+legado 99, sem data recuperável. As únicas safras encerradas com vintages 1–12 datáveis são
+**2022/23, 2023/24 e 2024/25**. A safra 2025/26 está em andamento e não entra. Logo o N efetivo
+é três anos-safra, não quatro ou nove; a estimativa anterior em D-047 fica corrigida por esta
+decisão posterior.
+
+**Desenho congelado:**
+
+1. peso intra-UF: PAM/SIDRA 1612, variável 214, produto 2689 (`Algodão herbáceo (em caroço)`),
+   última edição disponível em cada data; o produto em caroço localiza a lavoura, enquanto o
+   desfecho CONAB é produção de pluma;
+2. UFs e janelas: MT e BA, exatamente `COTTON_WINDOWS` de D-047;
+3. desfecho: revisão log acumulada de `ALGODAO EM PLUMA/UNICA` desde o 1º levantamento;
+4. regressor: `Shock` da UF observável na data de cada levantamento, com CHIRPS prelim e
+   climatologia expanding desde 2000; levantamentos anteriores ao início da janela não são
+   imputados;
+5. estimativa primária: painel MT+BA, `logrev ~ Shock`, erros agrupados por ano-safra;
+6. diagnósticos: MT e BA separados, coeficientes por safra e três estimativas
+   *leave-one-safra-out*; bootstrap por cluster e p-valores são reportados, mas não decidem
+   aprovação com apenas três clusters.
+
+**Critério direcional pré-registrado.** O canal é corroborado se `(a)` o β agrupado for
+negativo — estresse antecipa revisão para baixo — e `(b)` pelo menos duas das três estimativas
+*leave-one-safra-out* também forem negativas. Caso contrário, o algodão não entra no score.
+Significância não é exigida nem alegada. Se o sinal for correto, mas a estabilidade falhar, o
+resultado é inconclusivo e o canal também fica fora do primário.
+
+**Custo/limitação.** Levantamentos mensais dentro da mesma safra não são eventos independentes;
+o teste mede direção com três clusters e não compra o poder prometido para retorno pela D-045.
+Seu papel é controle de qualidade do ingrediente climático. A contribuição de poder do algodão
+ao holdout só existe se este teste direcional passar.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

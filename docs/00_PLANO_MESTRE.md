@@ -239,8 +239,9 @@ não dimensiona o experimento primário (D-026). Calibração
   validação H1 por cultura, sem tocar retorno.
   - ✅ **algodão — contrato congelado** (D-047): MT+BA, janela floração/capulho, fonte ZARC/Embrapa
     (`COTTON_WINDOWS`, travado em teste).
-  - ⬜ algodão — PAM municipal do algodão (peso intra-UF) + validação (choque prevê a revisão da
-    pluma CONAB? H1 por cultura).
+  - 🔒 algodão — validação H1 pré-registrada (D-048): PAM municipal 2689, revisão da pluma
+    CONAB em 2022/23–2024/25, β esperado negativo e estabilidade *leave-one-safra-out*;
+    execução ainda pendente.
   - ⬜ **cana** — contrato de choque próprio (sinal invertido, regiões SP/Centro-Sul) + validação.
 - ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
   sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.
