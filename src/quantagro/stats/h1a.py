@@ -16,33 +16,47 @@ import numpy as np
 import pandas as pd
 
 from ..features.shock import PRELIM_LAG_DAYS, PRIMARY_SIGNAL_KIND, uf_shock_asof
-from ..features.shock_spec import PRIMARY_WINDOWS, critical_period
+from ..features.shock_spec import PRIMARY_WINDOWS, CropRegionWindow, critical_period
 from ..ingest.conab_calendar import attach_avail_date
 from ..ingest.pam import pam_weights_asof
 from ..validate.pit import available_asof
 from .inference import cluster_bootstrap, ols_cluster
 
-# Produtos/safras do painel de vintages (D-030): soja única e milho 2ª nas UFs primárias.
-_CROP_FILTER = {
-    "soy": ("SOJA", "UNICA"),
-    "corn_second": ("MILHO", "2ª SAFRA"),
-}
-_CROP_UFS = {
-    crop: tuple(sorted({s.uf for s in PRIMARY_WINDOWS if s.crop == crop})) for crop in _CROP_FILTER
-}
 _PROD_COL = "producao_mil_t"
 DEV_LAST_BASE = 2019  # safras ≤ 2019/20 = desenvolvimento; ≥ 2020/21 = holdout (D-029)
 
 
-def _prepare_conab(conab: pd.DataFrame, bases: range) -> pd.DataFrame:
-    """Filtra o painel bruto aos produtos/UFs/safras primárias e carimba ``avail_date``."""
+def _window_contract(
+    windows: tuple[CropRegionWindow, ...],
+) -> tuple[dict[str, tuple[str, str]], dict[str, tuple[str, ...]]]:
+    """Deriva produto/safra/UF do contrato congelado, sem mapa paralelo sujeito a drift."""
+    if not windows:
+        raise ValueError("windows não pode ser vazio")
+    filters: dict[str, tuple[str, str]] = {}
+    ufs: dict[str, set[str]] = {}
+    for spec in windows:
+        pair = (spec.conab_product, spec.conab_season)
+        previous = filters.setdefault(spec.crop, pair)
+        if previous != pair:
+            raise ValueError(f"contrato CONAB inconsistente para {spec.crop}: {previous} vs {pair}")
+        ufs.setdefault(spec.crop, set()).add(spec.uf)
+    return filters, {crop: tuple(sorted(values)) for crop, values in ufs.items()}
+
+
+def _prepare_conab(
+    conab: pd.DataFrame,
+    bases: range,
+    windows: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS,
+) -> pd.DataFrame:
+    """Filtra o painel bruto ao contrato cultura/UF/safra e carimba ``avail_date``."""
     anos = {f"{b}/{(b + 1) % 100:02d}" for b in bases}
+    crop_filter, crop_ufs = _window_contract(windows)
     keep = []
-    for crop, (produto, safra) in _CROP_FILTER.items():
+    for crop, (produto, safra) in crop_filter.items():
         sub = conab[
             (conab["produto"] == produto)
             & (conab["safra"] == safra)
-            & (conab["uf"].isin(_CROP_UFS[crop]))
+            & (conab["uf"].isin(crop_ufs[crop]))
             & (conab["ano_agricola"].isin(anos))
             & (conab["id_levantamento"].between(1, 12))
         ].copy()
@@ -86,6 +100,7 @@ def _shocks(
     municipal_stamped: pd.DataFrame,
     pam_panel: pd.DataFrame,
     climatology_first_year: int,
+    windows: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS,
 ) -> pd.DataFrame:
     """``Shock`` de UF em cada ``(safra, avail_date)``, memoizado por ``(spec, ano, corte, PAM)``.
 
@@ -110,7 +125,7 @@ def _shocks(
         pos = int(np.searchsorted(prelim_refs, cutoff, side="right"))
         vis_max = pd.Timestamp(prelim_refs[pos - 1]) if pos > 0 else None
         visible_by_uf: dict[str, pd.DataFrame] = {}
-        for spec in PRIMARY_WINDOWS:
+        for spec in windows:
             # Chave pelo CORTE efetivo (não pelo vis_max cru): depois do fim da janela o corte
             # fica preso em window_end e o Shock é idêntico entre levantamentos tardios.
             w_start, w_end = critical_period(spec, ano)
@@ -147,17 +162,18 @@ def build_h1a_panel(
     pam_panel: pd.DataFrame,
     climatology_first_year: int,
     bases: range = range(2017, 2025),
+    windows: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS,
 ) -> pd.DataFrame:
     """Painel de regressão de H1a: ``(cultura, UF, safra, levantamento≥base+1)`` com revisão+Shock.
 
     ``municipal_stamped`` já carimbado (``stamp_municipal_panel``). ``bases`` = primeiros anos
     das safras com painel de vintages (2017/18+) **e** sinal ``prelim`` disponível.
     """
-    conab = _prepare_conab(conab, bases)
+    conab = _prepare_conab(conab, bases, windows)
     rev = _revisions(conab)
     if rev.empty:
         raise ValueError("nenhuma revisão computável no painel CONAB filtrado")
-    shocks = _shocks(rev, municipal_stamped, pam_panel, climatology_first_year)
+    shocks = _shocks(rev, municipal_stamped, pam_panel, climatology_first_year, windows)
     panel = rev.merge(shocks, on=["crop", "uf", "ano_agricola", "avail_date"], how="inner")
     panel["base_year"] = panel["ano_agricola"].str.slice(0, 4).astype(int)
     panel["sample"] = np.where(panel["base_year"] <= DEV_LAST_BASE, "dev", "holdout")

@@ -19,6 +19,7 @@ from quantagro.ingest.pam import (
 from quantagro.ingest.pam_calendar import PAM_RELEASES, pam_avail_map, pam_release
 
 FIXTURE = Path(__file__).parent / "fixtures" / "pam_mt_sample.json"
+FIXTURE_COTTON = Path(__file__).parent / "fixtures" / "pam_cotton_sample.json"
 
 
 class TestCalendar:
@@ -47,6 +48,9 @@ class TestUrl:
 
     def test_milho_total_explicito(self):
         assert pam_url("corn_total", [2023], ["MT"]).endswith("/c81/2711?formato=json")
+
+    def test_algodao_herbaceo_em_caroco_explicito(self):
+        assert pam_url("cotton", [2023], ["MT", "BA"]).endswith("/c81/2689?formato=json")
 
     def test_ano_sem_calendario_barra_antes_da_rede(self):
         with pytest.raises(KeyError):
@@ -78,6 +82,14 @@ class TestParse:
         assert (y2022["ref_date"] == pd.Timestamp("2022-12-31")).all()
         assert (y2022["avail_date"] == pd.Timestamp("2023-09-14")).all()
 
+    def test_algodao_real_mt_ba(self):
+        df = parse_pam(FIXTURE_COTTON)
+        assert len(df) == 8
+        assert set(df["crop"]) == {"cotton"}
+        assert set(df["uf"]) == {"MT", "BA"}
+        sao_desiderio = df.query("municipality_code == '2928901' and ref_year == 2023")
+        assert sao_desiderio.iloc[0]["quantity_tonnes"] == 543_506
+
     def test_zero_sidra_nao_vira_missing(self):
         df = parse_pam(FIXTURE)
         acorizal = df[df["municipality_code"] == "5100102"]
@@ -101,6 +113,12 @@ class TestWeights:
     def test_pesos_somam_um_por_cultura_uf(self):
         weights = pam_weights_asof(parse_pam(FIXTURE), "2024-09-12")
         sums = weights.groupby(["crop", "uf"])["within_uf_weight"].sum()
+        assert (sums.round(12) == 1.0).all()
+
+    def test_pesos_algodao_somam_um_em_mt_e_ba(self):
+        weights = pam_weights_asof(parse_pam(FIXTURE_COTTON), "2024-09-12")
+        sums = weights.groupby(["crop", "uf"])["within_uf_weight"].sum()
+        assert set(sums.index.get_level_values("uf")) == {"MT", "BA"}
         assert (sums.round(12) == 1.0).all()
 
     def test_sem_edicao_disponivel_falha(self):
