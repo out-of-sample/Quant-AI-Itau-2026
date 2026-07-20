@@ -260,6 +260,18 @@ Na safra 2024/25, produtividade caiu enquanto o ATR subiu 1,33%, confirmação d
 canais podem divergir. A extensão deve modelar tonelagem e ATR separadamente; um `Shock`
 anual linear de seca é proibido.
 
+O contrato D-050 fixa duas janelas Centro-Sul mais estreitas e sem sobreposição: **dez–fev**
+para crescimento/tonelagem (diagnóstico, β esperado negativo) e **jun–ago** para
+maturação/ATR (portão, β esperado positivo). O suporte SP+MG+GO+MS+PR responde por 87,8% da
+produção CONAB 2024/25. O teste usa os oito ciclos completos e datáveis 2018/19–2025/26 e
+CHIRPS mensal, preservando `prelim` no trecho corrente e `final` na climatologia.
+
+Fontes oficiais verificadas antes do teste:
+
+- Embrapa, [Características da cana-de-açúcar](https://www.embrapa.br/en/web/agencia-de-informacao-tecnologica/cultivos/cana-de-acucar/pre-producao/caracteristicas): calor e água favorecem crescimento; menor disponibilidade hídrica e temperaturas amenas favorecem maturação e sacarose;
+- Embrapa, [Clima](https://www.embrapa.br/en/web/agencia-de-informacao-tecnologica/cultivos/cana-de-acucar/pre-producao/caracteristicas/clima): água é essencial ao crescimento e a maturação interrompe crescimento vegetativo para acumular sacarose;
+- CONAB, [Safra de cana-de-açúcar](https://www.gov.br/conab/pt-br/atuacao/informacoes-agropecuarias/safras/safra-de-cana-de-acucar): quatro levantamentos anuais e boletins oficiais usados no calendário point-in-time.
+
 **NDVI/INPE Brazil Data Cube**
 
 O WTSS do INPE foi testado com MODIS `mod13q1-6.1`/`myd13q1-6.1` (16 dias, 250 m; série desde

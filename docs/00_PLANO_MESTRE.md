@@ -241,7 +241,9 @@ não dimensiona o experimento primário (D-026). Calibração
     CONAB em 2022/23–2024/25. O β agrupado foi **+0,042**, contrário ao esperado; BA, MT, as
     três safras e as três estimativas *leave-one-safra-out* também foram positivas. O critério
     congelado exigia β<0 e ao menos 2/3 LOO<0; o algodão fica fora do score.
-  - ⬜ **cana** — contrato de choque próprio (sinal invertido, regiões SP/Centro-Sul) + validação.
+  - 🔬 **cana — contrato e portão pré-registrados** (D-050): SP+MG+GO+MS+PR; maturação
+    jun–ago/ATR é o teste primário, crescimento dez–fev/tonelagem é diagnóstico incapaz de
+    resgatar o canal. Próximo: materializar dados, executar uma vez e registrar o veredito.
 - ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
   sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.
   Substituir H3/Fama–MacBeth por desenho compatível com o N (spread de evento / painel com

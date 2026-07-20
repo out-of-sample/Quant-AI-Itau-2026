@@ -1590,6 +1590,60 @@ parâmetros, hashes das entradas e hashes dos artefatos da primeira execução. 
 
 ---
 
+### D-050 — Contrato e validação H1 da cana: maturação/ATR é o portão
+**Data**: 2026-07-20
+
+Antes de calcular qualquer choque de cana, separam-se os dois mecanismos que um índice anual
+misturaria com sinais opostos:
+
+1. **maturação (primário)**: déficit de chuva em **junho–agosto** reduz crescimento vegetativo e
+   pode favorecer concentração de sacarose. O regressor é `dryness = −z(precipitação)` e o
+   desfecho é a revisão log de `producao_atr_kg_t` desde o 1º levantamento. Sinal esperado:
+   **β > 0**;
+2. **crescimento (diagnóstico pré-declarado)**: déficit de chuva em **dezembro–fevereiro** que
+   precede a safra reduz biomassa/tonelagem. O mesmo `dryness` é comparado à revisão log de
+   `producao_mil_t`. Sinal esperado: **β < 0**. Este resultado não pode promover nem resgatar o
+   canal se o teste primário de ATR falhar.
+
+**Suporte espacial congelado.** SP, MG, GO, MS e PR — o menor conjunto acima de 85% da produção
+CONAB 2024/25 (87,8%; SP sozinho = 51,5%). Dentro da UF, PAM/SIDRA 1612, variável 214, produto
+2696 (`Cana-de-açúcar`), com a última edição disponível em cada data. Não omitir SP para
+reaproveitar um painel pronto: isso eliminaria metade do fenômeno.
+
+**Amostra congelada.** Safras **2018/19–2025/26**, oito anos com quatro levantamentos datáveis.
+2017/18 é excluída porque só contém 1º, 2º e o resíduo legado 99; 2026/27 está incompleta. Cada
+levantamento posterior ao primeiro gera uma revisão; a inferência é agrupada por ano-safra.
+P-valores e bootstrap são diagnósticos com oito clusters, não regra de aprovação.
+
+**Clima e vintage.** CHIRPS mensal arquivado, preservando `prelim` para o trecho corrente e
+`final` somente na climatologia expanding desde 2000, com os mesmos lags conservadores de 7 e
+60 dias. Os arquivos mensais são somas oficiais dos dias e as janelas usam meses civis
+completos; a troca de frequência reduz a captura de milhares para centenas de rasters sem
+alterar a quantidade física acumulada. Em cada data entram somente meses cujo
+`avail_date ≤ t`; a climatologia compara o mesmo número de meses da fase em safras anteriores.
+
+**Critério direcional pré-registrado.** O canal de cana é corroborado somente se os três itens
+forem verdadeiros no teste de maturação/ATR: `(a)` β agrupado **positivo**; `(b)` pelo menos
+**6/8** estimativas *leave-one-safra-out* positivas; e `(c)` pelo menos **3/5** coeficientes por
+UF positivos. Significância não é exigida nem alegada. Falha em qualquer item exclui cana do
+score e impede a entrada de SMTO3/JALL3 por este mecanismo. O teste de crescimento é publicado
+em qualquer resultado, mas nunca substitui o portão.
+
+**Racional agronômico anterior ao resultado.** A Embrapa descreve água e calor favorecendo o
+crescimento vegetativo, enquanto menor disponibilidade hídrica e temperaturas mais amenas
+favorecem maturação e acúmulo de sacarose. A CONAB documenta que chuva excessiva/baixa
+luminosidade pode ampliar crescimento e atrasar maturação, enquanto baixa chuva/alta
+temperatura no desenvolvimento reduz produtividade. Fontes e períodos estão registrados em
+`09_FENOLOGIA_E_LIMIARES.md`.
+
+**Custo/limitação.** ATR é qualidade por tonelada, não receita total: ATR maior pode coexistir
+com tonelagem menor. O portão valida somente o ingrediente físico favorável da maturação; não
+prova retorno da ação nem benefício líquido da usina. A janela fixa Centro-Sul simplifica
+diferenças locais de plantio/corte, e os vintages mensais continuam sujeitos às limitações
+documentadas do produto CHIRPS.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
