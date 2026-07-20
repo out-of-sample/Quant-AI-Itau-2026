@@ -6,10 +6,16 @@ from quantagro.backtest.strategy_spec import (
     ALPHA,
     CANE_NAME,
     CANE_SATELLITE_CAP,
+    CLUSTER_BY,
+    EXEC_LAG_DAYS,
+    FWD_HORIZON_DAYS,
     GRAIN_NAME_CAP,
     GRAIN_NAMES,
+    GROSS,
     HOLDOUT_CROP_YEARS,
+    INFERENCE,
     NATIONAL_SHOCK_WEIGHTING,
+    PRIMARY_TEST,
     PRIMARY_TEST_UNIVERSE,
     TEST_IS_ONE_SIDED,
     UNIVERSE,
@@ -50,6 +56,15 @@ def test_holdout_tem_cinco_anos_safra_lacrados():
     assert HOLDOUT_CROP_YEARS == ("2020/21", "2021/22", "2022/23", "2023/24", "2024/25")
 
 
+def test_execucao_e_inferencia_congeladas():
+    assert EXEC_LAG_DAYS == 1
+    assert FWD_HORIZON_DAYS == 21
+    assert GROSS == 1.0
+    assert PRIMARY_TEST == "producer_processor_spread_panel"
+    assert INFERENCE == "permutation_cluster_by_crop_year"
+    assert CLUSTER_BY == "ano_agricola"
+
+
 def test_sizing_e_dollar_neutral_e_bruto_unitario():
     scores = {"AGRO3": -0.8, "SLCE3": -0.3, "BRFS3": 0.5, "JBSS3": 0.6, "SMTO3": 0.1}
     w = dollar_neutral_weights(scores)
@@ -66,6 +81,18 @@ def test_sizing_respeita_os_caps_por_nome():
     assert abs(sum(w.values())) < 1e-9
 
 
+def test_water_filling_nao_reabre_nome_que_ja_bateu_no_cap():
+    # Regressão do defeito encontrado na auditoria pré-Fase 4: a implementação anterior
+    # recolocava no conjunto livre um nome já capado e devolvia 29,7% apesar do teto de 25%.
+    scores = {"AGRO3": 100.0, "SLCE3": 40.0, "BRFS3": 1.0, "JBSS3": -141.0}
+    caps = {"AGRO3": 0.25, "SLCE3": 0.20, "BRFS3": 0.50, "JBSS3": 0.50}
+    w = dollar_neutral_weights(scores, caps)
+    assert abs(w["AGRO3"]) <= 0.25 + 1e-12
+    assert abs(w["SLCE3"]) <= 0.20 + 1e-12
+    assert abs(sum(w.values())) < 1e-12
+    assert abs(sum(abs(v) for v in w.values()) - 1.0) < 1e-12
+
+
 def test_satelite_da_cana_e_mais_apertado_que_grao():
     assert 0.0 < CANE_SATELLITE_CAP <= GRAIN_NAME_CAP <= 1.0
 
@@ -74,6 +101,17 @@ def test_sizing_sinal_zero_gera_carteira_vazia():
     scores = {n: 0.0 for n in UNIVERSE}
     w = dollar_neutral_weights(scores)
     assert all(v == 0.0 for v in w.values())
+
+
+def test_sizing_rejeita_score_nao_finito_ticker_desconhecido_e_cap_ausente():
+    import pytest
+
+    with pytest.raises(ValueError, match="finitos"):
+        dollar_neutral_weights({"AGRO3": np.nan, "BRFS3": 1.0})
+    with pytest.raises(ValueError, match="fora do universo"):
+        dollar_neutral_weights({"AGRO3": -1.0, "FAKE3": 1.0}, {"AGRO3": 0.5, "FAKE3": 0.5})
+    with pytest.raises(ValueError, match="caps ausentes"):
+        dollar_neutral_weights({"AGRO3": -1.0, "BRFS3": 1.0}, {"AGRO3": 0.5})
 
 
 def test_sizing_proporcional_ao_sinal_preserva_ordem():
