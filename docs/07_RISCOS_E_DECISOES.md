@@ -1173,6 +1173,48 @@ datada + manifesto; `avail_date` = fim de mês + 30 dias). N pequeno ⇒ leitura
 
 ---
 
+### D-041 — Resultado do teste local: sinal CERTO mas sem poder; mecanismo de preço não provado
+**Data**: 2026-07-20
+
+Rodada única do spec pré-registrado D-040. Artefatos em `data/processed/h2a_local_*`. 49 obs,
+14 clusters. Preço local recebido pelo agricultor (IPEADATA/DERAL-Seab-PR, R$/60kg).
+
+**Leitura confiável (pooled, span cheio, 14 clusters):**
+
+| Desfecho | β (esperado >0) | p unilateral (bootstrap) |
+|---|---|---|
+| contemporâneo local | +0,0071 | 0,33 |
+| forward local | +0,0310 | 0,21 |
+
+**Veredito pré-registrado: NÃO transmite** ao nível de 0,10 — nenhum dos dois cruza o limiar.
+
+**Mas é qualitativamente diferente do preço mundial.** Ao contrário de D-037/D-039 (forward
+mundial negativo, contemporâneo ≈ zero), aqui **os dois desfechos têm o sinal CERTO (positivo)**,
+e o `forward local` (+0,031) é a **maior estimativa positiva** de todas as seis medidas de preço;
+o holdout confirma o sinal (`fwd_local` +0,040). O milho contribui positivo no contemporâneo; a
+soja é a ponta fraca. É o padrão de um efeito **direcionalmente real, porém sem poder** — com
+~7 anos-safra, o intervalo não exclui zero.
+
+**Conclusão (fecha a família de testes de preço).** Em **seis** medidas pré-registradas (4
+mundiais + 2 locais), **nenhuma** atinge significância. O elo produção→preço→retorno **não está
+estatisticamente estabelecido** como preditor. O preço **local** aponta na direção certa, o que
+é consistente com uma transmissão **local/base** real mas fraca; o preço **mundial** não. A
+limitação é de fundo: o sinal só existe desde 2015/16, ~7–10 anos-safra — pouco para provar um
+elo mensal ruidoso. **Nenhum teste de preço adicional será rodado** (regra de parada de D-040).
+
+**Consequência para a tese.** A força **testada** da tese é o elo clima→revisão de safra
+(H1/D-031, forte e robusto), não o elo produção→preço→ação (fraco/subdimensionado). Decisão do
+próximo passo (novo go-ahead): reformular o sinal para se apoiar no elo provado (usar o
+corte/revisão da CONAB como gatilho direto, tratando o preço como racional econômico e não como
+preditor testado), reduzir o escopo, ou aceitar com ressalva explícita. R20 permanece 🔴; R2
+(ser só beta de commodity) segue no centro. O sinal local positivo **atenua** — não elimina — a
+leitura de "sem transmissão".
+
+**Custo/honestidade.** Seis medidas de preço pré-registradas, todas reportadas como vieram;
+nenhuma trocada ou re-especificada. A regra de parada foi respeitada: o teste local era o último.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
