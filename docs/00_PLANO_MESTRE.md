@@ -275,16 +275,22 @@ Andamento:
   exata de 32 estados, ADTV/custos/aluguel/capacidade, fronteiras e bloqueio do holdout estão
   executáveis em `backtest/operational_spec.py`. A safra 2019/20 foi excluída para não cruzar o
   lacre civil; o defeito de water-filling da auditoria também foi corrigido e testado.
-- ⬜ **4.1 — motor vetorizado:** materializar scores e posições-alvo, executar a grade D→X,
-  calcular retorno bruto/líquido e turnover sem permitir acesso ao holdout.
+- ✅ **4.1 — motor vetorizado (D-056):** adaptadores PIT materializam grãos/cana e posições-
+  alvo; o ledger mantém quantidades fixas, executa `(X, saída]`, reconcilia P&L bruto/líquido,
+  custos e turnover e bloqueia o holdout antes do I/O. Testes sintéticos cobrem transição,
+  drift, saída final e custos. **Nenhum P&L observado foi rodado.** R26 limita o smoke test real
+  a 2018/19, porque as safras anteriores não têm peso CONAB anterior admissível.
 - ⬜ **4.2 — fricções e investibilidade:** taxas, slippage, aluguel, ADTV e capacidade nos
-  cenários pré-registrados.
+  cenários pré-registrados; materializar o estado de mercado no COTAHIST, incluir SMTO3 no
+  retorno total e ingerir o BDI PIT. O calendário B3 completo e reason codes já estão expostos
+  por `validate/universe.py`.
 - ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
   de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
 
-> **Portão 4.0: ATRAVESSADO em 2026-07-20 (D-055).** Próximo passo: motor vetorizado no
-> desenvolvimento. O portão completo da Fase 4 ainda exige testes mecânicos e bloqueio técnico
-> integrado ao motor. Nenhum Sharpe do desenvolvimento pode escolher parâmetros.
+> **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056).** Próximo passo: Fase 4.2,
+> materializando fricções e investibilidade sem abrir o holdout. O portão completo da Fase 4
+> ainda exige o smoke test real permitido, diagnósticos e exposições. Nenhum Sharpe do
+> desenvolvimento pode escolher parâmetros.
 
 ### Fase 5 — Robustez
 

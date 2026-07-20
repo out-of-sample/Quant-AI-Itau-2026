@@ -46,6 +46,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
 | R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Submodelo separado; SMTO3 entra só na carteira, cap 0,15, e fica fora do teste primário; JALL3 excluída. Reportar p=0,12/bootstrap p=0,27 (D-052/D-053) | 🟡 Tratamento congelado; ATR≠receita permanece ressalva aberta |
 | R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitiam escolhas | Confirmada | Existencial | D-055 tornou os sete blocos executáveis em `operational_spec.py`, com tripwires e holdout negado por padrão | 🟢 **Resolvido — Fase 4.0 encerrada sem P&L** |
+| R26 | **Desenvolvimento operacional parcialmente não materializável** — D-055 declara 2015/16–2018/19, mas o peso nacional exige a safra CONAB anterior e o painel de vintages começa em 2017/18 | Confirmada | Médio | Não usar equal-weight, peso futuro ou backfill. Validar a mecânica com testes sintéticos; a única safra real de dev computável pelo contrato nacional é 2018/19. Tratar a cobertura como limitação, não selecionar regra alternativa por P&L (D-056) | 🟡 Motor resolvido; cobertura real restrita e declarada |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -1912,6 +1913,58 @@ reconstruídos perfeitamente; a regra usa hipóteses uniformes conservadoras. Es
 é proxy, não garantia de doador. A safra 2019/20 é perdida para preservar simultaneamente o
 lacre civil e os cinco clusters pré-registrados. R25 fica resolvido; R8/R9 passam a riscos
 mensuráveis, não eliminados.
+
+---
+
+### D-056 — Contabilidade diária do motor e cobertura efetiva do desenvolvimento
+**Data**: 2026-07-20
+
+Antes de consultar qualquer P&L observado, a implementação da Fase 4.1 encontrou que “posição
+por 21 pregões” ainda admitia duas contabilidades diferentes: manter quantidades ou reaplicar o
+peso-alvo todos os dias. A segunda opção criaria rebalanceamento diário, turnover e custos não
+declarados. A auditoria também mostrou que o peso nacional CONAB da safra anterior não existe
+para as três primeiras safras do desenvolvimento operacional.
+
+**Posições e sequência diária.** O motor mantém quantidades de um **índice de retorno total**
+fixas dentro de cada bloco. Uma ordem executada no close de `X` recebe os retornos em
+`(X, saída]`. No close compartilhado entre blocos, aplica-se primeiro o último retorno e o
+aluguel da posição antiga, marca-se seu drift e depois se faz uma única ordem líquida contra o
+novo alvo. A nova posição começa a receber retorno apenas no intervalo seguinte. A saída final
+negocia contra zero. Dividendos e splits já estão no retorno total; não há segunda cobrança.
+
+**Patrimônio e custos.** A simulação começa com R$500 mil e é autofinanciada: ordens usam o
+patrimônio corrente, não um reset de R$500 mil a cada bloco. Como o alvo é peso sobre o
+patrimônio **pós-custo**, o motor resolve por bisseção a identidade
+`A⁺ = A⁻ − Σ|ordem_i(A⁺)|·c_i`, instalando os pesos exatamente depois do custo. Participação e
+custo usam a ordem efetiva contra a posição marcada, nunca apenas a diferença entre dois alvos.
+Entrada, transição e liquidação são cobradas. No cenário zero o custo monetário some, mas os
+gates de participação e aluguel permanecem.
+
+O ADTV de entrada/transição é o disponível em `D`; na liquidação final programada, usa-se o
+ADTV encerrado no pregão imediatamente anterior à saída. A taxa de aluguel observada em `D`
+fica fixa pelos 21 intervalos e acumula linearmente em `taxa all-in/252` por pregão, incidindo
+sobre o short marcado no início de cada intervalo. O intervalo que termina numa transição paga
+o short antigo; o novo começa depois do close. Indisponibilidade de qualquer short zera somente
+aquele bloco inteiro, sem redistribuição.
+
+**Turnover e reconciliação.** O livro reporta simultaneamente notional bruto negociado
+`Σ|ordem|/A⁻` e turnover one-way convencional, metade desse valor. Custos de transição ficam em
+rubrica própria no dia da ordem, sem serem atribuídos oportunisticamente ao bloco que entra ou
+sai. A soma diária da atribuição por nome fecha com P&L bruto, e
+`ΔA = P&L bruto − aluguel − custo spot` é um invariante testado.
+
+**Cobertura do dev.** O contrato nacional usa a safra CONAB anterior encerrada. Como os painéis
+de vintages começam em 2017/18, 2015/16–2017/18 não possuem pesos anteriores admissíveis;
+2018/19 é a única safra real de desenvolvimento materializável sem alterar D-053/D-055. A
+Fase 4.1 não substitui isso por equal-weight, PAM, primeiro peso futuro nem reconstrução atual.
+Testes sintéticos cobrem toda a álgebra; o smoke test observado fica restrito a 2018/19 quando
+os dados de investibilidade da Fase 4.2 estiverem prontos.
+
+**Custo/limitação.** A contabilidade autofinanciada torna custos levemente dependentes do
+caminho do patrimônio e o uso de um índice de retorno total equivale a reinvestimento sintético
+dos proventos. A convenção linear de aluguel ignora dias corridos. A validação real do dev tem
+apenas uma safra e serve exclusivamente para detectar defeitos mecânicos, nunca para validar H′
+ou escolher parâmetros. Nenhum retorno observado foi consultado ao tomar esta decisão.
 
 ---
 

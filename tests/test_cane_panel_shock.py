@@ -1,6 +1,7 @@
 """Contrato mensal do CHIRPS para a cana (D-050)."""
 
 import pandas as pd
+import pytest
 
 from quantagro.features.cane_panel import phase_months, required_cane_monthly_files
 from quantagro.features.cane_shock import stamp_cane_monthly_panel, uf_cane_shock_asof
@@ -85,3 +86,10 @@ def test_shock_mensal_respeita_prefixo_visivel_e_climatologia_expanding():
     assert full["months_seen"] == 3
     assert full["n_clim_years"] == 18
     assert full["shock"] > 0  # mês corrente mais seco que toda a climatologia
+
+
+def test_ausencia_de_mes_ja_publicavel_falha_em_vez_de_parecer_janela_nao_iniciada():
+    spec = CANE_MATURATION_WINDOWS[0]
+    empty = _synthetic_monthly().query("not (kind == 'prelim' and uf == 'SP')")
+    with pytest.raises(ValueError, match="primeiro mês já esperado"):
+        uf_cane_shock_asof("2018-07-10", "2018/19", spec, empty, _synthetic_pam(), 2000)

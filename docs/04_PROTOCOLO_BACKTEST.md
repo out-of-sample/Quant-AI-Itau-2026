@@ -4,10 +4,10 @@
 > seja um teste da tese, e não um retrato do quanto conseguimos ajustar as regras até o
 > gráfico ficar bonito.
 
-> **Estado após D-055:** a especificação econômica de D-053 e a mecânica operacional estão
-> congeladas, sem consulta a P&L, em `backtest/strategy_spec.py` e
-> `backtest/operational_spec.py`. A Fase 4.0 está encerrada. A implementação do motor deve
-> executar literalmente estes contratos; não pode completar parâmetros olhando resultados.
+> **Estado após D-056:** a especificação econômica de D-053, a mecânica operacional de D-055
+> e a contabilidade diária de D-056 foram congeladas sem consultar P&L. O motor em
+> `backtest/engine.py` executa esses contratos sem rebalanceamento diário implícito e bloqueia
+> o holdout antes do I/O. Nenhum parâmetro pode ser completado olhando resultados.
 
 ---
 
@@ -80,6 +80,25 @@ A grade cobre, em sequência única, soja, milho safrinha e a maturação da can
 de retorno, fechamento de mês de mercado ou data de divulgação da CONAB. O painel estatístico
 de 21 pregões e a carteira negociável usam os mesmos blocos; isso impede que sobreposição
 fabrique observações ou alavancagem.
+
+### 2.2 Contabilidade diária congelada em D-056
+
+- os pesos-alvo são instalados no close da execução e viram quantidades de um índice de
+  retorno total; essas quantidades permanecem fixas até o próximo rebalanceamento;
+- o drift intrabloco é econômico e **não** dispara ordem. Repetir os pesos diariamente seria
+  uma estratégia diferente, com turnover oculto;
+- em `(t−1,t]`, calcula-se primeiro o P&L por nome e o aluguel da posição antiga; no close `t`,
+  marca-se a posição e só então se negocia contra o novo alvo;
+- o alvo é peso sobre o patrimônio pós-custo. O motor resolve a equação implícita do custo para
+  que os pesos efetivos depois da ordem coincidam com os alvos;
+- a simulação é autofinanciada a partir de R$500 mil. Ordens e participação usam o patrimônio
+  corrente; não há reset do AUM por bloco;
+- a soma da atribuição por nome fecha com o P&L bruto, e a identidade diária obrigatória é
+  `Δpatrimônio = P&L bruto − aluguel − custo spot`.
+
+O livro separa `gross_traded = Σ|ordem|/patrimônio pré-trade` de
+`turnover_one_way = gross_traded/2`. Na transição existe uma única ordem líquida contra a
+posição marcada; não se cobra uma saída e uma entrada artificiais sobre o mesmo notional.
 
 ---
 
@@ -175,6 +194,12 @@ O estoque é proxy de profundidade, não prova de oferta na corretora; recalls e
 como limitação. Fontes: [regras do empréstimo B3](https://www.b3.com.br/pt_br/produtos-e-servicos/emprestimo-de-ativos/informacoes.htm)
 e [tarifas do empréstimo B3](https://www.b3.com.br/pt_br/produtos-e-servicos/tarifas/tarifas-de-emprestimo-de-ativos/).
 
+Na contabilidade D-056, a taxa observada em D permanece fixa no bloco e acumula
+`taxa all-in/252` em cada um dos 21 intervalos. O aluguel incide sobre o short marcado no início
+do intervalo. No close de transição, o último accrual pertence à posição antiga; a nova começa
+no intervalo seguinte. A liquidação final usa o ADTV conhecido no pregão imediatamente
+anterior; entradas e transições usam o ADTV encerrado em D.
+
 ### 4.2 Cenários e capacidade
 
 | Cenário | Custos monetários | Regras de investibilidade |
@@ -242,6 +267,12 @@ O desenvolvimento operacional compreende as safras **2015/16–2018/19**, com to
 execuções e saídas até 31/12/2019, e está **queimado para a direção** por D-043. Na Fase 4, ele
 serve para validar mecânica, invariantes, custos, turnover e atribuição — seu P&L não confirma
 H′ nem autoriza alterar direção, score ou parâmetros.
+
+Há uma restrição de materialização registrada em R26/D-056: o peso nacional exige a safra
+CONAB anterior, mas o painel de vintages começa em 2017/18. Logo, somente 2018/19 é computável
+com dados reais sob o contrato atual. As três safras anteriores não recebem equal-weight, PAM,
+peso futuro ou backfill. A álgebra completa é validada por testes sintéticos; o único smoke test
+real admissível no desenvolvimento é 2018/19 e continua sem valor confirmatório para H′.
 
 A safra **2019/20 é uma zona de transição excluída**: seus retornos cairiam em 2020, mas ela não
 pertence às cinco safras congeladas do holdout. Bloco que cruza 31/12/2019 é rejeitado por

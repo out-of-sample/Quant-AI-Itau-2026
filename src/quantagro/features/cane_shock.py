@@ -89,6 +89,12 @@ def uf_cane_shock_asof(
         "window_end": expected[-1],
     }
     if seen.empty:
+        first_avail = expected[0] + pd.Timedelta(days=PRELIM_LAG_DAYS)
+        if ts >= first_avail:
+            raise ValueError(
+                f"painel mensal sem o primeiro mês já esperado para {spec.uf}/{spec.phase}: "
+                f"{expected[0].date()} disponível desde {first_avail.date()}"
+            )
         return row | {"months_seen": 0, "shock": np.nan, "status": "window_not_started"}
     prefix = expected[: len(seen)]
     if not seen.equals(prefix):

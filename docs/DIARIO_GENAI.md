@@ -1135,6 +1135,36 @@ faltante bloqueia o bloco até auditoria, em vez de criar seleção de amostra s
 
 ---
 
+## 2026-07-20 (noite) — Motor diário e auditoria de integração da Fase 4.1 (D-056)
+
+**Uso**: implementar o motor vetorizado sem abrir o holdout e submeter contratos de dados,
+timing, posições e custos a duas auditorias independentes antes de qualquer P&L observado.
+
+**Valor real**: a revisão detectou que fazer `ffill` dos pesos-alvo rebalancearia a carteira
+diariamente sem registrar ordens. O motor passou a manter quantidades de índice de retorno
+total, aplicar o último retorno à posição antiga, negociar uma única vez contra o drift e
+resolver implicitamente o patrimônio pós-custo para instalar pesos exatos. A segunda auditoria
+encontrou que a whitelist do universo podia remover um pregão B3 inteiro quando nenhum dos
+cinco nomes negociasse; `UniverseState` agora deriva o calendário antes do filtro e expõe
+reason codes e ADTV. Testes-canário fecham D+1, 21 intervalos, transição, saída, atribuição,
+aluguel, turnover, participação e bloqueio do holdout antes da leitura do parquet.
+
+**Validação humana/mecânica**: a álgebra foi confrontada com D-053/D-055 e implementada como
+ledger cuja identidade diária é verificada em runtime. Casos sintéticos reproduzem a fórmula
+direta do retorno do bloco e provam que uma alta intrabloco causa drift, não ordem. O cenário
+zero continua exigindo short disponível e participação admissível. Nenhum retorno observado
+foi usado para escolher a contabilidade ou executar a carteira.
+
+**O que a IA errou**: a primeira leitura do plano supôs que as quatro safras de desenvolvimento
+poderiam ser materializadas. A auditoria dos schemas mostrou que o peso nacional exige a safra
+CONAB anterior, enquanto o painel de vintages começa em 2017/18; apenas 2018/19 é computável
+sem backfill. A correção foi declarar R26 e proibir equal-weight/peso futuro, não fabricar
+histórico. A primeira proposta de custo também tratava a dedução como aproximação aditiva após
+instalar o alvo; a revisão contábil mostrou que isso deixaria os pesos pós-custo inexatos e foi
+substituída por um solver autofinanciado antes dos testes finais.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

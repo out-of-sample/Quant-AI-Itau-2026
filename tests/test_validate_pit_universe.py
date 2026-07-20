@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 
 from quantagro.validate.pit import available_asof, stamp_avail_date
-from quantagro.validate.universe import eligible_count, universe_membership
+from quantagro.validate.universe import eligible_count, universe_membership, universe_state
 
 
 class TestStampAvailDate:
@@ -145,6 +145,43 @@ class TestUniverseMembership:
         rows = [("2024-01-02", "DUPL3", 1.0), ("2024-01-02", "DUPL3", 2.0)]
         with pytest.raises(ValueError):
             universe_membership(_quotes(rows), adtv_floor=0.0)
+
+    def test_whitelist_nao_encurta_calendario_b3(self):
+        calendar = _daily("IBOV3", "2024-01-02", 30, 1e6)
+        sparse = [row for i, row in enumerate(_daily("AAAA3", "2024-01-02", 30, 1e6)) if i != 15]
+        state = universe_state(
+            _quotes(calendar + sparse),
+            adtv_floor=0.0,
+            ipo_seasoning=0,
+            adtv_window=5,
+            tickers=["AAAA3"],
+        )
+        missing_day = pd.Timestamp(calendar[15][0])
+        assert len(state.eligible) == 30
+        assert not state.traded.loc[missing_day, "AAAA3"]
+        assert state.adtv_brl.loc[missing_day, "AAAA3"] == pytest.approx(800_000.0)
+        assert state.reason.loc[missing_day, "AAAA3"] == "not_traded"
+
+    def test_estado_expoe_reason_codes_consistentes(self):
+        rows = _daily("AAAA3", "2024-01-02", 8, 100.0)
+        state = universe_state(_quotes(rows), adtv_floor=200.0, ipo_seasoning=2, adtv_window=3)
+        assert state.reason["AAAA3"].iloc[0] == "seasoning"
+        assert state.reason["AAAA3"].iloc[-1] == "adtv_below_floor"
+        assert (state.eligible.to_numpy() == state.reason.eq("eligible").to_numpy()).all()
+
+    def test_seasoning_conta_pregoes_desde_primeiro_negocio(self):
+        calendar = _daily("CALN3", "2024-01-02", 10, 1.0)
+        sparse = [calendar[0], calendar[6]]
+        sparse = [(date, "SPRS3", vol) for date, _, vol in sparse]
+        state = universe_state(
+            _quotes(calendar + sparse),
+            adtv_floor=0.0,
+            ipo_seasoning=5,
+            adtv_window=1,
+            tickers=["SPRS3"],
+        )
+        assert state.seasoned.loc[pd.Timestamp(calendar[6][0]), "SPRS3"]
+        assert state.eligible.loc[pd.Timestamp(calendar[6][0]), "SPRS3"]
 
 
 class TestEligibleCount:
