@@ -166,6 +166,13 @@ Antes de retornos, a fase deve escolher e pré-registrar um desenho que:
 Alternativas admissíveis para a decisão: estudo de spread por evento/horizonte; painel com
 interação `Shock × exposição` e efeitos fixos; combinação dos dois, com um único primário.
 
+**Escolha congelada (D-053).** O primário é o **spread produtor–processador** medido como painel
+`Shock×exposição` demeanado na seção transversal, **só nos 4 nomes de grãos** (a cana, de
+mecanismo fraco, fica de fora do teste para não diluir a força), cluster por ano-safra,
+**inferência por permutação** (mais honesta que a assintótica com 5 clusters) e **unilateral**
+α=0,10 (direção dada por H′). O Fama–MacBeth fica descartado. Contrato em
+`src/quantagro/backtest/strategy_spec.py`.
+
 ## 7. Dollar-neutral não é market-neutral
 
 Notional comprado igual ao vendido garante apenas soma de pesos igual a zero. Não neutraliza

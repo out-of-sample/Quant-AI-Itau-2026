@@ -1052,6 +1052,34 @@ leu 20-F direto.
 
 ---
 
+## 2026-07-20 (noite) — Congelamento da estratégia reformulada, Fase 3.5 (D-053)
+
+**Uso**: transformar as decisões de desenho em um contrato executável e imutável, anterior ao
+holdout, sem rodar retorno.
+
+**Valor real**: a IA separou explicitamente o que a fase pode e não pode fazer — a força
+estatística é limitada pelos 5 anos-safra e nenhuma escolha aqui a levanta. Sobre isso, alinhou
+cada fork à prioridade certa: teste primário só nos grãos (A1) porque **misturar a cana fraca
+diluiria o t-stat do sinal forte** — isso serve a prioridade de força; e esclareceu que o sizing
+(B1) **não afeta o teste primário**, só o P&L, então é escolha de lucro, não de força. Encontrou
+o bug de construção do sizing (o cap iterativo oscilava num caso degenerado) e trocou por
+water-filling por lado, que garante dollar-neutral + caps por construção. Também notou que o R19
+**se dissolve** sob H′ (a concentração era artefato do long-produtor antigo; no holdout os 5
+nomes estão vivos).
+
+**Validação humana/mecânica**: 13 testes novos travam universo, direção H′, caps, execução, anos
+do holdout e a garantia cruzada de que H′ não altera a convenção de mecanismo falsificada
+(`test_signal_sign.py` intacto). Suíte = 400. As prioridades (força > lucro, sob rigor) foram
+dadas pelo time; a IA reconciliou a recomendação com elas em vez de empurrar a própria.
+
+**O que a IA errou**: a primeira implementação do sizing (clip + renormaliza em loop) não
+convergia — a normalização reempurrava os nomes capados por cima do limite. O teste com input
+degenerado pegou na hora; a correção (water-filling por lado, com bruto reduzido quando um cap
+torna Σ|w|=1 inviável) é matematicamente sã e determinística. Sem o teste do caso extremo, o bug
+teria passado silencioso para a Fase 4.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

@@ -250,10 +250,13 @@ não dimensiona o experimento primário (D-026). Calibração
     fica fora** por IPO fev/2021 (holdout-only, sem dev). Universo scoreado = **5 nomes** (4 grãos
     + SMTO3). Registro em `data/reference/cane_corporate_audit_v1.json`; ATR≠receita segue como
     ressalva aberta (R24).
-- ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
-  sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.
-  Substituir H3/Fama–MacBeth por desenho compatível com o N (spread de evento / painel com
-  interação), pré-registrado.
+- ✅ **3.5 — estratégia reformulada congelada** (D-053, anterior ao holdout): contrato em
+  `src/quantagro/backtest/strategy_spec.py`. Universo = 5 nomes; direção H′ (grãos = negativo de
+  `E·Shock`; cana = maturação +1). **A1**: teste primário só nos 4 grãos (spread produtor–
+  processador) para proteger a força; SMTO3 na carteira negociável capada em 0,15. **B1**: sizing
+  proporcional ao sinal, dollar-neutral, cap 0,40 por grão. Pesos CONAB (D-028); execução D+1;
+  horizonte 21 pregões. Teste primário = painel `Shock×exposição`, cluster por ano-safra,
+  permutação, unilateral α=0,10 (substitui H3/Fama–MacBeth). **R19 resolvido**.
 - ⬜ **Fase 4 — backtest de verdade no dev**: máquina, custos, turnover, exposição a fatores — o
   **return-agnóstico**; o dev **não** valida lucro da direção (está queimado).
 - ⬜ **Fase 5 — robustez** pré-registrada (H4/H5, placebo, sensibilidades).
