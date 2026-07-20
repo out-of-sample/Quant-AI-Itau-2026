@@ -132,6 +132,14 @@ span cheio deram **nulo**: contemporâneo USD −0,001, contemporâneo BRL +0,00
 o teste do **preço local CEPEA** (base brasileira, o preço certo para o processador), como último
 teste de preço; se nulo, mecanismo de preço morto. Detalhe em `07` D-039.
 
+**Teste local (D-040 pré-registro / D-041 resultado, 2026-07-20).** CEPEA está atrás de Cloudflare
+(D-025); usado o preço local recebido pelo agricultor via IPEADATA/DERAL-Seab-PR. Resultado:
+`contemp_local` +0,007 (p 0,33), `forward local` +0,031 (p 0,21) — **sinal certo (positivo)**,
+ao contrário do mundial, mas **sem significância**. Fecha a família (6 medidas, nenhuma
+significativa): o elo produção→preço→ação não está estatisticamente estabelecido; a força testada
+da tese é clima→revisão CONAB (H1). Próximo passo = reformular o sinal no elo provado / reduzir /
+aceitar com ressalva. Detalhe em `07` D-041.
+
 ### H2b — reação à publicação CONAB — diagnóstico
 
 Pergunta: a surpresa do levantamento move o preço ao redor da divulgação?

@@ -1,0 +1,15 @@
+{
+  "source": "IPEADATA (mirror of Seab-PR/DERAL)",
+  "series_id": "DERAL12_PRMI12",
+  "crop": "corn_second",
+  "url": "http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='DERAL12_PRMI12')",
+  "unit": "BRL per 60kg, farmer-received price, Parana, monthly",
+  "license_note": "IPEADATA public data; non-commercial academic use",
+  "publication_lag_days": 30,
+  "latest_ref_date": "2026-06-30",
+  "latest_price": 51.3336,
+  "n_obs": 438,
+  "sha256": "617a6ee3b294dbcacdd5d71db20226edb76dfef0b6fd1fa0d614cc96a95a5767",
+  "bytes": 56889,
+  "downloaded_at": "2026-07-20T03:41:15.176012+00:00"
+}

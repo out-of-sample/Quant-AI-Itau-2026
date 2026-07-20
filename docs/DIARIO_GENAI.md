@@ -915,6 +915,30 @@ lida como resposta, não como convite a seguir testando indefinidamente.
 
 ---
 
+## 2026-07-20 (tarde) — Último teste de preço: local BRL (D-040/D-041)
+
+**Uso**: rodar o último teste de preço da tese com o preço LOCAL brasileiro (o que o produtor
+recebe / o processador paga), fonte que o D-025 já dizia ser difícil (CEPEA sem API).
+
+**Valor real**: a IA confirmou ao vivo que o CEPEA está atrás de Cloudflare (curl/WebFetch
+inúteis) e, em vez de pedir download manual de Excel, achou o IPEADATA (API OData aberta do
+governo) espelhando a série Seab-PR/DERAL do preço recebido pelo agricultor — reproduzível,
+mensal, cobertura 2015-2024 completa, e economicamente ainda mais direto que o CEPEA para o lado
+produtor (receita realizada). Reaproveitou todo o maquinário de H2a mudando só a fonte.
+
+**Validação humana/mecânica**: pré-registro (D-040) commitado antes do resultado; substituição
+CEPEA→IPEADATA/DERAL declarada e justificada ANTES de ver o número, com as limitações (é Paraná,
+não nacional; revisão modesta). Regra de parada declarada: este era o último teste de preço.
+
+**O resultado e a honestidade**: sinal CERTO (positivo em ambos os desfechos, forward +0,031, o
+maior de todas as 6 medidas) mas SEM significância (p 0,21). A IA não vendeu o sinal positivo
+como vitória nem o tratou como nulo puro — reportou o que é: direcionalmente real, porém sem
+poder, com ~7 safras. Fechou a família de 6 testes de preço e nomeou a consequência dura: o elo
+produção→preço→ação não está estabelecido; a força testada da tese é clima→revisão CONAB. Não
+propôs rodar um sétimo teste de preço (respeitou a própria regra de parada).
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
