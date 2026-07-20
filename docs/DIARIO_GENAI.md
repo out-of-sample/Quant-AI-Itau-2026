@@ -939,6 +939,34 @@ propôs rodar um sétimo teste de preço (respeitou a própria regra de parada).
 
 ---
 
+## 2026-07-20 (noite) — Reação das ações: o primeiro teste de retorno, e o mais duro (D-042/D-043)
+
+**Uso**: montar e rodar o primeiro teste que toca retorno de ação — o score `E·Shock` ordena os
+retornos dos 4 nomes no desenvolvimento? — reaproveitando o motor de retorno total PIT e os
+fetchers de evento.
+
+**Valor real**: a IA montou o retorno total dos 4 nomes ao vivo (COTAHIST 2014-2019 + eventos),
+construiu o painel score×retorno-forward demeanado na seção transversal (neutro a mercado) e
+rodou. Resultado: **β=−0,09, t=−3,6, P&L −4%/período, todas as correlações por nome negativas** —
+a estratégia perde e o sinal é **invertido**.
+
+**Validação humana/mecânica**: pré-registro (D-042) commitado antes do resultado (ordem no git).
+O tripwire de retorno suspeito pegou dois saltos: o −31% da JBSS3 em 22/05/2017 foi reconhecido
+como o **crash real da delação** (legítimo), e o −46,5% da SLCE3 em 02/05/2019 como um **split 2:1
+não capturado** — confirmado no preço bruto (41,10→20,10) e por fonte primária (AGE 30/04/2019),
+adicionado à curadoria com proveniência. Sem esse conserto, o lado long estaria corrompido.
+
+**A honestidade que definiu o passo**: o sinal veio invertido, e a tentação óbvia — "então basta
+inverter: short produtor, long processador, que aí ganha" — é **exatamente** o p-hacking que a
+gente havia discutido a fundo. A IA **não inverteu**. Reportou o negativo como veio, explicou que
+é economicamente coerente (a seca corta o volume do produtor, `Q>P`, batendo com a auditoria
+D-035 e o preço fraco D-041), e registrou "a seca prejudica o produtor" como **hipótese nova a
+pré-registrar**, não como gatilho para virar a estratégia. Também: quando o Shock nacional D-028
+(safra anterior) reduziria o dev a 2 safras, trocou para média simples das UFs por um motivo
+estrutural (poder), **antes** de ver o β, e declarou a simplificação.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

@@ -216,11 +216,13 @@ não dimensiona o experimento primário (D-026). Calibração
 - ✅ decisão do fork `P/Q/C`: `P`/`Q` **não são PIT-separáveis** ⇒ mantém-se a matriz D-033
   (opção 1), materialidade atenuada como sensibilidade, **long condicionado a H2a** (D-035)
 - ⚠️ Família de testes de preço FECHADA (D-036–D-041, 6 medidas): transmissão do `Shock` ao
-  preço não atinge significância em nenhuma. Preço **mundial** nulo/errado (4 medidas); preço
-  **local** BRL (IPEADATA/DERAL) tem o sinal **certo** (forward +0,031) mas **sem poder** (~7
-  safras). Elo produção→preço→ação não estabelecido; a força testada é clima→revisão CONAB (H1).
-  Próximo (novo go-ahead) = reformular o sinal no elo provado (gatilho CONAB) / reduzir / aceitar
-  com ressalva. Manter H2b diagnóstico
+  preço não atinge significância em nenhuma (mundial nulo/errado; local BRL sinal certo mas sem
+  poder). A força testada é clima→revisão CONAB (H1).
+- 🛑 **Reação das ações testada (D-042/D-043, Fase 3.2, PR pendente): ANTI-preditiva no dev** —
+  β=−0,09 (t=−3,6), P&L −4%/período, correlações por nome todas negativas. A estratégia long/short
+  pelo choque **perde** e o sinal é invertido: a seca **prejudica** o produtor (`Q>P`). Não se
+  inverte o sinal post-hoc. **A tese, como desenhada, não vira estratégia de ações.** Ponto de
+  decisão: reformular com hipótese nova pré-registrada, reduzir, ou reportar o achado negativo
 - ⬜ substituir o H3/Fama–MacBeth por teste compatível com apenas três a quatro ações
 - ⬜ resolver R19 sem consultar retornos e construir carteira dollar-neutral, sem presumir
   neutralidade a beta, fatores ou commodities
