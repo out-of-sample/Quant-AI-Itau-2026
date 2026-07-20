@@ -6,14 +6,16 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from quantagro.ingest.fred_prices import PUBLICATION_LAG_DAYS, parse_fred_prices
+from quantagro.ingest.fred_prices import PUBLICATION_LAG_DAYS, parse_fred_fx, parse_fred_prices
 from quantagro.stats.h2a import (
+    DIAG_OUTCOMES,
     PRIMARY_HORIZON,
     _fwd_return,
     _obs_month_ends,
     build_h2a_panel,
     h2a_verdict,
     run_h2a,
+    run_h2a_diag,
 )
 
 # Trecho real do formato FRED (PSOYBUSDM), com uma linha ausente "." preservada de propósito.
@@ -113,3 +115,53 @@ def test_build_h2a_panel_requires_observations():
     empty_prices = pd.DataFrame({"crop": [], "ref_date": [], "price": [], "avail_date": []})
     with pytest.raises((ValueError, KeyError, FileNotFoundError)):
         build_h2a_panel(empty_prices, pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), 2000)
+
+
+FX_CSV = "observation_date,EXBZUS\n2015-01-01,2.63\n2015-02-01,.\n2015-03-01,3.14\n"
+
+
+def test_parse_fred_fx_month_end():
+    df = parse_fred_fx(FX_CSV)
+    assert len(df) == 2  # a linha "." é descartada
+    assert (df["brl_per_usd"] > 0).all()
+    assert df.iloc[0]["ref_date"] == pd.Timestamp("2015-01-31")
+    assert df.iloc[-1]["brl_per_usd"] == pytest.approx(3.14)
+
+
+def _synthetic_diag_panel(seed: int = 1) -> pd.DataFrame:
+    """Painel de diagnóstico sintético: contemp com sinal certo, forward ruidoso."""
+    rng = np.random.default_rng(seed)
+    rows = []
+    for crop in ("soy", "corn_second"):
+        for base in range(2018, 2024):
+            ano = f"{base}/{(base + 1) % 100:02d}"
+            for mo in range(3):
+                shock = float(rng.normal())
+                rows.append(
+                    {
+                        "crop": crop,
+                        "ano_agricola": ano,
+                        "base_year": base,
+                        "obs_month": f"{base}-{12 - mo:02d}",
+                        "shock": shock,
+                        "contemp_usd": 0.4 * shock + 0.01 * rng.normal(),
+                        "contemp_brl": 0.5 * shock + 0.01 * rng.normal(),
+                        "fwd_usd": -0.1 * shock + 0.05 * rng.normal(),
+                        "fwd_brl": 0.02 * shock + 0.05 * rng.normal(),
+                        "cluster": f"{crop}:{ano}",
+                    }
+                )
+    panel = pd.DataFrame(rows)
+    panel["sample"] = np.where(panel["base_year"] <= 2019, "dev", "holdout")
+    return panel
+
+
+def test_run_h2a_diag_covers_all_outcomes():
+    res = run_h2a_diag(_synthetic_diag_panel())
+    assert set(res["outcome"]) == set(DIAG_OUTCOMES)
+    # contemporâneo com sinal positivo forte -> β>0 no pooled full-span
+    row = res[
+        (res["outcome"] == "contemp_usd") & (res["scope"] == "full") & (res["unit"] == "pooled")
+    ]
+    assert len(row) == 1
+    assert float(row["beta"].iloc[0]) > 0

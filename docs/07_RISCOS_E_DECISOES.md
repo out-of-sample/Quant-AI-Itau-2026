@@ -1049,6 +1049,44 @@ veio. Nenhuma troca de fonte ou horizonte foi feita para melhorá-lo.
 
 ---
 
+### D-038 — Pré-registro dos diagnósticos de H2a: contemporâneo e BRL (não-veto)
+**Data**: 2026-07-20
+
+Especificação **congelada antes do resultado** (ordem provada no git). Implementação em
+`stats/h2a.py` (`build_h2a_diag_panel`, `run_h2a_diag`), `ingest/fred_prices.py` (câmbio),
+`scripts/run_h2a_diag.py`. Motivação: D-037 deu forward-negativo ao preço mundial USD, com duas
+leituras não distinguíveis (transmissão fraca ao USD vs. reação contemporânea + reversão
+invisível a um teste forward). Estes diagnósticos separam as leituras **sem** trocar o primário
+de H2a (isso seria resgate post-hoc); são diagnósticos, **sem poder de veto próprio**.
+
+**Fonte adicional.** Câmbio BRL/USD mensal FRED `EXBZUS` (vintage-estável, sem chave). Preço em
+BRL = preço mundial USD × câmbio — proxy da receita do produtor pelo canal de câmbio.
+
+**Testes (todos com sinal esperado `β>0`), regressor = Shock nacional as-of `t`:**
+- `contemp_usd` / `contemp_brl`: `log(P[m]/P[base])`, base = mês anterior ao início da janela —
+  mede se o preço JÁ se moveu com o choque **dentro** da janela. É **contemporâneo**, não
+  preditivo ⇒ diagnóstico explicativo, **nunca vira sinal negociável**;
+- `fwd_usd` / `fwd_brl`: `log(P[m+3]/P[m])` no horizonte primário — compara com D-037 e isola o
+  canal de câmbio (BRL vs USD).
+
+**Inferência e perímetro.** Iguais a H2a: cluster por ano-safra × cultura + bootstrap; pooled
+com efeito fixo de cultura; span cheio com dev/holdout separados. Diagnóstico, não portão.
+
+**Regra de leitura (pré-registrada).**
+1. se `contemp_*` `β>0` significativo (USD ou BRL) ⇒ o preço reage **contemporaneamente** ao
+   choque (leitura 2); o forward-negativo de D-037 é reversão, não ausência de transmissão ⇒ o
+   canal de preço `P` é plausível e o long pode seguir com ressalva e confirmação no holdout;
+2. se `fwd_brl` `β>0` enquanto `fwd_usd` ~0/negativo ⇒ a transmissão está no **câmbio/base** ⇒
+   canal `P` via BRL;
+3. se todos forem nulos/negativos ⇒ leitura 1 (sem transmissão) confirmada ⇒ reduzir a tese ao
+   lado processador (canal `C`, D-035) ou reformular o long.
+
+**Custo/limitação.** O contemporâneo não é preditivo — informa a economia, não gera posição.
+BRL via (mundial × câmbio) é proxy: falta a **base local** brasileira (CEPEA), declarada como
+robustez futura, não reconstruída aqui. N pequeno (safra anual) ⇒ leitura direcional, não veto.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
