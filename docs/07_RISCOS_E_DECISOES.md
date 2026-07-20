@@ -1087,6 +1087,57 @@ robustez futura, não reconstruída aqui. N pequeno (safra anual) ⇒ leitura di
 
 ---
 
+### D-039 — Resultado dos diagnósticos: canal de preço mundial NÃO resgatado; resta o local (CEPEA)
+**Data**: 2026-07-20
+
+Rodada única do spec pré-registrado D-038, sem alterar nada após ver o número. Artefatos em
+`data/processed/h2a_diag_{panel.parquet,results.csv}`. 49 obs, 14 clusters.
+
+**Leitura confiável (pooled, span cheio, 14 clusters):**
+
+| Desfecho | β (esperado >0) | p unilateral (bootstrap) |
+|---|---|---|
+| contemporâneo USD | −0,0013 | 0,54 |
+| contemporâneo BRL | +0,0045 | 0,39 |
+| forward USD (= D-037) | −0,0166 | 0,89 |
+| forward BRL | +0,0041 | 0,43 |
+
+**Nenhum é significativo.** Aplicando a regra de leitura de D-038:
+1. o **contemporâneo** deu ≈ zero (não positivo significativo) ⇒ a leitura "o preço reage
+   dentro da janela e reverte" **não se sustenta**; o forward-negativo de D-037 não é artefato de
+   reversão de um efeito contemporâneo — o efeito contemporâneo também está ausente;
+2. a conversão para **BRL** vira o forward de −0,017 (USD) para +0,004, direção coerente com um
+   canal de **câmbio**, mas não significativo ⇒ sinal fraco, não conclusivo;
+3. no nível do preço **mundial** (USD) e do proxy **mundial×câmbio** (BRL), o quadro é de
+   **nulo generalizado**.
+
+**Conclusão honesta.** O canal de preço `P` do produtor, medido no preço mundial e no proxy
+BRL, **não tem suporte empírico**. A ponta long "comprar produtor porque o choque eleva o preço
+que ele recebe" não se confirmou em quatro medidas (forward/contemporâneo × USD/BRL).
+
+**A porta que resta é distinta, não é insistência.** O proxy BRL = mundial × câmbio **não** tem
+a **base local** brasileira (CEPEA/ESALQ), e é justamente o preço **local** que um choque
+doméstico moveria primeiro (oferta/logística/basis interno). Além disso, o preço local é o preço
+**economicamente certo para o lado processador** (a BRF compra milho **brasileiro**, D-035),
+que estes diagnósticos **não** testaram e **não** derrubam. Um pequeno indício positivo aparece
+só no milho contemporâneo (holdout significativo, N pequeno), não na soja.
+
+**Consequência.** Evidência forte contra o long de produtor pelo **preço mundial**. O teste
+decisivo restante é o **preço local CEPEA** (pré-registrado como robustez em D-038/D-025), que
+resolve tanto o preço realizado do produtor quanto o custo do processador. Recomenda-se como o
+**último** teste de preço antes de decidir o rumo: se o CEPEA também for nulo, o mecanismo de
+preço está morto e a tese precisa ser reformulada ou reduzida; se o CEPEA local transmitir, o
+lado **processador** (canal `C`) é o sobrevivente natural. R20 permanece 🔴; o passo do preço na
+cadeia clima→safra→**preço**→ação está sob dúvida direta, o que aproxima R2 (estratégia ser só
+beta de commodity) do centro da discussão.
+
+**Custo/honestidade.** Quatro medidas de preço pré-registradas deram nulo e foram reportadas
+como vieram. Nenhuma foi trocada ou re-especificada para melhorar. O CEPEA é uma fonte
+economicamente distinta (base local), não uma quinta tentativa da mesma coisa — mas será o
+último teste de preço, para não virar busca por especificação.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

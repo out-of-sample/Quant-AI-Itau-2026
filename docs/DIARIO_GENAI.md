@@ -889,6 +889,32 @@ teste forward) foi declarada sem escolher a mais conveniente.
 
 ---
 
+## 2026-07-20 — Diagnósticos de H2a: contemporâneo e BRL (D-038/D-039)
+
+**Uso**: dado o forward-negativo de H2a (D-037), desenhar e rodar dois diagnósticos
+pré-registrados para separar "transmissão fraca ao preço mundial" de "reação contemporânea
+invisível a um teste forward", e testar o canal de câmbio (BRL).
+
+**Valor real**: a IA achou no FRED o câmbio mensal EXBZUS (sem chave), montou o preço em BRL
+= mundial × câmbio, e reaproveitou todo o maquinário de H2a mudando só o desfecho (retorno
+contemporâneo na janela e conversão BRL). Rodou uma vez: os quatro desfechos pooled deram nulo;
+o contemporâneo ≈ zero descartou a leitura de reversão. Resultado registrado (D-039) com a
+consequência para a tese, sem suavizar.
+
+**Validação humana/mecânica**: pré-registro (D-038) commitado antes do resultado (ordem no git).
+Inferência confiável lida só nas células com clusters suficientes (pooled, 14 clusters); as
+células por cultura com 2 clusters e bootstrap p=0,000 foram explicitamente tratadas como não
+confiáveis, não celebradas.
+
+**O que a IA NÃO fez / cuidou**: não trocou o primário de H2a para "consertar" o resultado;
+manteve os diagnósticos como testes separados e sem veto. Reconheceu o limite do proxy BRL (não
+tem a base local CEPEA) e classificou o CEPEA como uma fonte economicamente **distinta** — o
+preço certo para o processador — e não uma quinta tentativa da mesma medida, mas marcou-o como
+o **último** teste de preço para não virar busca por especificação. A acumulação de nulos foi
+lida como resposta, não como convite a seguir testando indefinidamente.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
