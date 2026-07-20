@@ -1215,6 +1215,53 @@ nenhuma trocada ou re-especificada. A regra de parada foi respeitada: o teste lo
 
 ---
 
+### D-042 — Roteiro pós-preço e pré-registro do teste de reação das ações (Fase 3.2)
+**Data**: 2026-07-20
+
+**Contexto.** A família de testes de preço (D-036–D-041) fechou sem transmissão significativa; a
+força testada da tese é clima→revisão CONAB (H1). Antes de reformular ou expandir, falta testar o
+elo que nunca foi tocado: **as ações expostas reagem?** Decisão de roteiro acordada:
+
+1. **agora (barato)**: testar a reação das ações na versão soja+milho / 4 nomes, **só no
+   desenvolvimento** — retorno de ação é o que o holdout protege;
+2. **expandir por cultura** (algodão, cana) **só se** o teste mostrar sinal de vida — cada
+   cultura é um canal independente pré-registrado (janela, sinal, UFs, nomes), motor reaproveitado;
+3. **congelar uma vez** e rodar o **holdout uma vez**. Adiar a decisão de expandir é permitido;
+   adiar para **depois** do holdout, não (seria segundo olhar no holdout). R7/R19/R22 (N pequeno)
+   permanecem; a expansão por cultura é a única forma *de princípio* de crescer (não afrouxar a
+   régua de nomes nem minerar betas — isso seria seleção pelo resultado).
+
+**Pré-registro do teste (congelado antes do resultado; ordem provada no git).** Implementação em
+`scripts/build_equity_returns.py`, `stats/equity_reaction.py`, `scripts/run_equity_reaction.py`.
+
+- **Universo**: os 4 nomes diretos, com entrada PIT pelos vintages da matriz (`exposure_asof`).
+- **Sinal**: score `S_i(t) = Σ_c E_i,c(t) · Shock_c(t)` — matriz de exposição as-of `t` × Shock
+  nacional as-of `t` (cultura com janela não iniciada contribui 0). Observado em fins de mês
+  dentro das janelas das culturas, nas safras de desenvolvimento (2015/16–2019/20). O Shock
+  nacional aqui é **equal-weighted** entre as UFs primárias (não a ponderação D-028 por safra
+  CONAB anterior, que só existe de 2017/18 e reduziria o dev a 2 safras): simplificação
+  **declarada** para o diagnóstico cobrir o desenvolvimento inteiro (5 safras); a ponderação de
+  produção D-028 fica para o backtest congelado.
+- **Desfecho**: retorno total forward do nome sobre os próximos `H=21` pregões, com execução em
+  **D+1** (motor de retorno total PIT, D-014).
+- **Teste primário**: painel pooled com retorno **demeanado na seção transversal por data**
+  (remove o componente comum/mercado) regredido no score demeanado; OLS agrupado por ano-safra +
+  bootstrap. Sinal esperado `β>0` (nome com score maior rende mais que os pares na mesma data).
+  Neutro a mercado por construção.
+- **Secundário**: retorno médio forward da carteira dollar-neutral ponderada pelo score (o P&L) e
+  por nome.
+- **Perímetro**: **desenvolvimento apenas** (≤2019/20); holdout 2020-2025 lacrado.
+- **Regra de leitura (direcional, amostra pequena)**: `β>0` com p unilateral < 0,10 ⇒ o sinal
+  ordena os nomes ⇒ o mecanismo chega ao equity ⇒ vale congelar e considerar a expansão por
+  cultura. Nulo/negativo ⇒ a reação não aparece nem no desenvolvimento ⇒ reconsiderar antes de
+  gastar o holdout.
+
+**Custo/limitação.** Dev tem ~2-5 safras e 4 nomes (SLCE3 só a partir de 2018) ⇒ baixo poder; é
+diagnóstico direcional, não veredito de lucro. Eventos B3 vêm de endpoint frágil (retentativa no
+build). Nenhuma medida será trocada após ver o resultado.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
