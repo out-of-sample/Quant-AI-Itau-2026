@@ -28,8 +28,8 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo fundamental direto é estreito** — quatro nomes de grãos no teste primário e SMTO3 como satélite de evidência inferior | **Confirmada** | Alto | Não fabricar exposição; teste primário restrito aos quatro grãos; caps 0,40/0,15 e redução de bruto quando necessário (D-053). Método B só como robustez identificada | 🟡 Estrutura resolvida; poder e concentração seguem como limitações |
-| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Congelar cenário de aluguel e indisponibilidade na Fase 4.0. Long-only com hedge, se mantido, é análise separada pré-registrada — não resgate post-hoc | Aberto — depende da modelagem operacional |
-| R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | Reportar a capacidade estimada explicitamente | Aceito |
+| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | D-055 exige evidência B3 PIT em 5 pregões, posição ≤1% do estoque alugado e custo com piso de 5% a.a.; se qualquer short falhar, o bloco inteiro não abre. Long-only não resgata o primário | 🟡 Regra resolvida; viabilidade empírica depende da ingestão do BDI |
+| R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | D-055 fixa AUM de R$500 mil, ADTV21 ≥R$8 mi, ordem ≤5% do ADTV e short ≤1% do estoque alugado; reportar mínimo/P10/mediana | 🟡 Métrica congelada; capacidade será medida na Fase 4 |
 | R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido operacionalmente**; reforço das poucas datas com fonte única em PT-005 |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
@@ -45,7 +45,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Fama–MacBeth suspenso e substituído em D-053 por spread/painel nos quatro grãos, cluster por ano-safra e permutação unilateral | 🟢 Desenho substituto congelado; poder continua limitado por R1 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
 | R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Submodelo separado; SMTO3 entra só na carteira, cap 0,15, e fica fora do teste primário; JALL3 excluída. Reportar p=0,12/bootstrap p=0,27 (D-052/D-053) | 🟡 Tratamento congelado; ATR≠receita permanece ressalva aberta |
-| R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitem escolhas | Confirmada | Existencial | Fase 4.0 obrigatória e return-agnóstica; congelar cada item antes do primeiro P&L da máquina; holdout negado por padrão. Auditoria também corrigiu water-filling que podia violar cap | 🔴 Aberto — bloqueia a implementação do motor e qualquer acesso ao holdout |
+| R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitiam escolhas | Confirmada | Existencial | D-055 tornou os sete blocos executáveis em `operational_spec.py`, com tripwires e holdout negado por padrão | 🟢 **Resolvido — Fase 4.0 encerrada sem P&L** |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -1856,6 +1856,62 @@ em D-053. Isso corrige a implementação do contrato, sem alterar nenhuma decis�
 ela não autorizava calcular o backtest nem garantia que cada detalhe operacional estivesse
 fechado. A Fase 4 ganha um gate adicional e pode levar mais tempo, mas elimina escolhas pós-P&L
 e torna a rodada do holdout auditável.
+
+---
+
+### D-055 — Contrato operacional completo da Fase 4.0, anterior ao P&L
+**Data**: 2026-07-20
+
+Os sete graus de liberdade de D-054 foram fechados sem carregar retorno nem calcular P&L. O
+contrato executável está em `src/quantagro/backtest/operational_spec.py` e seus invariantes em
+`tests/test_operational_spec.py`.
+
+**Calendário.** Cada safra usa blocos contíguos e não sobrepostos de 21 pregões. A primeira
+decisão é o primeiro pregão em ou após 7/jan do segundo ano da safra; executa-se no close do
+pregão seguinte. O close de saída após 21 intervalos é também o close de entrada do bloco
+seguinte. O primeiro ponto da grade em ou após 7/set é a última decisão; ao fim desse bloco, a
+carteira fica zerada. Informação entre decisão e execução não altera a ordem.
+
+**Score.** Grãos usam `−(E_soja·Shock_soja + E_milho·Shock_milho)`. Janela ainda não iniciada
+contribui zero sem renormalizar `E`; dado ausente/indefinido falha alto. A cana agrega GO, MG,
+MS, PR e SP com pesos CONAB anteriores, em escala z 1:1. O cap de 15% é seu único *haircut*;
+SMTO3 fica fora do *demean* antes do primeiro prefixo de maturação. Teste primário usa somente
+grãos; carteira acrescenta SMTO3 quando ativa.
+
+**Universo incompleto.** Exigem-se ao menos um produtor e um processador de grãos válidos e
+elegíveis. Sem qualquer lado, o bloco inteiro é zerado; SMTO3 não substitui o núcleo. Ausência
+de close de execução/saída sem evento terminal auditado bloqueia o bloco, em vez de trocar o
+preço ou descartar o nome.
+
+**Inferência.** Em cada ano-safra calcula-se a inclinação do painel transversal demeanado nos
+quatro grãos; a estatística é a média com peso igual dos cinco anos do holdout. O teste
+unilateral enumera os `2⁵=32` *sign flips* dos clusters inteiros. Não há semente nem aproximação;
+`p=#(T_perm≥T_obs)/32`. H′ passa se `T_obs>0` e `p≤0,10`. As cinco safras e todos os blocos
+pré-declarados são obrigatórios.
+
+**Investibilidade.** Patrimônio de referência = R$500 mil; ADTV21 encerrado em D ≥R$8 milhões;
+ordem ≤5% do ADTV. Custo-base à vista, em bps do notional, é
+`3,5 B3 + 2 corretagem + 5 execução + 10·sqrt(participação/1%)`. O short exige negócio B3 nos
+cinco pregões anteriores, posição ≤1% do estoque alugado e taxa
+`max(taxa PIT,5%)+tarifa B3+1%` a.a. Sem evidência para qualquer short, o bloco não abre.
+Cenários zero/base/2× mantêm a mesma investibilidade; zero remove só custo monetário. Não há
+cap de turnover. Capacidade é o mínimo entre limites do à vista e do aluguel.
+
+**Partição e segurança.** Dev = safras 2015/16–2018/19 com saída até 31/12/2019. A safra
+2019/20 é excluída integralmente. Holdout = somente 2020/21–2024/25, com saída até 31/12/2025,
+e permanece negado por padrão até a Fase 6. Bloco de fronteira não é truncado.
+
+**Por quê.** Blocos de 21 pregões preservam literalmente o horizonte congelado sem cohorts
+sobrepostos; peso igual por safra respeita o N efetivo; o piso de ADTV fecha algebricamente a
+pior reversão de peso permitida (`0,80×R$500 mil/R$8 mi=5%`); a política de aluguel impede que
+um cenário monetário transforme short inexistente em operação possível.
+
+**Custo/limitação.** A escolha abre mão da atualização diária e pode ficar zerada quando um
+lado ou aluguel falha. Tarifas históricas, corretagem, spread e profundidade não são
+reconstruídos perfeitamente; a regra usa hipóteses uniformes conservadoras. Estoque negociado
+é proxy, não garantia de doador. A safra 2019/20 é perdida para preservar simultaneamente o
+lacre civil e os cinco clusters pré-registrados. R25 fica resolvido; R8/R9 passam a riscos
+mensuráveis, não eliminados.
 
 ---
 

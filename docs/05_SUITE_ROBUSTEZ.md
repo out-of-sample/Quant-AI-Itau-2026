@@ -133,7 +133,7 @@ que o resultado não desmorona na vizinhança. Tabela no relatório.
 | Lag de publicação | 7 dias | 0, 3, 14, 21 | ver §2.3 |
 | Método de exposição `E` | fundamentalista (A) | estatístico (B) | os dois discordam completamente |
 | Cap por nome | 0,40 por grão; 0,15 SMTO3 (D-053) | vizinhos simétricos pré-registrados na Fase 5 | resultado depende de uma única posição concentrada |
-| Filtro de liquidez (ADTV) | valor a congelar na Fase 4.0 | ±50% do valor congelado | alfa só existe nos nomes ilíquidos ⇒ não é operável |
+| Filtro de liquidez (ADTV) | R$ 8 milhões, 21 pregões (D-055) | R$ 4 mi e R$ 12 mi | alfa só existe nos nomes ilíquidos ⇒ não é operável |
 
 > **Interpretação correta de uma tabela de sensibilidade**: não estamos procurando o melhor
 > valor. Estamos provando que a escolha primária **não foi garimpada**. Se o Sharpe é 1.8 no

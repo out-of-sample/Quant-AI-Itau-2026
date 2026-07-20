@@ -270,20 +270,21 @@ o desenho. O antigo Backtest B amplo deixa de ser promessa; só pode existir com
 identificada se surgir exposição direta admissível.
 
 Andamento:
-- 🔄 **4.0 — auditoria e fechamento operacional (D-054):** a revisão de transição encontrou
-  graus de liberdade que D-053 não tornou executáveis — calendário, composição dos scores,
-  universo incompleto, permutação, custos/liquidez e fronteiras temporais. Eles serão congelados
-  sem P&L antes do motor. O defeito de water-filling identificado na auditoria foi corrigido e
-  ganhou teste de regressão.
-- ⬜ **4.1 — motor vetorizado:** posições-alvo, execução no primeiro pregão após D, horizontes,
-  posições sobrepostas, retorno bruto/líquido e turnover.
+- ✅ **4.0 — contrato operacional fechado sem P&L (D-054/D-055):** grade de blocos não
+  sobrepostos de 21 pregões, score multicanal, política sem produtor/processador, permutação
+  exata de 32 estados, ADTV/custos/aluguel/capacidade, fronteiras e bloqueio do holdout estão
+  executáveis em `backtest/operational_spec.py`. A safra 2019/20 foi excluída para não cruzar o
+  lacre civil; o defeito de water-filling da auditoria também foi corrigido e testado.
+- ⬜ **4.1 — motor vetorizado:** materializar scores e posições-alvo, executar a grade D→X,
+  calcular retorno bruto/líquido e turnover sem permitir acesso ao holdout.
 - ⬜ **4.2 — fricções e investibilidade:** taxas, slippage, aluguel, ADTV e capacidade nos
   cenários pré-registrados.
 - ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
   de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
 
-> **Portão:** contrato operacional completo + testes mecânicos e bloqueio técnico do holdout.
-> Nenhum Sharpe do desenvolvimento pode escolher parâmetros.
+> **Portão 4.0: ATRAVESSADO em 2026-07-20 (D-055).** Próximo passo: motor vetorizado no
+> desenvolvimento. O portão completo da Fase 4 ainda exige testes mecânicos e bloqueio técnico
+> integrado ao motor. Nenhum Sharpe do desenvolvimento pode escolher parâmetros.
 
 ### Fase 5 — Robustez
 

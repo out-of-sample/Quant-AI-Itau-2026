@@ -1106,6 +1106,35 @@ tratar a implementação futura como preenchimento neutro.
 
 ---
 
+## 2026-07-20 (noite) — Fechamento operacional return-agnóstico da Fase 4.0 (D-055)
+
+**Uso**: transformar os sete graus de liberdade de D-054 em contrato executável antes do
+primeiro P&L da máquina. Duas auditorias independentes trabalharam em paralelo: uma reconciliou
+calendário, score, universo incompleto e partição temporal com o código; outra pesquisou custos,
+liquidez e aluguel em fontes primárias.
+
+**Valor real**: a revisão encontrou a solução conservadora para a colisão entre o horizonte de
+21 pregões e sinais persistentes: uma grade de blocos contíguos, sem cohorts sobrepostos, entre
+jan/set de cada safra. Também explicitou que o demean poderia fabricar long/short entre duas
+produtoras quando faltasse o processador; agora o bloco fica zerado sem os dois lados. A
+inferência virou enumeração exata dos 32 sign-flips dos cinco anos-safra, sem t assintótico
+frágil. O piso de ADTV foi derivado do pior Δpeso permitido, não escolhido por Sharpe.
+
+**Validação humana/mecânica**: as recomendações foram cruzadas com `shock.py`,
+`cane_shock.py`, `exposure.py`, `universe.py` e D-008/D-053. Testes sintéticos travam D+1, 21
+intervalos sem retorno duplicado, score soja+milho sem renormalização, cinco UFs da cana,
+produtor+processador, exclusão de 2019/20, holdout fechado, 32 permutações e álgebra de
+custos/capacidade. Nenhum retorno ou P&L foi carregado.
+
+**O que a IA errou**: a pesquisa de custos trouxe 3,45 bps de uma página oficial da B3, mas a
+página era de outro segmento, não a tabela correta de ações listadas. A conferência na fonte
+específica encontrou 3,0 bps em operação regular e 3,2 bps no leilão de fechamento. O contrato
+usa 3,5 bps arredondados para cima e documenta a escolha. A auditoria de código inicialmente
+propôs aceitar blocos parcialmente ausentes; isso foi endurecido: preço ou evento terminal
+faltante bloqueia o bloco até auditoria, em vez de criar seleção de amostra silenciosa.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

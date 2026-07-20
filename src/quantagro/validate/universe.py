@@ -10,8 +10,8 @@ no pregão `t` se, e somente se:
 (iv)  tem exposição fundamentalista definida — critério aplicado via `tickers` (whitelist),
       porque a matriz `E` é da camada de features, não desta.
 
-O piso de ADTV **não tem default de propósito**: seu valor é decisão de calibração in-sample
-(04_PROTOCOLO §3), não desta camada.
+O piso de ADTV **não tem default de propósito**: a camada continua reutilizável, mas o backtest
+primário passa explicitamente R$ 8 milhões, congelados sem P&L em D-055 (04_PROTOCOLO §4).
 
 Duas propriedades importam mais que tudo:
 - **Deslistagem não apaga o passado**: o papel sai do universo quando para de negociar, mas
