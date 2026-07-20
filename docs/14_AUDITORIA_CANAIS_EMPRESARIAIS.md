@@ -125,6 +125,13 @@ negativo. Duas leituras não resolvidas: transmissão fraca ao preço **mundial 
 suporte empírico; a decisão de reformular o long / pré-registrar diagnóstico contemporâneo ou em
 BRL (CEPEA) / reduzir ao processador é o próximo passo. Detalhe em `07` D-037.
 
+**Diagnósticos (D-038 pré-registro / D-039 resultado, 2026-07-20).** Os quatro desfechos pooled
+span cheio deram **nulo**: contemporâneo USD −0,001, contemporâneo BRL +0,005, forward USD
+−0,017, forward BRL +0,004 — nenhum significativo. O contemporâneo ≈ zero **descarta** a leitura
+"reage na janela e reverte". O canal de preço mundial (USD e proxy BRL) **não resgatado**. Resta
+o teste do **preço local CEPEA** (base brasileira, o preço certo para o processador), como último
+teste de preço; se nulo, mecanismo de preço morto. Detalhe em `07` D-039.
+
 ### H2b — reação à publicação CONAB — diagnóstico
 
 Pergunta: a surpresa do levantamento move o preço ao redor da divulgação?

@@ -265,6 +265,132 @@ def run_h2a(panel: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def _base_month(crop: str, ano: str) -> pd.Timestamp:
+    """Fim do mês ANTERIOR ao início da janela nacional — base do retorno contemporâneo."""
+    start, _ = _national_window(crop, ano)
+    prev = pd.Timestamp(start).replace(day=1) - pd.Timedelta(days=1)
+    return prev.normalize()
+
+
+def _brl_lookup(usd_price: pd.Series, fx: pd.DataFrame) -> pd.Series:
+    """Preço em BRL = preço USD × câmbio (BRL/USD), alinhado por fim de mês."""
+    f = fx.set_index("ref_date")["brl_per_usd"]
+    f = f[~f.index.duplicated()]
+    return (usd_price * f).dropna()
+
+
+def build_h2a_diag_panel(
+    prices: pd.DataFrame,
+    fx: pd.DataFrame,
+    municipal_stamped: pd.DataFrame,
+    pam_panel: pd.DataFrame,
+    conab: pd.DataFrame,
+    climatology_first_year: int,
+    bases: range = range(2018, 2025),
+) -> pd.DataFrame:
+    """Painel dos diagnósticos de H2a (D-038): desfecho contemporâneo e em BRL, no h primário.
+
+    Reaproveita ``_national_shocks``. Para cada observação (fim de mês na janela):
+    - ``contemp_usd`` / ``contemp_brl``: ``log(P[m]/P[base])``, base = mês anterior ao início da
+      janela — mede se o preço JÁ se moveu com o choque **dentro** da janela (não é preditivo,
+      é diagnóstico; nunca vira sinal negociável);
+    - ``fwd_usd`` / ``fwd_brl``: ``log(P[m+h]/P[m])`` no horizonte primário (comparável a H2a).
+    """
+    conab_stamped = _stamp_grains(conab)
+    obs_points = [
+        (crop, f"{base}/{(base + 1) % 100:02d}", t)
+        for crop in CROPS
+        for base in bases
+        for t in _obs_month_ends(crop, f"{base}/{(base + 1) % 100:02d}")
+    ]
+    shocks = _national_shocks(
+        obs_points, municipal_stamped, pam_panel, conab_stamped, climatology_first_year
+    )
+    usd_by_crop = {crop: _price_lookup(prices, crop) for crop in CROPS}
+    brl_by_crop = {crop: _brl_lookup(usd_by_crop[crop], fx) for crop in CROPS}
+    h = PRIMARY_HORIZON
+    rows = []
+    for crop, ano, t in obs_points:
+        shock = shocks.get((crop, ano, t))
+        if shock is None:
+            continue
+        usd, brl = usd_by_crop[crop], brl_by_crop[crop]
+        base_m = _base_month(crop, ano)
+
+        def contemp(series: pd.Series, base_m=base_m, t=t) -> float:
+            p0, p1 = series.get(base_m), series.get(t)
+            if p0 is None or p1 is None or not (p0 > 0 and p1 > 0):
+                return np.nan
+            return float(np.log(p1 / p0))
+
+        rows.append(
+            {
+                "crop": crop,
+                "ano_agricola": ano,
+                "base_year": int(ano[:4]),
+                "obs_month": t.strftime("%Y-%m"),
+                "shock": shock,
+                "contemp_usd": contemp(usd),
+                "contemp_brl": contemp(brl),
+                "fwd_usd": _fwd_return(usd, t, h),
+                "fwd_brl": _fwd_return(brl, t, h),
+                "cluster": f"{crop}:{ano}",
+            }
+        )
+    panel = pd.DataFrame(rows)
+    if panel.empty:
+        raise ValueError("nenhuma observação de diagnóstico H2a computável")
+    panel["sample"] = np.where(panel["base_year"] <= DEV_LAST_BASE, "dev", "holdout")
+    return panel.sort_values(["crop", "ano_agricola", "obs_month"]).reset_index(drop=True)
+
+
+DIAG_OUTCOMES = ("contemp_usd", "contemp_brl", "fwd_usd", "fwd_brl")
+
+
+def run_h2a_diag(panel: pd.DataFrame) -> pd.DataFrame:
+    """Regressões dos diagnósticos: cada desfecho ~ Shock, por escopo × pooled/cultura (β>0).
+
+    Diagnóstico, não portão: informa a leitura (transmissão contemporânea vs. forward; USD vs.
+    BRL), sem poder de veto próprio.
+    """
+    rows = []
+    scopes = {
+        "full": panel,
+        "dev": panel[panel["sample"] == "dev"],
+        "holdout": panel[panel["sample"] == "holdout"],
+    }
+    for outcome in DIAG_OUTCOMES:
+        for scope_name, scope in scopes.items():
+            for label, crop in [("pooled", None)] + [(c, c) for c in CROPS]:
+                sub = scope if crop is None else scope[scope["crop"] == crop]
+                sub = sub.dropna(subset=[outcome, "shock"])
+                if sub["cluster"].nunique() < 2 or len(sub) < 3:
+                    continue
+                if crop is None:
+                    x = (sub["shock"] - sub.groupby("crop")["shock"].transform("mean")).to_numpy()
+                    y = (sub[outcome] - sub.groupby("crop")[outcome].transform("mean")).to_numpy()
+                else:
+                    x, y = sub["shock"].to_numpy(), sub[outcome].to_numpy()
+                clusters = sub["cluster"].to_numpy()
+                res = ols_cluster(x, y, clusters, f"diag:{outcome}:{scope_name}:{label}")
+                boot = cluster_bootstrap(x, y, clusters)
+                rows.append(
+                    {
+                        "outcome": outcome,
+                        "scope": scope_name,
+                        "unit": label,
+                        "n": res.nobs,
+                        "n_clusters": res.n_clusters,
+                        "beta": res.beta,
+                        "tstat": res.tstat,
+                        "boot_p_one_sided": _one_sided_p(res.beta, boot["pvalue"]),
+                        "ci_low": res.ci_low,
+                        "ci_high": res.ci_high,
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
 @dataclass(frozen=True)
 class H2aVerdict:
     """Veredito do portão do lado long (D-036)."""

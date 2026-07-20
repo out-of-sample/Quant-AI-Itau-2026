@@ -1049,6 +1049,95 @@ veio. Nenhuma troca de fonte ou horizonte foi feita para melhorá-lo.
 
 ---
 
+### D-038 — Pré-registro dos diagnósticos de H2a: contemporâneo e BRL (não-veto)
+**Data**: 2026-07-20
+
+Especificação **congelada antes do resultado** (ordem provada no git). Implementação em
+`stats/h2a.py` (`build_h2a_diag_panel`, `run_h2a_diag`), `ingest/fred_prices.py` (câmbio),
+`scripts/run_h2a_diag.py`. Motivação: D-037 deu forward-negativo ao preço mundial USD, com duas
+leituras não distinguíveis (transmissão fraca ao USD vs. reação contemporânea + reversão
+invisível a um teste forward). Estes diagnósticos separam as leituras **sem** trocar o primário
+de H2a (isso seria resgate post-hoc); são diagnósticos, **sem poder de veto próprio**.
+
+**Fonte adicional.** Câmbio BRL/USD mensal FRED `EXBZUS` (vintage-estável, sem chave). Preço em
+BRL = preço mundial USD × câmbio — proxy da receita do produtor pelo canal de câmbio.
+
+**Testes (todos com sinal esperado `β>0`), regressor = Shock nacional as-of `t`:**
+- `contemp_usd` / `contemp_brl`: `log(P[m]/P[base])`, base = mês anterior ao início da janela —
+  mede se o preço JÁ se moveu com o choque **dentro** da janela. É **contemporâneo**, não
+  preditivo ⇒ diagnóstico explicativo, **nunca vira sinal negociável**;
+- `fwd_usd` / `fwd_brl`: `log(P[m+3]/P[m])` no horizonte primário — compara com D-037 e isola o
+  canal de câmbio (BRL vs USD).
+
+**Inferência e perímetro.** Iguais a H2a: cluster por ano-safra × cultura + bootstrap; pooled
+com efeito fixo de cultura; span cheio com dev/holdout separados. Diagnóstico, não portão.
+
+**Regra de leitura (pré-registrada).**
+1. se `contemp_*` `β>0` significativo (USD ou BRL) ⇒ o preço reage **contemporaneamente** ao
+   choque (leitura 2); o forward-negativo de D-037 é reversão, não ausência de transmissão ⇒ o
+   canal de preço `P` é plausível e o long pode seguir com ressalva e confirmação no holdout;
+2. se `fwd_brl` `β>0` enquanto `fwd_usd` ~0/negativo ⇒ a transmissão está no **câmbio/base** ⇒
+   canal `P` via BRL;
+3. se todos forem nulos/negativos ⇒ leitura 1 (sem transmissão) confirmada ⇒ reduzir a tese ao
+   lado processador (canal `C`, D-035) ou reformular o long.
+
+**Custo/limitação.** O contemporâneo não é preditivo — informa a economia, não gera posição.
+BRL via (mundial × câmbio) é proxy: falta a **base local** brasileira (CEPEA), declarada como
+robustez futura, não reconstruída aqui. N pequeno (safra anual) ⇒ leitura direcional, não veto.
+
+---
+
+### D-039 — Resultado dos diagnósticos: canal de preço mundial NÃO resgatado; resta o local (CEPEA)
+**Data**: 2026-07-20
+
+Rodada única do spec pré-registrado D-038, sem alterar nada após ver o número. Artefatos em
+`data/processed/h2a_diag_{panel.parquet,results.csv}`. 49 obs, 14 clusters.
+
+**Leitura confiável (pooled, span cheio, 14 clusters):**
+
+| Desfecho | β (esperado >0) | p unilateral (bootstrap) |
+|---|---|---|
+| contemporâneo USD | −0,0013 | 0,54 |
+| contemporâneo BRL | +0,0045 | 0,39 |
+| forward USD (= D-037) | −0,0166 | 0,89 |
+| forward BRL | +0,0041 | 0,43 |
+
+**Nenhum é significativo.** Aplicando a regra de leitura de D-038:
+1. o **contemporâneo** deu ≈ zero (não positivo significativo) ⇒ a leitura "o preço reage
+   dentro da janela e reverte" **não se sustenta**; o forward-negativo de D-037 não é artefato de
+   reversão de um efeito contemporâneo — o efeito contemporâneo também está ausente;
+2. a conversão para **BRL** vira o forward de −0,017 (USD) para +0,004, direção coerente com um
+   canal de **câmbio**, mas não significativo ⇒ sinal fraco, não conclusivo;
+3. no nível do preço **mundial** (USD) e do proxy **mundial×câmbio** (BRL), o quadro é de
+   **nulo generalizado**.
+
+**Conclusão honesta.** O canal de preço `P` do produtor, medido no preço mundial e no proxy
+BRL, **não tem suporte empírico**. A ponta long "comprar produtor porque o choque eleva o preço
+que ele recebe" não se confirmou em quatro medidas (forward/contemporâneo × USD/BRL).
+
+**A porta que resta é distinta, não é insistência.** O proxy BRL = mundial × câmbio **não** tem
+a **base local** brasileira (CEPEA/ESALQ), e é justamente o preço **local** que um choque
+doméstico moveria primeiro (oferta/logística/basis interno). Além disso, o preço local é o preço
+**economicamente certo para o lado processador** (a BRF compra milho **brasileiro**, D-035),
+que estes diagnósticos **não** testaram e **não** derrubam. Um pequeno indício positivo aparece
+só no milho contemporâneo (holdout significativo, N pequeno), não na soja.
+
+**Consequência.** Evidência forte contra o long de produtor pelo **preço mundial**. O teste
+decisivo restante é o **preço local CEPEA** (pré-registrado como robustez em D-038/D-025), que
+resolve tanto o preço realizado do produtor quanto o custo do processador. Recomenda-se como o
+**último** teste de preço antes de decidir o rumo: se o CEPEA também for nulo, o mecanismo de
+preço está morto e a tese precisa ser reformulada ou reduzida; se o CEPEA local transmitir, o
+lado **processador** (canal `C`) é o sobrevivente natural. R20 permanece 🔴; o passo do preço na
+cadeia clima→safra→**preço**→ação está sob dúvida direta, o que aproxima R2 (estratégia ser só
+beta de commodity) do centro da discussão.
+
+**Custo/honestidade.** Quatro medidas de preço pré-registradas deram nulo e foram reportadas
+como vieram. Nenhuma foi trocada ou re-especificada para melhorar. O CEPEA é uma fonte
+economicamente distinta (base local), não uma quinta tentativa da mesma coisa — mas será o
+último teste de preço, para não virar busca por especificação.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

@@ -215,10 +215,10 @@ não dimensiona o experimento primário (D-026). Calibração
   concluída, com lacunas declaradas (D-035; `14` §9; `data/reference/corporate_audit_v1.json`)
 - ✅ decisão do fork `P/Q/C`: `P`/`Q` **não são PIT-separáveis** ⇒ mantém-se a matriz D-033
   (opção 1), materialidade atenuada como sensibilidade, **long condicionado a H2a** (D-035)
-- ⚠️ H2a executado (D-036 pré-registro / D-037 resultado): transmissão ao preço mundial FRED
-  **NÃO confirmada** — β=−0,017 no spec primário, inconclusivo-negativo. O canal `P` do lado
-  long ficou sem suporte empírico; decidir reformular o long / diagnóstico contemporâneo/BRL /
-  reduzir ao processador antes de score e carteira. Manter H2b como diagnóstico
+- ⚠️ H2a executado (D-036/D-037) + diagnósticos (D-038/D-039): transmissão do `Shock` ao preço
+  **mundial** (USD e proxy BRL) **NÃO confirmada** em 4 medidas (forward/contemporâneo × USD/BRL),
+  todas nulas. O canal `P` do produtor por preço mundial está sem suporte. Último teste de preço
+  pendente = **CEPEA local** (base brasileira; preço certo do processador). Manter H2b diagnóstico
 - ⬜ substituir o H3/Fama–MacBeth por teste compatível com apenas três a quatro ações
 - ⬜ resolver R19 sem consultar retornos e construir carteira dollar-neutral, sem presumir
   neutralidade a beta, fatores ou commodities

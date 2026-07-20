@@ -1,0 +1,12 @@
+{
+  "source": "FRED",
+  "series_id": "EXBZUS",
+  "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=EXBZUS",
+  "unit": "Brazilian Reais per US Dollar, monthly average",
+  "latest_ref_date": "2026-06-30",
+  "latest_value": 5.1241,
+  "n_obs": 378,
+  "sha256": "c37d716964cfbf8ad643cda2f3310a3bc824100a527ba4f5fb1ae9838ea755c8",
+  "bytes": 6828,
+  "downloaded_at": "2026-07-20T03:21:32.765202+00:00"
+}
