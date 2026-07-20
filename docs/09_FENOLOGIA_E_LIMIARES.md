@@ -272,6 +272,11 @@ Fontes oficiais verificadas antes do teste:
 - Embrapa, [Clima](https://www.embrapa.br/en/web/agencia-de-informacao-tecnologica/cultivos/cana-de-acucar/pre-producao/caracteristicas/clima): água é essencial ao crescimento e a maturação interrompe crescimento vegetativo para acumular sacarose;
 - CONAB, [Safra de cana-de-açúcar](https://www.gov.br/conab/pt-br/atuacao/informacoes-agropecuarias/safras/safra-de-cana-de-acucar): quatro levantamentos anuais e boletins oficiais usados no calendário point-in-time.
 
+**Resultado D-051.** Maturação/ATR passou o critério direcional: β `+0,0134`, 8/8 exclusões
+de safra e 5/5 UFs positivas, mas sem significância convencional ou por bootstrap. O
+diagnóstico crescimento/tonelagem teve β `−0,0061`, sinal esperado porém fraco. Isso valida
+com ressalva a separação fenológica; não prova receita nem retorno de usina.
+
 **NDVI/INPE Brazil Data Cube**
 
 O WTSS do INPE foi testado com MODIS `mod13q1-6.1`/`myd13q1-6.1` (16 dias, 250 m; série desde

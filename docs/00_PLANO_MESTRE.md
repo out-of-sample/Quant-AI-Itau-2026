@@ -241,9 +241,10 @@ não dimensiona o experimento primário (D-026). Calibração
     CONAB em 2022/23–2024/25. O β agrupado foi **+0,042**, contrário ao esperado; BA, MT, as
     três safras e as três estimativas *leave-one-safra-out* também foram positivas. O critério
     congelado exigia β<0 e ao menos 2/3 LOO<0; o algodão fica fora do score.
-  - 🔬 **cana — contrato e portão pré-registrados** (D-050): SP+MG+GO+MS+PR; maturação
-    jun–ago/ATR é o teste primário, crescimento dez–fev/tonelagem é diagnóstico incapaz de
-    resgatar o canal. Próximo: materializar dados, executar uma vez e registrar o veredito.
+  - ✅ **cana — mecanismo físico corroborado, com ressalva** (D-050/D-051): maturação
+    jun–ago→ATR passou a regra direcional (β `+0,0134`, 8/8 LOO e 5/5 UFs positivas), mas sem
+    significância (p `0,12`; bootstrap `0,27`). Crescimento→tonelagem veio negativo e fraco.
+    Próximo portão: auditoria PIT de SMTO3/JALL3 antes de traduzir ATR em posição financeira.
 - ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
   sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.
   Substituir H3/Fama–MacBeth por desenho compatível com o N (spread de evento / painel com

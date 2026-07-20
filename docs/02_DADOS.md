@@ -75,6 +75,15 @@ escolhidas à mão. O carimbo `avail_date` é **por produto** (`features/shock.p
 (conservador vs. a publicação ~1 mês depois). `kind` (prelim/final) permanece como eixo de
 vintage — um lag único superestimaria a disponibilidade do `final`.
 
+**Produto mensal para cana (D-050/D-051).** As pastas oficiais `global_monthly/tifs` e
+`prelim/global_monthly/tifs` preservam os acumulados mensais final e prelim separadamente.
+Como as fases da cana são meses civis completos, esse produto soma a mesma quantidade física
+e reduz a captura de milhares de rasters diários para **198 mensais**. A captura validada ao
+vivo contém 150 finais (climatologia desde 2000) e 48 preliminares (oito safras × seis meses),
+com URL+hash em `chirps_cane_monthly_bulk.parquet`. O carimbo permanece conservador: fim do
+mês +7 dias no prelim, +60 no final; em cada levantamento entra apenas o prefixo mensal já
+público.
+
 ### 1.2 NASA POWER — temperatura e demais variáveis — **fonte secundária**
 
 | | |
@@ -260,6 +269,12 @@ desfecho é a produção CONAB de pluma, portanto não se equiparam níveis fís
 Na CONAB, as únicas safras encerradas com ao menos dois levantamentos numerados e calendário
 recuperável são 2022/23–2024/25. O teste direcional falhou (D-049), de modo que essa captura
 permanece como registro reproduzível do teste e não alimenta o score.
+
+**Captura da cana (D-050/D-051).** O produto SIDRA 2696 (`Cana-de-açúcar`) foi capturado para
+SP+MG+GO+MS+PR em 2014–2024: 24.409 linhas. SP foi acrescentado à malha municipal fixa 2013;
+as cinco UFs respondem por 87,8% da produção CONAB 2024/25. Os pesos servem somente à
+regionalização do clima. O resultado físico positivo em ATR não os transforma em exposição
+de empresa listada.
 
 **Geometria**: `ingest/ibge_geometry.py` usa a malha municipal IBGE **edição 2013** como suporte
 fixo. Seus artefatos foram gerados em 16/03/2015, antes da primeira janela operacional em

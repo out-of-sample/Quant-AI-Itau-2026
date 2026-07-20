@@ -44,6 +44,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
+| R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Manter cana como submodelo separado; auditar exposição PIT de SMTO3/JALL3 e congelar tradução econômica antes de retorno; reportar p=0,12/bootstrap p=0,27 | 🟡 Ingrediente físico corroborado, força estatística fraca; não prova ação |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -1641,6 +1642,50 @@ com tonelagem menor. O portão valida somente o ingrediente físico favorável d
 prova retorno da ação nem benefício líquido da usina. A janela fixa Centro-Sul simplifica
 diferenças locais de plantio/corte, e os vintages mensais continuam sujeitos às limitações
 documentadas do produto CHIRPS.
+
+---
+
+### D-051 — Resultado H1 da cana: canal físico corroborado, evidência fraca
+**Data**: 2026-07-20
+
+O portão D-050 foi executado uma vez, sem carregar retorno de ação. A captura contém 198 meses
+CHIRPS (150 `final`, 48 `prelim`), 439.956 agregações município×mês nas cinco UFs, zero valor
+de precipitação ausente e pesos PAM 2014–2024 para cana. O painel de regressão tem 120 linhas
+em oito anos-safra (2018/19–2025/26).
+
+**Teste primário — maturação/ATR.** O β agrupado foi **+0,0134**, com erro-padrão por safra
+`0,0086`, `t=1,55`, p bilateral `0,121` e p do bootstrap por cluster `0,273`. A estabilidade
+direcional, que era a regra de aprovação congelada, passou integralmente:
+
+- **8/8** estimativas *leave-one-safra-out* positivas (`+0,0055` a `+0,0187`);
+- **5/5** UFs positivas (GO `+0,0029`, MG `+0,0207`, MS `+0,0066`, PR `+0,0185`,
+  SP `+0,0272`).
+
+Logo, o mecanismo **inverno seco → revisão positiva de ATR** é **corroborado pelo critério
+direcional pré-registrado**. A formulação não é “comprovado”: os p-valores não rejeitam zero e
+o efeito é pequeno. A estabilidade entre UFs e exclusões anuais é evidência de sinal coerente,
+não substituto de poder estatístico.
+
+**Diagnóstico pré-declarado — crescimento/produção.** O β foi `−0,0061`, no sinal esperado,
+mas fraco (`t=−0,59`, p `0,556`, bootstrap p `0,615`) e com instabilidade anual. Como D-050
+determinava, este diagnóstico não participou do veredito e não melhora a qualificação do
+primário.
+
+**Consequência.** A cana pode prosseguir como **submodelo independente** para a próxima etapa,
+mas ainda não autoriza posição em SMTO3/JALL3. Antes de qualquer retorno é preciso auditar,
+point-in-time, se a exposição econômica dessas empresas traduz ATR favorável em receita/margem
+líquida (tonelagem, mix açúcar/etanol, cana própria/terceiros, hedge e geografia) e então
+congelar direção, sizing e regra de combinação. R24 impede transformar o passe físico em
+alegação financeira automática.
+
+O registro imutável `data/reference/cane_h1_result_v1.json` preserva os commits anteriores ao
+resultado, hashes das entradas/saídas e a leitura limitada. O manifesto consolidado
+`data/manifests/chirps_cane_monthly_bulk.parquet` preserva URL e hash dos 198 rasters.
+
+**Custo/limitação.** Há apenas oito clusters; as três observações por UF×safra são revisões
+acumuladas, não eventos independentes. ATR mede kg de açúcar recuperável por tonelada, e não
+receita total. O passo seguinte pode matar o canal mesmo com D-051 positivo — isso é uma
+barreira metodológica, não uma formalidade.
 
 ---
 
