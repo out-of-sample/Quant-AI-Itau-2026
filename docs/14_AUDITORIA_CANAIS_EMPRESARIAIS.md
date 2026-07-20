@@ -237,3 +237,40 @@ identificação: o sinal permanece o canal de preço/insumo de D-033, agora com 
 explícita de que a ponta long depende de H2a e que a materialidade real é menor que a
 participação de receita sugere. Fechar as lacunas de área-por-UF e de hedge exigiria vintage
 CVM que as fontes lidas não entregaram de forma datável.
+
+## 10. Auditoria dos veículos de cana (D-052)
+
+Auditoria PIT dos dois nomes candidatos do submodelo da cana (D-050/D-051), sem consultar
+retorno de ação, respondendo ao R24. Registro estruturado por nome, fonte e lacuna declarada em
+`data/reference/cane_corporate_audit_v1.json`. **Tier de evidência inferior ao da §9**: as
+fontes primárias CVM (formulário de referência) não foram baixadas — WebFetch deu 403 em
+XP/NovaCana e a SEC não cobre nomes só da B3 —, então os percentuais finos vêm de síntese de
+imprensa setorial/RI e ficam como lacuna declarada. A decisão não depende deles.
+
+### 10.1 Achados por nome (sem retornos)
+
+| Nome | Papel | Achado material |
+|---|---|---|
+| **SMTO3** | produtor de cana (+) | Usinas em SP (×3) + Boa Vista/GO — **dentro** do choque (SP/MG/GO/MS/PR). **~70% cana própria** (30% terceiros a CONSECANA → offset parcial do ATR). Mix ~47% açúcar; Boa Vista/GO **só etanol**. Hedge trava **~96% do preço** do açúcar ~1 safra à frente. **IPO 2007 → histórico dev + holdout completo.** |
+| **JALL3** | produtor de cana (+) | Usinas em GO (×2) + MG (adquirida 2022) — **dentro** do choque. **100% cana própria** (exposição mais limpa, sem offset CONSECANA). Mix ~50–60% açúcar, **>⅓ orgânico premium**. Hedge de preço até ~2 anos. **IPO 08/02/2021 → zero histórico no dev, só holdout.** |
+
+### 10.2 Decisão (opção 1, decidida pelo time)
+
+1. **O canal da cana é de quantidade, não de preço.** ATR = açúcar recuperável por tonelada:
+   mais ATR rende mais açúcar **e** etanol da mesma cana, então o sinal **sobrevive ao hedge de
+   preço** — ao contrário do canal de preço de grãos que falhou (D-037/D-041). É o que justifica
+   manter cana como submodelo. Mas ATR ≠ receita total, e o canal de tonelagem veio fraco em
+   D-051: o sinal físico líquido **não é provado** (R24).
+2. **SMTO3 entra no universo scoreado, com haircut declarado** (30% terceiros, hedge, GO só
+   etanol). Único veículo testável no dev e negociável no holdout. Direção +1 sob o submodelo.
+3. **JALL3 fica fora do score.** A exposição é a mais limpa, mas o IPO de fev/2021 a deixa
+   **holdout-only, sem dev**. Pôr no teste de tiro único um nome nunca validável é o risco de
+   descoberta falsa que o projeto blinda. O mecanismo já está validado por D-051 no CONAB e
+   independe do IPO; excluí-la não enfraquece o canal.
+4. **Universo scoreado = 5 nomes** (4 grãos + SMTO3). O ganho de 5→6 é marginal (~+4–8pp,
+   re-análise D-045) e não paga o custo metodológico.
+
+**Custo/limitação.** Assumimos abrir mão do nome economicamente mais limpo (JALL3) em nome da
+disciplina PIT, e um tier de evidência menor que o das §9 (percentuais finos = lacuna). O peso
+da SMTO3 no score, refletindo a força estatística fraca da cana, é decidido no congelamento da
+Fase 3.5, apenas no desenvolvimento.
