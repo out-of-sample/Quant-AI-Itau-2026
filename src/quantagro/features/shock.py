@@ -54,6 +54,7 @@ PAM_CROP_FOR: dict[str, str] = {
     "soy": "soy",
     "corn_second": "corn_total",
     "cotton": "cotton",
+    "sugarcane": "sugarcane",
 }
 
 # Lags de publicação por produto CHIRPS (dias corridos): prelim é o caso primário congelado

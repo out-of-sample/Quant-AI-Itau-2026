@@ -20,8 +20,10 @@ from quantagro.ingest.chirps import (
     GeoTransform,
     assert_global_grid,
     build_chirps_panel,
+    chirps_monthly_url,
     chirps_url,
     download_chirps,
+    download_chirps_monthly,
     extract_boxes,
     read_chirps_grid,
 )
@@ -50,6 +52,14 @@ class TestUrl:
             chirps_url("2013-01-15", "prelim")
         # O produto final histórico existe e continua sendo válido para climatologia.
         assert "/2013/" in chirps_url("2013-01-15", "final")
+
+    def test_mensal_preserva_produto_prelim_e_final(self):
+        assert chirps_monthly_url("2024-01-15", "final").endswith(
+            "/global_monthly/tifs/chirps-v2.0.2024.01.tif.gz"
+        )
+        assert chirps_monthly_url("2024-01-15", "prelim").endswith(
+            "/prelim/global_monthly/tifs/chirps-v2.0.2024.01.tif"
+        )
 
 
 class TestReadGrid:
@@ -201,3 +211,16 @@ class TestDownload:
     def test_kind_invalido(self):
         with pytest.raises(ValueError, match="kind desconhecido"):
             download_chirps("2024-01-15", "xxx")
+
+    def test_mensal_normaliza_mes_e_grava_manifesto(self, tmp_path):
+        sess = _FakeSession(FINAL.read_bytes())
+        out = download_chirps_monthly(
+            "2024-01-15",
+            "final",
+            dest_dir=tmp_path / "raw",
+            manifest_dir=tmp_path / "man",
+            session=sess,
+        )
+        assert out.name == "chirps-v2.0.2024.01.final.tif.gz"
+        manifest = next((tmp_path / "man").glob("chirps_monthly_final_20240131.json"))
+        assert '"ref_date": "2024-01-31"' in manifest.read_text()

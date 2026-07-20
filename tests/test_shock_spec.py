@@ -4,6 +4,8 @@ import pandas as pd
 import pytest
 
 from quantagro.features.shock_spec import (
+    CANE_GROWTH_WINDOWS,
+    CANE_MATURATION_WINDOWS,
     CLIMATOLOGY_KIND,
     COTTON_WINDOWS,
     EXPANDING_STD_DDOF,
@@ -14,6 +16,7 @@ from quantagro.features.shock_spec import (
     PRIMARY_SIGNAL_KIND,
     PRIMARY_WINDOWS,
     REGIONALIZATION,
+    cane_windows,
     critical_period,
     crop_year_start,
     windows_for_crop,
@@ -103,6 +106,24 @@ def test_contrato_algodao_congelado():
     assert (mt_f.month, mt_f.day) == (5, 31)
     assert (ba_i.month, ba_i.day) == (2, 1)
     assert (ba_f.month, ba_f.day) == (4, 30)
+
+
+def test_contrato_cana_separa_crescimento_e_maturacao_d050():
+    expected = {"SP", "MG", "GO", "MS", "PR"}
+    assert {s.uf for s in CANE_GROWTH_WINDOWS} == expected
+    assert {s.uf for s in CANE_MATURATION_WINDOWS} == expected
+    assert {s.phase for s in cane_windows("growth")} == {"vegetative_growth"}
+    assert {s.phase for s in cane_windows("maturation")} == {"maturation"}
+    assert critical_period(CANE_GROWTH_WINDOWS[0], "2024/25") == (
+        pd.Timestamp("2023-12-01"),
+        pd.Timestamp("2024-02-29"),
+    )
+    assert critical_period(CANE_MATURATION_WINDOWS[0], "2024/25") == (
+        pd.Timestamp("2024-06-01"),
+        pd.Timestamp("2024-08-31"),
+    )
+    with pytest.raises(KeyError, match="fase da cana"):
+        cane_windows("annual")
 
 
 def test_chaves_cultura_uf_sao_unicas():

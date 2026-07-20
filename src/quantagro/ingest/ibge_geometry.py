@@ -29,7 +29,16 @@ _EXPECTED_MEMBER_DATE = (2015, 3, 16)
 _BASE_URL = (
     "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais"
 )
-_UF_CODES = {"BA": "29", "MG": "31", "PR": "41", "RS": "43", "MS": "50", "MT": "51", "GO": "52"}
+_UF_CODES = {
+    "BA": "29",
+    "MG": "31",
+    "SP": "35",
+    "PR": "41",
+    "RS": "43",
+    "MS": "50",
+    "MT": "51",
+    "GO": "52",
+}
 
 
 def geometry_url(uf: str, edition: int = GEOMETRY_EDITION) -> str:

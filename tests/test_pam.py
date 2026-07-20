@@ -52,6 +52,9 @@ class TestUrl:
     def test_algodao_herbaceo_em_caroco_explicito(self):
         assert pam_url("cotton", [2023], ["MT", "BA"]).endswith("/c81/2689?formato=json")
 
+    def test_cana_e_sp_explicitos(self):
+        assert pam_url("sugarcane", [2023], ["SP"]).endswith("/c81/2696?formato=json")
+
     def test_ano_sem_calendario_barra_antes_da_rede(self):
         with pytest.raises(KeyError):
             pam_url("soy", [2025], ["MT"])
@@ -60,7 +63,7 @@ class TestUrl:
         with pytest.raises(ValueError, match="produto PAM"):
             pam_url("corn_second", [2023], ["MT"])
         with pytest.raises(ValueError, match="UF fora"):
-            pam_url("soy", [2023], ["SP"])
+            pam_url("soy", [2023], ["RJ"])
         with pytest.raises(TypeError, match="sequências"):
             pam_url("soy", "2023", ["MT"])
 
