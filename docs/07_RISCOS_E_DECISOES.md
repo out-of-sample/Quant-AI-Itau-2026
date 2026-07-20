@@ -1312,6 +1312,72 @@ pré-registrado. Nenhuma medida trocada após ver o número; o sinal não foi in
 
 ---
 
+### D-044 — Reformulação Q-dominante: hipótese derivada, não invertida; protocolo anti-p-hacking
+**Data**: 2026-07-20
+
+D-043 mostrou que a estratégia original (long produtor / short processador pelo choque) é
+**anti-preditiva** no desenvolvimento. Esta decisão reformula a tese para a direção oposta —
+**mas por derivação econômica, não por inversão do sinal olhando o dev.** O que se segue é o
+registro que separa as duas coisas e trava o protocolo que impede o p-hacking.
+
+#### 1. A hipótese reformulada (H′)
+> Um choque climático adverso **reduz** o retorno das produtoras agrícolas expostas em relação
+> aos processadores, porque o dano de volume próprio (`Q`) domina o benefício de preço (`P`).
+
+#### 2. Derivação econômica — H′ era formulável ANTES do teste de ações
+Três resultados **anteriores e independentes do retorno de ação** implicam H′:
+- **H1 (D-031)**: o choque prevê a **revisão para baixo** da produção CONAB, β=−0,067 por σ de
+  estresse (a colheita cai). Medido em estimativa de safra, não em cotação.
+- **D-041 (preço)**: o choque **quase não move** o preço recebido pelo produtor (local, +0,031 sem
+  significância; mundial nulo/negativo). O produtor **não é compensado** pela quebra.
+- **D-035 (auditoria)**: as produtoras têm **volume próprio real** exposto ao choque (fazendas
+  atingidas), lido de balanço, não de retorno.
+
+Composição: receita do produtor ≈ **volume × preço**. Se o volume cai (H1) e o preço não sobe
+(D-041), a receita cai — e a produtora, cujo `Q` é material (D-035), é prejudicada. **H′ é uma
+consequência lógica de três achados que precedem e não usam o β acionário.** O β=−0,09 de D-043 é
+**consistente** com H′, não a sua fonte: poderíamos ter previsto o sinal negativo antes de rodar
+o teste de ações. Este é o teste-chave de legitimidade — hipótese derivável a priori não é
+padrão pescado no resultado.
+
+#### 3. Por que isto NÃO é p-hacking (e o resíduo que assumimos)
+- **A direção vem do mecanismo**, não do dado acionário (§2). Não invertemos um sinal; derivamos
+  uma hipótese.
+- **Resíduo honesto**: nós **vimos** o β<0 do dev. Não dá para des-ver. Consequência inegociável:
+  **o desenvolvimento está QUEIMADO para a escolha de direção** — o desempenho de H′ no dev deixa
+  de valer como evidência (seria circular), e **não se afina H′ no dev**.
+- **O holdout 2020-2025 é a ÚNICA prova de retorno restante** — nunca informou a direção. H′ e a
+  estratégia serão **congeladas por inteiro num commit anterior** ao primeiro contato com o
+  holdout; roda **uma vez**; reporta-se o que der.
+- **Disclosure total no relatório**: a sequência real (apostamos +, preço fraco, `Q` domina,
+  reformulamos para −, testamos uma vez no holdout) entra explícita. A transparência é o rigor.
+
+Seria p-hacking se: usássemos o desempenho no **dev** como prova; **iterássemos** H′ no dev;
+inventássemos a economia **só** para justificar (não é o caso — D-035/D-041 vieram antes); ou
+rodássemos o holdout, não gostássemos, e mexêssemos.
+
+#### 4. Corroboração independente ANTES do holdout (para o holdout não ser o único tiro)
+- **(a) Cadeia lógica** — já estabelecida por H1 (volume↓) + D-041 (preço≈flat) ⇒ receita↓. Não
+  usa dado novo nem o retorno acionário.
+- **(b) Teste de fundamentos** (a construir, pré-registrado aqui): a **receita/margem de grão
+  reportada** das produtoras (AGRO3 via 20-F; SLCE3 se obtível) **cai** em anos de choque alto?
+  Fonte = demonstração financeira, **independente do retorno de ação e do holdout**. Sinal
+  esperado: β<0 (receita/margem de grão vs. Shock da safra). N pequeno ⇒ direcional; corrobora,
+  não prova sozinho.
+
+#### 5. O que é congelado agora e o que fica para depois
+- **Congelado agora**: H′, a derivação (§2) e o protocolo anti-p-hacking (§3).
+- **Depois, em decisão própria, antes do holdout**: a especificação exata da estratégia
+  reformulada (universo, direção operacional, sizing, execução) — só então o holdout roda uma vez.
+  **Não se paga a expansão por cultura** enquanto H′ não for corroborada.
+
+**Custo/limitação declarado.** O dev está gasto para a direção; vimos o resultado primeiro (e
+dizemos isso). O holdout é um tiro único. A corroboração por fundamentos tem N pequeno e, para
+SLCE3, dado difícil (pode virar lacuna declarada). Se o holdout desmentir H′, reporta-se o
+negativo — a tese vira um achado honesto, não uma curva forçada.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
