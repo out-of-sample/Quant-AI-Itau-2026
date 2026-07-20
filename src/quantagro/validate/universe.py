@@ -24,7 +24,77 @@ Duas propriedades importam mais que tudo:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
+import numpy as np
 import pandas as pd
+
+
+@dataclass(frozen=True)
+class UniverseState:
+    """Painéis auditáveis que explicam cada inclusão e exclusão do universo."""
+
+    traded: pd.DataFrame
+    seasoned: pd.DataFrame
+    adtv_brl: pd.DataFrame
+    eligible: pd.DataFrame
+    reason: pd.DataFrame
+
+
+def universe_state(
+    quotes: pd.DataFrame,
+    adtv_floor: float,
+    ipo_seasoning: int = 60,
+    adtv_window: int = 21,
+    tickers: list[str] | None = None,
+) -> UniverseState:
+    """Devolve universo, ADTV e reason codes no calendário B3 completo.
+
+    O calendário é extraído **antes** da whitelist. Assim, um pregão em que nenhum papel do
+    universo econômico negociou continua contando na janela de ADTV e no seasoning. A função
+    mantém ``pivot`` (não ``pivot_table``) para duplicatas explodirem em vez de serem somadas.
+    """
+    if adtv_floor < 0:
+        raise ValueError(f"adtv_floor não pode ser negativo, veio {adtv_floor}")
+    if ipo_seasoning < 0 or adtv_window <= 0:
+        raise ValueError("seasoning deve ser não-negativo e janela de ADTV positiva")
+    required = {"date", "ticker", "financial_volume"}
+    missing = required - set(quotes.columns)
+    if missing:
+        raise ValueError(f"cotações sem colunas obrigatórias: {sorted(missing)}")
+    calendar = pd.DatetimeIndex(pd.to_datetime(quotes["date"]).unique()).sort_values()
+    if calendar.empty:
+        raise ValueError("cotações vazias")
+
+    selected = quotes
+    if tickers is not None:
+        selected = selected[selected["ticker"].isin(tickers)]
+        if selected.empty:
+            raise ValueError("nenhum dos tickers da whitelist aparece nas cotações")
+    volume = selected.pivot(index="date", columns="ticker", values="financial_volume")  # noqa: PD010
+    volume.index = pd.DatetimeIndex(volume.index)
+    volume = volume.reindex(calendar)
+    traded = volume.notna()
+    adtv = volume.fillna(0.0).rolling(adtv_window).mean()
+
+    # Pregões decorridos desde a primeira negociação observada, não número de negócios do
+    # papel. Uma suspensão temporária continua envelhecendo a companhia no calendário B3.
+    started = traded.cummax()
+    sessions_since_first = started.cumsum() - 1
+    seasoned = sessions_since_first >= ipo_seasoning
+    eligible = traded & seasoned & (adtv >= adtv_floor)
+
+    reason = pd.DataFrame("eligible", index=calendar, columns=volume.columns, dtype="string")
+    reason = reason.mask(~traded, "not_traded")
+    reason = reason.mask(traded & ~seasoned, "seasoning")
+    reason = reason.mask(traded & seasoned & adtv.isna(), "adtv_warmup")
+    reason = reason.mask(traded & seasoned & adtv.notna() & (adtv < adtv_floor), "adtv_below_floor")
+    if not np.array_equal(eligible.to_numpy(), reason.eq("eligible").to_numpy()):
+        raise RuntimeError("reason codes não fecham com a matriz de elegibilidade")
+
+    for frame in (traded, seasoned, adtv, eligible, reason):
+        frame.index.name = "date"
+    return UniverseState(traded, seasoned, adtv, eligible, reason)
 
 
 def universe_membership(
@@ -41,22 +111,13 @@ def universe_membership(
     que a B3 operou. ADTV = média móvel de `adtv_window` pregões do volume financeiro, com
     dia sem negociação contando **zero** (iliquidez conta contra o papel, não é ignorada).
     """
-    if adtv_floor < 0:
-        raise ValueError(f"adtv_floor não pode ser negativo, veio {adtv_floor}")
-    df = quotes
-    if tickers is not None:
-        df = df[df["ticker"].isin(tickers)]
-        if df.empty:
-            raise ValueError("nenhum dos tickers da whitelist aparece nas cotações")
-    # pivot (não pivot_table) de propósito: duplicata (date, ticker) tem que EXPLODIR,
-    # não ser agregada silenciosamente — indicaria filtro de segmento não aplicado.
-    vol = df.pivot(index="date", columns="ticker", values="financial_volume")  # noqa: PD010
-    traded = vol.notna()
-    adtv = vol.fillna(0.0).rolling(adtv_window).mean()
-    seasoned = traded.cumsum() > ipo_seasoning
-    membership = traded & seasoned & (adtv >= adtv_floor)
-    membership.index.name = "date"
-    return membership
+    return universe_state(
+        quotes,
+        adtv_floor=adtv_floor,
+        ipo_seasoning=ipo_seasoning,
+        adtv_window=adtv_window,
+        tickers=tickers,
+    ).eligible
 
 
 def eligible_count(membership: pd.DataFrame) -> pd.Series:
