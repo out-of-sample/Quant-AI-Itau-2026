@@ -1378,6 +1378,101 @@ negativo — a tese vira um achado honesto, não uma curva forçada.
 
 ---
 
+### D-045 — Análise de poder: expandir o universo compra conclusividade, não lucro
+**Data**: 2026-07-20
+
+Antes de investir na obra da expansão, quantificamos o que de fato importa: a probabilidade de o
+teste no holdout dar um **veredito CLARO** (rejeitar na direção certa, α=0,10 unilateral) — não
+"dar lucro". Monte Carlo do teste efetivo (demeaning na seção transversal + SE agrupado por
+ano-safra), em `scripts/power_analysis.py`. Calibração: |β|≈0,09 é o efeito observado no
+desenvolvimento (D-043); ruído idiossincrático do retorno de ~21 pregões varrido em [0,10; 0,16].
+
+**Gargalo estrutural.** O holdout tem **5 anos-safra fixos** (2020/21–2024/25) — não se cria
+evento novo ali. O único ajuste operável é o **nº de nomes** (expansão).
+
+**Poder por tamanho do efeito × nº de nomes (holdout, 5 anos, faixa de ruído):**
+
+| β real | 4 nomes (hoje) | 8 nomes (expandido) |
+|---|---|---|
+| 0,09 (o do dev — grande) | 82–95% | 93–98% |
+| 0,05 (metade — moderado) | 56–77% | 72–90% |
+| 0,03 (um terço — pequeno) | 37–53% | 51–71% |
+
+IC 90% do β aperta de ±0,028 (4 nomes) para ±0,020 (8 nomes).
+
+**Leitura.**
+1. **Não estamos condenados ao inconclusivo.** Se o efeito for do tamanho que o dev mostrou
+   (β≈0,09), o holdout é conclusivo com 82–95% já com 4 nomes. Não vamos cegos — o dev
+   *detectou* esse efeito (t=−3,6), evidência direta de que ele é grande.
+2. O risco de inconclusivo mora só no cenário de **efeito bem menor que o do dev** (β≈0,03–0,05,
+   se o t=−3,6 foi parte sorte). Aí a expansão para **~8 nomes** sobe o poder de ~64–77% para
+   ~72–90% (moderado) — de "cara ou coroa" para "provavelmente conclusivo".
+3. Efeito **minúsculo** (β≈0,03) é inconclusivo mesmo expandido: precisaria de ~15–20 anos-safra,
+   que não existem. Limite irredutível — mas um inconclusivo **depois** de um dev fortíssimo é
+   ele próprio informativo (indica que o sinal do dev não era robusto).
+
+**Decisão.** **Expandir o universo para ~8 nomes** (algodão nos nomes existentes + cana
+SMTO3/JALL3) como **seguro de conclusividade** antes do holdout — não para caçar lucro, mas para
+garantir um sim/não limpo se o efeito for pelo menos moderado. Desenho da expansão em D-046.
+
+**Custo/limitação.** A calibração assume que a estrutura do dev vale no holdout; a regressão à
+média sugere que β no holdout tende a ser ≤ o do dev, então o caso de planejamento honesto é o
+**moderado** (β≈0,05), onde 8 nomes são justificados. Nenhuma expansão salva um efeito minúsculo.
+
+---
+
+### D-046 — Desenho da expansão de universo: canais de cultura sob H′ (algodão, cana)
+**Data**: 2026-07-20
+
+Pré-registro do **desenho** da expansão que D-045 justifica (comprar conclusividade). A obra
+(contratos de choque congelados por cultura, no molde de D-023) vem depois; aqui travamos os
+**princípios e as direções**, cada uma **derivada do mecanismo**, não do retorno — mesma
+disciplina anti-p-hacking de D-044.
+
+#### Princípio de direção (para nenhum canal ser "invertido olhando o dev")
+Para cada cultura, define-se o **estresse climático adverso ao rendimento/qualidade daquela
+cultura** e a direção do retorno do produtor é **derivada da agronomia + do achado Q>P**, e
+**congelada antes de qualquer retorno**. A validação é só no holdout.
+
+#### Canal 1 — Algodão (extensão limpa de H′; recomendado)
+- Mecanismo: algodão é preço global (como soja) e sensível à seca. Estresse = déficit de chuva na
+  janela crítica. Sob H′ (Q>P): seca → queda de volume do produtor, preço global não compensa →
+  **produtor de algodão prejudicado** (mesma direção do produtor de grão).
+- Nomes: **0 novos** — AGRO3 e SLCE3 já são grandes produtores de algodão (já no universo).
+- Ganho: reforça o sinal do produtor com um **evento semi-independente** (seca do algodão no
+  Cerrado/BA difere parcialmente da soja em timing/geografia). Barato: só um contrato de choque
+  novo (UFs do algodão: MT/BA/GO/MS; janela fenológica própria).
+
+#### Canal 2 — Cana (mecanismo INVERTIDO; opcional, sub-modelo à parte)
+- Mecanismo **diferente**: para cana, **inverno seco é BOM** (mais sacarose/ATR) e o preço é de
+  energia (açúcar/etanol, CONSECANA), não grão. Logo o "estresse" da cana é o adverso próprio
+  (excesso de chuva / seca extrema), e a direção do produtor **não** é a mesma do grão.
+- Direção derivada: evento **favorável à cana** (inverno seco) → maior ATR/receita → **produtor
+  de cana beneficiado**. Sinal próprio, congelado.
+- Nomes: **+2** (SMTO3, JALL3; RAIZ4 é diversificada/energia, fica de robustez).
+- Tratamento: canal **separado**, testado standalone **e** combinado — **não** jogado na mesma
+  regressão de H′ (misturar mecanismos sujaria o teste primário). Custo: um contrato de choque de
+  cana (fenologia, sinal invertido/não-linear, regiões SP/Centro-Sul) — obra maior que o algodão.
+
+#### Não entram (com motivo)
+- **Café**: o **melhor sinal climático** do Brasil (geada/seca), mas **sem produtor listado** —
+  limitação declarada, boa para o relatório ("mecanismo forte sem veículo de equity").
+- **Proteína bovina** (MRFG3, BEEF3): canal de grão fraco (boi é pasto); só entra se for preciso
+  empurrar para ~8 nomes, e explicitamente rotulada como fraca.
+- **Trigo/arroz/celulose**: fora do mecanismo (importado / ambíguo / árvore).
+
+#### O que a expansão realmente entrega (honesto)
+Núcleo H′ limpo (grão+algodão): AGRO3, SLCE3 (produtores) + BRFS3, JBSS3 (processadores) = **4
+nomes, +1 evento (algodão)**. Com cana: **6 nomes, +1 canal independente**. Com proteína: ~8,
+mais sujo. Por D-045, isso põe o poder na faixa "**conclusivo se o efeito for ≥ moderado**" — não
+vira um universo de dezenas de ações. É o teto do listado brasileiro, e a gente o assume.
+
+**Congelado agora**: os princípios e as direções (algodão = produtor prejudicado por seca; cana =
+produtor beneficiado por inverno seco, à parte). **Depois, antes do holdout**: os contratos de
+choque por cultura (D-023-like) e a especificação final da estratégia (D-044 §5).
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

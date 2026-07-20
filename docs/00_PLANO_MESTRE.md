@@ -223,13 +223,30 @@ não dimensiona o experimento primário (D-026). Calibração
   choque **perde** e o sinal é invertido: a seca **prejudica** o produtor (`Q>P`).
 - 🔬 **Reformulação Q-dominante pré-registrada (D-044)**: a hipótese "a seca prejudica o produtor"
   é **derivada** de H1 (volume↓) + D-041 (preço flat) + D-035 (`Q` real) — formulável antes do
-  teste de ações, **não** uma inversão post-hoc. Protocolo anti-p-hacking: dev queimado para a
-  direção, holdout = tiro único, disclosure total. Corroboração independente antes do holdout:
-  cadeia lógica + teste de **fundamentos** (receita/margem de grão das produtoras vs Shock).
-  Próximo: construir a corroboração por fundamentos; depois congelar a estratégia; só então holdout
-- ⬜ substituir o H3/Fama–MacBeth por teste compatível com apenas três a quatro ações
-- ⬜ resolver R19 sem consultar retornos e construir carteira dollar-neutral, sem presumir
-  neutralidade a beta, fatores ou commodities
+  teste de ações, **não** inversão post-hoc. Anti-p-hacking: dev queimado para a direção, holdout
+  = tiro único, disclosure total. Corroboração independente = a **cadeia lógica** (H1+D-041 ⇒
+  receita↓); o teste de fundamentos foi **rebaixado a ilustração** (N≈4, uma empresa, dado sujo).
+- 📐 **Análise de poder (D-045)**: expandir compra **conclusividade**, não lucro. Holdout tem 5
+  anos-safra fixos ⇒ o único ajuste é nº de nomes. Se o efeito for grande (o do dev), conclusivo
+  já com 4 nomes; se moderado, ~8 nomes chegam a ~80-90%; se minúsculo, inconclusivo mesmo
+  expandido. `scripts/power_analysis.py`.
+- 🌱 **Desenho da expansão (D-046)**: canais de cultura sob H′, direções derivadas do mecanismo.
+  Algodão (limpo, reforça AGRO3/SLCE3, +evento, 0 nomes novos); cana (mecanismo **invertido**,
+  sub-modelo à parte, +SMTO3/JALL3); café sem veículo (limitação declarada).
+
+**Mapa das sub-fases restantes (o caminho até o holdout):**
+- ⬜ **3.4 — construir os canais de cultura**: contratos de choque congelados (molde D-023) para
+  algodão e cana; validar cada um (o choque da cultura prevê a revisão CONAB dela? — um H1 por
+  cultura), tudo sem tocar retorno de ação.
+- ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
+  sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.
+  Substituir H3/Fama–MacBeth por desenho compatível com o N (spread de evento / painel com
+  interação), pré-registrado.
+- ⬜ **Fase 4 — backtest de verdade no dev**: máquina, custos, turnover, exposição a fatores — o
+  **return-agnóstico**; o dev **não** valida lucro da direção (está queimado).
+- ⬜ **Fase 5 — robustez** pré-registrada (H4/H5, placebo, sensibilidades).
+- ⬜ **Fase 6 — holdout, uma vez**: a única prova de retorno; roda o que foi congelado, reporta o
+  que der (com o poder de D-045 a favor de um veredito claro).
 
 ### Fase 4 — Backtest
 Backtest A (núcleo histórico, primário); B amplo permanece condicionado a evidência direta
