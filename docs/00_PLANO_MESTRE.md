@@ -235,9 +235,13 @@ não dimensiona o experimento primário (D-026). Calibração
   sub-modelo à parte, +SMTO3/JALL3); café sem veículo (limitação declarada).
 
 **Mapa das sub-fases restantes (o caminho até o holdout):**
-- ⬜ **3.4 — construir os canais de cultura**: contratos de choque congelados (molde D-023) para
-  algodão e cana; validar cada um (o choque da cultura prevê a revisão CONAB dela? — um H1 por
-  cultura), tudo sem tocar retorno de ação.
+- 🔄 **3.4 — construir os canais de cultura**: contratos de choque congelados (molde D-023) e
+  validação H1 por cultura, sem tocar retorno.
+  - ✅ **algodão — contrato congelado** (D-047): MT+BA, janela floração/capulho, fonte ZARC/Embrapa
+    (`COTTON_WINDOWS`, travado em teste).
+  - ⬜ algodão — PAM municipal do algodão (peso intra-UF) + validação (choque prevê a revisão da
+    pluma CONAB? H1 por cultura).
+  - ⬜ **cana** — contrato de choque próprio (sinal invertido, regiões SP/Centro-Sul) + validação.
 - ⬜ **3.5 — congelar a estratégia reformulada** (D-044 §5): universo expandido, direção operacional
   sob H′, sizing, execução D+1, resolução de R19 (concentração) — num commit anterior ao holdout.
   Substituir H3/Fama–MacBeth por desenho compatível com o N (spread de evento / painel com

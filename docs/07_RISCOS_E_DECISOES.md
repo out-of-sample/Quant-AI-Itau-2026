@@ -1473,6 +1473,38 @@ choque por cultura (D-023-like) e a especificação final da estratégia (D-044 
 
 ---
 
+### D-047 — Contrato congelado do canal do algodão (Fase 3.4)
+**Data**: 2026-07-20
+
+Materializa o algodão de D-046 num contrato de choque congelado, no molde de D-023, **antes de
+computar qualquer choque ou retorno**. Em `features/shock_spec.py::COTTON_WINDOWS` (à parte do
+`PRIMARY_WINDOWS` de grãos) e travado por `tests/test_shock_spec.py::test_contrato_algodao_congelado`.
+
+- **UFs (suporte mínimo >80%)**: **MT + BA** (MT ~68%, BA ~17% da produção CONAB 2023/24; as
+  demais somam <15%). Ambas já no painel CHIRPS municipal (são UFs de soja) — regionalização
+  reaproveitada.
+- **Fase crítica hídrica = floração + formação do capulho** (`flowering_boll`): 50–60% da
+  necessidade hídrica e ~80% das estruturas produtivas emitidas 60–100 dias após a emergência.
+  Fonte: ZARC/MAPA (portarias de algodão herbáceo MT/BA) e fisiologia Embrapa.
+- **Janelas** (ano base+1): **MT 15/03–31/05** (plantio jan–fev após a soja ⇒ floração/capulho
+  mar–mai); **BA 01/02–30/04** (plantio dez–jan ⇒ fev–abr).
+- **Canal climático e sinal**: idênticos ao grão — déficit CHIRPS, `Shock = −z(chuva acumulada)`
+  na janela. Mesmo mecanismo, mesma convenção (seca = estresse); sob H′, seca prejudica o
+  produtor de algodão como o de grão.
+- **CONAB**: produto `ALGODAO EM PLUMA`, safra `UNICA` (rótulo de MT e BA no painel), disponível
+  de 2017/18 em diante.
+
+**Próximo (3.4, parte 2)**: buscar a PAM municipal do algodão (SIDRA, produto próprio) para o
+peso intra-UF e **validar** o canal — o choque do algodão prevê a **revisão CONAB da pluma**?
+(H1 por cultura, sem tocar retorno de ação). Só depois o algodão entra no score.
+
+**Custo/limitação.** A CONAB da pluma começa em 2017/18 (~4 safras com ≥2 levantamentos por UF)
+⇒ a validação será de **baixo poder/direcional** (como H1b), não um veto forte. Reforça, não
+sozinha decide. MT concentra ~68% ⇒ o canal é quase MT+BA; a diversificação de evento vem do
+timing/geografia parcialmente distintos da soja, não de muitas UFs.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

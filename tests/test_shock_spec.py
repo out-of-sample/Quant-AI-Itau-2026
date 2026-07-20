@@ -5,6 +5,7 @@ import pytest
 
 from quantagro.features.shock_spec import (
     CLIMATOLOGY_KIND,
+    COTTON_WINDOWS,
     EXPANDING_STD_DDOF,
     FIRST_COMPLETE_CROP_YEAR,
     MIN_EXPANDING_YEARS,
@@ -82,8 +83,26 @@ def test_ano_agricola_ambiguo_falha_alto(bad):
 
 
 def test_cultura_fora_do_primario_falha_alto():
-    with pytest.raises(KeyError, match="fora da especificação primária"):
+    with pytest.raises(KeyError, match="fora da especificação"):
         windows_for_crop("coffee")
+
+
+def test_contrato_algodao_congelado():
+    """Trava o contrato do algodão (D-047): MT+BA, janela floração/capulho, ano base+1."""
+    specs = {s.uf: s for s in windows_for_crop("cotton")}
+    assert set(specs) == {"MT", "BA"}
+    assert len(COTTON_WINDOWS) == 2
+    for s in COTTON_WINDOWS:
+        assert s.conab_product == "ALGODAO EM PLUMA"
+        assert s.conab_season == "UNICA"
+        assert s.start_year_offset == 1 and s.end_year_offset == 1
+    # MT: 15/03–31/05 do ano base+1; BA: 01/02–30/04
+    mt_i, mt_f = critical_period(specs["MT"], "2023/24")
+    ba_i, ba_f = critical_period(specs["BA"], "2023/24")
+    assert (mt_i.month, mt_i.day, mt_i.year) == (3, 15, 2024)
+    assert (mt_f.month, mt_f.day) == (5, 31)
+    assert (ba_i.month, ba_i.day) == (2, 1)
+    assert (ba_f.month, ba_f.day) == (4, 30)
 
 
 def test_chaves_cultura_uf_sao_unicas():
