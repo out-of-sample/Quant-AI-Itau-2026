@@ -27,8 +27,8 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
-| R7 | **Universo fundamental direto é estreito** — a auditoria rejeitou os adjacentes indiretos e deixou quatro nomes | **Confirmada** | Alto | Não fabricar exposição; matriz PIT conservadora (D-032/D-033); Método B apenas como robustez. Resolver carteira antes de retorno | 🔴 Materializado; concentração aberta |
-| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Reportar variante long-only com hedge de índice em paralelo | Planejado |
+| R7 | **Universo fundamental direto é estreito** — quatro nomes de grãos no teste primário e SMTO3 como satélite de evidência inferior | **Confirmada** | Alto | Não fabricar exposição; teste primário restrito aos quatro grãos; caps 0,40/0,15 e redução de bruto quando necessário (D-053). Método B só como robustez identificada | 🟡 Estrutura resolvida; poder e concentração seguem como limitações |
+| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | Congelar cenário de aluguel e indisponibilidade na Fase 4.0. Long-only com hedge, se mantido, é análise separada pré-registrada — não resgate post-hoc | Aberto — depende da modelagem operacional |
 | R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | Reportar a capacidade estimada explicitamente | Aceito |
 | R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido operacionalmente**; reforço das poucas datas com fonte única em PT-005 |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
@@ -40,11 +40,12 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 | R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Resolvida (D-053) | Baixo | Artefato da estrutura antiga (long produtor). Sob H′ a carteira é balanceada nos dois sentidos e o holdout (2020/21+) tem os 5 nomes vivos ⇒ concentração de "um nome só" não ocorre; cap 0,40 declara o teto | 🟢 Resolvido — sizing dollar-neutral congelado em `strategy_spec.py` |
-| R20 | **Sinal líquido do produtor está subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | **Resolvido empiricamente como NEGATIVO (D-043)**: a reação das ações no dev deu β=−0,09 (t=−3,6; correlações por nome todas negativas) — a seca **prejudica** o produtor (`Q>P`, coerente com D-035/D-041). A ponta long tem o sinal invertido e a estratégia como desenhada perde. **Não inverter post-hoc** (p-hacking); reformular com hipótese nova pré-registrada | 🔴 Materializado — long invertido; estratégia atual não traduz |
+| R20 | **Sinal líquido do produtor estava subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | D-043 falsificou a direção antiga; D-044 pré-registrou H′ (`Q>P`) com disclosure de que o dev está queimado; D-053 congelou a camada operacional sem apagar o sinal histórico | 🟡 Reformulado; validação de H′ existe somente no holdout |
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
-| R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
+| R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Fama–MacBeth suspenso e substituído em D-053 por spread/painel nos quatro grãos, cluster por ano-safra e permutação unilateral | 🟢 Desenho substituto congelado; poder continua limitado por R1 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
-| R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Manter cana como submodelo separado; auditoria PIT concluída (D-052): SMTO3 assinável entra com haircut, JALL3 fora do score por ser holdout-only; congelar direção/sizing na Fase 3.5; reportar p=0,12/bootstrap p=0,27 | 🟡 Veículo (SMTO3) auditado; ingrediente físico corroborado, força estatística fraca; ATR≠receita segue como ressalva aberta |
+| R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Submodelo separado; SMTO3 entra só na carteira, cap 0,15, e fica fora do teste primário; JALL3 excluída. Reportar p=0,12/bootstrap p=0,27 (D-052/D-053) | 🟡 Tratamento congelado; ATR≠receita permanece ressalva aberta |
+| R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitem escolhas | Confirmada | Existencial | Fase 4.0 obrigatória e return-agnóstica; congelar cada item antes do primeiro P&L da máquina; holdout negado por padrão. Auditoria também corrigiu water-filling que podia violar cap | 🔴 Aberto — bloqueia a implementação do motor e qualquer acesso ao holdout |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -1822,6 +1823,39 @@ reportado. (b) A cana é satélite de mecanismo fraco: pode não somar nada ao P
 neutral **não é market-neutral**: exposições residuais a fatores/beta/commodity não são
 neutralizadas — declaradas, não presumidas. (d) O dev está queimado para a direção; o desempenho
 de H′ no dev **não** vale como evidência (Fase 4 é return-agnóstica). O holdout roda **uma vez**.
+
+---
+
+### D-054 — Auditoria de transição e gate operacional da Fase 4.0
+**Data**: 2026-07-20
+
+D-053 congelou corretamente a **estratégia econômica** — universo, direção H′, sizing, caps,
+execução D+1, horizonte e teste primário —, mas a auditoria anterior à máquina encontrou graus
+de liberdade operacionais que ainda poderiam alterar materialmente o resultado:
+
+1. calendário das decisões, encerramento e sobreposição de posições;
+2. combinação soja+milho e escala da cana, ausências e conjunto usado no demean;
+3. comportamento quando elegibilidade/liquidez elimina um dos lados econômicos;
+4. estatística e unidade exatas da permutação, semente/enumerabilidade e fórmula do p-valor;
+5. piso de ADTV, patrimônio de referência, taxas, slippage, aluguel e capacidade;
+6. datas diárias exatas de dev/holdout e eventos que atravessam a fronteira.
+
+**Decisão.** A Fase 4 começa por uma subfase **4.0 return-agnóstica** que fecha e torna
+executáveis esses itens sem consultar P&L. O motor não será implementado sobre placeholders e
+deve negar o holdout por padrão; a liberação deliberada pertence somente à Fase 6. As escolhas
+de Fase 4.0 serão registradas em decisão própria antes do primeiro resultado de carteira.
+
+**Defeito de implementação encontrado.** O water-filling de `strategy_spec.py` recalculava o
+conjunto livre a cada iteração e podia recolocar um nome já capado, violando o teto em mapas de
+caps admissíveis pela API. O algoritmo passou a manter caps ativos permanentemente, usar
+`GROSS/2` em vez de `0.5` literal e rejeitar score/cap inválido; um caso de regressão trava o
+erro. Também foram adicionados tripwires para lag, horizonte, bruto e inferência já declarados
+em D-053. Isso corrige a implementação do contrato, sem alterar nenhuma decisão econômica.
+
+**Custo/limitação.** A expressão “estratégia congelada” em D-053 precisava ser qualificada:
+ela não autorizava calcular o backtest nem garantia que cada detalhe operacional estivesse
+fechado. A Fase 4 ganha um gate adicional e pode levar mais tempo, mas elimina escolhas pós-P&L
+e torna a rodada do holdout auditável.
 
 ---
 

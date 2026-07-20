@@ -4,139 +4,169 @@
 > seja um teste da tese, e não um retrato do quanto conseguimos ajustar as regras até o
 > gráfico ficar bonito.
 
+> **Estado após D-053/D-054:** a hipótese H′, o universo econômico, a direção, o sizing, os
+> caps, o lag D+1 e o horizonte de 21 pregões estão congelados em
+> `backtest/strategy_spec.py`. A auditoria de transição para a Fase 4 mostrou que a mecânica
+> operacional ainda não está completamente especificada. Calendário de decisões, composição
+> dos scores, casos de universo incompleto, inferência por permutação, custos e fronteiras
+> temporais serão fechados na **Fase 4.0**, sem consultar P&L, antes de implementar o motor.
+
 ---
 
 ## 1. Universo — construído point-in-time
 
-O universo **não** é uma lista de tickers. É uma **função de `t`**:
+Uma ação só pode receber posição em `t` se, simultaneamente:
 
-> Uma ação está no universo em `t` se, e somente se: (i) estava sendo negociada na B3 em `t`
-> segundo o COTAHIST; (ii) já se passaram 60 pregões do IPO; (iii) o ADTV dos últimos 21
-> pregões supera o piso de liquidez; e (iv) ela tem exposição fundamentalista definida a
-> pelo menos uma commodity do escopo.
+1. pertence ao universo econômico congelado em D-053;
+2. estava sendo negociada na B3 segundo o COTAHIST;
+3. já completou 60 pregões desde a primeira negociação observada;
+4. seu ADTV dos 21 pregões anteriores supera o piso de liquidez ainda a congelar na Fase 4.0;
+5. sua exposição e seu score estavam disponíveis em `t`.
 
-**Por que 60 pregões pós-IPO**: os primeiros meses de um papel recém-listado têm dinâmica
-distorcida (estabilização, lock-up, poeira do bookbuilding). Incluir esse período adiciona
-ruído que nada tem a ver com a tese.
+O universo econômico é:
 
-**Regra de deslistagem**: a ação **permanece** no backtest até a data efetiva de deslistagem,
-com o último preço negociado. Não é apagada retroativamente — apagar é exatamente o viés de
-sobrevivência que estamos combatendo (JBSS3, BRFS3, MRFG3 e STBP3 sumiram em 2025; ver
-`02_DADOS.md` §4.1).
-
-**Entregável obrigatório**: gráfico da **contagem de ativos elegíveis ao longo do tempo**.
-Vai no relatório. É a prova visual de que o universo é dinâmico.
-
-### Os dois backtests declarados
-
-| | **A — Núcleo histórico** (primário) | **B — Universo amplo** (secundário) |
+| Papel | Canal operacional | Uso |
 |---|---|---|
-| Período | sinal 2015/16–2025; preços anteriores só como histórico auxiliar | 2021-2025 (~5 anos) |
-| Universo | Método A PIT: AGRO3, BRFS3 e JBSS3 em 2015; SLCE3 entra em 2018 (D-033) | não materializado no Método A; nomes indiretos/pós-2021 só entram se fonte primária futura provar canal direto |
-| Papel | **resultado principal** — tem histórico para sustentar afirmação | diagnóstico condicionado à existência de evidência direta; **não calibra nada** |
-| Limitação | só dois nomes por ponta a partir de 2018; concentração é risco central | está **inteiramente dentro do holdout** e pode não existir sob o critério fundamentalista conservador |
+| AGRO3, SLCE3 | grãos, produtor sob H′ (`Q>P`) | teste primário e carteira |
+| BRFS3, JBSS3 | grãos, processador/insumo sob H′ | teste primário e carteira |
+| SMTO3 | cana, maturação→ATR, evidência mais fraca | somente carteira, satélite capado em 15% |
+
+O **teste estatístico primário** usa apenas os quatro nomes de grãos. A **carteira negociável**
+inclui os cinco nomes. O antigo “universo amplo” não é um segundo backtest prometido: só poderá
+aparecer como robustez identificada se surgir evidência fundamental direta admissível, nunca
+porque nomes adicionais melhoraram o resultado.
+
+**Regra de deslistagem:** a ação permanece no histórico até o último pregão efetivo; não é
+apagada retroativamente. A elegibilidade de uma ordem executada em D+1 usa apenas informação
+conhecida até D — o volume ou o status final de D+1 não podem decidir retrospectivamente a
+ordem.
+
+**Entregável obrigatório:** gráfico da contagem de ativos elegíveis ao longo do tempo, junto
+da razão de cada entrada/saída. É a prova visual contra survivorship e backfill.
 
 ---
 
 ## 2. Timing — a regra que impede lookahead
 
 ```
-      D                    D+1
-      │                    │
-      ├─ dado com          ├─ EXECUÇÃO no CLOSE
-      │  avail_date ≤ D    │  (preço de fechamento de D+1)
-      │                    │
-      └─ sinal calculado   └─ posição passa a valer
+      D                                  primeiro pregão após D
+      │                                         │
+      ├─ dados com avail_date ≤ D               ├─ EXECUÇÃO no CLOSE
+      ├─ elegibilidade medida até D              └─ posição passa a valer
+      └─ score e pesos-alvo calculados
 ```
 
-- O sinal de `D` usa **apenas** linhas com `avail_date ≤ D`.
-- A execução acontece no **close de D+1**, nunca no close de `D`.
+- “D+1” significa o **primeiro pregão B3 estritamente posterior**, não o dia civil seguinte.
+- A execução acontece no close desse pregão; nunca no mesmo fechamento que gerou o sinal.
+- O retorno começa depois de incorporado o preço de execução, sem contar o mesmo close duas
+  vezes.
+- O horizonte primário é de **21 pregões**.
 
-**Por que não executar no close de `D`**: o sinal foi calculado *com* a informação do dia `D`.
-Executar no fechamento do mesmo dia assume que a decisão foi tomada e executada
-instantaneamente no último instante do pregão. É a fonte de lookahead mais comum e mais
-inocente-parecendo que existe. O custo de ser conservador aqui é baixo; o custo de estar
-errado é o projeto inteiro.
+A Fase 4.0 ainda precisa tornar executável o calendário de geração do sinal: datas de decisão,
+efeito de nova informação durante uma posição, vencimento e tratamento de posições
+sobrepostas. “Mensal” não é especificação suficiente e não pode ser completado depois de ver
+o P&L.
 
 ---
 
-## 3. Construção da carteira
+## 3. Construção da carteira — decisões já congeladas
 
-> **Estado após D-034:** esta seção é especificação candidata, não implementação liberada.
-> A Fase 3.1 precisa resolver o canal líquido das empresas, H2a/H2b, o desenho de H3 e R19
-> antes de qualquer score, peso ou retorno de ação.
-
-| Regra | Valor | Motivo |
+| Regra | Contrato D-053 | Consequência |
 |---|---|---|
-| Estrutura | **dollar-neutral long/short** | zera o notional líquido; não garante neutralidade a beta, fatores, câmbio, liquidez ou commodity |
-| Peso | candidato: proporcional ao score `S_{i,t}`, normalizado | só será congelado depois que a auditoria `P/Q/C` definir o score líquido |
-| Cap por nome | 20% do bruto, **pendente de ratificação antes da carteira** | incompatível: um único long até 03/2018 exige 50% do bruto; depois, dois longs exigem 25% cada (D-033) |
-| Rebalanceamento | mensal, com holding de 21 pregões | compatível com a hipótese pré-registrada de difusão lenta; ComexStat é apenas H1b *ex post* (D-026) |
-| Cap de turnover | a definir na calibração (in-sample) | turnover alto come o alfa em nomes ilíquidos |
-| Alavancagem | 1.0× bruto (0.5 long + 0.5 short) | sem alavancagem — não é onde está a contribuição |
+| Direção de grãos | negativo de `E·Shock` | estresse reduz score do produtor e eleva score do processador sob H′ |
+| Direção da cana | `+Shock_maturação` para SMTO3 | canal separado; não entra no teste estatístico primário |
+| Sizing | proporcional ao score demeanado na seção transversal | regra simples, determinística e sem retorno como entrada |
+| Estrutura | dollar-neutral | `Σw=0`; isso **não** garante neutralidade a mercado, fatores, FX ou commodities |
+| Bruto | 1,0×, alvo 0,5 long + 0,5 short | reduz apenas quando os caps tornam um lado inviável |
+| Cap por grão | `|w_i| ≤ 0,40` | resolve R19 sem fingir diversificação inexistente |
+| Cap da SMTO3 | `|w_i| ≤ 0,15` | haircut pela evidência fraca e limitações de ATR/hedge |
+| Pesos do choque | CONAB da safra anterior disponível | proíbe equal-weight oportunista |
+| Execução/horizonte | D+1 / 21 pregões | definidos antes do holdout |
 
-Exposições residuais a mercado, fatores e commodities serão reportadas e testadas. O termo
-*market-neutral* só poderá ser usado como resultado empírico se esses betas forem de fato
-pequenos; a construção, por si, é apenas dollar-neutral.
+O algoritmo de water-filling e os invariantes acima vivem em `backtest/strategy_spec.py` e
+são travados por testes. Exposições residuais a mercado, fatores e commodities são resultados
+diagnósticos: não alteram os pesos congelados.
 
----
+### 3.1 Graus de liberdade que a Fase 4.0 precisa fechar
 
-## 4. Custos de transação
-
-Modelados explicitamente. Custo subestimado é a forma mais fácil de inventar alfa.
-
-| Componente | Tratamento |
+| Tema | Decisão ainda necessária — sempre sem P&L |
 |---|---|
-| Corretagem + emolumentos B3 | taxa fixa por notional (ordem de ~0,03%) |
-| **Slippage** | **proporcional à participação no ADTV** — quanto maior a ordem em relação ao volume diário do papel, maior o impacto |
-| Aluguel (ponta short) | custo de aluguel do papel; **nomes sem lastro de aluguel são inelegíveis para short** |
-| Robustez | rodar tudo de novo com **custo 2×** |
+| Calendário | datas de decisão, encerramento, nova informação e sobreposição de horizontes |
+| Score | combinação soja+milho; escala comum com cana; ausências; conjunto usado no demean |
+| Universo incompleto | zerar, reduzir bruto ou manter posição relativa quando falta um lado econômico |
+| Liquidez | piso numérico de ADTV e convenção de janela, escolhidos por operabilidade observável |
+| Custos | patrimônio de referência, taxas, slippage, aluguel e capacidade, com fontes/cenários |
+| Inferência | estatística, unidade permutada, enumeração/semente, p-valor e dados ausentes |
+| Partição temporal | datas exatas de dev/holdout e eventos que cruzam a fronteira |
+| Segurança | motor nega o holdout por padrão; somente a Fase 6 pode liberá-lo deliberadamente |
 
-> ⚠️ **A ponta short é o ponto mais frágil da execução.** Vender a descoberto small caps
-> agrícolas na B3 pode ser caro ou simplesmente impossível por falta de doador. Se a
-> viabilidade do short não se sustentar, a alternativa é uma versão **long-only com hedge de
-> índice** (long produtores, short futuro de Ibovespa), que é menos elegante mas operável.
-> Essa variante deve ser reportada em paralelo, não escondida.
+Esses itens pertencem à Fase 4, não ao registro de pendências transversais. Nenhuma escolha
+pode ser feita para aumentar Sharpe, significância ou retorno.
 
 ---
 
-## 5. Métricas reportadas (todas, sempre — não só as boas)
+## 4. Custos de transação e capacidade
+
+Custos são parte do resultado, não um desconto decorativo aplicado no fim. O modelo deve
+separar:
+
+| Componente | Tratamento exigido |
+|---|---|
+| Corretagem, emolumentos e demais taxas | taxa por notional negociado, com valor e fonte congelados na Fase 4.0 |
+| Slippage | função explícita da participação da ordem no ADTV; patrimônio/notional declarado |
+| Aluguel da ponta short | cenário histórico quando houver fonte válida; na ausência, cenários conservadores declarados, nunca taxa atual retroaplicada como se fosse PIT |
+| Indisponibilidade de aluguel | política determinística congelada antes do P&L; não remover apenas operações perdedoras |
+| Robustez | caso-base, custo zero como decomposição e custo 2× como stress |
+| Capacidade | capital máximo compatível com o limite pré-fixado de participação no ADTV |
+
+A antiga proposta de uma carteira long-only com hedge de índice **não é substituto automático**:
+é uma estratégia diferente e não pode ser promovida depois de observar que o short foi ruim.
+Se for mantida, será apenas análise operacional identificada e pré-registrada antes do holdout.
+
+---
+
+## 5. Métricas reportadas — inclusive as ruins
 
 | Categoria | Métricas |
 |---|---|
-| Retorno | retorno anualizado, retorno acumulado |
-| Risco | volatilidade, **max drawdown**, tempo até recuperação, VaR/CVaR |
-| Ajustado a risco | **Sharpe**, Sortino, Calmar |
-| Qualidade do sinal | *hit rate*, *information coefficient* (IC), IC por cultura |
-| Operacional | **turnover**, custo total pago, **capacidade estimada** |
-| Atribuição | contribuição da ponta long × short, por commodity, por ano |
-| Contra benchmark | vs. **Ibovespa** e vs. **CDI** — ambos declarados a priori |
+| Retorno | acumulado e anualizado, sempre bruto e líquido de custos |
+| Risco | volatilidade, max drawdown, tempo de recuperação, VaR/CVaR |
+| Ajustado a risco | Sharpe, Sortino e Calmar |
+| Qualidade do sinal | estatística primária D-053, hit rate e IC apenas quando identificáveis |
+| Operacional | turnover, custo total, participação no ADTV e capacidade |
+| Atribuição | long/short, nome, cultura/canal e ano-safra; SMTO3 separada |
+| Exposições | beta de mercado, FX, commodities e fatores NEFIN, sem chamá-las de neutralizadas |
+| Benchmarks | Ibovespa e CDI, ambos declarados a priori |
 
-> **Capacidade** (quanto capital a estratégia suporta antes de o alfa desaparecer) é a
-> métrica que uma gestora de verdade olha primeiro e que trabalhos acadêmicos costumam
-> omitir. Vamos reportá-la, mesmo que o número seja desconfortavelmente baixo.
-
----
-
-## 6. O que torna este backtest reprodutível
-
-1. **Semente aleatória fixa** em tudo que tem aleatoriedade (bootstrap, embaralhamentos).
-2. **Dependências pinadas** com lockfile.
-3. **Manifesto de dados** (`data/manifests/`): data de download, hash e vintage de cada
-   pull — versionado no git, ao contrário dos dados brutos.
-4. **Um comando** roda o pipeline inteiro, do dado bruto ao número final. Se o resultado do
-   relatório não puder ser regenerado por um comando, ele não é um resultado — é uma
-   anedota.
+O N efetivo é o número de anos-safra/clusters relevante para a inferência, não a quantidade
+de retornos diários. Retornos sobrepostos não fabricam novas observações independentes.
 
 ---
 
-## 7. Disciplina do holdout
+## 6. Reprodutibilidade e testes obrigatórios do motor
 
-O período **2020-2025 é lacrado**. Enquanto o desenho não estiver congelado, ninguém do time
-roda backtest nele — nem "só para dar uma olhada".
+1. semente fixa em bootstrap e permutações;
+2. dependências pinadas e manifestos de dados versionados;
+3. um comando reproduz cada artefato a partir das entradas locais;
+4. teste-canário de D+1, inclusive feriado e fim de semana;
+5. teste de fronteira para não duplicar o close de execução;
+6. teste de elegibilidade usando informação somente até D;
+7. teste de caps, bruto, dollar-neutralidade e redução de bruto quando um lado é inviável;
+8. teste de custo zero, custo conhecido e turnover por mudança de pesos;
+9. teste de deslistagem, ausência de preço e evento que cruza a fronteira temporal;
+10. bloqueio técnico do holdout por padrão.
 
-Rodamos **uma vez**. O resultado, qualquer que seja, vai para o relatório.
+---
 
-> Olhar o holdout e depois "ajustar um detalhezinho" o transforma em in-sample, e o projeto
-> perde a única defesa forte que tem contra a acusação de overfitting. Não existe meio-termo:
-> ou o holdout está lacrado, ou ele não existe.
+## 7. Disciplina do desenvolvimento e do holdout
+
+O desenvolvimento termina em 2019 e está **queimado para a direção** por D-043. Na Fase 4,
+ele serve para validar mecânica, invariantes, custos, turnover e atribuição — seu P&L não
+confirma H′ nem autoriza alterar direção, score ou parâmetros.
+
+O holdout de retornos 2020–2025 permanece lacrado mesmo após D-053. “Desenho econômico
+congelado” não significa “permissão para olhar”: a abertura só ocorre na Fase 6, depois de
+fechar a Fase 4.0, implementar e testar o motor e pré-registrar a suíte de robustez.
+
+O motor deve falhar alto ao receber datas do holdout sem uma autorização explícita e exclusiva
+da Fase 6. A rodada ocorre **uma vez** e o resultado, qualquer que seja, vai para o relatório.

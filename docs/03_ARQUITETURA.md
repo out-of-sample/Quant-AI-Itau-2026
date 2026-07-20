@@ -124,16 +124,17 @@ Kairos — features em categorias, não lista ad-hoc, é o que dá estrutura ao 
 | Bloco | O que é | Papel |
 |---|---|---|
 | **(a) Sinal da tese** | `Shock_{c,t}` — anomalia climática ponderada por produção, dentro da janela fenológica | é a tese |
-| **(b) Exposição** | matriz empresa × commodity point-in-time | D-033 registra preço/insumo; D-034 bloqueia o score até separar preço, volume próprio, custo, geografia e hedge |
+| **(b) Exposição** | matriz empresa × commodity point-in-time | D-033 registra o canal histórico; D-035 audita `P/Q/C`; D-043 falsifica a direção original e D-053 congela a camada operacional H′ sem apagar o registro anterior |
 | **(c) Contexto/controle** | IBOV, USDBRL, ONI (El Niño), vol realizada, ADTV, momentum | separa o efeito da tese de movimento de mercado amplo — **sem isso não há como afirmar que é alfa** |
 
 ### C3 — Teste de significância (PORTÃO)
 
 **Esta camada tem poder de veto.** Não é decorativa.
 
-Roda as hipóteses `H1` (mecanismo físico), `H2a` (transmissão preditiva ao futuro da
-commodity) e `H5` (placebo espacial) **antes** do backtest de retorno de ações. H2b, reação à
-publicação CONAB, é diagnóstico complementar; sua nulidade isolada não veta H2a.
+H1 já confirmou o mecanismo físico; H2a e seus diagnósticos de preço foram encerrados sem
+suporte ao canal `P`; o teste de reação acionária D-043 falsificou a direção original. O H3/
+Fama–MacBeth foi substituído em D-053 por um spread/painel compatível com quatro grãos. H4 e H5
+permanecem como testes existenciais nas Fases 4–5, não como fontes de ajuste dos pesos.
 
 - Correção de múltiplas comparações (**Benjamini-Hochberg/FDR**) sobre toda a família de
   testes `(cultura × horizonte × região)` — sem isso, testando dezenas de combinações,
@@ -151,12 +152,15 @@ publicação CONAB, é diagnóstico complementar; sua nulidade isolada não veta
 
 Converte o score contínuo em uma carteira observável e replicável.
 
-- `S_{i,t} = Σ_c E_{i,c} · Shock_{c,t}` (ver `01_TESE_E_PRE_REGISTRO.md` §3)
+- A convenção histórica `S=E·Shock` permanece como registro do mecanismo falsificado.
+- A camada operacional H′ de D-053 usa o **negativo** de `E·Shock` nos grãos e um canal próprio
+  `+Shock_maturação` para a SMTO3.
 - ComexStat **não entra no sizing primário**: valida H1b *ex post*. O gate histórico foi
   removido em D-026 porque a fonte não preserva o vintage da primeira publicação
-- **Sizing proporcional à convicção**, não binário
-- **Dollar-neutral** long/short — consequência direta da tese (produtores vs. processadores)
-- Filtro de liquidez (ADTV mínimo), cap por nome, cap de turnover
+- **Sizing proporcional ao score demeanado**, não binário; water-filling por lado.
+- **Dollar-neutral** long/short, bruto 1,0×; não presumir neutralidade fatorial.
+- Caps congelados em 0,40 por grão e 0,15 para a SMTO3. ADTV, custos, calendário e casos de
+  universo incompleto são o gate operacional D-054 da Fase 4.0.
 
 ### C5 — Execução (opcional)
 
@@ -290,7 +294,7 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C0 controle | `ingest/oni.py` | ✅ | ONI NOAA/CPC sazonal: parser da temporada centrada, captura datada + manifesto; fonte sobrescreve o histórico e revisa os valores recentes. `initial_avail_date` no dia 5 após o fim da janela; caso primário espera mais 2 meses para estabilização (D-021). RONI fica para robustez, sem troca silenciosa do pré-registro |
 | C0 controle | `ingest/nefin.py` | ✅ | fatores brasileiros para H4, em decimal. Download preso ao SHA do commit oficial + manifesto; snapshot inteiro recebe a data do commit. Revisão HML material comprovada entre dois vintages; uso exclusivamente ex post, nunca no sinal (D-022) |
 | C0 geografia | `ingest/pam.py`, `ingest/pam_calendar.py`, `ingest/ibge_geometry.py` | ✅ | PAM/SIDRA 1612 municipal com calendário efetivo 2014–2024, captura datada e pesos *as-of*; inclui soja 2713, milho 2711, algodão 2689 e cana 2696. Malha IBGE 2013 fixa pré-amostra, agora incluindo SP. Cobertura positiva sem polígono falha alto (D-024/D-048/D-050) |
-| C4 sinal | `signal/convention.py` | 🟡 | a convenção algébrica histórica `S = E·Shock` permanece travada contra inversão acidental, mas foi rejeitada economicamente em D-043. Algodão foi excluído e cana passou apenas o mecanismo físico; direção reformulada e carteira seguem sem congelamento até a auditoria empresarial da cana (D-044–D-051/R24) |
+| C4 sinal | `signal/convention.py`, `backtest/strategy_spec.py` | ✅ | a convenção histórica `S=E·Shock` permanece travada como mecanismo falsificado em D-043; a camada operacional H′ foi congelada em D-053: grãos usam o negativo de `E·Shock`, SMTO3 usa cana/maturação +1, com sizing/caps e teste primário explícitos |
 | C1 validação | `validate/pit.py`, `validate/universe.py` | ✅ | carimbo `avail_date` + filtro as-of; universo dinâmico validado nas 4 deslistagens reais de 2025. Cross-check dos 19 papéis vivos concluído, com divergências classificadas contra COTAHIST oficial (`scripts/crosscheck_yahoo.py`, D-025) |
 | C2 features | `features/shock_spec.py` | ✅ | contrato do `Shock` primário congelado e testado (D-023): soja + milho 2ª, UFs/janelas, chuva CHIRPS, mínimo 10 safras e geografia PAM/IBGE→UF→CONAB. Extensões ficam separadas: `COTTON_WINDOWS` foi rejeitado (D-047–D-049); cana tem contratos distintos de crescimento e maturação (D-050/D-051) |
 | C2 features | `features/shock.py` | ✅ | cálculo do `Shock` as-of `t` (D-028): acumulado `prelim` até a data de corte, climatologia expanding do mesmo trecho (produto `final`, ≥10 safras, cobertura diária obrigatória), `Shock = −z`; UF pondera municípios pela PAM as-of e o nacional pondera UFs pela safra CONAB anterior encerrada (nunca a corrente), renormalizando sobre janelas já iniciadas com `uf_coverage_weight` visível. Carimbo por produto: `prelim` +7d, `final` +60d |
@@ -302,7 +306,8 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C3 stats | `stats/cotton_h1.py`, `scripts/run_cotton_h1.py`, `data/reference/cotton_h1_result_v1.json` | ✅ | validação isolada do algodão, sem retornos: painel de 3 safras, OLS agrupado, UFs/anos/LOO e veredito literal de D-048. Critério não corroborado, com sinal positivo em todos os diagnósticos desta amostra; registro imutável contém hashes das entradas e da primeira execução (D-049) |
 | C2/C3 cana | `features/cane_panel.py`, `features/cane_shock.py`, `stats/cane_h1.py`, scripts e `data/reference/cane_h1_result_v1.json` | ✅ | submodelo mensal separado: crescimento/produção e maturação/ATR nunca se misturam. 198 rasters com manifesto, painel SP+MG+GO+MS+PR e portão direcional reproduzível. Maturação passou D-050 (8/8 LOO, 5/5 UFs), mas sem significância; R24 bloqueia tradução automática em ação (D-051) |
 | C4 estratégia | `backtest/strategy_spec.py` | ✅ | contrato congelado da estratégia reformulada (D-053), anterior ao holdout e return-agnóstico: universo de 5 nomes, direção H′ (grãos = negativo de `E·Shock`; cana +1), sizing dollar-neutral proporcional ao sinal com cap 0,40/0,15 (B1, resolve R19), execução D+1, pesos CONAB, e o teste primário spread produtor–processador só nos grãos (A1). Travado em `tests/test_strategy_spec.py` |
-| C6 backtest · C7 robustez · C8 report | idem | ⬜ | especificados nos docs `04`/`05`; a máquina de backtest (Fase 4) consome `strategy_spec.py` |
+| C6 backtest | `backtest/strategy_spec.py` | 🔄 | estratégia econômica congelada; auditoria D-054 abriu a Fase 4.0 para fechar calendário, score, universo incompleto, inferência, custos e partição temporal antes do motor. Holdout negado até a Fase 6 |
+| C7 robustez · C8 report | — | ⬜ | suíte será atualizada para H′ na Fase 5; relatório na Fase 7 |
 
 > A camada **`prices/`** não estava no esqueleto original de 8 camadas: ela nasceu na Fase 1
 > como o passo que transforma preço bruto + eventos corporativos em retorno total antes das
