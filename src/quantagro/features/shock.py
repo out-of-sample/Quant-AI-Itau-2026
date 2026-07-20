@@ -49,7 +49,12 @@ from quantagro.ingest.pam import pam_weights_asof
 from quantagro.validate.pit import AVAIL_COL, available_asof, stamp_avail_date
 
 # O milho 2ª safra usa o milho total da PAM como proxy espacial declarado (D-023/R15).
-PAM_CROP_FOR: dict[str, str] = {"soy": "soy", "corn_second": "corn_total"}
+# Algodão em caroço localiza a mesma lavoura cujo desfecho CONAB é pluma (D-048).
+PAM_CROP_FOR: dict[str, str] = {
+    "soy": "soy",
+    "corn_second": "corn_total",
+    "cotton": "cotton",
+}
 
 # Lags de publicação por produto CHIRPS (dias corridos): prelim é o caso primário congelado
 # (01_TESE §5); final sai ~1 mês depois da referência — 60 dias é conservador de propósito.

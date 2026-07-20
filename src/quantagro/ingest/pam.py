@@ -1,10 +1,12 @@
 """Ingestão point-in-time da PAM/IBGE, tabela SIDRA 1612.
 
-A PAM localiza a produção de soja e milho dentro de cada UF. Ela não gera sinal e não informa
-milho 2ª safra separadamente no nível municipal: ``corn_total`` é um proxy espacial declarado
-em D-023/R15. A fonte reescreve anos antigos; por isso cada download é uma captura datada com
-hash. O ``avail_date`` reconstrói quando a edição anual apareceu, mas não desfaz correções
-retroativas já incorporadas pelo SIDRA atual.
+A PAM localiza a produção de soja, milho e algodão herbáceo dentro de cada UF. Ela não gera
+sinal e não informa milho 2ª safra separadamente no nível municipal: ``corn_total`` é um proxy
+espacial declarado em D-023/R15. Para algodão, ``cotton`` usa produção em caroço apenas como
+peso espacial da lavoura; o desfecho H1 continua sendo pluma na CONAB (D-048). A fonte
+reescreve anos antigos; por isso cada download é uma captura datada com hash. O ``avail_date``
+reconstrói quando a edição anual apareceu, mas não desfaz correções retroativas já incorporadas
+pelo SIDRA atual.
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ UNIT_TONNES = "1017"
 _BASE_URL = "https://apisidra.ibge.gov.br/values"
 
 PAM_PRODUCTS: dict[str, str] = {
+    "cotton": "2689",  # Algodão herbáceo (em caroço) — localização da lavoura (D-048)
     "corn_total": "2711",
     "soy": "2713",
 }

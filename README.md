@@ -12,14 +12,18 @@ defasagem e de forma heterogênea entre empresas**: uma seca pode elevar o preç
 commodity, reduzir o volume do produtor atingido e comprimir a margem de quem compra o grão
 como insumo.
 
-O Brasil é um dos maiores exportadores mundiais dessas commodities — logo, uma quebra de safra
-brasileira é um **choque de oferta global**, e **eleva** o preço. É por isso que a leitura
-intuitiva ("detectou seca ⇒ vende agro") está economicamente errada, e por que o alfa não está
-na direção do setor, mas na **dispersão dentro dele**.
+O Brasil é um dos maiores exportadores mundiais dessas commodities. A hipótese econômica
+original era que uma quebra brasileira, como choque de oferta global, elevaria o preço e
+criaria dispersão entre empresas. Os testes D-037–D-041 **não deram suporte estatístico a esse
+canal de preço**, e D-043 mostrou que o dano de volume dominou nos produtores da amostra. Essa
+distinção entre mecanismo plausível e mecanismo demonstrado orienta a reformulação atual.
 
-A estratégia candidata é **dollar-neutral long/short dentro do agro**. A direção líquida dos
-produtores ainda depende da separação entre preço e volume próprio; neutralidade a mercado,
-fatores e commodities será testada, não presumida a partir do notional.
+A estratégia originalmente candidata era **dollar-neutral long/short dentro do agro**. O
+teste no desenvolvimento mostrou que comprar produtores sob seca perde: o dano de volume
+próprio dominou o benefício de preço. Essa formulação não foi invertida depois do resultado;
+uma hipótese nova, Q-dominante, foi pré-registrada e está sendo construída antes de um único
+teste no holdout. Neutralidade a mercado, fatores e commodities será testada, não presumida
+a partir do notional.
 
 **A ineficiência explorada é de agregação, não de acesso.** O dado é público e gratuito; caro
 é cruzar grade meteorológica × mapa de produção agrícola × composição de receita e custo das
@@ -30,15 +34,15 @@ empresas.
 ## A cadeia causal (testada em etapas, não assumida)
 
 ```
-choque climático  →  revisão da estimativa de safra da CONAB  →  preço da commodity  →  ação
-   (CHIRPS)            (painel de vintages, data conhecida)        (futuro/CEPEA)      (B3)
-                                        ↑
-                     confirmação independente: volume exportado (ComexStat)
+choque climático  →  revisão CONAB  →  preço da commodity  →  ação
+   (CHIRPS)             ✅ H1              ❌ H2              ❌ direção original
+                            ↑
+             ComexStat corroborou soja ex post
 ```
 
-Cada seta é uma hipótese com **critério de falsificação declarado antes de rodar**. Se o clima
-não prevê a revisão da CONAB, o mecanismo é falso e o projeto para e reformula — em vez de
-seguir para o backtest e encontrar um alfa que seria coincidência.
+Cada seta foi tratada como hipótese com **critério de falsificação declarado antes de rodar**.
+O mecanismo físico passou, mas os elos financeiros não; por isso a formulação original foi
+interrompida e a reformulação é registrada como hipótese nova, não como reinterpretação.
 
 ---
 
@@ -89,9 +93,11 @@ Três compromissos que estruturam tudo o mais:
 
 ## Estado atual
 
-**Fase 3.1 — auditoria dos canais empresariais.** H1 confirmou o mecanismo clima → revisão
-de safra (D-031), e a matriz fundamentalista PIT foi construída sem retornos (D-032/D-033).
-Antes de qualquer score ou backtest de ações, D-034 exige auditar geografia, hedge e perímetro,
-separar preço/volume próprio/custo, testar H2a no desenvolvimento, substituir H3 por desenho
-compatível com três a quatro ações e resolver a concentração R19. Dívidas sem fase proprietária
-ficam em [`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).
+**Fase 3.4 — construção dos canais da hipótese reformulada.** H1 confirmou o mecanismo
+clima → revisão de safra para soja e milho (D-031), mas os testes de preço e ações derrubaram
+a direção financeira original (D-037–D-043). A hipótese Q-dominante foi pré-registrada em
+D-044. O algodão foi então testado como extensão independente e **rejeitado**: β=+0,042, sinal
+contrário ao esperado, com 0/3 estimativas *leave-one-safra-out* negativas (D-048/D-049).
+O próximo canal é a cana, com contrato fenológico e sinal próprios. O holdout de retornos
+2020–2025 continua lacrado. Dívidas sem fase proprietária ficam em
+[`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).

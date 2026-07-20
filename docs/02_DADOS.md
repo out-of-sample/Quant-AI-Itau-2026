@@ -214,8 +214,9 @@ publicar?*
   com o calendário de boletins é **ambíguo** (as revisões de trigo não casam com um único
   ano-boletim) ⇒ inverno fica **fora do calendário** e o carimbo falha alto se aparecer.
   A tese não usa culturas de inverno.
-- **`id_levantamento == 99` ("LEVANT")**: resíduo legado sem número (algodão 2017/18–2021/22,
-  café 2017, cana ≤2020/21). Não é datável; o parser preserva, o calendário não cobre.
+- **`id_levantamento == 99` ("LEVANT")**: resíduo legado sem número (algodão 2018/19–2021/22,
+  enquanto 2017/18 tem apenas o 12º levantamento; café 2017; cana ≤2020/21). Não é datável;
+  o parser preserva, o calendário não cobre.
 - **Café 2020 não tem 2º levantamento** (suspenso na pandemia) — ausente do painel e da
   página da CONAB da época. Buraco real da fonte, não do mapa.
 - **Armadilha de vintage no próprio site da CONAB**: o listing atual (gov.br) mostra, para a
@@ -235,7 +236,8 @@ publicar?*
 
 **Para peso espacial por município (implementado, D-024)**: IBGE **SIDRA** (PAM, tabela 1612),
 API pública sem chave. `ingest/pam.py` consulta nível municipal (`n6`), variável 214
-(`Quantidade produzida`, toneladas), soja 2713 e milho total 2711. Cada captura recebe hash e
+(`Quantidade produzida`, toneladas), soja 2713, milho total 2711 e algodão herbáceo em caroço
+2689. Cada captura recebe hash e
 manifesto; o painel carrega `ref_date=31/12` e a data efetiva de divulgação de
 `ingest/pam_calendar.py`. O calendário curado, sem interpolação, é:
 
@@ -251,6 +253,13 @@ Em cada data `D`, `pam_weights_asof` usa somente a edição mais recente com
 permanece `NaN`, com contagem por cultura/UF — nunca é convertido em zero. Na captura integral
 2014–2024, 130 de 38.467 linhas vieram como `...`, concentradas em municípios urbanos; os pesos
 são normalizados sobre a tonelagem reportada e a incompletude fica visível no painel.
+
+**Captura do algodão (D-048/D-049).** O snapshot 2014–2024 de BA+MT contém 6.138 linhas e
+558 municípios. O produto PAM em caroço é usado **somente como peso espacial** da lavoura; o
+desfecho é a produção CONAB de pluma, portanto não se equiparam níveis físicos entre as bases.
+Na CONAB, as únicas safras encerradas com ao menos dois levantamentos numerados e calendário
+recuperável são 2022/23–2024/25. O teste direcional falhou (D-049), de modo que essa captura
+permanece como registro reproduzível do teste e não alimenta o score.
 
 **Geometria**: `ingest/ibge_geometry.py` usa a malha municipal IBGE **edição 2013** como suporte
 fixo. Seus artefatos foram gerados em 16/03/2015, antes da primeira janela operacional em

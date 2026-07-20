@@ -1467,6 +1467,10 @@ nomes, +1 evento (algodão)**. Com cana: **6 nomes, +1 canal independente**. Com
 mais sujo. Por D-045, isso põe o poder na faixa "**conclusivo se o efeito for ≥ moderado**" — não
 vira um universo de dezenas de ações. É o teto do listado brasileiro, e a gente o assume.
 
+> **Resultado posterior:** D-049 rejeitou o canal do algodão; portanto ele não fornece o
+> evento adicional projetado neste desenho. O texto acima é preservado como expectativa
+> anterior ao teste, não como descrição do estado atual.
+
 **Congelado agora**: os princípios e as direções (algodão = produtor prejudicado por seca; cana =
 produtor beneficiado por inverno seco, à parte). **Depois, antes do holdout**: os contratos de
 choque por cultura (D-023-like) e a especificação final da estratégia (D-044 §5).
@@ -1502,6 +1506,87 @@ peso intra-UF e **validar** o canal — o choque do algodão prevê a **revisão
 ⇒ a validação será de **baixo poder/direcional** (como H1b), não um veto forte. Reforça, não
 sozinha decide. MT concentra ~68% ⇒ o canal é quase MT+BA; a diversificação de evento vem do
 timing/geografia parcialmente distintos da soja, não de muitas UFs.
+
+---
+
+### D-048 — Pré-registro da validação H1 do algodão: três safras e critério direcional
+**Data**: 2026-07-20
+
+Antes de calcular o primeiro `Shock` de algodão, fica congelado o teste que decide se o canal
+D-047 pode entrar na estratégia reformulada H′. Ele testa somente o mecanismo físico
+clima→revisão de safra; não consulta retorno de ação.
+
+**Correção de cobertura descoberta antes do teste.** O painel CONAB traz `ALGODAO EM PLUMA`
+desde 2017/18, mas 2017/18 possui apenas o 12º levantamento e 2018/19–2021/22 usam o código
+legado 99, sem data recuperável. As únicas safras encerradas com vintages 1–12 datáveis são
+**2022/23, 2023/24 e 2024/25**. A safra 2025/26 está em andamento e não entra. Logo o N efetivo
+é três anos-safra, não quatro ou nove; a estimativa anterior em D-047 fica corrigida por esta
+decisão posterior.
+
+**Desenho congelado:**
+
+1. peso intra-UF: PAM/SIDRA 1612, variável 214, produto 2689 (`Algodão herbáceo (em caroço)`),
+   última edição disponível em cada data; o produto em caroço localiza a lavoura, enquanto o
+   desfecho CONAB é produção de pluma;
+2. UFs e janelas: MT e BA, exatamente `COTTON_WINDOWS` de D-047;
+3. desfecho: revisão log acumulada de `ALGODAO EM PLUMA/UNICA` desde o 1º levantamento;
+4. regressor: `Shock` da UF observável na data de cada levantamento, com CHIRPS prelim e
+   climatologia expanding desde 2000; levantamentos anteriores ao início da janela não são
+   imputados;
+5. estimativa primária: painel MT+BA, `logrev ~ Shock`, erros agrupados por ano-safra;
+6. diagnósticos: MT e BA separados, coeficientes por safra e três estimativas
+   *leave-one-safra-out*; bootstrap por cluster e p-valores são reportados, mas não decidem
+   aprovação com apenas três clusters.
+
+**Critério direcional pré-registrado.** O canal é corroborado se `(a)` o β agrupado for
+negativo — estresse antecipa revisão para baixo — e `(b)` pelo menos duas das três estimativas
+*leave-one-safra-out* também forem negativas. Caso contrário, o algodão não entra no score.
+Significância não é exigida nem alegada. Se o sinal for correto, mas a estabilidade falhar, o
+resultado é inconclusivo e o canal também fica fora do primário.
+
+**Custo/limitação.** Levantamentos mensais dentro da mesma safra não são eventos independentes;
+o teste mede direção com três clusters e não compra o poder prometido para retorno pela D-045.
+Seu papel é controle de qualidade do ingrediente climático. A contribuição de poder do algodão
+ao holdout só existe se este teste direcional passar.
+
+---
+
+### D-049 — Resultado H1 do algodão: critério não corroborado; canal excluído
+**Data**: 2026-07-20
+
+O teste D-048 foi executado uma vez, sem retorno de ação. O painel contém 42 observações em
+MT e BA e apenas **três anos-safra independentes** (2022/23–2024/25). O resultado agrupado foi
+`β=+0,0421` (erro-padrão agrupado `0,0089`; `t=+4,76`, apenas diagnóstico). O sinal é o
+**oposto** do mecanismo pré-registrado, segundo o qual estresse deveria antecipar revisão para
+baixo da produção de pluma.
+
+A estabilidade também veio no sentido contrário:
+
+- BA: `β=+0,0299`; MT: `β=+0,1431`;
+- por safra: `+0,0185`, `+0,0820` e `+0,0458`;
+- *leave-one-safra-out*: `+0,0502`, `+0,0466` e `+0,0376` — portanto **0/3 negativas**.
+
+O critério D-048 falhou nos dois componentes. **O algodão não entra no score H′, não recebe
+peso próprio e não conta como evento adicional na análise de poder D-045.** A expansão segue
+para o canal independente da cana; o holdout de ações permanece intocado.
+
+Um diagnóstico posterior, rotulado como explicativo e incapaz de resgatar o teste, decompôs a
+produção em área e produtividade. O coeficiente da área plantada foi positivo (`+0,0375`),
+enquanto o de produtividade foi próximo de zero (`−0,0018`). Assim, a revisão positiva da
+produção parece refletir revisão de área, não evidência de que déficit hídrico eleve rendimento.
+Trocar o desfecho primário para produtividade depois de observar esse resultado seria uma
+mudança *post-hoc* e não foi feita.
+
+**Custo/limitação.** Três clusters não permitem uma alegação forte de significância, e os
+diagnósticos não são evidências independentes entre si. A formulação precisa é: o ingrediente
+**não foi corroborado pelo critério pré-registrado**, com sinal positivo em todos os
+diagnósticos desta amostra. Isso não é prova geral sobre a fisiologia do algodão. A sensibilidade
+com pesos municipais uniformes pode quantificar R15, mas, por ser secundária, não pode reverter
+o veto do teste primário nem promover o canal.
+
+O registro imutável `data/reference/cotton_h1_result_v1.json` preserva commit de pré-registro,
+parâmetros, hashes das entradas e hashes dos artefatos da primeira execução. O diagnóstico
+área/produtividade foi incorporado ao rodador depois do veredito, com rótulo pós-hoc explícito.
 
 ---
 

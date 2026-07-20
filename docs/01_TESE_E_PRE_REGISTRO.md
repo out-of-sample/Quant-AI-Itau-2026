@@ -6,6 +6,13 @@
 > em `07_RISCOS_E_DECISOES.md` com data e justificativa. Um plano que muda silenciosamente
 > depois de ver o resultado não é um plano, é overfitting narrado.
 
+> **Estado posterior preservado sem reescrever o pré-registro.** A formulação abaixo é o
+> registro original. D-037–D-043 mostraram que o canal de preço não teve suporte e que a
+> reação das ações foi contrária à direção proposta. D-044 abriu uma hipótese nova,
+> Q-dominante, sem inverter retroativamente este documento. A extensão de algodão foi
+> pré-registrada em D-048 e rejeitada em D-049. O desenho operacional vigente deve ser lido no
+> log de decisões e no `00_PLANO_MESTRE.md`; o holdout de retornos permanece lacrado.
+
 ---
 
 ## 1. A tese em uma frase

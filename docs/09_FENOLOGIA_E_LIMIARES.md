@@ -89,9 +89,10 @@ z_{c,u,s}(D) = [P_{c,u,s}(D) − média expanding do mesmo trecho em safras ante
 Shock_{c,u,s}(D) = −z_{c,u,s}(D)
 ```
 
-Logo, chuva abaixo da climatologia gera `Shock > 0`, coerente com a convenção econômica:
-estresse reduz oferta, tende a elevar a commodity, beneficia o produtor e prejudica quem a
-compra como insumo.
+Logo, chuva abaixo da climatologia gera `Shock > 0`. Essa convenção identifica **estresse
+físico**, não determina sozinha retorno acionário. A hipótese original de que o benefício de
+preço dominaria no produtor foi rejeitada em D-037–D-043; a direção financeira reformulada é
+tratada separadamente em D-044 e não reescreve a definição climática.
 
 Regras duras:
 
@@ -208,7 +209,7 @@ e seus testes pertencem a uma família sujeita a BH-FDR.
 | Lag climático | resultado depende da hipótese operacional? | 3, 7 e 14 dias; 7 é primário |
 | Janela temporal | efeito sobrevive a pequena imprecisão fenológica? | deslocar o bloco completo em −10 e +10 dias; sem otimizar cada borda |
 | ZARC por ciclo | janela oficial mais granular confirma o sinal? | se implementada, fixar previamente solo, manejo, risco e grupo; nunca selecionar pelo retorno |
-| Algodão | o mecanismo replica numa cultura concentrada em MT/BA? | precipitação, MT mar–mai e BA jan–mar; secundário pelo painel curto |
+| Algodão | o mecanismo replica numa cultura concentrada em MT/BA? | contrato D-047: MT 15/mar–31/mai e BA 1/fev–30/abr. **Testado e rejeitado em D-049** (β de produção +0,042, sinal contrário; 0/3 LOO negativos); não entra no score |
 | Café | a sequência seca→chuva acrescenta mecanismo distinto? | especificação própria; déficit linear é proibido |
 | Cana | crescimento e ATR respondem com sinais opostos? | nov–abr: seca ruim; mai–set: seca favorece ATR; nunca um z-score anual único |
 
