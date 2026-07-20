@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "decision": "D-052",
+  "built_on": "D-050/D-051 (canal fisico da cana corroborado com ressalva) e R24",
+  "note": "Auditoria PIT dos dois veiculos de cana (SMTO3, JALL3), sem consultar retorno de acao. Responde ao R24: o ATR favoravel de D-051 se traduz em exposicao economica assinavel? A decisao de incluir SMTO3 e excluir JALL3 NAO depende dos numeros finos abaixo; depende da data de IPO (fato publico robusto) e da geografia/cana-propria (corroboradas em multiplas fontes). Direcao do submodelo cana: produtor com ATR favoravel = +1 (D-051).",
+  "evidence_tier": "Fontes primarias CVM (formulario de referencia / releases de RI) NAO foram baixadas diretamente nesta passada: WebFetch retornou 403 em XP/Novacana e a SEC/EDGAR nao cobre nomes listados so na B3. Os numeros operacionais finos vem de sinteses de imprensa setorial e de resumos de releases de RI, tier inferior ao D-035 (que leu 20-F direto). Fatos estruturais (IPO, UFs das usinas, cana propria majoritaria) sao corroborados por multiplas fontes; percentuais finos sao lacuna declarada.",
+  "shock_uf_scope_cana": ["SP", "MG", "GO", "MS", "PR"],
+  "names": [
+    {
+      "ticker": "SMTO3",
+      "company": "Sao Martinho",
+      "role": "cane_producer",
+      "cane_submodel_direction": 1,
+      "decision": "INCLUIR no universo scoreado, com haircut declarado",
+      "pit_history": {
+        "b3_listed_since": "2007",
+        "dev_available": true,
+        "holdout_available": true,
+        "note": "IPO 2007 -> historico completo no dev (<=2019/20) e no holdout (2020/21-2024/25); veiculo testavel e negociavel."
+      },
+      "findings": {
+        "mills": [
+          {"name": "Sao Martinho", "city": "Pradopolis", "uf": "SP", "products": ["acucar", "etanol"]},
+          {"name": "Iracema", "city": "Iracemapolis", "uf": "SP", "products": ["acucar", "etanol"]},
+          {"name": "Santa Cruz", "city": "Americo Brasiliense", "uf": "SP", "products": ["acucar", "etanol"], "own_cane_note": ">90% cana propria"},
+          {"name": "Boa Vista", "city": "Quirinopolis", "uf": "GO", "products": ["etanol"], "note": "100% etanol, nao produz acucar"}
+        ],
+        "geography_in_shock": "SP+GO, integralmente dentro do escopo do choque da cana (SP/MG/GO/MS/PR).",
+        "milling_capacity_mt_year": "~24-25",
+        "own_cane_share_group": 0.70,
+        "own_cane_note": "~70% propria/parceria, ~30% terceiros a CONSECANA -> offset PARCIAL de custo do ATR na fatia de terceiros (CONSECANA remunera cana por ATR).",
+        "sugar_mix_share": 0.47,
+        "sugar_mix_note": "~47% do mix para acucar na 2020/21 (flexivel); Boa Vista/GO so etanol.",
+        "hedge": "Trava ~96% do preco do acucar de cana propria ~1 safra a frente (2020/21: 1.094 kt a R$1.319/t). Hedge de PRECO, nao de ATR: o canal ATR e quantidade de acucar recuperavel por tonelada e sobrevive ao hedge de preco (ver cross_cutting)."
+      },
+      "declared_gaps": [
+        "% cana propria por safra/vintage nao extraido de formulario de referencia CVM primario",
+        "mix acucar/etanol por vintage e % de hedge por safra vem de sintese de imprensa/RI, nao do documento primario",
+        "timing do surpreendimento de ATR vs. momento do hedge de volume NAO e PIT-separavel (lacuna de identificacao)"
+      ],
+      "conclusion": "Veiculo assinavel do submodelo cana: geografia dentro do choque, cana majoritariamente propria, ATR (acucar total recuperavel) rende acucar E etanol. Direcao +1 sob D-051. Haircut candidato por ~30% terceiros (offset CONSECANA), hedge intenso de preco e Boa Vista/GO so etanol. Ressalva dura: ATR != receita total e o canal de tonelagem (crescimento) veio fraco/negativo em D-051 -> sinal fisico liquido de receita NAO provado (R24). Peso definido no congelamento do score (Fase 3.5)."
+    },
+    {
+      "ticker": "JALL3",
+      "company": "Jalles Machado",
+      "role": "cane_producer",
+      "cane_submodel_direction": 1,
+      "decision": "EXCLUIR do universo scoreado (historico PIT insuficiente)",
+      "pit_history": {
+        "b3_listed_since": "2021-02-08",
+        "dev_available": false,
+        "holdout_available": "parcial (apos seasoning, ~2021 em diante)",
+        "note": "IPO 08/02/2021 -> ZERO historico no dev; vida negociavel inteira dentro do holdout lacrado. Nao ha como valida-la no dev; inclui-la no score adicionaria ao teste de tiro unico um nome nunca pre-testado (risco de descoberta falsa)."
+      },
+      "findings": {
+        "mills": [
+          {"name": "Jalles Machado", "city": "Goianesia", "uf": "GO", "products": ["acucar", "acucar_organico", "etanol"]},
+          {"name": "Otavio Lage", "city": "Goianesia", "uf": "GO", "products": ["acucar", "etanol"]},
+          {"name": "usina MG", "uf": "MG", "products": ["acucar", "etanol"], "note": "adquirida em 2022 (mudanca de perimetro, dentro do holdout)"}
+        ],
+        "geography_in_shock": "GO+MG, dentro do escopo do choque da cana.",
+        "milling_capacity_mt_year": "~8.5",
+        "own_cane_share_group": 1.0,
+        "own_cane_note": "100% cana propria -> exposicao ao ATR mais limpa, sem offset CONSECANA de terceiros.",
+        "sugar_mix_note": "~50-60% acucar, com fatia relevante ORGANICO (premium, >1/3 da receita em produtos nao-commoditizados); etanol.",
+        "hedge": "Politica de travar preco do acucar ate ~2 anos a frente; forte resultado financeiro de hedge cambial/preco.",
+        "perimeter_change": "Usina de MG adquirida em 2022, dentro do holdout."
+      },
+      "declared_gaps": [
+        "numeros operacionais finos de sintese de imprensa/RI, nao de formulario de referencia CVM primario"
+      ],
+      "conclusion": "Economicamente a exposicao MAIS LIMPA (100% propria, GO+MG no choque, acucar organico premium), mas metodologicamente inadmissivel como posicao pontuada: IPO fev/2021 => sem dev, so holdout. O mecanismo clima->ATR ja esta validado por D-051 no CONAB, independente do IPO; a exclusao da JALL3 nao enfraquece o canal, apenas evita um nome nao-validavel no teste lacrado. Excluida do score por decisao do time (opcao 1)."
+    }
+  ],
+  "cross_cutting_findings": {
+    "atr_is_a_quantity_channel_not_price": "O sinal da cana (D-051) e ATR = acucar recuperavel por tonelada de cana, um canal de QUANTIDADE/RENDIMENTO. Mais ATR = mais acucar e mais etanol da mesma cana. Por isso ele SOBREVIVE ao hedge de preco de acucar (que travou ~96% na SMTO3) - diferentemente do canal de PRECO de graos que falhou em D-037/D-041. Esse e o racional economico para manter cana como submodelo separado.",
+    "atr_not_total_revenue": "ATR e qualidade por tonelada, nao receita total. Receita ~ tonelagem x ATR x preco. O canal de tonelagem (crescimento, D-051) veio fraco/negativo (beta -0,0061, n.s.) e pode compensar parte do ganho de ATR. O sinal fisico liquido de receita NAO esta provado; cana permanece submodelo com ressalva (R24), nao estrategia comprovada.",
+    "geography_and_own_cane": "Ambos os nomes tem usinas integralmente dentro do escopo do choque (SP+GO para SMTO3; GO+MG para JALL3) e cana majoritariamente/totalmente propria (SMTO3 ~70%, JALL3 100%) -> o ganho de ATR acrua como margem sem grande offset CONSECANA.",
+    "vehicle_decision": "SMTO3 e o unico veiculo assinavel e testavel do canal da cana. JALL3, apesar de mais limpa, e excluida do score por historico PIT insuficiente (holdout-only). Universo scoreado passa a 5 nomes (4 graos + SMTO3). Ganho de poder de 5->6 nomes e marginal (~+4-8pp, re-analise D-045), nao justifica o risco metodologico de um nome nao-validavel."
+  },
+  "sources_consulted": [
+    "B3 - IPO JALL3 (b3.com.br/pt_br/noticias/jall3.htm); Money Times (estreia 08/02/2021)",
+    "Sao Martinho - Negocios & Unidades (saomartinho.com.br); UDOP; JornalCana; Forbes (releases de safra 2019/20, 2020/21: mix ~47%, hedge 1.094 kt = 96% a R$1.319/t)",
+    "NovaCana - fichas de usina (capacidade, cana propria por unidade) [WebFetch 403; via busca]",
+    "AgFeed/TheAgriBiz/Forbes Agro/RPAnews - Jalles Machado (100% cana propria, usinas GO Goianesia + MG 2022, mix ~50-60% acucar incl. organico, hedge ate 2 anos)"
+  ]
+}

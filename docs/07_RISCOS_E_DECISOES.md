@@ -44,7 +44,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Suspender Fama–MacBeth primário; pré-registrar spread/painel com inferência por ano-safra antes de retornos | 🔴 Aberto — bloqueia H3 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
-| R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Manter cana como submodelo separado; auditar exposição PIT de SMTO3/JALL3 e congelar tradução econômica antes de retorno; reportar p=0,12/bootstrap p=0,27 | 🟡 Ingrediente físico corroborado, força estatística fraca; não prova ação |
+| R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Manter cana como submodelo separado; auditoria PIT concluída (D-052): SMTO3 assinável entra com haircut, JALL3 fora do score por ser holdout-only; congelar direção/sizing na Fase 3.5; reportar p=0,12/bootstrap p=0,27 | 🟡 Veículo (SMTO3) auditado; ingrediente físico corroborado, força estatística fraca; ATR≠receita segue como ressalva aberta |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -1721,6 +1721,55 @@ resultado, hashes das entradas/saídas e a leitura limitada. O manifesto consoli
 acumuladas, não eventos independentes. ATR mede kg de açúcar recuperável por tonelada, e não
 receita total. O passo seguinte pode matar o canal mesmo com D-051 positivo — isso é uma
 barreira metodológica, não uma formalidade.
+
+---
+
+### D-052 — Auditoria PIT dos veículos de cana: SMTO3 entra, JALL3 fica fora do score
+**Data**: 2026-07-20
+
+Auditoria conduzida sem tocar retorno de ação, respondendo ao R24: o ATR favorável de D-051
+se traduz em exposição econômica assinável? Registro estruturado por nome, fonte e lacuna
+declarada em `data/reference/cane_corporate_audit_v1.json`. Direção do submodelo: produtor de
+cana com ATR favorável = **+1** (D-051).
+
+**Achados que decidem (ambos os nomes têm geografia dentro do choque SP/MG/GO/MS/PR e cana
+majoritária/totalmente própria):**
+
+| | **SMTO3 — São Martinho** | **JALL3 — Jalles Machado** |
+|---|---|---|
+| Geografia usinas | 3 SP + Boa Vista/GO (dentro) | 2 GO + 1 MG/2022 (dentro) |
+| Cana própria | ~70% (30% terceiros/CONSECANA) | 100% (exposição mais limpa) |
+| Mix | ~47% açúcar; Boa Vista/GO só etanol | ~50–60% açúcar, >⅓ orgânico premium |
+| Hedge | ~96% do preço 1 safra à frente | preço até 2 anos à frente |
+| **Histórico PIT** | **IPO 2007 → dev + holdout** | **IPO 08/02/2021 → só holdout, zero dev** |
+
+**Racional econômico central.** O canal da cana é de **quantidade** (ATR = açúcar recuperável
+por tonelada), não de preço: mais ATR = mais açúcar **e** etanol da mesma cana. Por isso ele
+**sobrevive ao hedge de preço** (que travou ~96% na SMTO3) — diferentemente do canal de preço
+de grãos que falhou em D-037/D-041. Esse é o motivo de manter cana como submodelo. Ressalva
+dura: ATR ≠ receita total, e o canal de tonelagem (crescimento) veio fraco/negativo em D-051 —
+o sinal físico líquido de receita **não está provado** (R24).
+
+**Decisão (opção 1, decidida pelo time).**
+1. **SMTO3 entra no universo scoreado, com haircut declarado** (30% terceiros → offset
+   CONSECANA; hedge intenso de preço; Boa Vista/GO só etanol). É o único veículo **testável no
+   dev e negociável no holdout**. Direção +1 sob o submodelo; peso definido no congelamento do
+   score (Fase 3.5).
+2. **JALL3 fica fora do score.** Economicamente é a exposição mais limpa, mas o **IPO de
+   fev/2021** a deixa sem dev, só no holdout lacrado. Incluí-la seria pôr no teste de tiro único
+   um nome que **nunca poderíamos ter validado** — exatamente o risco de descoberta falsa que o
+   projeto blinda. O mecanismo clima→ATR já está validado por D-051 no CONAB, **independe do
+   IPO**; excluir a JALL3 não enfraquece o canal.
+3. **Universo scoreado passa a 5 nomes** (4 grãos + SMTO3). O ganho de poder de 5→6 nomes é
+   marginal (~+4–8pp, re-análise D-045) e não justifica o risco metodológico.
+
+**Custo/limitação declarado.** Tier de evidência **inferior ao de D-035**: as fontes primárias
+CVM (formulário de referência) não foram baixadas diretamente — WebFetch retornou 403 em
+XP/NovaCana e a SEC não cobre nomes só da B3. Os números finos (% cana própria por safra, mix
+por vintage, % de hedge) vêm de síntese de imprensa setorial/RI e ficam como **lacuna
+declarada**. A decisão, porém, **não depende deles**: apoia-se na data de IPO (fato público
+robusto) e na geografia/cana-própria (corroboradas em múltiplas fontes). O timing do
+surpreendimento de ATR vs. o momento do hedge não é PIT-separável — lacuna de identificação.
 
 ---
 

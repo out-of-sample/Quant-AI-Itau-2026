@@ -1024,6 +1024,34 @@ não foi uma troca motivada pelo coeficiente.
 
 ---
 
+## 2026-07-20 (noite) — Auditoria dos veículos de cana e re-análise de poder (D-045 nota, D-052)
+
+**Uso**: (a) re-rodar a análise de poder com o universo real pós-canais; (b) auditar
+point-in-time se o ATR favorável da cana (D-051) se traduz em ação assinável, sem tocar retorno.
+
+**Valor real**: a IA reusou o simulador de D-045 sem alterá-lo e mostrou que a premissa de "~8
+nomes" caiu (algodão 0 nomes, cana ≤2 condicionais) — universo real é 4–6, e a expansão virou
+alavanca fraca (+8pp), movendo o peso da aposta contra o inconclusivo do "quantos nomes" para o
+"tamanho do efeito sobreviver". Na auditoria, separou o canal da cana como de **quantidade**
+(ATR = açúcar recuperável/tonelada), o que explica por que ele sobrevive ao hedge de preço
+(~96% travado na SMTO3) enquanto o canal de preço de grãos morreu (D-037/D-041). Achou o ponto
+que decide os dois nomes: geografia e cana própria são bons nos dois, mas a **JALL3 fez IPO em
+fev/2021** — zero histórico no dev, holdout-only.
+
+**Validação humana**: a data do IPO da JALL3 e a geografia das usinas foram conferidas em
+múltiplas fontes; o time decidiu a opção 1 (SMTO3 no score, JALL3 fora). Registro estruturado
+com fontes e lacunas em `data/reference/cane_corporate_audit_v1.json`.
+
+**O que a IA errou**: nada foi derrubado nesta passada, mas a própria IA rebaixou o tier de
+evidência: as fontes primárias CVM (formulário de referência) **não** foram baixadas — WebFetch
+deu 403 em XP/NovaCana e a SEC não cobre nomes só da B3 —, então os percentuais finos (% cana
+própria por safra, mix por vintage, % hedge) ficaram como **lacuna declarada**, não preenchidos
+de memória. A decisão foi construída para **não depender** deles (apoia-se no IPO e na
+geografia, fatos robustos), e isso ficou explícito no registro. Tier inferior ao de D-035, que
+leu 20-F direto.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
