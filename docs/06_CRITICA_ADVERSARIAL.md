@@ -53,9 +53,9 @@ fatores de risco brasileiros (NEFIN). **Se o alfa não sobreviver a isso, dizemo
 sobreviveu.**
 
 Há uma razão *a priori* para testar se sobrevive: a estratégia é **dollar-neutral e
-long/short dentro do setor**. O componente comprado (produtores) e o vendido (processadores)
-tem canais econômicos de sinais opostos. Isso cria uma hipótese de dispersão, mas **não**
-zera por construção o beta ao futuro nem os demais fatores.
+long/short dentro do setor**, agora sob H′ (`Q>P` nos grãos). Estresse reduz o score dos
+produtores e eleva o dos processadores; a SMTO3 é satélite de cana com canal próprio. Isso cria
+uma hipótese de dispersão, mas **não** zera por construção o beta ao futuro nem os fatores.
 
 **Onde a defesa é fraca.** As exposições não se cancelam perfeitamente. Se o beta líquido à
 commodity for materialmente diferente de zero, parte do retorno é, sim, beta. Vamos medir e
@@ -71,15 +71,14 @@ concentrada exatamente na região seca pode perder receita mesmo com a commodity
 Geografia, hedge e produtividade própria podem dominar a classificação genérica de
 "produtor".
 
-**A defesa.** D-034 criou a Fase 3.1 antes de qualquer retorno acionário. A auditoria separa
-benefício de preço (`P`), dano regional de volume próprio (`Q`) e custo de insumo (`C`), usando
-apenas divulgações corporativas PIT. H2a precisa confirmar no desenvolvimento que o choque
-antecipa preço antes de esse canal ser usado no score.
+**A defesa.** A objeção procedia. D-035 auditou `P/Q/C`; D-037–D-041 não sustentaram o canal
+de preço; D-043 mostrou reação acionária contrária à direção antiga. A hipótese H′ (`Q>P`) foi
+pré-registrada em D-044 e congelada em D-053, com disclosure de que o desenvolvimento está
+queimado para sua direção. O registro antigo não foi reescrito.
 
-**Onde a defesa é fraca.** A geografia histórica pode não existir com granularidade suficiente
-e hedge pode ser divulgado de forma agregada. Se não houver evidência para assinar o efeito
-líquido do produtor, a saída correta é reduzir o escopo ou declarar o portão reprovado — não
-presumir direção positiva.
+**Onde a defesa é fraca.** H′ é uma reformulação motivada por um resultado do desenvolvimento,
+não confirmação independente. Geografia e hedge históricos seguem incompletos. Só o holdout
+de tiro único pode validar a nova direção; se falhar, não existe segunda inversão.
 
 ---
 
@@ -90,13 +89,12 @@ tem três ações no início e quatro após 2018. Uma inclinação diária estim
 produz uma cross-section informativa; repetir o procedimento em muitos dias não cria novas
 empresas independentes.
 
-**A defesa.** D-034 suspendeu o Fama–MacBeth antes de consultar retornos acionários. A Fase
-3.1 escolherá e pré-registrará um único desenho compatível com o dado, entre spread de evento
-e painel com interação empresa × canal, com inferência agrupada por ano-safra.
+**A defesa.** D-034 suspendeu o Fama–MacBeth. D-053 congelou o substituto: spread/painel
+apenas nos quatro grãos, demean na seção transversal, cluster por ano-safra e permutação
+unilateral. A SMTO3 não dilui o teste primário.
 
-**Onde a defesa é fraca.** Trocar o estimador não fabrica poder estatístico. Mesmo o desenho
-substituto pode ser inconclusivo; a contribuição pode terminar como evidência do mecanismo
-físico sem alfa acionário demonstrável.
+**Onde a defesa é fraca.** Trocar o estimador não fabrica poder: o holdout tem cinco
+anos-safra. A permutação exata ainda é um item da Fase 4.0 (D-054), a fechar sem P&L.
 
 ---
 
@@ -110,7 +108,7 @@ exposições superestima o desenho.
 **A defesa.** A linguagem foi corrigida para dollar-neutral. Betas e fatores serão medidos,
 eventuais restrições serão declaradas e H4 continua sendo teste existencial de *spanning*.
 
-**Onde a defesa é fraca.** Com quatro nomes, neutralizar muitos fatores pode tornar a carteira
+**Onde a defesa é fraca.** Com cinco nomes — e só quatro no teste primário — neutralizar fatores pode tornar a carteira
 inviável ou eliminar o próprio sinal. A prioridade será transparência sobre exposições
 residuais, não prometer neutralidade que o universo não suporta.
 
@@ -173,11 +171,9 @@ deslistagem) e, após D-033, exposição fundamental igualmente PIT. O primário
 os quatro nomes com canal direto comprovado; um universo amplo não é fabricado com empresas
 indiretas. Publicamos a contagem de elegíveis ao longo do tempo como gráfico.
 
-**Onde a defesa é fraca.** A defesa contra survivorship ficou mais rigorosa, mas a defesa
-econômica revelou concentração: há um único produtor até março de 2018 e apenas dois depois.
-O antigo universo amplo pode nem existir no Método A. Isso reduz poder cross-seccional,
-fragiliza a neutralidade e torna o cap original inviável (R19); não há saída limpa sem mudar
-uma restrição antes do backtest e declarar seu custo.
+**Onde a defesa é fraca.** A defesa contra survivorship ficou rigorosa, mas o universo
+econômico continua estreito: quatro grãos no teste e SMTO3 como satélite. D-053 resolveu a
+inviabilidade do cap antigo, não a escassez de nomes nem o poder cross-seccional.
 
 ---
 
@@ -196,9 +192,9 @@ estimado (viés para zero), tornando nosso teste **conservador**, não otimista.
 ruído joga contra nós, não a nosso favor. Se acharmos sinal apesar dele, o efeito verdadeiro
 é maior do que o medido.
 
-Além disso, o mecanismo de **preço** (o canal dominante da tese) não depende da localização
-da fazenda: se o Mato Grosso seca, o preço da soja sobe para **todos**, inclusive para o
-produtor cuja lavoura escapou. E o produtor que escapou é justamente o mais beneficiado.
+Esse ruído ficou mais importante após o canal de preço falhar: H′ depende justamente de o
+dano de volume próprio alcançar a empresa exposta. A regionalização municipal melhora o
+choque agregado, mas não localiza fazendas históricas de cada companhia; a defesa é parcial.
 
 **Melhoria possível (não obrigatória)**: usar o CAR/mapas de propriedade para localizar as
 fazendas das empresas listadas e construir um choque **específico da empresa**, em vez de um
@@ -248,12 +244,12 @@ seria suspeito é o inverso: alfa constante e suave em anos sem choque nenhum.
 
 ### 🟢 9. "Os ativos são ilíquidos demais para isso ser operável."
 
-**A objeção.** JALL3, VITT3, AGRO3, SOJA3 são small caps com volume diário baixo. Uma
+**A objeção.** AGRO3, SLCE3 e SMTO3 podem ter volume e aluguel limitados. Uma
 estratégia que precisa entrar e sair em 21 dias nesses nomes tem custo de mercado que come
 o alfa.
 
-**A defesa.** Filtro de liquidez (ADTV mínimo) e modelo de *slippage* proporcional à
-participação no volume, mais um teste de robustez com custos dobrados. Também reportamos a
+**A defesa.** A Fase 4.0 congela o filtro de ADTV, o modelo de slippage, aluguel e a política
+de indisponibilidade sem consultar P&L; custos dobrados entram na robustez. Também reportamos a
 **capacidade** estimada da estratégia (quanto capital ela suporta antes de o alfa
 desaparecer) — que é a métrica que uma gestora de verdade olharia.
 
@@ -267,7 +263,7 @@ irrelevante. Vamos reportar o número em vez de omiti-lo.
 
 | | |
 |---|---|
-| **O que é forte** | A reformulação produtor-vs-processador (a heterogeneidade cross-seccional) é economicamente correta, não-óbvia e original no contexto brasileiro. A cadeia causal tem um elo intermediário observável e datável (a revisão da CONAB), o que torna a tese **falsificável em etapas** em vez de ser uma caixa-preta de "clima → retorno". |
+| **O que é forte** | O mecanismo clima→revisão CONAB foi confirmado; a direção original foi falsificada e preservada no registro; H′ foi congelada com disclosure completo. A cadeia continua **falsificável em etapas**, não uma caixa-preta de “clima → retorno”. |
 | **O que é frágil** | O N efetivo (poucas dezenas de eventos independentes). Não tem conserto. |
 | **O que pode matar** | H4 (a estratégia ser só beta de commodity) e H5 (o sinal ser ENSO disfarçado). |
 | **O que fazemos se morrer** | Reportamos. Um projeto que testa a própria tese com rigor e conclui que ela não se sustenta pontua nos critérios de Backtest (15%), Análise de Resultados (15%) e Conclusão (10%) — e é infinitamente mais defensável do que um Sharpe bonito que não sobrevive à primeira pergunta da banca. |

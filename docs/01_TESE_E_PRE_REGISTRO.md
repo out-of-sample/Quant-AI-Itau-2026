@@ -105,19 +105,16 @@ Seja:
 S_{i,t} = Σ_c  E_{i,c} · Shock_{c,t}
 ```
 
-> **Estado após D-034.** Esta é a formulação-base do canal de preço/insumo, não o score já
-> liberado para carteira. Para produtores, a alta da commodity (`P`) e a perda regional de
-> volume próprio (`Q`) têm sinais opostos; custo de insumo (`C`), geografia e hedge também
-> podem alterar o efeito líquido. A Fase 3.1, descrita em
-> `14_AUDITORIA_CANAIS_EMPRESARIAIS.md`, bloqueia qualquer retorno de ação até decidir, sem
-> olhar retornos, se `E` pode ser promovido ou precisa ser decomposto em `P`, `Q` e `C`.
+> **Estado após D-043/D-053.** Esta formulação-base preserva o canal histórico de preço/insumo,
+> que foi falsificado no desenvolvimento e continua travado como registro. A estratégia H′ é
+> uma camada operacional separada: usa `−E·Shock` nos grãos porque o dano de volume próprio
+> dominou (`Q>P`) e `+Shock_maturação` para a SMTO3. A mudança, seus limites e o fato de o dev
+> estar queimado para a direção estão registrados em D-044–D-053.
 
-**Nota de sinal (importante):** `Shock` é definido como **estresse** — valores positivos
-significam condição climática ruim para a lavoura (seca/calor). A hipótese H2a, ainda sujeita
-ao portão, é que esse estresse antecipa alta da commodity. Na álgebra-base, `E > 0` recebe
-score positivo e `E < 0`, negativo. Essa convenção está codificada em
-`tests/test_signal_sign.py` para impedir inversão acidental, mas o teste unitário garante a
-consistência do sinal declarado — não prova que o efeito econômico ou o retorno existam.
+**Nota de sinal (importante):** `Shock` é definido como **estresse**. Na álgebra-base, `E>0`
+recebe score positivo; `tests/test_signal_sign.py` impede que a hipótese histórica seja
+reescrita. Isso não conflita com H′: `backtest/strategy_spec.py` aplica explicitamente o sinal
+operacional negativo nos grãos e mantém a cana como submodelo de direção própria.
 
 ### 3.1 O componente climático `Shock_{c,t}`
 
@@ -285,9 +282,10 @@ o resultado vai para o relatório como achado negativo, não é escondido.
 |---|---|---|---|
 | **H1a** (mecanismo — o elo central) | O choque climático prevê a **revisão da estimativa de safra da CONAB** antes de ela ser publicada | Regressão `revisão_{lev n} ~ Shock` acumulado até a data de corte do levantamento, painel (safra × UF × cultura), erros agrupados por ano-safra | Coeficiente sem o sinal esperado ou não-significativo após BH-FDR |
 | **H1b** (mecanismo físico) | O choque prevê a produção/exportação física da cultura | Regressão preditiva `Δ log(volume exportado)_{t+h} ~ Shock_t`, `h ∈ {3,4,5,6}` meses, erros-padrão Newey-West | idem |
-| **H2a** (transmissão preditiva a preço) | O choque disponível antes do mercado prevê o retorno subsequente do futuro da commodity | Regressão preditiva em futuros, com fonte, regra de rolagem e horizonte congelados antes da execução; desenho e teste somente no desenvolvimento até 2019 | coeficiente sem o sinal esperado ou economicamente irrelevante no desenho primário ⇒ o canal econômico não sustenta o score |
+| **H2a** (transmissão preditiva a preço) | O choque disponível antes do mercado prevê o retorno subsequente da commodity | Família pré-registrada mundial/local, contemporânea/forward (D-036–D-041) | **falhou**: nenhuma das seis medidas foi significativa; o canal `P` não sustenta a direção original |
 | **H2b** (reação à CONAB) | A publicação do levantamento pode concentrar incorporação de informação já parcialmente observável | Estudo de evento na janela pré-registrada ao redor da divulgação da CONAB | ausência de retorno anormal é diagnóstico compatível com antecipação; não falsifica H2a isoladamente |
-| **H3** (defasagem no equity) | O choque prevê retorno relativo das ações por meio da exposição empresarial líquida | O Fama–MacBeth originalmente proposto está **suspenso por D-034**: três a quatro ações não formam cross-section suficiente. A Fase 3.1 pré-registrará um único desenho primário compatível, entre spread de evento e painel com interação | critério de falsificação será congelado junto ao desenho substituto, antes de qualquer retorno acionário |
+| **H3 original** (defasagem no equity) | `E·Shock` previa retorno relativo na direção produtor-comprado/processador-vendido | Painel no desenvolvimento, pré-registrado em D-042 | **falsificada em D-043**: reação anti-preditiva; não inverter silenciosamente |
+| **H3′ / H′** (reformulada) | sob `Q>P`, o negativo de `E·Shock` nos grãos prevê o spread relativo; cana é satélite separado | spread/painel apenas nos quatro grãos, demean cross-sectional, cluster por ano-safra, permutação unilateral α=0,10; contrato D-053 | avaliada uma vez no holdout; dev não confirma a direção porque foi usado para formulá-la |
 | **H4** (a que mata o projeto) | O retorno da estratégia **não é apenas beta de commodity reembalado** | *Spanning regression*: `r_strat ~ α + IBOV + USDBRL + futuros (soja, milho, açúcar, café) + fatores NEFIN (SMB, HML, WML, IML)` | **α ≤ 0** ou não-significativo ⇒ a estratégia é uma forma cara de comprar o futuro da soja, e temos que dizer isso |
 | **H5** (especificidade / placebo) | O sinal vem da agronomia, não de um confundidor macro | Placebo espacial: recalcular `Shock` usando células de grade **sem produção agrícola relevante** (Amazônia central, litoral) | Se o alfa **sobrevive** ao placebo, o sinal está capturando outra coisa (ENSO, risco global, FX) e não o que dizemos que captura |
 
@@ -300,8 +298,9 @@ antes, e reportar o resultado honestamente, é o que separa um trabalho sério d
 > `Shock` (estresse ⇒ revisão para baixo), `t(7)` p≈6e-4, bootstrap por cluster p≈0, sobrevive
 > ao BH-FDR; o efeito é consistente no desenvolvimento (−0,057) e no holdout (−0,072) e nas duas
 > culturas. **H1b** corrobora a soja ex post (3º e 6º mês pós-colheita); milho fraco (N=7). A
-> cadeia climático → revisão de safra é real. H2a, H2b e H3–H5 permanecem para as fases
-> seguintes, sujeitos ao portão econômico D-034 antes de qualquer retorno acionário.
+> cadeia climático → revisão de safra é real. Depois disso, H2a falhou (D-037–D-041), a direção
+> H3 original foi falsificada (D-043) e H′ foi pré-registrada e congelada (D-044/D-053). H4/H5
+> permanecem para a robustez; o holdout de retornos continua lacrado.
 
 ### Confundidor conhecido: ENSO (El Niño / La Niña)
 
@@ -329,11 +328,11 @@ combinações testadas — que é a forma mais comum de auto-engano em backtest.
 | Janela fenológica | fixa por cultura × UF em `features/shock_spec.py` | CONAB/ZARC/Embrapa; datas e custo documentados em `09_FENOLOGIA_E_LIMIARES.md` |
 | Lag de publicação do clima | **7 dias corridos** | Conservador vs. a latência real da fonte (ver `02_DADOS.md`); sensibilidade testada em 3/7/14 dias |
 | Uso do ComexStat | H1b *ex post*; **não entra no sizing primário** | Vintages históricos da primeira publicação não são recuperáveis; usar a base final como gate criaria lookahead (D-026) |
-| Exposição `E_{i,c}` | Método A (fundamentalista), condicionado à auditoria D-034 | Auditável e não circular; a Fase 3.1 decide se o canal líquido exige decomposição `P/Q/C` |
+| Exposição `E_{i,c}` | Método A fundamentalista PIT; H′ aplica o negativo nos grãos | D-033 preserva a exposição auditável; D-035/D-043 mostram que `Q>P`; D-053 separa mecanismo histórico e direção operacional |
 | Horizonte de holding | 21 dias úteis (~1 mês) | Compatível com a hipótese de difusão lenta e declarado antes de consultar retornos |
 | Execução | no **close de D+1** após o sinal de D | Nunca no mesmo close que gerou o sinal |
-| Construção do portfólio | bloqueada até a saída da Fase 3.1; candidata dollar-neutral long/short, sem neutralidade fatorial presumida | D-033 mostrou concentração incompatível com o cap; D-034 exige resolver canal líquido, H2/H3 e R19 sem retornos |
-| Custos | corretagem+emolumentos B3 + slippage proporcional à participação no ADTV | Ver `04_PROTOCOLO_BACKTEST.md` |
+| Construção do portfólio | dollar-neutral, proporcional ao score demeanado, bruto 1,0×; caps 0,40/grão e 0,15/SMTO3 | D-053; neutralidade fatorial não é presumida |
+| Custos | componentes definidos; valores e cenários são gate return-agnóstico da Fase 4.0 | Ver D-054 e `04_PROTOCOLO_BACKTEST.md` |
 | Benchmark | Ibovespa **e** CDI, ambos declarados a priori | Não escolher depois qual "ganhou" |
 
 ---
@@ -355,19 +354,18 @@ resposta:
 - O produto CHIRPS `prelim` só existe a partir de 2015 e seu início foi carregado em bloco;
   portanto o sinal point-in-time começa na safra **2015/16**. 2013-2014 permanecem no recorte
   de preços/universo, mas não recebem `Shock` primário (R16).
-- O período 2020-2025 é **lacrado**. Ninguém do time roda backtest nele até o desenho
-  estar congelado. Rodamos **uma única vez**, e o resultado — qualquer que seja — vai para
-  o relatório.
+- O período 2020-2025 é **lacrado**. D-053 congelou a estratégia econômica, mas D-054 exige
+  fechar a mecânica operacional e implementar o bloqueio técnico antes da liberação exclusiva
+  da Fase 6. Rodamos **uma única vez**, e o resultado vai para o relatório.
 - O holdout contém COVID (2020), o superciclo de commodities (2021-22), a guerra na Ucrânia
   e a seca histórica de 2021 no Brasil. É um teste **duro** e de regime genuinamente
   diferente. Se a estratégia sobreviver a ele, o resultado é forte. Se não sobreviver,
   isso também é um resultado, e vamos reportá-lo.
 
-**Tensão real, assumida com honestidade** (ver §7): a auditoria D-033 mostrou que o problema
-não é apenas a data de IPO. Dos 21 candidatos, somente AGRO3, SLCE3, BRFS3 e JBSS3 têm canal
-direto soja/milho admissível no Método A; os demais são indiretos, ambíguos ou de outra
-cultura. O backtest primário usa esse núcleo com entrada PIT gradual. Isso preserva o split
-in-sample/holdout, mas cria concentração severa e bloqueia o cap original de 20% (R19).
+**Tensão real, assumida com honestidade** (ver §7): o teste primário tem somente AGRO3,
+SLCE3, BRFS3 e JBSS3. A SMTO3 foi admitida apenas como satélite da carteira após auditoria da
+cana. D-053 resolveu a inviabilidade do cap antigo com caps 0,40/0,15 e redução de bruto, mas
+não fabrica diversificação nem poder estatístico; essas limitações permanecem visíveis.
 
 O antigo **Backtest B — universo amplo (2021–2025)** deixa de ser uma promessa: só será
 materializado se nova fonte primária provar canal direto para nomes pós-IPO, ou como

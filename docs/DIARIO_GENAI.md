@@ -1080,6 +1080,32 @@ teria passado silencioso para a Fase 4.
 
 ---
 
+## 2026-07-20 (noite) — Auditoria de transição para a Fase 4 (D-054)
+
+**Uso**: confrontar o plano, o protocolo de backtest, a suíte de robustez e o contrato
+executável D-053 antes de construir a máquina ou consultar novo P&L.
+
+**Valor real**: a auditoria distinguiu “estratégia econômica congelada” de “backtest
+inteiramente especificado”. Encontrou graus de liberdade ainda abertos em calendário,
+composição de scores, universo incompleto, permutação, liquidez, custos e fronteiras do
+holdout; eles viraram o gate explícito da Fase 4.0. Também detectou documentação contraditória
+(cap antigo de 20%, H3 suspenso e carteira ainda candidata) e reorganizou o plano para que as
+Fases 4–6 não apareçam dentro do registro da Fase 3.
+
+**Validação humana/mecânica**: nenhum retorno ou P&L foi carregado. A revisão cruzou D-053 com
+`strategy_spec.py` e seus testes. Um caso sintético reproduzível mostrou que o water-filling
+devolvia peso de 29,7% sob cap de 25%; a correção agora mantém nomes capados fora do conjunto
+livre, verifica soma/caps e ganhou teste de regressão. A suíte completa e a CI validam a mudança.
+
+**O que a IA errou**: a revisão anterior de D-053 declarou o water-filling matematicamente são,
+mas testou apenas os caps do universo corrente e não a API genérica que o código oferecia. Uma
+segunda auditoria encontrou que o algoritmo podia “reabrir” um nome capado na iteração
+seguinte. Também ficou claro que a frase “todas as escolhas de desenho” no contrato era forte
+demais: D-053 não definia vários detalhes operacionais. O registro foi corrigido em vez de
+tratar a implementação futura como preenchimento neutro.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

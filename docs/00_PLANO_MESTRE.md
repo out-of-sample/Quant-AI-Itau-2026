@@ -14,7 +14,8 @@ comprar produtores e vender processadores —, porém, **falhou no desenvolvimen
 preço não teve suporte e a reação das ações veio no sentido contrário. O projeto foi então
 reformulado, com registro completo, para testar a hipótese nova e pré-registrada de que o dano
 de volume próprio domina o benefício de preço (`Q>P`). O holdout de retornos 2020–2025 continua
-lacrado; nenhuma estratégia reformulada está aprovada ainda.
+lacrado. A estratégia reformulada foi **congelada antes do holdout** em D-053; ainda não foi
+avaliada fora da amostra nem pode ser chamada de aprovada empiricamente.
 
 O elo causal é testado em etapas, não assumido:
 
@@ -197,7 +198,7 @@ Andamento:
 > **pararíamos e reformularíamos** em vez de caçar um alfa que seria coincidência. O achado —
 > qualquer que fosse — iria para o relatório.)
 
-### Fase 3 — Sinal e carteira
+### Fase 3 — Sinal e carteira ✅
 Matriz de exposição `E`, score e construção da carteira. O ComexStat valida H1b *ex post* e
 não dimensiona o experimento primário (D-026). Calibração
 **exclusivamente** no desenvolvimento até 2019; o `Shock` operacional começa em 2015/16
@@ -232,8 +233,8 @@ não dimensiona o experimento primário (D-026). Calibração
   Algodão (limpo, reforça AGRO3/SLCE3, +evento, 0 nomes novos); cana (mecanismo **invertido**,
   sub-modelo à parte, +SMTO3/JALL3); café sem veículo (limitação declarada).
 
-**Mapa das sub-fases restantes (o caminho até o holdout):**
-- 🔄 **3.4 — construir os canais de cultura**: contratos de choque congelados (molde D-023) e
+**Fechamento das subfases da Fase 3:**
+- ✅ **3.4 — construir os canais de cultura**: contratos de choque congelados (molde D-023) e
   validação H1 por cultura, sem tocar retorno.
   - ✅ **algodão — contrato congelado** (D-047): MT+BA, janela floração/capulho, fonte ZARC/Embrapa
     (`COTTON_WINDOWS`, travado em teste).
@@ -257,22 +258,43 @@ não dimensiona o experimento primário (D-026). Calibração
   proporcional ao sinal, dollar-neutral, cap 0,40 por grão. Pesos CONAB (D-028); execução D+1;
   horizonte 21 pregões. Teste primário = painel `Shock×exposição`, cluster por ano-safra,
   permutação, unilateral α=0,10 (substitui H3/Fama–MacBeth). **R19 resolvido**.
-- ⬜ **Fase 4 — backtest de verdade no dev**: máquina, custos, turnover, exposição a fatores — o
-  **return-agnóstico**; o dev **não** valida lucro da direção (está queimado).
-- ⬜ **Fase 5 — robustez** pré-registrada (H4/H5, placebo, sensibilidades).
-- ⬜ **Fase 6 — holdout, uma vez**: a única prova de retorno; roda o que foi congelado, reporta o
-  que der (com o poder de D-045 a favor de um veredito claro).
+
+> **Portão da Fase 3: ATRAVESSADO em 2026-07-20 (D-053).** Hipótese H′, universo, direção,
+> sizing, caps, execução e teste primário foram congelados antes do holdout. Isso autoriza a
+> construção da máquina, não a abertura do holdout.
 
 ### Fase 4 — Backtest
-Backtest A (núcleo histórico, primário); B amplo permanece condicionado a evidência direta
-admissível (D-033). Custos, capacidade, atribuição.
+
+Construir e validar a máquina no desenvolvimento, sem usar seu P&L para confirmar H′ ou ajustar
+o desenho. O antigo Backtest B amplo deixa de ser promessa; só pode existir como robustez
+identificada se surgir exposição direta admissível.
+
+Andamento:
+- 🔄 **4.0 — auditoria e fechamento operacional (D-054):** a revisão de transição encontrou
+  graus de liberdade que D-053 não tornou executáveis — calendário, composição dos scores,
+  universo incompleto, permutação, custos/liquidez e fronteiras temporais. Eles serão congelados
+  sem P&L antes do motor. O defeito de water-filling identificado na auditoria foi corrigido e
+  ganhou teste de regressão.
+- ⬜ **4.1 — motor vetorizado:** posições-alvo, execução no primeiro pregão após D, horizontes,
+  posições sobrepostas, retorno bruto/líquido e turnover.
+- ⬜ **4.2 — fricções e investibilidade:** taxas, slippage, aluguel, ADTV e capacidade nos
+  cenários pré-registrados.
+- ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
+  de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
+
+> **Portão:** contrato operacional completo + testes mecânicos e bloqueio técnico do holdout.
+> Nenhum Sharpe do desenvolvimento pode escolher parâmetros.
 
 ### Fase 5 — Robustez
-Suíte completa. **Os três testes existenciais primeiro** (spanning, placebo, sensibilidade ao
-lag), antes dos cosméticos — porque são os que podem tornar o resto irrelevante.
+
+Atualizar e pré-registrar a suíte para H′; executar H4/H5, placebo, lag/vintage, custos,
+subperíodos e leave-one-out na ordem de poder de falsificação. O H3 original já foi substituído
+pelo teste primário D-053 e H2a já produziu achado negativo.
 
 ### Fase 6 — Holdout
-Rodar em 2020-2025. **Uma vez.** O resultado vai para o relatório, qualquer que seja.
+
+Liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
+correção posterior; o resultado vai para o relatório, qualquer que seja.
 
 ### Fase 7 — Relatório
 5 páginas, 16:9, 100% anônimo. É o único entregável avaliado.
