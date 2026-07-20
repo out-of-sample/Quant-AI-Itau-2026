@@ -1420,6 +1420,41 @@ garantir um sim/não limpo se o efeito for pelo menos moderado. Desenho da expan
 média sugere que β no holdout tende a ser ≤ o do dev, então o caso de planejamento honesto é o
 **moderado** (β≈0,05), onde 8 nomes são justificados. Nenhuma expansão salva um efeito minúsculo.
 
+#### Nota de re-análise (2026-07-20) — o universo de ~8 nomes não se materializou
+
+A decisão original assumia chegar a ~8 nomes via algodão (nos nomes existentes) + cana
+(SMTO3/JALL3). Depois de executar os dois canais, essa premissa caiu:
+
+- **algodão (D-049)**: não corroborado (β agrupado +0,0421, 0/3 LOO na direção certa). Adiciona
+  **0 nome** e não entrega o evento adicional prometido;
+- **cana (D-051)**: corroborada só pelo critério direcional, com evidência fraca (p=0,12). Adiciona
+  **no máximo 2 nomes** (SMTO3/JALL3), ainda **condicionados** à auditoria PIT do R24.
+
+Universo real, portanto: **4 nomes (core de grãos)**, ou **6 se a auditoria da cana passar** — não
+8. Re-rodamos o mesmo simulador de D-045 (`scripts/power_analysis.py::power`, reusado sem
+alteração) nessas células, σ=0,13 (caso central), holdout de 5 anos-safra:
+
+| β real | 4 nomes (core grãos) | 6 nomes (+cana, se audit passar) |
+|---|---|---|
+| 0,09 (o do dev — grande) | 89% | 93% |
+| 0,05 (metade — moderado) | 65% | 73% |
+| 0,03 (um terço — pequeno) | 45% | 51% |
+
+**Leitura atualizada.**
+1. A conclusão qualitativa de D-045 se mantém: com efeito grande (β≈0,09) o holdout é conclusivo
+   (~89%) já com 4 nomes; o risco de inconclusivo mora no cenário de efeito moderado/pequeno.
+2. **A alavanca "expansão de universo" ficou fraca.** Ir de 4→6 nomes vale só **~+8pp** — não
+   muda o regime. A alavanca que moveria o poder de verdade é o nº de anos-safra (5→10 levaria o
+   caso moderado de 65%→84%), e ela está **travada em 5**. Não há como comprá-la.
+3. Consequência prática: a proteção contra o inconclusivo **não é mais a expansão** (ela entregou
+   menos que o assumido em D-045) — é o **tamanho do efeito sobreviver fora da amostra**. O dev
+   sugere que sobrevive (t=−3,6), mas isso só se confirma gastando o holdout, tiro único.
+
+Isto **não reabre** nenhum desenho congelado: o universo permanece o de D-046 (com cana ainda sob
+R24). A nota apenas corrige a expectativa de poder ao valor realista pós-canais e move o peso da
+aposta do "quantos nomes" para o "quão grande é o efeito". Re-análise determinística; execução em
+`scripts/power_analysis.py` (N_SIM=4000, seed fixa).
+
 ---
 
 ### D-046 — Desenho da expansão de universo: canais de cultura sob H′ (algodão, cana)
