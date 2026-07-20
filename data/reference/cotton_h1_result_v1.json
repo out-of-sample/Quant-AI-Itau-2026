@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "decision": "D-049",
+  "pre_registration_commit": "d0bfdc0b848f576d0d7ed3f5a4bb3ac37c267094",
+  "implementation_commit": "8e9d90399c84338a9967e35dd8619ca4d82d2d8b",
+  "first_execution_at": "2026-07-20T14:08:26.207070261-03:00",
+  "design": {
+    "crop": "cotton",
+    "ufs": [
+      "BA",
+      "MT"
+    ],
+    "crop_years": [
+      "2022/23",
+      "2023/24",
+      "2024/25"
+    ],
+    "outcome": "cumulative log revision of CONAB ALGODAO EM PLUMA/UNICA production",
+    "regressor": "UF cotton Shock observable at each CONAB release",
+    "criterion": "pooled beta < 0 and at least 2 of 3 leave-one-crop-year-out betas < 0"
+  },
+  "input_provenance": {
+    "conab_raw_sha256": "c2e8e2aa2e1b9c818850dcf56dee6bb4406fca37751f527fb4f95257e93ddd94",
+    "conab_manifest_sha256": "b2bae171f301222d2b66e417f3a36fa497cc01362e060a08a70ad11c87a4cb2b",
+    "pam_raw_sha256": "775bb0b62bcab7d3abcd87750d928dc1024668471b19c185cd9710490531cda1",
+    "pam_manifest_sha256": "901d4e3ee71cd1d3054cd869688bdcf33a44cdb4d8018f69f77c32c300929a5c",
+    "chirps_bulk_manifest_sha256": "c1dc3013b484787c7f4a818b8f0671fbf5442598685b6425960d5f30fbd680fd"
+  },
+  "first_execution_artifacts": {
+    "panel_sha256": "3830e87c67318032338eba0fda0ddb4b6d575fc942d8448f86220f8e7d2984dc",
+    "results_sha256": "f237604c00959f47ba585543eb45f20b2a1077df8d3796c059e52adbd3fd5069",
+    "verdict_sha256": "6c14c02ab725c0f6f6aa3a6ed241884bcb473a9a40a060dfa61d5b5cc16692f3"
+  },
+  "primary_result": {
+    "n": 42,
+    "n_clusters": 3,
+    "beta": 0.042136786683397584,
+    "cluster_se": 0.008860546194567824,
+    "tstat_diagnostic": 4.7555518314695515,
+    "pvalue_diagnostic": 0.0000019790507446505394,
+    "negative_leave_one_out": 0,
+    "total_leave_one_out": 3,
+    "passed": false
+  },
+  "diagnostic_betas": {
+    "uf": {
+      "BA": 0.02987605341378026,
+      "MT": 0.1430640261517193
+    },
+    "crop_year": {
+      "2022/23": 0.01853725998566398,
+      "2023/24": 0.08203000964289697,
+      "2024/25": 0.04582411120132816
+    },
+    "leave_one_crop_year_out": {
+      "2022/23": 0.05023531512921992,
+      "2023/24": 0.04662478928164296,
+      "2024/25": 0.03756403606182748
+    }
+  },
+  "post_hoc_outcome_decomposition": {
+    "status": "explanatory only; cannot alter or rescue the D-048 verdict",
+    "artifact_sha256": "e9a697be63cebaf1a04a158cc4839db98ce81e35c81de6d97550780ca66862e1",
+    "planted_area_beta": 0.03746998796280977,
+    "yield_beta": -0.001786459700313558
+  },
+  "conclusion": "not corroborated by the pre-registered criterion; cotton is excluded from the score"
+}

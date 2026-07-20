@@ -2,9 +2,14 @@
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from quantagro.features.shock_spec import COTTON_WINDOWS
-from quantagro.stats.cotton_h1 import cotton_h1_verdict, run_cotton_h1
+from quantagro.stats.cotton_h1 import (
+    _revisions_for_measure,
+    cotton_h1_verdict,
+    run_cotton_h1,
+)
 from quantagro.stats.h1a import _window_contract
 
 
@@ -56,3 +61,33 @@ def test_veredito_reprova_sinal_positivo_sem_consultar_pvalor():
     verdict = cotton_h1_verdict(results)
     assert not verdict.passed
     assert verdict.pooled_beta > 0
+
+
+def test_veredito_reprova_beta_negativo_sem_estabilidade_leave_one_out():
+    results = pd.DataFrame(
+        [
+            {"scope": "pooled", "key": "all", "beta": -0.1},
+            {"scope": "leave_one_crop_year_out", "key": "2022/23", "beta": -0.01},
+            {"scope": "leave_one_crop_year_out", "key": "2023/24", "beta": 0.02},
+            {"scope": "leave_one_crop_year_out", "key": "2024/25", "beta": 0.03},
+        ]
+    )
+    verdict = cotton_h1_verdict(results)
+    assert not verdict.passed
+    assert verdict.pooled_beta < 0
+    assert verdict.negative_leave_one_out == 1
+
+
+def test_revisao_de_medida_usa_primeiro_levantamento_positivo_como_base():
+    conab = pd.DataFrame(
+        {
+            "crop": ["cotton"] * 3,
+            "uf": ["BA"] * 3,
+            "ano_agricola": ["2022/23"] * 3,
+            "id_levantamento": [1, 2, 3],
+            "area": [100.0, 110.0, 90.0],
+        }
+    )
+    revisions = _revisions_for_measure(conab, "area")
+    assert revisions["id_levantamento"].tolist() == [2, 3]
+    assert revisions["logrev_measure"].tolist() == pytest.approx([np.log(1.1), np.log(0.9)])

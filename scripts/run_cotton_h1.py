@@ -23,6 +23,7 @@ from quantagro.ingest.pam import parse_pam  # noqa: E402
 from quantagro.stats.cotton_h1 import (  # noqa: E402
     build_cotton_h1_panel,
     cotton_h1_verdict,
+    cotton_outcome_diagnostics,
     run_cotton_h1,
 )
 
@@ -65,6 +66,7 @@ def main() -> None:
     panel = build_cotton_h1_panel(conab, municipal, pam, CLIMATOLOGY_FIRST_YEAR)
     results = run_cotton_h1(panel)
     verdict = cotton_h1_verdict(results)
+    diagnostics = cotton_outcome_diagnostics(conab, panel)
 
     pd.set_option("display.width", 180, "display.max_columns", 30)
     print(
@@ -73,10 +75,13 @@ def main() -> None:
     )
     print(results.to_string(index=False))
     print(f"\npassou={verdict.passed} | {verdict.reason}")
+    print("\ndiagnóstico pós-hoc (não altera o veredito):")
+    print(diagnostics.to_string(index=False))
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     panel.to_parquet(OUT_DIR / "cotton_h1_panel.parquet", index=False)
     results.to_csv(OUT_DIR / "cotton_h1_results.csv", index=False)
+    diagnostics.to_csv(OUT_DIR / "cotton_h1_outcome_diagnostics.csv", index=False)
     (OUT_DIR / "cotton_h1_verdict.json").write_text(
         json.dumps(asdict(verdict), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )

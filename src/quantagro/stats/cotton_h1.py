@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 from ..features.shock_spec import COTTON_WINDOWS
-from .h1a import build_h1a_panel
+from .h1a import _prepare_conab, build_h1a_panel
 from .inference import cluster_bootstrap, ols_cluster
 
 COTTON_BASES = range(2022, 2025)
@@ -156,3 +156,65 @@ def cotton_h1_verdict(results: pd.DataFrame) -> CottonH1Verdict:
     else:
         reason = f"não corroborado: beta={beta:.4f}; {negative}/3 LOO negativos"
     return CottonH1Verdict(passed, beta, negative, 3, reason)
+
+
+def _revisions_for_measure(conab: pd.DataFrame, value_col: str) -> pd.DataFrame:
+    """Revisões log de uma medida CONAB; diagnóstico pós-hoc, fora do veredito D-048."""
+    rows = []
+    for (crop, uf, year), group in conab.groupby(["crop", "uf", "ano_agricola"], sort=False):
+        group = group.sort_values("id_levantamento")
+        values = group.set_index("id_levantamento")[value_col]
+        values = values[values > 0]
+        if values.size < 2:
+            continue
+        base_lev = int(values.index.min())
+        base = float(values.loc[base_lev])
+        for lev, value in values.items():
+            if int(lev) == base_lev:
+                continue
+            rows.append(
+                {
+                    "crop": crop,
+                    "uf": uf,
+                    "ano_agricola": year,
+                    "id_levantamento": int(lev),
+                    "logrev_measure": float(np.log(float(value) / base)),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def cotton_outcome_diagnostics(conab: pd.DataFrame, panel: pd.DataFrame) -> pd.DataFrame:
+    """Decompõe produção em área/produtividade sem alterar o veredito pré-registrado.
+
+    Este diagnóstico foi definido somente depois do resultado D-048. Ele existe para tornar
+    reproduzíveis os números explicativos de D-049, não para escolher outro desfecho.
+    """
+    prepared = _prepare_conab(conab, COTTON_BASES, COTTON_WINDOWS)
+    keys = ["crop", "uf", "ano_agricola", "id_levantamento"]
+    shocks = panel[keys + ["shock"]]
+    rows = []
+    for outcome, column in (
+        ("planted_area", "area_plantada_mil_ha"),
+        ("yield", "produtividade_mil_ha_mil_t"),
+    ):
+        revisions = _revisions_for_measure(prepared, column)
+        merged = shocks.merge(revisions, on=keys, how="inner", validate="one_to_one")
+        result = ols_cluster(
+            merged["shock"],
+            merged["logrev_measure"],
+            merged["ano_agricola"],
+            f"cotton_h1:posthoc:{outcome}",
+        )
+        rows.append(
+            {
+                "outcome": outcome,
+                "n": result.nobs,
+                "n_clusters": result.n_clusters,
+                "beta": result.beta,
+                "se": result.se,
+                "tstat": result.tstat,
+                "pvalue": result.pvalue,
+            }
+        )
+    return pd.DataFrame(rows)

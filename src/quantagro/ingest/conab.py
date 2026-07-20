@@ -17,7 +17,8 @@ Duas propriedades da fonte governam o desenho deste módulo:
 
 Fatos do arquivo real (verificados em 2026-07-16):
 - `id_levantamento == 99` ("LEVANT") é resíduo legado sem número de levantamento
-  (algodão 2017/18–2021/22, café 2017, cana até 2020/21). Não é datável — o parser
+  (algodão 2018/19–2021/22; 2017/18 tem só o 12º levantamento; café 2017; cana até
+  2020/21). Não é datável — o parser
   preserva a linha, mas o calendário nunca a cobre (carimbo falha alto, de propósito).
 - Grãos tem `ano_agricola` em dois formatos: "2017/18" (safra de verão) e "2018" (ano
   civil — culturas de inverno: trigo, aveia, cevada...). O alinhamento dos levantamentos
