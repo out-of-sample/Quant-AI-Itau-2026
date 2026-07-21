@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "decision": "D-058",
+  "purpose": "Evidência da calibração do custo de aluguel (short) sob R27. Registra a única observação real recuperável das taxas doadoras dos cinco nomes e a compara com a premissa conservadora congelada, para justificar a proxy declarada. Nenhum retorno foi consultado.",
+  "data_reality": {
+    "public_export_window": "somente o último pregão (~21 dias no site B3); nenhuma série histórica por ativo é recuperável gratuitamente",
+    "probed_dates_empty": ["2024-06-03", "2025-01-15", "2025-07-15", "2026-01-15", "2026-04-15", "2026-05-15", "2026-06-16"],
+    "only_full_snapshot": "2026-07-17",
+    "processors_absent": "BRFS3 e JBSS3 ausentes do snapshot (aparentemente fora da B3 até 2026: BRF-Marfrig; reorganização JBS). Ausência observada, causa não confirmada."
+  },
+  "snapshot": {
+    "source": "B3_BDI_BTBLoanBalance",
+    "ref_date": "2026-07-17",
+    "sha256": "1a5efd463b21631934885e06f97d6026e2b11c27b54dc0866f8dd366ffd9590d",
+    "rows": 4670
+  },
+  "observed_donor_rate_annual": {
+    "AGRO3": {"weighted": 0.0008, "max": 0.0015},
+    "SLCE3": {"weighted": 0.0019, "max": 0.002},
+    "SMTO3": {"weighted": 0.0465, "max": 0.25},
+    "BRFS3": null,
+    "JBSS3": null
+  },
+  "frozen_assumption": {
+    "borrow_rate_floor": 0.05,
+    "all_in_base_annual": 0.067,
+    "all_in_double_annual": 0.134,
+    "per_block_base_pct": 0.558,
+    "per_block_double_pct": 1.117,
+    "note": "all-in = max(obs, 5%) + tarifa B3 clip(20% do contrato, 2.5-70 bps) + 1% intermediação; cenário double = 2x."
+  },
+  "finding": "As taxas doadoras reais observáveis (AGRO3 0,08%; SLCE3 0,19%; SMTO3 4,65% ponderada) ficam ABAIXO do piso congelado de 5%. Para BRFS3/JBSS3, sem observação, o piso é conservador pela classe de liquidez (mega-caps historicamente fáceis de alugar). Portanto a premissa congelada DOMINA o custo real observável; a série histórica faltante não altera o custo que a proxy assume.",
+  "caveat": "A cauda da SMTO3 (máx 25% numa modalidade) pode exceder até o cenário 2x; por isso SMTO3 é satélite capado em 0,15. Esta é uma observação de um único dia (2026-07-17), não uma distribuição histórica.",
+  "proxy_policy": "Para datas sem BDI real, o estado de aluguel é uma PROXY declarada (build_proxy_borrow_state): taxa 0 -> piso 5%+tarifas+2x; disponibilidade = elegibilidade por ADTV; profundidade de 1% do estoque tratada como não-vinculante ao AUM de referência de R$500 mil; todo bloco carrega reason 'proxy'."
+}

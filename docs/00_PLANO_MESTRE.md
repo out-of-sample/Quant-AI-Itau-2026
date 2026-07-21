@@ -280,23 +280,26 @@ Andamento:
   custos e turnover e bloqueia o holdout antes do I/O. Testes sintéticos cobrem transição,
   drift, saída final e custos. **Nenhum P&L de carteira/backtest foi rodado.** R26 limita o smoke test real
   a 2018/19, porque as safras anteriores não têm peso CONAB anterior admissível.
-- 🟡 **4.2 — fricções e investibilidade (D-057):** retorno total offline dos cinco nomes e
+- ✅ **4.2 — fricções e investibilidade (D-057/D-058):** retorno total offline dos cinco nomes e
   estado real COTAHIST/ADTV foram materializados; o parser/fetcher das duas tabelas BDI, o
   carimbo PIT e o gate de aluguel por patrimônio corrente estão implementados. O piso congelado
-  exclui AGRO3 em todo o dev; SLCE3 preserva o lado produtor nos nove blocos de 2018/19. **O
-  smoke test não foi executado:** a fonte pública gratuita não preserva negócios/taxas/estoque
-  de aluguel de 2019, e o BDI centralizado só cobre parte do holdout. R27 bloqueia chamar o
-  backtest de investível até uma decisão explícita sobre fonte histórica ou reformulação.
-  Cobertura e nove pontos de decisão estão congelados em
-  `data/reference/market_state_dev_summary_v1.json`.
+  exclui AGRO3 em todo o dev; SLCE3 preserva o lado produtor nos nove blocos de 2018/19. **Fork
+  R27 resolvido pela opção 2 (D-058):** confirmado que não há série histórica pública (só o
+  último pregão) e que a opção 1 gratuita é inviável, o custo do short passa a ser **proxy
+  conservadora declarada** (piso 5%+tarifas+2×, disponibilidade por ADTV), corroborada pelo único
+  snapshot real — não medição de investibilidade histórica. Isso **destrava o smoke** (sujeito a
+  R26). Cobertura e nove pontos de decisão congelados em
+  `data/reference/market_state_dev_summary_v1.json`; evidência de calibração em
+  `data/reference/borrow_rate_calibration_v1.json`.
 - ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
   de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
 
-> **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056). Portão 4.2: BLOQUEADO em R27.**
-> A infraestrutura mensurável foi concluída sem abrir o holdout, mas a condição short de D-055
-> não pode ser reconstruída em 2018/19 com dados públicos. O próximo passo não é calcular P&L
-> com zeros ou proxies silenciosos: é resolver explicitamente o fork de D-057. Só depois disso
-> seguem o smoke test permitido e os diagnósticos 4.3.
+> **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056). Portão 4.2: ATRAVESSADO em 2026-07-20
+> (D-058).** A infraestrutura mensurável foi concluída sem abrir o holdout. A condição short de
+> D-055 não é reconstruível em 2018/19 com dados públicos; em vez de P&L com zeros ou proxies
+> silenciosos, o fork de D-057 foi resolvido por uma proxy conservadora **declarada e sinalizada**
+> (reason `proxy`). O próximo passo autorizável é o **smoke test permitido** (dev 2018/19) e, na
+> sequência, os diagnósticos 4.3. O holdout segue lacrado até a Fase 6.
 
 ### Fase 5 — Robustez
 

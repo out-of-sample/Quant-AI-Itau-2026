@@ -28,8 +28,8 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo fundamental direto é estreito** — quatro nomes de grãos no teste primário e SMTO3 como satélite de evidência inferior | **Confirmada** | Alto | Não fabricar exposição; teste primário restrito aos quatro grãos; caps 0,40/0,15 e redução de bruto quando necessário (D-053). Método B só como robustez identificada | 🟡 Estrutura resolvida; poder e concentração seguem como limitações |
-| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | D-055 exige evidência B3 PIT em 5 pregões, posição ≤1% do estoque alugado e custo com piso de 5% a.a.; se qualquer short falhar, o bloco inteiro não abre. Long-only não resgata o primário | 🟡 Regra e código resolvidos; medição histórica bloqueada por R27 |
-| R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | D-055 fixa AUM de R$500 mil, ADTV21 ≥R$8 mi, ordem ≤5% do ADTV e short ≤1% do estoque alugado; reportar mínimo/P10/mediana | 🟡 ADTV real medido (AGRO3 sempre abaixo do piso no dev); componente short bloqueado por R27 |
+| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | D-055 exige evidência B3 PIT em 5 pregões, posição ≤1% do estoque alugado e custo com piso de 5% a.a.; se qualquer short falhar, o bloco inteiro não abre. Long-only não resgata o primário | 🟡 Regra e código resolvidos; custo histórico via proxy conservadora declarada (D-058), não medição |
+| R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | D-055 fixa AUM de R$500 mil, ADTV21 ≥R$8 mi, ordem ≤5% do ADTV e short ≤1% do estoque alugado; reportar mínimo/P10/mediana | 🟡 ADTV real medido (AGRO3 sempre abaixo do piso no dev); custo do short via proxy declarada (D-058) |
 | R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido operacionalmente**; reforço das poucas datas com fonte única em PT-005 |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
@@ -47,7 +47,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Submodelo separado; SMTO3 entra só na carteira, cap 0,15, e fica fora do teste primário; JALL3 excluída. Reportar p=0,12/bootstrap p=0,27 (D-052/D-053) | 🟡 Tratamento congelado; ATR≠receita permanece ressalva aberta |
 | R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitiam escolhas | Confirmada | Existencial | D-055 tornou a grade de blocos executável em `operational_spec.py`, com tripwires e holdout negado por padrão | 🟢 **Resolvido — Fase 4.0 encerrada sem P&L** |
 | R26 | **Desenvolvimento operacional parcialmente não materializável** — D-055 declara 2015/16–2018/19, mas o peso nacional exige a safra CONAB anterior e o painel de vintages começa em 2017/18 | Confirmada | Médio | Não usar equal-weight, peso futuro ou backfill. Validar a mecânica com testes sintéticos; a única safra real de dev computável pelo contrato nacional é 2018/19. Tratar a cobertura como limitação, não selecionar regra alternativa por P&L (D-056) | 🟡 Motor resolvido; cobertura real restrita e declarada |
-| R27 | **Histórico público de aluguel não cobre o experimento** — negócios, taxa e estoque por ticker de D-055 não são recuperáveis em 2018/19 e cobrem apenas parte do holdout | Confirmada | **Existencial para investibilidade** | Parser/gate permanecem estritos; não usar taxa atual, zero por ausência nem backfill. Obter fonte histórica contratada ou registrar mudança de estratégia/metodologia antes de qualquer P&L (D-057) | 🔴 **BLOQUEIA o smoke 2018/19 e o portão 4.2** |
+| R27 | **Histórico público de aluguel não cobre o experimento** — negócios, taxa e estoque por ticker de D-055 não são recuperáveis em 2018/19 e cobrem apenas parte do holdout | Confirmada | **Existencial para investibilidade** | Parser/gate permanecem estritos; não usar taxa atual, zero por ausência nem backfill. **Fork resolvido pela opção 2 (D-058)**: custo de aluguel via proxy conservadora declarada (piso 5%+tarifas+2×, disponibilidade por ADTV), corroborada pelo único snapshot real; custo é premissa, não medição de investibilidade histórica | 🟡 **Mitigado por D-058**: smoke destravado; limitação (custo não medido do short) declarada no relatório |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -2019,6 +2019,44 @@ gate não foi removido.
 Até essa escolha, R27 bloqueia a conclusão da Fase 4.2 e também impede usar o holdout como
 estratégia “investível”. A infraestrutura não é descartada: ela mede corretamente datas cobertas
 e torna explícito o que antes seria uma suposição invisível.
+
+### D-058 — Proxy conservadora declarada de aluguel (resolve o fork R27), anterior ao P&L
+
+**Data:** 2026-07-20. **Decisão:** resolver o fork de D-057/R27 pela **opção 2** — custo de
+aluguel do short via **proxy econômica declarada**, não medição histórica —, depois de confirmar
+que a **opção 1 (fonte gratuita) é inviável** e que a calibração pretendida não tem dado de
+origem.
+
+**Por que a opção 1 caiu.** Sondagem ao vivo do endpoint de exportação da B3
+(`arquivos.b3.com.br/bdi/table/export/csv`): datas de 2024, jan/2025, jul/2025 e jan–jun/2026
+retornam “Nenhum resultado”; **somente o último pregão (2026-07-17)** traz dado completo. A
+própria B3 documenta que o histórico livre no site é dos “últimos 21 dias”. Terceiros
+(StatusInvest, investsite, ADVFN) mostram taxa atual/recente, não são vintage-safe/PIT e não
+cobrem BRFS3/JBSS3 — os dois processadores, ausentes do snapshot (aparentemente fora da B3 até
+2026). Não existe série histórica pública por ativo para 2018/19 nem para parte do holdout.
+
+**O que a calibração virou.** Do único snapshot real, as taxas doadoras dos nomes observáveis são
+AGRO3 0,08%, SLCE3 0,19% e SMTO3 4,65% ponderada — **todas abaixo do piso de 5% a.a. já congelado
+em D-055**. Para BRFS3/JBSS3, sem observação, o piso é conservador pela classe de liquidez. Logo,
+a premissa congelada **domina** o custo real observável, e a série faltante **não mudaria** o
+custo assumido. A calibração, na prática, **corrobora** o piso em vez de alterar um número.
+Evidência imutável em `data/reference/borrow_rate_calibration_v1.json`.
+
+**A proxy (return-agnóstica).** `validate/borrow.py::build_proxy_borrow_state` produz, para datas
+sem BDI real, um `BorrowState` que codifica: taxa 0 → `borrow_all_in_rate` aplica piso 5% + tarifa
+B3 + 1% de intermediação (all-in base 6,7% a.a. ≈ 0,56%/bloco; cenário 2× ≈ 1,12%/bloco);
+disponibilidade = **elegibilidade por ADTV**; profundidade de 1% do estoque **não modelada** ao
+AUM de referência de R$500 mil (imaterial para nomes que passam o piso de R$8 mi), via sentinela
+finito; completude declarada. **Todo bloco carrega reason `proxy`**, para que nenhum resultado
+seja confundido com aluguel medido. O motor congelado não muda — apenas consome o estado.
+
+**Custo/limitação declarados.** Isto **não** demonstra investibilidade histórica medida do lado
+short: o custo é premissa, não observação. A honestidade está em (a) o piso ser superestimado
+vs. o real observável, (b) o estresse 2× e (c) a cauda da SMTO3 (máx 25% numa modalidade) poder
+furar até o 2× — por isso ela é satélite capado em 0,15. O relatório deve dizer isto sem rodeio.
+A força estatística do teste primário **não é afetada** (o custo simétrico não entra na
+permutação de sinal). Com D-058, o smoke de 2018/19 fica **destravado** (sujeito a R26); o holdout
+segue lacrado até a Fase 6.
 
 ---
 

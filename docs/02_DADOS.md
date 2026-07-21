@@ -529,9 +529,14 @@ D−21. Probes dos PDFs oficiais confirmaram as tabelas apenas a partir de setem
 forma consistente com a migração. Não foi encontrada série pública por ticker para 2018/19 nem
 para a primeira parte do holdout. O NEFIN menciona *loan fees/short interest*, mas os arquivos
 legados estão indisponíveis e a série documentada é semanal/agregada, insuficiente para D-055.
-Logo, **não houve backfill, taxa atual aplicada ao passado nem disponibilidade presumida**. Uma
-fonte histórica contratada (por exemplo, serviço B3) ou uma mudança metodológica explícita é
-necessária antes do smoke test. Fontes: [lançamento com retenção de 10 dias](https://www.b3.com.br/pt_br/noticias/dados-para-download.htm),
+Logo, **não houve backfill, taxa atual aplicada ao passado nem disponibilidade presumida**.
+Sondagem ao vivo (2026-07-20) confirmou o limite: só o último pregão retorna dado; 2024, jan/2025,
+jul/2025 e jan–jun/2026 voltam “Nenhum resultado”. BRFS3/JBSS3 (processadores) já não constam do
+único snapshot recuperável. **Resolvido em D-058 pela proxy conservadora declarada**: como as
+taxas doadoras reais observáveis (AGRO3 0,08%; SLCE3 0,19%; SMTO3 4,65%) ficam abaixo do piso de
+5% já congelado, a premissa domina o custo real e a série faltante não o mudaria; evidência em
+`data/reference/borrow_rate_calibration_v1.json`. O custo do short passa a ser premissa declarada,
+não medição de investibilidade histórica. Fontes: [lançamento com retenção de 10 dias](https://www.b3.com.br/pt_br/noticias/dados-para-download.htm),
 [centralização no BDI em 2023](https://www.b3.com.br/pt_br/noticias/melhorias-no-site-8AA8D0CC8A91931A018ACE03859D1F68.htm)
 e [glossário oficial de empréstimos registrados](https://www.b3.com.br/data/files/32/02/C0/25/391EA810E9C1AAA8AC094EA8/Glossario%20_%20Emprestimos_Registrados.pdf).
 
@@ -680,7 +685,7 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 | ComexStat semanal | ~1 dia | 🔴 **não arquiva** | ❌ inutilizável para backtest |
 | ANTAQ | ~40 dias | — | ❌ despriorizada (pior que ComexStat) |
 | **COTAHIST (B3)** | D+1 | ✅ (registro de pregão) | 🥇 preços + universo point-in-time |
-| **BDI aluguel (B3)** | primeiro pregão após a referência | ✅ no arquivo baixado; 🔴 retenção pública curta | taxa/negócio/estoque short; R27 bloqueia 2018/19 |
+| **BDI aluguel (B3)** | primeiro pregão após a referência | ✅ no arquivo baixado; 🔴 retenção pública curta (só o último pregão) | taxa/negócio/estoque short; sem série histórica, custo via proxy conservadora declarada (D-058) |
 | yfinance | D+1 | 🔴 **apaga deslistados** | só conferência cruzada |
 | Futuros (yfinance) | D+1 | ✅ | preço de commodity |
 | ONI (NOAA) | até dia 5; caso primário espera +2 meses | 🔴 não (revisão recente + base quinquenal) | controle (El Niño) |

@@ -1205,6 +1205,30 @@ Também se corrigiu a descrição do snapshot: o hash é da serialização JSON 
 interpretado, não dos bytes HTTP originais. Essas mudanças ocorreram antes de qualquer P&L de
 carteira ou acesso ao holdout.
 
+## 2026-07-20 — Fase 4.2, resolução do fork R27 (D-058)
+
+**Uso**: com o time tendo escolhido "calibrar o custo de aluguel a partir do dado público de
+2023+", pedimos à IA para capturar essa série e calibrar a taxa por nome.
+
+**Valor real**: a IA sondou o endpoint de exportação da B3 ao vivo e **mostrou que a premissa da
+tarefa era falsa** — não existe série histórica gratuita: 2024, jan/2025, jul/2025 e jan–jun/2026
+retornam "Nenhum resultado"; só o último pregão (2026-07-17) traz dado. E os dois processadores
+(BRFS3/JBSS3) nem constam do único snapshot. Em vez de fabricar uma calibração, a IA re-desenhou
+a solução: as taxas reais observáveis (AGRO3 0,08%; SLCE3 0,19%; SMTO3 4,65%) ficam **abaixo do
+piso de 5% já congelado**, então a premissa conservadora domina o custo real e a série faltante
+não o mudaria. Virou uma proxy declarada e sinalizada (`build_proxy_borrow_state`, reason
+`proxy`), corroborada por evidência versionada, sem tocar no motor congelado nem em retornos.
+
+**Validação humana**: sondagem reproduzível de múltiplas datas; leitura das taxas direto do
+snapshot local; conferência de que o piso all-in (6,7% base / 13,4% no 2×) supera o observável;
+482 testes verdes, ruff e guards limpos. A decisão de opção (proxy vs. long-only vs. fonte paga)
+foi do time, com as três medidas (rigor/poder/lucro) postas na mesa.
+
+**O que a IA errou**: a própria IA havia proposto ao time a expressão "calibrar de 2023+" antes de
+checar a viabilidade da fonte — otimismo sobre o dado que a sondagem derrubou. O registro guarda
+o erro: a "calibração" acabou sendo confirmação do piso, não estimativa de um número novo, e isso
+foi dito ao time sem maquiar.
+
 ---
 
 ## Modelo de entrada (para as próximas)
