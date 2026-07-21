@@ -2058,6 +2058,33 @@ A força estatística do teste primário **não é afetada** (o custo simétrico
 permutação de sinal). Com D-058, o smoke de 2018/19 fica **destravado** (sujeito a R26); o holdout
 segue lacrado até a Fase 6.
 
+### D-059 — Smoke de engenharia do motor no dev 2018/19 (validação, não estratégia)
+
+**Data:** 2026-07-20. **O que foi feito:** `scripts/run_smoke_dev.py` montou os inputs reais do
+dev (retorno total dos cinco nomes, ADTV/traded/elegibilidade COTAHIST, scores de grãos via
+CHIRPS/PAM/CONAB, proxy de aluguel D-058) e rodou o motor ponta a ponta nos três cenários de
+custo. **Objetivo: validar engenharia, não avaliar a estratégia.**
+
+**Resultado de engenharia (aprovado):** motor rodou os nove blocos sem erro em zero/base/double;
+pesos dollar-neutral (máx |Σw|=0), caps respeitados, custos escalam zero<base<2× (aluguel
+≈R$11,7 mil base / R$23,1 mil no 2×; spot ≈R$1,9 mil/R$3,8 mil), patrimônio final finito e
+positivo, identidade diária de P&L fechando, e `require_backtest_scope` mantendo o holdout
+bloqueado. A proxy de aluguel foi consumida sem incidente (todos os blocos `planned`).
+
+**Achado 1 — SMTO3 é holdout-only na prática.** No dev 2018/19 o satélite de cana **não é
+scoreável**: o bloco exige o peso CONAB de cana do ano anterior (2017/18), mas a série de
+vintages datáveis da cana só começa em 2018/19 (D-050). Logo, a carteira do dev é **só de
+grãos** — SLCE3 (produtor) short contra BRFS3+JBSS3 (processadores) long, bruto 0,8 porque
+AGRO3 é excluído por ADTV e o lado produtor tem um único nome no cap de 0,40. A cana só entra a
+partir do holdout. Registrado para não sobre-vender o papel da cana na tese.
+
+**Achado 2 (metodológico, o que mais importa) — o P&L do dev é circular.** O motor devolveu
+retorno **positivo** no dev (base ≈ +36%), mas isso **não é evidência de que a estratégia
+funciona**: a direção H′ foi *derivada* deste mesmo dev depois de D-043 falsificar a original. O
+dev está queimado; o P&L é in-sample e descritivo. **Só o holdout lacrado (Fase 6) valida.** Tratar
+o +36% como sucesso seria exatamente o teatro estatístico que o projeto recusa. Artefatos de
+engenharia em `data/processed/smoke_dev_*` (gitignored); o runner é versionado.
+
 ---
 
 ## Como registrar uma decisão nova

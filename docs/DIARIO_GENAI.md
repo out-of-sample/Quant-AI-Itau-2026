@@ -1229,6 +1229,24 @@ checar a viabilidade da fonte — otimismo sobre o dado que a sondagem derrubou.
 o erro: a "calibração" acabou sendo confirmação do piso, não estimativa de um número novo, e isso
 foi dito ao time sem maquiar.
 
+## 2026-07-20 — Fase 4, smoke de engenharia do motor (D-059)
+
+**Uso**: pedimos à IA para montar e rodar o smoke test do dev 2018/19 — primeiro P&L do projeto.
+
+**Valor real**: a IA reusou os assemblies canônicos (`run_equity_reaction`, `run_cane_h1`) para
+montar retornos/ADTV/scores reais + proxy de aluguel e rodou o motor ponta a ponta nos três
+cenários. Validou engenharia (dollar-neutral, caps, custos escalando, holdout bloqueado) e
+descobriu, ao rodar, que **SMTO3 não é scoreável no dev** (a série de vintages CONAB da cana só
+começa em 2018/19, sem peso do ano anterior) — a cana é, na prática, holdout-only.
+
+**Validação humana**: o run real falhou duas vezes por motivos legítimos (CONAB sem carimbo
+`avail_date`; cana sem peso do ano anterior) antes de passar — cada falha foi lida e tratada, não
+contornada. Saída conferida contra as invariantes esperadas.
+
+**O que a IA NÃO fez (e é o ponto)**: o dev deu +36%, e a IA se recusou a chamar isso de sucesso.
+A direção H′ foi derivada deste mesmo dev; o P&L é circular. O banner do script, o D-059 e o plano
+dizem explicitamente que só o holdout valida. Resistir ao número bonito é o comportamento certo.
+
 ---
 
 ## Modelo de entrada (para as próximas)

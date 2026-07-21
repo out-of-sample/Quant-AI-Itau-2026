@@ -291,15 +291,22 @@ Andamento:
   R26). Cobertura e nove pontos de decisão congelados em
   `data/reference/market_state_dev_summary_v1.json`; evidência de calibração em
   `data/reference/borrow_rate_calibration_v1.json`.
+- ✅ **Smoke de engenharia (D-059, `scripts/run_smoke_dev.py`):** motor rodou ponta a ponta no
+  dev 2018/19 com dados reais nos três cenários — dollar-neutral (máx |Σw|=0), caps respeitados,
+  custos zero<base<2×, patrimônio finito>0, holdout bloqueado. **Achado:** SMTO3 é holdout-only na
+  prática (sem peso CONAB de cana de 2017/18), então o dev é só grãos (SLCE3 short × BRFS3/JBSS3
+  long). **O P&L do dev (+36% base) é circular e NÃO valida a estratégia** — a direção H′ foi
+  derivada deste mesmo dev; só o holdout (Fase 6) valida.
 - ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
   de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
 
 > **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056). Portão 4.2: ATRAVESSADO em 2026-07-20
-> (D-058).** A infraestrutura mensurável foi concluída sem abrir o holdout. A condição short de
-> D-055 não é reconstruível em 2018/19 com dados públicos; em vez de P&L com zeros ou proxies
-> silenciosos, o fork de D-057 foi resolvido por uma proxy conservadora **declarada e sinalizada**
-> (reason `proxy`). O próximo passo autorizável é o **smoke test permitido** (dev 2018/19) e, na
-> sequência, os diagnósticos 4.3. O holdout segue lacrado até a Fase 6.
+> (D-058). Smoke de engenharia: ATRAVESSADO em 2026-07-20 (D-059).** A infraestrutura mensurável
+> foi concluída e validada ponta a ponta sem abrir o holdout. A condição short de D-055 não é
+> reconstruível em 2018/19 com dados públicos; em vez de P&L com zeros ou proxies silenciosos, o
+> fork de D-057 foi resolvido por uma proxy conservadora **declarada e sinalizada** (reason
+> `proxy`). O próximo passo autorizável são os **diagnósticos 4.3**. O holdout segue lacrado até a
+> Fase 6, e o P&L do dev nunca é tratado como validação.
 
 ### Fase 5 — Robustez
 
