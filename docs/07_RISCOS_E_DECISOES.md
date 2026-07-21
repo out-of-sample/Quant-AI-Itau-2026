@@ -2087,6 +2087,50 @@ engenharia em `data/processed/smoke_dev_*` (gitignored); o runner é versionado.
 
 ---
 
+### D-060 — Diagnósticos descritivos da Fase 4.3 no dev (setor-vs-clima)
+
+**Data:** 2026-07-20. **O que foi feito:** `backtest/diagnostics.py` e
+`scripts/run_diagnostics_dev.py` produziram, sobre o dev 2018/19 e sem abrir o holdout, três
+blocos descritivos: (A) invariantes do motor; (B) atribuição do P&L por nome; (C) decomposição do
+retorno em aposta de SETOR versus sinal cross-section de clima. **Objetivo: entender o que o motor
+faz, não avaliar a estratégia.** O P&L do dev continua circular (direção H′ derivada do próprio
+dev, D-059); nada aqui é validação.
+
+**Bloco A — invariantes (ok):** alvo dollar-neutral (máx |Σw|=0), bruto-alvo máx 0,800 (o lado
+produtor tem um único nome no cap 0,40 porque AGRO3 sai por ADTV), custo monótono
+zero≥base≥double (697,0 ≥ 681,3 ≥ 665,9 mil).
+
+**Bloco B — atribuição por nome (base):** o P&L bruto vem esmagadoramente da perna long de
+proteína. JBSS3 **54,6%** (long, +R$106,4 mil), BRFS3 31,7% (long, +R$61,8 mil), SLCE3 13,7%
+(short, +R$26,6 mil); AGRO3/SMTO3 fora. A perna long (JBS+BRF) = **86,3%** do bruto; HHI 0,42.
+Custos: bruto 194,9 − aluguel 11,7 − spot 1,9 = líquido 181,3 mil (+36,26% sobre R$500 mil).
+
+**Bloco C — decomposição setor-vs-clima (o que mais importa):** construiu-se uma **carteira
+setorial ingênua** que só expressa short produtor / long processador com pesos iguais por perna,
+ignorando o score de clima — reusando a máquina de pesos congelada com um `E·Shock` constante
+(produtor +1, processador −1). Resultado: a carteira real (+36,26%) e a ingênua (+36,26%) são
+**idênticas** — **incremento atribuível ao clima = +0,00%**. A regressão do retorno diário do
+livro no spread proteína−produtor dá **R²=0,84**. Ou seja: no dev, com apenas três nomes ativos, o
+livro **É uma aposta de setor**; o score cross-section de clima não diferencia nada. O +36% é o
+rali de proteína de 2019 (peste suína africana) entrando pela perna long, não alpha climático.
+
+**Por quê / consequência:** isto converte os gargalos conhecidos (concentração e exposição
+setorial não neutralizada) de suspeita em fato medido. **Não muda o contrato congelado (D-053/
+D-055)** — os diagnósticos são descritivos e a inferência mora só no holdout. Alimenta duas coisas:
+(1) a Fase 5 deve incluir uma leitura de retorno **líquida de setor/beta**, separando quanto é
+spread proteína×produtor de quanto é o sinal climático; (2) o relatório precisa **declarar a
+exposição setorial** e jamais vender o P&L do dev como sinal de clima. Se o time decidir
+neutralizar setor na própria estratégia, isso vira decisão pré-registrada ANTES do holdout,
+separada de D-060.
+
+**Custo/limitação:** o incremento de clima exatamente nulo é, em parte, artefato do dev ter só 3
+nomes ativos (a atribuição de perna determina quase toda a estrutura); no holdout, com 5 nomes e
+variação cross-section real, o score de clima tem mais espaço para diferenciar — mas isso é
+justamente o que o holdout, e só ele, vai medir. Artefatos em `data/processed/diag_dev_*`
+(gitignored); módulo e runner versionados.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

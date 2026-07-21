@@ -297,16 +297,24 @@ Andamento:
   prática (sem peso CONAB de cana de 2017/18), então o dev é só grãos (SLCE3 short × BRFS3/JBSS3
   long). **O P&L do dev (+36% base) é circular e NÃO valida a estratégia** — a direção H′ foi
   derivada deste mesmo dev; só o holdout (Fase 6) valida.
-- ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
-  de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
+- ✅ **4.3 — diagnósticos no dev (D-060, `backtest/diagnostics.py`, `scripts/run_diagnostics_dev.py`):**
+  descritivos, holdout lacrado. Atribuição por nome: **JBSS3 sozinho responde por 54,6% do P&L
+  bruto** e a perna long de proteína (JBS+BRF) por 86,3%; SLCE3 short 13,7%; HHI 0,42 (muito
+  concentrado). Decomposição setor-vs-clima: a carteira real (+36,26%) e a carteira **setorial
+  ingênua** (short produtor/long processador equal-weight, +36,26%) são idênticas — **incremento
+  de clima = +0,00%**; regressão no spread proteína−produtor dá **R²=0,84**. **Conclusão dura:** no
+  dev o livro É uma aposta de setor, não um sinal cross-section de clima — o +36% é o rali de
+  proteína de 2019 (ASF), não alpha climático. Isso não muda o contrato congelado; alimenta a Fase
+  5 (robustez) e o que o relatório precisa declarar sobre exposição setorial.
 
 > **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056). Portão 4.2: ATRAVESSADO em 2026-07-20
-> (D-058). Smoke de engenharia: ATRAVESSADO em 2026-07-20 (D-059).** A infraestrutura mensurável
-> foi concluída e validada ponta a ponta sem abrir o holdout. A condição short de D-055 não é
-> reconstruível em 2018/19 com dados públicos; em vez de P&L com zeros ou proxies silenciosos, o
-> fork de D-057 foi resolvido por uma proxy conservadora **declarada e sinalizada** (reason
-> `proxy`). O próximo passo autorizável são os **diagnósticos 4.3**. O holdout segue lacrado até a
-> Fase 6, e o P&L do dev nunca é tratado como validação.
+> (D-058). Smoke de engenharia: ATRAVESSADO em 2026-07-20 (D-059). Diagnósticos 4.3: CONCLUÍDOS em
+> 2026-07-20 (D-060).** A infraestrutura mensurável foi concluída e validada ponta a ponta sem abrir
+> o holdout. A condição short de D-055 não é reconstruível em 2018/19 com dados públicos; em vez de
+> P&L com zeros ou proxies silenciosos, o fork de D-057 foi resolvido por uma proxy conservadora
+> **declarada e sinalizada** (reason `proxy`). Os diagnósticos 4.3 mostraram que o P&L do dev é uma
+> aposta setorial (incremento de clima ~0), reforçando que só o holdout valida. O holdout segue
+> lacrado até a Fase 6, e o P&L do dev nunca é tratado como validação.
 
 ### Fase 5 — Robustez
 
