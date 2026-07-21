@@ -7,12 +7,19 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from quantagro.backtest.operational_spec import TradeBlock, borrow_all_in_rate
+from quantagro.backtest.strategy_spec import UNIVERSE
 from quantagro.ingest.borrow_b3 import (
     parse_open_positions,
     parse_registered_loans,
     stamp_borrow_availability,
 )
-from quantagro.validate.borrow import BorrowFileCoverage, build_borrow_state
+from quantagro.validate.borrow import (
+    PROXY_BORROW_DEPTH_BRL,
+    BorrowFileCoverage,
+    build_borrow_state,
+    build_proxy_borrow_state,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 TICKERS = ("AGRO3", "SLCE3", "SMTO3")
@@ -150,3 +157,71 @@ def test_estado_rejeita_cobertura_declarada_sem_atestacao():
     unverified = BorrowFileCoverage(frozenset(sessions[:-1]), frozenset(sessions[:-1]))
     with pytest.raises(ValueError, match="não foi atestada"):
         build_borrow_state(registered, opened, close, sessions[-1:], TICKERS, unverified)
+
+
+# --- proxy declarada de aluguel (D-058) -------------------------------------------------
+def _proxy_decisions():
+    return pd.DatetimeIndex(["2019-01-07", "2019-02-06", "2019-03-08"]).normalize()
+
+
+def test_proxy_codifica_piso_disponibilidade_e_flag_de_auditoria():
+    decisions = _proxy_decisions()
+    elig = pd.DataFrame(True, index=decisions, columns=list(UNIVERSE))
+    elig.loc[decisions[1], "AGRO3"] = False
+    state = build_proxy_borrow_state(decisions, UNIVERSE, elig)
+
+    assert (state.donor_rate.to_numpy() == 0.0).all()  # piso a jusante
+    assert state.complete.to_numpy().all()
+    assert state.recent_trade.loc[decisions[0], "AGRO3"]
+    assert not state.recent_trade.loc[decisions[1], "AGRO3"]
+    assert state.stock_brl.loc[decisions[0], "AGRO3"] == PROXY_BORROW_DEPTH_BRL
+    assert state.stock_brl.loc[decisions[1], "AGRO3"] == 0.0
+    assert state.reason.loc[decisions[0], "AGRO3"] == "proxy"
+    assert state.reason.loc[decisions[1], "AGRO3"] == "proxy_no_adtv"
+
+
+def test_proxy_permite_short_elegivel_com_taxa_no_piso_a_500k():
+    from quantagro.backtest.engine import _gate_borrow
+
+    decisions = _proxy_decisions()
+    elig = pd.DataFrame(True, index=decisions, columns=list(UNIVERSE))
+    state = build_proxy_borrow_state(decisions, UNIVERSE, elig)
+    block = TradeBlock("2018/19", 0, decisions[0], decisions[1], decisions[2])
+    target = pd.Series(0.0, index=UNIVERSE)
+    target["SLCE3"] = 0.4
+    target["BRFS3"] = -0.4  # short elegível
+    effective, annual, status = _gate_borrow(target, block, state, 500_000.0, "planned")
+
+    assert status["status"] == "planned"
+    assert (effective == target).all()
+    assert annual["BRFS3"] == 0.0  # taxa observada 0 -> piso a jusante
+    assert borrow_all_in_rate(float(annual["BRFS3"]), "base") == pytest.approx(0.067, abs=1e-3)
+
+
+def test_proxy_zera_bloco_se_short_e_inelegivel_por_adtv():
+    from quantagro.backtest.engine import _gate_borrow
+
+    decisions = _proxy_decisions()
+    elig = pd.DataFrame(True, index=decisions, columns=list(UNIVERSE))
+    elig.loc[decisions[0], "BRFS3"] = False  # não passa ADTV
+    state = build_proxy_borrow_state(decisions, UNIVERSE, elig)
+    block = TradeBlock("2018/19", 0, decisions[0], decisions[1], decisions[2])
+    target = pd.Series(0.0, index=UNIVERSE)
+    target["SLCE3"] = 0.4
+    target["BRFS3"] = -0.4
+    effective, _annual, status = _gate_borrow(target, block, state, 500_000.0, "planned")
+
+    assert status["status"] == "flat_borrow_no_recent_trade"
+    assert status["limiting_ticker"] == "BRFS3"
+    assert (effective == 0.0).all()
+
+
+def test_proxy_exige_elegibilidade_booleana_e_completa():
+    decisions = _proxy_decisions()
+    faltando = pd.DataFrame(True, index=decisions[:-1], columns=list(UNIVERSE))
+    with pytest.raises(ValueError, match="decisão"):
+        build_proxy_borrow_state(decisions, UNIVERSE, faltando)
+
+    nao_bool = pd.DataFrame(1.0, index=decisions, columns=list(UNIVERSE))
+    with pytest.raises(ValueError, match="booleana"):
+        build_proxy_borrow_state(decisions, UNIVERSE, nao_bool)

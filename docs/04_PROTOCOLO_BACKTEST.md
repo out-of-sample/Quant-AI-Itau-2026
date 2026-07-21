@@ -223,12 +223,16 @@ negociou no close de saída/transição, o motor falha alto em vez de simular li
 total observado menor que −100% também falha alto, pois inverteria o sinal econômico da
 posição e denuncia erro de ajuste ou de dado.
 
-**Bloqueio empírico.** A infraestrutura acima está validada em arquivos BDI reais de 2026, mas
-a B3 pública não preserva esses dois painéis para 2018/19 (R27). O histórico gratuito antigo
-tinha retenção de 10 dias; as tabelas centralizadas atuais aparecem apenas desde 2023. Portanto,
-o smoke test de 2018/19 permanece **não executado**. Aplicar taxa atual ao passado, interpretar
-ausência de arquivo como zero ou remover o gate seria alteração de D-055, não preenchimento de
-dado, e exige decisão explícita anterior a qualquer P&L.
+**Bloqueio empírico e sua resolução (D-058).** A infraestrutura acima está validada em arquivos
+BDI reais de 2026, mas a B3 pública não preserva esses dois painéis para 2018/19 (R27): o
+histórico gratuito antigo retinha 10 dias e o export atual serve só o último pregão. Sem série
+histórica, o custo do short é resolvido por **proxy conservadora declarada** (D-058), não por
+medição: para datas sem BDI real, `build_proxy_borrow_state` fornece taxa 0 → piso 5% + tarifas +
+2×, disponibilidade pela elegibilidade de ADTV, profundidade não vinculante a R$500 mil, e todo
+bloco carrega reason `proxy`. A proxy é corroborada pelo único snapshot real (taxas observáveis
+abaixo do piso). O custo passa a ser premissa, não demonstração de investibilidade histórica do
+short — declarado como tal. Aplicar taxa atual ao passado, interpretar ausência como zero ou
+remover o gate seria outra coisa (alteração silenciosa), e não é o que se fez.
 
 ### 4.2 Cenários e capacidade
 

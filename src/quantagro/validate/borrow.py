@@ -192,3 +192,67 @@ def build_borrow_state(
             reasons.loc[decision, ticker] = "ok" if quantity > 0 else "zero_open_position"
 
     return BorrowState(rates, recent, stock, complete, reasons)
+
+
+# Sentinela finito de profundidade: a proxy NÃO modela o gate de 1% do estoque, porque a
+# R$500 mil de AUM de referência ele é imaterial para nomes que passam o piso de ADTV. Um valor
+# grande e finito mantém a capacidade muito acima de qualquer patrimônio viável sem quebrar as
+# checagens de finitude do motor. Ver D-058 e data/reference/borrow_rate_calibration_v1.json.
+PROXY_BORROW_DEPTH_BRL: float = 1e12
+
+
+def build_proxy_borrow_state(
+    decision_dates: pd.DatetimeIndex,
+    tickers: tuple[str, ...],
+    eligibility: pd.DataFrame,
+) -> BorrowState:
+    """Estado de aluguel DECLARADO (não medido) para datas sem BDI real (D-058, R27).
+
+    Não existe série histórica pública de aluguel por ativo (o export da B3 só serve o último
+    pregão). Para o dev/holdout pré-2023, o custo do short vira premissa conservadora declarada,
+    return-agnóstica:
+
+    * ``donor_rate = 0`` — a jusante ``borrow_all_in_rate`` aplica o piso de 5% + tarifa B3 + 1%
+      de intermediação, com o cenário ``double`` disponível como estresse 2×;
+    * ``recent_trade = eligibility`` — disponibilidade proxiada pela elegibilidade de ADTV;
+    * ``stock_brl = PROXY_BORROW_DEPTH_BRL`` onde elegível — profundidade não vinculante ao AUM;
+    * ``complete = True`` — completude declarada pela proxy;
+    * ``reason = "proxy"`` em todo bloco elegível (``"proxy_no_adtv"`` caso contrário), para que
+      nenhum resultado seja confundido com aluguel medido.
+
+    A evidência de que o piso domina as taxas reais observáveis está em
+    ``data/reference/borrow_rate_calibration_v1.json``. Um nome inelegível que porventura fosse
+    shorteado cai em ``recent_trade=False`` e zera o bloco (``flat_borrow_no_recent_trade``),
+    nunca negocia silenciosamente.
+    """
+    decisions = pd.DatetimeIndex(decision_dates).normalize()
+    if decisions.empty or decisions.has_duplicates or not decisions.is_monotonic_increasing:
+        raise ValueError("decisões da proxy devem ser crescentes, únicas e não vazias")
+    columns = list(tickers)
+    if len(set(columns)) != len(columns):
+        raise ValueError("tickers da proxy não podem repetir")
+
+    elig = eligibility.copy()
+    elig.index = pd.DatetimeIndex(elig.index).normalize()
+    if not set(columns).issubset(elig.columns):
+        raise ValueError("elegibilidade não cobre todos os tickers da proxy")
+    missing = decisions.difference(elig.index)
+    if len(missing):
+        raise ValueError(f"elegibilidade sem {len(missing)} decisão(ões): {list(missing[:3])}")
+    elig = elig.loc[decisions, columns]
+    if elig.isna().any().any() or not all(
+        pd.api.types.is_bool_dtype(dtype) for dtype in elig.dtypes
+    ):
+        raise ValueError("elegibilidade deve ser booleana e completa nas decisões")
+
+    eligible = elig.to_numpy(dtype=bool)
+    rates = pd.DataFrame(0.0, index=decisions, columns=columns, dtype=float)
+    recent = pd.DataFrame(eligible, index=decisions, columns=columns)
+    stock = pd.DataFrame(
+        np.where(eligible, PROXY_BORROW_DEPTH_BRL, 0.0), index=decisions, columns=columns
+    )
+    complete = pd.DataFrame(True, index=decisions, columns=columns, dtype=bool)
+    reason = pd.DataFrame(
+        np.where(eligible, "proxy", "proxy_no_adtv"), index=decisions, columns=columns, dtype=object
+    )
+    return BorrowState(rates, recent, stock, complete, reason)
