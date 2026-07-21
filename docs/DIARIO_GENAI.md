@@ -1249,6 +1249,35 @@ dizem explicitamente que só o holdout valida. Resistir ao número bonito é o c
 
 ---
 
+## 2026-07-20 — Fase 4.3, diagnósticos setor-vs-clima (D-060)
+
+**Uso**: a pedido do time (após um passo-atrás de revisão geral do projeto), a IA desenhou e
+implementou os diagnósticos descritivos do dev — atribuição por nome e uma decomposição que separa
+"aposta de setor" de "sinal cross-section de clima" — para transformar dois gargalos suspeitados em
+fato medido.
+
+**Valor real**: a IA propôs um benchmark setorial ingênuo que **reusa a máquina de pesos congelada**
+(um `E·Shock` constante produtor +1/processador −1, que a inversão H′ vira "short produtor/long
+processador") — em vez de escrever um caminho de pesos novo, testável e passível de divergir do
+contrato. O diagnóstico revelou, com número, que no dev a carteira real e a ingênua rendem o
+**mesmo +36,26%** (incremento de clima +0,00%; R²=0,84 no spread proteína−produtor) e que **JBSS3
+sozinho é 54,6% do P&L** — ou seja, o resultado do dev é o rali de proteína de 2019, não alpha
+climático.
+
+**Validação humana**: os testes unitários usaram fixtures sintéticas com resposta fechada (livro =
+spread ⇒ beta=1, R²=1) e um bloco dev real para o benchmark. A primeira versão tinha um **bug**: a
+SMTO3 vazava para o lado "processador" na regressão (defini processador como "tudo que não é
+produtor"). O teste de fixture pegou (beta 1,04 em vez de 1,00); corrigido usando o conjunto
+`PROCESSORS` explícito. Sem isso, a decomposição estaria contaminada silenciosamente.
+
+**O que a IA errou**: além do vazamento da SMTO3 acima, na revisão geral a própria IA reconheceu que
+sua recomendação anterior de **tirar a SMTO3** por ser holdout-only tinha sido dogmática — o time
+apontou a incoerência aparente com a JALL3, e a IA revisou para "manter com limitação declarada",
+que é a leitura honesta. O diagnóstico não muda o contrato congelado; a inferência segue só no
+holdout.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
