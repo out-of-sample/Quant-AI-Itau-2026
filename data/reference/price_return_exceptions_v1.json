@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "purpose": "audited_extreme_raw_returns_in_development",
+  "exceptions": [
+    {
+      "ticker": "JBSS3",
+      "date": "2017-05-22",
+      "expected_return": -0.3134328358208951,
+      "absolute_tolerance": 1e-09,
+      "reason": "movimento de mercado no período da divulgação da colaboração premiada dos controladores; não houve evento societário de razão",
+      "primary_source": "https://www.gov.br/cvm/pt-br/assuntos/noticias/2017/comunicado-ao-mercado-n-03-2017-93b0b5def5384b6680202677a27a2651"
+    }
+  ]
+}

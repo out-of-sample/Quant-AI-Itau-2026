@@ -278,19 +278,25 @@ Andamento:
 - ✅ **4.1 — motor vetorizado (D-056):** adaptadores PIT materializam grãos/cana e posições-
   alvo; o ledger mantém quantidades fixas, executa `(X, saída]`, reconcilia P&L bruto/líquido,
   custos e turnover e bloqueia o holdout antes do I/O. Testes sintéticos cobrem transição,
-  drift, saída final e custos. **Nenhum P&L observado foi rodado.** R26 limita o smoke test real
+  drift, saída final e custos. **Nenhum P&L de carteira/backtest foi rodado.** R26 limita o smoke test real
   a 2018/19, porque as safras anteriores não têm peso CONAB anterior admissível.
-- ⬜ **4.2 — fricções e investibilidade:** taxas, slippage, aluguel, ADTV e capacidade nos
-  cenários pré-registrados; materializar o estado de mercado no COTAHIST, incluir SMTO3 no
-  retorno total e ingerir o BDI PIT. O calendário B3 completo e reason codes já estão expostos
-  por `validate/universe.py`.
+- 🟡 **4.2 — fricções e investibilidade (D-057):** retorno total offline dos cinco nomes e
+  estado real COTAHIST/ADTV foram materializados; o parser/fetcher das duas tabelas BDI, o
+  carimbo PIT e o gate de aluguel por patrimônio corrente estão implementados. O piso congelado
+  exclui AGRO3 em todo o dev; SLCE3 preserva o lado produtor nos nove blocos de 2018/19. **O
+  smoke test não foi executado:** a fonte pública gratuita não preserva negócios/taxas/estoque
+  de aluguel de 2019, e o BDI centralizado só cobre parte do holdout. R27 bloqueia chamar o
+  backtest de investível até uma decisão explícita sobre fonte histórica ou reformulação.
+  Cobertura e nove pontos de decisão estão congelados em
+  `data/reference/market_state_dev_summary_v1.json`.
 - ⬜ **4.3 — diagnósticos no dev:** invariantes, atribuição e exposições a fatores. O desempenho
   de H′ no dev é descritivo porque a direção foi derivada depois de D-043.
 
-> **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056).** Próximo passo: Fase 4.2,
-> materializando fricções e investibilidade sem abrir o holdout. O portão completo da Fase 4
-> ainda exige o smoke test real permitido, diagnósticos e exposições. Nenhum Sharpe do
-> desenvolvimento pode escolher parâmetros.
+> **Portão mecânico 4.1: ATRAVESSADO em 2026-07-20 (D-056). Portão 4.2: BLOQUEADO em R27.**
+> A infraestrutura mensurável foi concluída sem abrir o holdout, mas a condição short de D-055
+> não pode ser reconstruída em 2018/19 com dados públicos. O próximo passo não é calcular P&L
+> com zeros ou proxies silenciosos: é resolver explicitamente o fork de D-057. Só depois disso
+> seguem o smoke test permitido e os diagnósticos 4.3.
 
 ### Fase 5 — Robustez
 

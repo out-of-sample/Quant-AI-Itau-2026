@@ -1,0 +1,10 @@
+﻿Informações detalhadas sobre empréstimos de ativos que foram formalmente registrados.
+Glossário;https://www.b3.com.br/
+
+;;;;;;;;Taxa doador;;;Taxa tomador;;
+Data;Código IF;Código ISIN;Empresa ou fundo;Mercado;Número de contratos;Quantidade de ativos;Valor em R$;Mínima;Média ponderada;Máxima;Mínima;Média ponderada;Máxima
+17/07/2026;AGRO3;BRAGROACNOR7;BRASILAGRO - CIA BRAS DE PROP AGRICOLAS;Registro;103;138251;2658566,73;0,08%;0,08%;0,15%;0,08%;0,08%;0,15%
+17/07/2026;SLCE3;BRSLCEACNOR2;SLC AGRICOLA S.A.;Registro;763;1846450;25130184,5;0,10%;0,19%;0,20%;0,10%;0,19%;0,20%
+17/07/2026;SMTO3;BRSMTOACNOR3;SAO MARTINHO S.A.;Registro;491;1200236;18819700,48;0,10%;4,65%;25,00%;0,10%;4,65%;25,00%
+17/07/2026;SLCE3;BRSLCEACNOR2;SLC AGRICOLA S.A.;Neg. Eletrônica D+0;;0;0;0,10%;0,19%;0,20%;0,10%;0,19%;0,20%
+17/07/2026;SMTO3;BRSMTOACNOR3;SAO MARTINHO S.A.;Neg. Eletrônica D+1;56;764584;11988677,12;0,10%;4,65%;25,00%;0,10%;4,65%;25,00%

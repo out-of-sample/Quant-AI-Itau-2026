@@ -121,6 +121,14 @@ class TestMergeCashEvents:
 
 
 class TestAssembleTotalReturn:
+    def test_split_real_smto_2016_fica_neutro_com_ratio_tres(self):
+        quotes = filter_equities_spot(parse_cotahist(FIXTURES / "cotahist_smto_split_2016.txt"))
+        close = close_series(quotes, "SMTO3")
+        event = CorporateEvent(cum_date=pd.Timestamp("2016-12-09"), share_ratio=3.0)
+        ret = assemble_total_return(close, stock=[event]).dropna()
+        assert ret.iloc[0] == pytest.approx(3 * 17.45 / 52.45 - 1)
+        assert abs(ret.iloc[0]) < 0.01
+
     def test_dividendo_de_cada_fonte_entra_uma_vez(self):
         close = _close(["2024-01-02", "2024-01-03", "2024-01-04"], [10.0, 9.0, 9.0])
         ev = CorporateEvent(cum_date=pd.Timestamp("2024-01-02"), cash_value=1.0)

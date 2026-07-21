@@ -21,12 +21,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from quantagro.validate.borrow import BorrowState
+
 from .operational_spec import (
     COST_SCENARIOS,
     HOLDING_SESSIONS,
     REFERENCE_AUM_BRL,
     TradeBlock,
     borrow_all_in_rate,
+    borrow_capacity_brl,
+    borrow_is_available,
     compose_operational_scores,
     one_way_equity_cost_rate,
     require_backtest_scope,
@@ -201,50 +205,86 @@ def _validated_panel(frame: pd.DataFrame, what: str, *, boolean: bool = False) -
     return out
 
 
-def _effective_targets(
-    schedule: TargetSchedule,
-    borrow_rates: pd.DataFrame,
-    borrow_available: pd.DataFrame,
-) -> tuple[pd.DataFrame, pd.DataFrame, dict[pd.Timestamp, pd.Series]]:
-    rates = _validated_panel(borrow_rates, "taxas de aluguel")
-    available = _validated_panel(borrow_available, "disponibilidade de aluguel", boolean=True)
+def _validated_borrow_state(state: BorrowState, schedule: TargetSchedule) -> BorrowState:
+    rates = _validated_panel(state.donor_rate, "taxas de aluguel")
+    recent = _validated_panel(state.recent_trade, "negócio recente de aluguel", boolean=True)
+    stock = _validated_panel(state.stock_brl, "estoque alugado")
+    complete = _validated_panel(state.complete, "completude do aluguel", boolean=True)
+    reason = _validated_panel(state.reason, "motivo do aluguel")
     decision_dates = pd.DatetimeIndex([b.decision_date for b in schedule.blocks])
     _require_dates(rates, decision_dates, "taxas de aluguel")
-    _require_dates(available, decision_dates, "disponibilidade de aluguel")
+    _require_dates(recent, decision_dates, "negócio recente de aluguel")
+    _require_dates(stock, decision_dates, "estoque alugado")
+    _require_dates(complete, decision_dates, "completude do aluguel")
+    _require_dates(reason, decision_dates, "motivo do aluguel")
+    return BorrowState(rates, recent, stock, complete, reason)
 
-    effective = schedule.target_weights.copy()
-    status_rows = []
-    block_rates: dict[pd.Timestamp, pd.Series] = {}
-    for block in schedule.blocks:
-        target = effective.loc[block.execution_date]
-        shorts = target[target < -1e-15].index
-        reason = str(schedule.decisions.loc[block.execution_date, "status"])
-        if len(shorts):
-            if not available.loc[block.decision_date, shorts].all():
-                effective.loc[block.execution_date] = 0.0
-                reason = "flat_borrow_unavailable"
-                shorts = pd.Index([])
-            else:
-                observed = rates.loc[block.decision_date, shorts]
-                if observed.isna().any() or not np.isfinite(observed.to_numpy(dtype=float)).all():
-                    raise ValueError(f"taxa de aluguel inválida em {block.decision_date.date()}")
-                if (observed < 0).any():
-                    raise ValueError("taxa de aluguel observada não pode ser negativa")
-        annual = pd.Series(0.0, index=UNIVERSE, dtype=float)
-        for name in shorts:
-            annual[name] = float(rates.loc[block.decision_date, name])
-        block_rates[block.execution_date] = annual
-        status_rows.append(
-            {
-                "crop_year": block.crop_year,
-                "sequence": block.sequence,
-                "decision_date": block.decision_date,
-                "execution_date": block.execution_date,
-                "exit_date": block.exit_date,
-                "status": reason,
-            }
-        )
-    return effective, pd.DataFrame(status_rows).set_index("execution_date"), block_rates
+
+def _gate_borrow(
+    target: pd.Series,
+    block: TradeBlock,
+    state: BorrowState,
+    equity_brl: float,
+    planned_status: str,
+) -> tuple[pd.Series, pd.Series, dict[str, object]]:
+    """Aplica D-055 com o patrimônio real imediatamente antes da ordem."""
+    effective = target.copy()
+    annual = pd.Series(0.0, index=UNIVERSE, dtype=float)
+    status: dict[str, object] = {
+        "crop_year": block.crop_year,
+        "sequence": block.sequence,
+        "decision_date": block.decision_date,
+        "execution_date": block.execution_date,
+        "exit_date": block.exit_date,
+        "status": planned_status,
+        "limiting_ticker": pd.NA,
+        "borrow_capacity_brl": np.inf,
+    }
+    shorts = target[target < -1e-15]
+    if shorts.empty:
+        return effective, annual, status
+
+    complete = state.complete.loc[block.decision_date, shorts.index]
+    if not complete.all():
+        missing = complete.index[~complete].tolist()
+        raise ValueError(f"estado de aluguel incompleto em {block.decision_date.date()}: {missing}")
+    recent = state.recent_trade.loc[block.decision_date, shorts.index]
+    if not recent.all():
+        ticker = str(recent.index[~recent][0])
+        effective[:] = 0.0
+        status["status"] = "flat_borrow_no_recent_trade"
+        status["limiting_ticker"] = ticker
+        return effective, annual, status
+
+    observed = state.donor_rate.loc[block.decision_date, shorts.index]
+    stocks = state.stock_brl.loc[block.decision_date, shorts.index]
+    if observed.isna().any() or not np.isfinite(observed.to_numpy(dtype=float)).all():
+        raise ValueError(f"taxa de aluguel inválida em {block.decision_date.date()}")
+    if (observed < 0).any():
+        raise ValueError("taxa de aluguel observada não pode ser negativa")
+    if stocks.isna().any() or not np.isfinite(stocks.to_numpy(dtype=float)).all():
+        raise ValueError(f"estoque alugado inválido em {block.decision_date.date()}")
+    if (stocks < 0).any():
+        raise ValueError("estoque alugado não pode ser negativo")
+
+    capacities = pd.Series(
+        {
+            ticker: borrow_capacity_brl(float(stocks[ticker]), float(shorts[ticker]))
+            for ticker in shorts.index
+        }
+    )
+    limiter = str(capacities.idxmin())
+    status["borrow_capacity_brl"] = float(capacities.min())
+    status["limiting_ticker"] = limiter
+    if equity_brl > float(capacities.min()) + 1e-12:
+        effective[:] = 0.0
+        status["status"] = "flat_borrow_capacity"
+        return effective, annual, status
+    for ticker, weight in shorts.items():
+        if not borrow_is_available([1.0], float(stocks[ticker]), abs(float(weight)) * equity_brl):
+            raise RuntimeError("capacidade agregada e gate por ticker divergiram")
+        annual[ticker] = float(observed[ticker])
+    return effective, annual, status
 
 
 def _spot_trade(
@@ -314,8 +354,8 @@ def run_backtest(
     returns: pd.DataFrame,
     schedule: TargetSchedule,
     adtv_brl: pd.DataFrame,
-    borrow_rates: pd.DataFrame,
-    borrow_available: pd.DataFrame,
+    traded: pd.DataFrame,
+    borrow_state: BorrowState,
     *,
     scenario: str = "zero",
     initial_aum_brl: float = REFERENCE_AUM_BRL,
@@ -326,7 +366,8 @@ def run_backtest(
     O gate de escopo é a primeira operação. Para demonstrar que ele ocorre antes do I/O, o
     entrypoint ``run_backtest_from_parquet`` recebe um caminho e só o abre depois dessa trava.
     Taxas de aluguel são observadas em D, convertidas para ``a.a./252`` e mantidas fixas pelos
-    21 intervalos. O cenário zero remove dinheiro, mas preserva disponibilidade e participação.
+    21 intervalos. O gate usa o patrimônio real pré-ordem, não o AUM inicial. O cenário zero
+    remove dinheiro, mas preserva disponibilidade, estoque e participação.
     """
     scope = require_backtest_scope(schedule.blocks, allow_holdout=allow_holdout)
     if scenario not in COST_SCENARIOS:
@@ -335,13 +376,16 @@ def run_backtest(
         raise ValueError("patrimônio inicial deve ser positivo e finito")
 
     ret = _validated_panel(returns, "retornos")
-    if not np.isfinite(ret.to_numpy(dtype=float, na_value=np.nan)[~ret.isna().to_numpy()]).all():
+    observed_returns = ret.to_numpy(dtype=float, na_value=np.nan)[~ret.isna().to_numpy()]
+    if not np.isfinite(observed_returns).all():
         raise ValueError("retorno infinito no painel")
+    if (observed_returns < -1.0).any():
+        raise ValueError("retorno total não pode ser menor que -100%")
     adtv = _validated_panel(adtv_brl, "ADTV")
-    effective, block_status, block_rates = _effective_targets(
-        schedule, borrow_rates, borrow_available
-    )
-    _validate_targets(effective)
+    traded_panel = _validated_panel(traded, "negociação", boolean=True)
+    borrow_inputs = _validated_borrow_state(borrow_state, schedule)
+    effective = schedule.target_weights.copy()
+    effective.loc[:, :] = 0.0
 
     blocks = schedule.blocks
     for previous, current in zip(blocks, blocks[1:], strict=False):
@@ -351,6 +395,7 @@ def run_backtest(
         sorted({d for b in blocks for d in (b.execution_date, b.exit_date)})
     )
     _require_dates(ret, required_boundaries, "retornos")
+    _require_dates(traded_panel, required_boundaries, "negociação")
     for block in blocks:
         left = int(ret.index.get_loc(block.execution_date))
         right = int(ret.index.get_loc(block.exit_date))
@@ -359,7 +404,8 @@ def run_backtest(
 
     block_by_execution = {b.execution_date: b for b in blocks}
     events: dict[pd.Timestamp, np.ndarray] = {
-        b.execution_date: effective.loc[b.execution_date].to_numpy(dtype=float) for b in blocks
+        b.execution_date: schedule.target_weights.loc[b.execution_date].to_numpy(dtype=float)
+        for b in blocks
     }
     for block in blocks:
         if block.exit_date not in block_by_execution:
@@ -383,6 +429,7 @@ def run_backtest(
     holding_rows = []
     weight_rows = []
     order_rows = []
+    status_rows = []
 
     for date in sessions:
         equity_previous = equity
@@ -420,14 +467,50 @@ def run_backtest(
             asof = _trade_asof(date, block_by_execution, ret.index)
             liquidity = adtv.loc[asof].to_numpy(dtype=float)
             pretrade_equity = equity
+            held = np.abs(holdings) > 1e-12
+            traded_today = traded_panel.loc[date].to_numpy(dtype=bool)
+            if (held & ~traded_today).any():
+                missing = [names[i] for i in np.flatnonzero(held & ~traded_today)]
+                raise ValueError(
+                    f"posição mantida sem negociação no close de {date.date()}: {missing}"
+                )
+            annual = pd.Series(0.0, index=UNIVERSE, dtype=float)
+            if date in block_by_execution:
+                new_block = block_by_execution[date]
+                planned = pd.Series(target, index=UNIVERSE, dtype=float)
+                active = planned.abs().gt(1e-15)
+                unavailable = active & ~traded_panel.loc[date]
+                if unavailable.any():
+                    gated = planned.copy()
+                    gated[:] = 0.0
+                    status = {
+                        "crop_year": new_block.crop_year,
+                        "sequence": new_block.sequence,
+                        "decision_date": new_block.decision_date,
+                        "execution_date": new_block.execution_date,
+                        "exit_date": new_block.exit_date,
+                        "status": "flat_execution_not_traded",
+                        "limiting_ticker": str(unavailable.index[unavailable][0]),
+                        "borrow_capacity_brl": np.inf,
+                    }
+                else:
+                    gated, annual, status = _gate_borrow(
+                        planned,
+                        new_block,
+                        borrow_inputs,
+                        pretrade_equity,
+                        str(schedule.decisions.loc[date, "status"]),
+                    )
+                target = gated.to_numpy(dtype=float)
+                effective.loc[date] = gated
+                status_rows.append(status)
             equity, holdings, orders, spot_cost = _spot_trade(
                 pretrade_equity, holdings, target, liquidity, scenario
             )
             gross_turnover = float(np.abs(orders).sum() / pretrade_equity)
             if date in block_by_execution:
                 current_block = block_by_execution[date]
-                observed = block_rates[date].to_numpy(dtype=float)
-                current_annual = observed
+                current_annual = annual.to_numpy(dtype=float)
             else:
                 current_block = None
                 current_annual = np.zeros(len(names), dtype=float)
@@ -467,6 +550,8 @@ def run_backtest(
         out.index = pd.DatetimeIndex(out.index)
         return out.reindex(columns=columns) if columns is not None else out
 
+    _validate_targets(effective)
+    block_status = pd.DataFrame(status_rows).set_index("execution_date")
     return BacktestResult(
         scope=scope,
         scenario=scenario,
@@ -485,8 +570,8 @@ def run_backtest_from_parquet(
     returns_path: str | Path,
     schedule: TargetSchedule,
     adtv_brl: pd.DataFrame,
-    borrow_rates: pd.DataFrame,
-    borrow_available: pd.DataFrame,
+    traded: pd.DataFrame,
+    borrow_state: BorrowState,
     **kwargs,
 ) -> BacktestResult:
     """Abre retornos somente depois de o gate dev/holdout autorizar a execução."""
@@ -497,7 +582,7 @@ def run_backtest_from_parquet(
         returns,
         schedule,
         adtv_brl,
-        borrow_rates,
-        borrow_available,
+        traded,
+        borrow_state,
         **kwargs,
     )

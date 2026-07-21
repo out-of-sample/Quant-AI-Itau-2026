@@ -1,0 +1,10 @@
+{
+  "source": "B3_BDI",
+  "table": "BTBLendingOpenPosition",
+  "ref_date": "2026-07-17",
+  "url": "https://arquivos.b3.com.br/bdi/table/export/csv?lang=pt-BR",
+  "sha256": "6b1b826a43d85ab85a6b01481c091fdcd42dbe7ab208173edc4d79a9421ca446",
+  "bytes": 283365,
+  "rows": 2882,
+  "downloaded_at": "2026-07-20T23:02:39.176738+00:00"
+}
