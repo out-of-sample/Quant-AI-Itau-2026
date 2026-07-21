@@ -28,8 +28,8 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
 | R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
 | R7 | **Universo fundamental direto é estreito** — quatro nomes de grãos no teste primário e SMTO3 como satélite de evidência inferior | **Confirmada** | Alto | Não fabricar exposição; teste primário restrito aos quatro grãos; caps 0,40/0,15 e redução de bruto quando necessário (D-053). Método B só como robustez identificada | 🟡 Estrutura resolvida; poder e concentração seguem como limitações |
-| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | D-055 exige evidência B3 PIT em 5 pregões, posição ≤1% do estoque alugado e custo com piso de 5% a.a.; se qualquer short falhar, o bloco inteiro não abre. Long-only não resgata o primário | 🟡 Regra resolvida; viabilidade empírica depende da ingestão do BDI |
-| R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | D-055 fixa AUM de R$500 mil, ADTV21 ≥R$8 mi, ordem ≤5% do ADTV e short ≤1% do estoque alugado; reportar mínimo/P10/mediana | 🟡 Métrica congelada; capacidade será medida na Fase 4 |
+| R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | D-055 exige evidência B3 PIT em 5 pregões, posição ≤1% do estoque alugado e custo com piso de 5% a.a.; se qualquer short falhar, o bloco inteiro não abre. Long-only não resgata o primário | 🟡 Regra e código resolvidos; medição histórica bloqueada por R27 |
+| R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | D-055 fixa AUM de R$500 mil, ADTV21 ≥R$8 mi, ordem ≤5% do ADTV e short ≤1% do estoque alugado; reportar mínimo/P10/mediana | 🟡 ADTV real medido (AGRO3 sempre abaixo do piso no dev); componente short bloqueado por R27 |
 | R10 | **Erro de data no calendário CONAB** — o arquivo não traz a data de divulgação dos levantamentos | Média | Alto (contamina o estudo de evento) | Mapa curado ano a ano de fontes primárias, com ≥2 fontes concordando na quase totalidade (D-017); zero interpolação; carimbo falha alto fora do mapa. O risco se materializou na coleta: o próprio site da CONAB exibe datas falsas para 2022/23 | ✅ **Resolvido operacionalmente**; reforço das poucas datas com fonte única em PT-005 |
 | R11 | **Bug de sinal invertido** — tratar frigorífico como produtor | Baixa | Existencial (silencioso!) | Teste unitário travando a convenção de sinal; checklist de revisão de PR | Mitigado por automação |
 | R12 | **Rate limit / instabilidade das APIs públicas** | Média | Baixo | Cache local agressivo; pipeline nunca depende de rede em tempo de execução | Mitigado |
@@ -45,8 +45,9 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Fama–MacBeth suspenso e substituído em D-053 por spread/painel nos quatro grãos, cluster por ano-safra e permutação unilateral | 🟢 Desenho substituto congelado; poder continua limitado por R1 |
 | R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
 | R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Submodelo separado; SMTO3 entra só na carteira, cap 0,15, e fica fora do teste primário; JALL3 excluída. Reportar p=0,12/bootstrap p=0,27 (D-052/D-053) | 🟡 Tratamento congelado; ATR≠receita permanece ressalva aberta |
-| R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitiam escolhas | Confirmada | Existencial | D-055 tornou os sete blocos executáveis em `operational_spec.py`, com tripwires e holdout negado por padrão | 🟢 **Resolvido — Fase 4.0 encerrada sem P&L** |
+| R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitiam escolhas | Confirmada | Existencial | D-055 tornou a grade de blocos executável em `operational_spec.py`, com tripwires e holdout negado por padrão | 🟢 **Resolvido — Fase 4.0 encerrada sem P&L** |
 | R26 | **Desenvolvimento operacional parcialmente não materializável** — D-055 declara 2015/16–2018/19, mas o peso nacional exige a safra CONAB anterior e o painel de vintages começa em 2017/18 | Confirmada | Médio | Não usar equal-weight, peso futuro ou backfill. Validar a mecânica com testes sintéticos; a única safra real de dev computável pelo contrato nacional é 2018/19. Tratar a cobertura como limitação, não selecionar regra alternativa por P&L (D-056) | 🟡 Motor resolvido; cobertura real restrita e declarada |
+| R27 | **Histórico público de aluguel não cobre o experimento** — negócios, taxa e estoque por ticker de D-055 não são recuperáveis em 2018/19 e cobrem apenas parte do holdout | Confirmada | **Existencial para investibilidade** | Parser/gate permanecem estritos; não usar taxa atual, zero por ausência nem backfill. Obter fonte histórica contratada ou registrar mudança de estratégia/metodologia antes de qualquer P&L (D-057) | 🔴 **BLOQUEIA o smoke 2018/19 e o portão 4.2** |
 
 > **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
 > uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
@@ -1965,6 +1966,59 @@ caminho do patrimônio e o uso de um índice de retorno total equivale a reinves
 dos proventos. A convenção linear de aluguel ignora dias corridos. A validação real do dev tem
 apenas uma safra e serve exclusivamente para detectar defeitos mecânicos, nunca para validar H′
 ou escolher parâmetros. Nenhum retorno observado foi consultado ao tomar esta decisão.
+
+---
+
+### D-057 — Materialização das fricções e bloqueio histórico do aluguel
+**Data**: 2026-07-20
+
+A Fase 4.2 materializou tudo que pode ser reconstruído sem alterar D-055. Os eventos
+corporativos dos cinco nomes até 2019 foram congelados num snapshot versionado por fonte; o
+build de retorno total passou a ser offline e ganhou SMTO3. O split 3:1 de 12/2016 foi
+confirmado no evento B3 e no COTAHIST. O único retorno absoluto ≥30% restante, JBSS3 em
+22/05/2017, foi auditado como movimento real ligado aos fatos de maio/2017 e registrado com
+fonte CVM — não foi “ajustado”.
+
+O estado COTAHIST 2014–2019 confirmou um calendário de 1.482 pregões; quatro papéis negociaram
+em todos eles e JBSS3 em 1.451. Aplicando literalmente ADTV21 ≥R$8 milhões, **AGRO3 não passa
+o piso em nenhum pregão do dev**; em todos
+os nove pontos de decisão de 2018/19, SLCE3, BRFS3, JBSS3 e SMTO3 passam, preservando o núcleo
+produtor/processador sem relaxar o piso. Isso é um resultado de investibilidade, não motivo para
+recalibrar o parâmetro. Cobertura, parâmetros, hashes dos seis COTAHIST e os nove pontos ficam
+em `data/reference/market_state_dev_summary_v1.json`.
+
+**Aluguel implementado.** As exportações `BTBLoanBalance` e `BTBLendingOpenPosition` do BDI
+referentes a 17/07/2026 foram baixadas e parseadas ao vivo em 20/07/2026, com manifestos. O
+primeiro painel distingue taxa repetida de negócio real exigindo contratos e quantidade
+positivos; o segundo reconcilia modalidades com a linha `Total`. Uma data só entra na cobertura
+após atestar CSV e manifesto por tabela, data interna, bytes, SHA-256 e contagem. A decisão no
+close D só usa arquivos disponíveis até D, taxa doadora ponderada do último negócio nos cinco
+pregões anteriores e estoque Total de D−1 marcado pelo close D. Arquivo/manifesto faltante ou
+divergente falha alto. O motor passou a verificar 1% do estoque contra o **patrimônio corrente
+pré-ordem**; testes cobrem igualdade exata, drift entre blocos, falta de arquivo e falha de um
+único short inclusive no cenário zero. O motor também zera a entrada se um alvo não negociou no
+close de execução, falha se uma posição aberta não negociou no close de saída e rejeita retorno
+total menor que −100%.
+
+**Fato que bloqueia o experimento.** A fonte pública antiga da B3, iniciada em 14/11/2019,
+preservava apenas dez dias. A centralização atual das duas tabelas foi anunciada em 25/09/2023,
+com exclusividade a partir de 01/12/2023, e a interface limita o acesso recente. A busca oficial,
+probes de PDFs e endpoints antigos não recuperaram taxa/negócio/estoque por ticker para 2018/19;
+o NEFIN disponível também não fornece esse contrato. Assim, o smoke real de 2018/19 **não foi
+rodado**. Ausência de arquivo não virou ausência de doador, taxa atual não foi retroagida e o
+gate não foi removido.
+
+**Fork que exige decisão do time antes de qualquer P&L:**
+
+1. obter uma fonte histórica contratada que entregue negócios, taxas e estoque por ticker;
+2. revisar formalmente D-055 para um backtest econômico com proxy declarada, aceitando que não
+   demonstrará investibilidade histórica;
+3. reformular a estratégia para não depender de short, reconhecendo que isso muda H′ e exige
+   novo congelamento antes do holdout.
+
+Até essa escolha, R27 bloqueia a conclusão da Fase 4.2 e também impede usar o holdout como
+estratégia “investível”. A infraestrutura não é descartada: ela mede corretamente datas cobertas
+e torna explícito o que antes seria uma suposição invisível.
 
 ---
 

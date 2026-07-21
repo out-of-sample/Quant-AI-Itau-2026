@@ -1,0 +1,10 @@
+{
+  "source": "B3_BDI",
+  "table": "BTBLoanBalance",
+  "ref_date": "2026-07-17",
+  "url": "https://arquivos.b3.com.br/bdi/table/export/csv?lang=pt-BR",
+  "sha256": "1a5efd463b21631934885e06f97d6026e2b11c27b54dc0866f8dd366ffd9590d",
+  "bytes": 567733,
+  "rows": 4670,
+  "downloaded_at": "2026-07-20T23:02:38.864542+00:00"
+}

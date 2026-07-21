@@ -200,6 +200,36 @@ do intervalo. No close de transição, o último accrual pertence à posição a
 no intervalo seguinte. A liquidação final usa o ADTV conhecido no pregão imediatamente
 anterior; entradas e transições usam o ADTV encerrado em D.
 
+**Contrato de dados implementado em D-057.** A tabela de negócios registrados mantém
+`ref_date`, `avail_date`, ticker/ISIN/modalidade, contratos, quantidade, notional e taxas
+doadora/tomadora; somente contratos **e** quantidade positivos provam negociação. A posição em
+aberto mantém modalidades e linha `Total`, cuja soma é reconciliada. Para decisão no close D:
+
+1. os cinco boletins de negócios de D−5 a D−1 precisam estar disponíveis e atestados por
+   CSV + manifesto (tabela, data, bytes, SHA-256 e contagem);
+2. a posição Total de D−1 precisa ter a mesma atestação;
+3. usa-se a taxa **doadora média ponderada** do dia mais recente com negócio;
+4. `estoque_brl = quantidade_total(D−1) × close_COTAHIST(D)`;
+5. o gate de 1% usa `|peso_short| × patrimônio_real_pré-ordem`, inclusive em transições.
+
+Arquivo/manifesto ausente ou divergente é erro de dado e falha alto; ticker ausente num arquivo
+atestado equivale a zero. Ausência de negócio recente ou capacidade insuficiente zera o bloco
+inteiro, com reason code. A distinção impede que taxa antiga repetida pela B3 vire falsa
+disponibilidade e impede que o gate use R$500 mil depois de o patrimônio ter derivado.
+
+O painel COTAHIST fornece também o indicador explícito de negociação. Se um alvo novo não
+negociou no close de execução, o bloco inteiro fica zerado; se uma posição já aberta não
+negociou no close de saída/transição, o motor falha alto em vez de simular liquidação. Retorno
+total observado menor que −100% também falha alto, pois inverteria o sinal econômico da
+posição e denuncia erro de ajuste ou de dado.
+
+**Bloqueio empírico.** A infraestrutura acima está validada em arquivos BDI reais de 2026, mas
+a B3 pública não preserva esses dois painéis para 2018/19 (R27). O histórico gratuito antigo
+tinha retenção de 10 dias; as tabelas centralizadas atuais aparecem apenas desde 2023. Portanto,
+o smoke test de 2018/19 permanece **não executado**. Aplicar taxa atual ao passado, interpretar
+ausência de arquivo como zero ou remover o gate seria alteração de D-055, não preenchimento de
+dado, e exige decisão explícita anterior a qualquer P&L.
+
 ### 4.2 Cenários e capacidade
 
 | Cenário | Custos monetários | Regras de investibilidade |

@@ -1,0 +1,231 @@
+{
+  "cotahist_sha256": {
+    "A2014": "613d76f8a64c7ffba0406cb54c1fd187266f55ed8b6037cb85993b2071a5aae7",
+    "A2015": "593f8740ec1aa87c80c54c623f1759530b6b32cdadd34a64f0fc66a529f34e35",
+    "A2016": "ffc82a9b973cb5901e68dc11bea1bbc9bf0a2c46749e0efe5a7a89229bc0d81f",
+    "A2017": "af6aaa85187c1d58ec6565522644066da573a7dc5b579c1d4c906ae95a2dea86",
+    "A2018": "9d66136179d9822476c6035000167aecf2665f4396619e4d74c0011745a0c507",
+    "A2019": "5170d3f8f079c3306424b36c2fae9b467391f8fa37d16d389f487b4c5c28edb9"
+  },
+  "coverage": {
+    "AGRO3": {
+      "eligible_sessions": 0,
+      "rows": 1482,
+      "traded_sessions": 1482
+    },
+    "BRFS3": {
+      "eligible_sessions": 1422,
+      "rows": 1482,
+      "traded_sessions": 1482
+    },
+    "JBSS3": {
+      "eligible_sessions": 1389,
+      "rows": 1482,
+      "traded_sessions": 1451
+    },
+    "SLCE3": {
+      "eligible_sessions": 536,
+      "rows": 1482,
+      "traded_sessions": 1482
+    },
+    "SMTO3": {
+      "eligible_sessions": 1112,
+      "rows": 1482,
+      "traded_sessions": 1482
+    }
+  },
+  "parameters": {
+    "adtv_floor_brl": 8000000.0,
+    "adtv_window_sessions": 21,
+    "ipo_seasoning_sessions": 60
+  },
+  "schema_version": 1,
+  "scope": {
+    "calendar_sessions": 1482,
+    "crop_year": "2018/19",
+    "end": "2019-12-31",
+    "start": "2014-01-01"
+  },
+  "trade_blocks": [
+    {
+      "adtv_brl": {
+        "AGRO3": 736493.7142857143,
+        "BRFS3": 114812740.95238096,
+        "JBSS3": 74533796.52380952,
+        "SLCE3": 30719623.523809522,
+        "SMTO3": 15276813.333333334
+      },
+      "decision_date": "2019-01-07",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-01-08",
+      "exit_date": "2019-02-07",
+      "sequence": 0
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 888494.0476190476,
+        "BRFS3": 178713429.0,
+        "JBSS3": 85615491.76190476,
+        "SLCE3": 25512507.76190476,
+        "SMTO3": 17920456.57142857
+      },
+      "decision_date": "2019-02-06",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-02-07",
+      "exit_date": "2019-03-12",
+      "sequence": 1
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 691033.2380952381,
+        "BRFS3": 160758008.9047619,
+        "JBSS3": 125258088.1904762,
+        "SLCE3": 23671914.42857143,
+        "SMTO3": 13859907.047619049
+      },
+      "decision_date": "2019-03-11",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-03-12",
+      "exit_date": "2019-04-10",
+      "sequence": 2
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 1174223.0952380951,
+        "BRFS3": 166481221.42857143,
+        "JBSS3": 153970612.3809524,
+        "SLCE3": 26353335.714285713,
+        "SMTO3": 16959375.14285714
+      },
+      "decision_date": "2019-04-09",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-04-10",
+      "exit_date": "2019-05-13",
+      "sequence": 3
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 456066.7619047619,
+        "BRFS3": 302453614.04761904,
+        "JBSS3": 269336949.14285713,
+        "SLCE3": 25343579.85714286,
+        "SMTO3": 10271133.047619049
+      },
+      "decision_date": "2019-05-10",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-05-13",
+      "exit_date": "2019-06-11",
+      "sequence": 4
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 851830.0952380953,
+        "BRFS3": 269799097.0,
+        "JBSS3": 332733950.4285714,
+        "SLCE3": 29809788.23809524,
+        "SMTO3": 9399324.142857144
+      },
+      "decision_date": "2019-06-10",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-06-11",
+      "exit_date": "2019-07-12",
+      "sequence": 5
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 1240016.2857142857,
+        "BRFS3": 215492095.9047619,
+        "JBSS3": 256433504.9047619,
+        "SLCE3": 29507565.285714287,
+        "SMTO3": 12425450.761904761
+      },
+      "decision_date": "2019-07-11",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-07-12",
+      "exit_date": "2019-08-12",
+      "sequence": 6
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 703071.0,
+        "BRFS3": 179254415.57142857,
+        "JBSS3": 210452120.6190476,
+        "SLCE3": 30043520.19047619,
+        "SMTO3": 10823247.38095238
+      },
+      "decision_date": "2019-08-09",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-08-12",
+      "exit_date": "2019-09-10",
+      "sequence": 7
+    },
+    {
+      "adtv_brl": {
+        "AGRO3": 3707544.0,
+        "BRFS3": 225559052.7142857,
+        "JBSS3": 362898100.71428573,
+        "SLCE3": 21333679.904761903,
+        "SMTO3": 16325033.761904761
+      },
+      "decision_date": "2019-09-09",
+      "eligible": {
+        "AGRO3": false,
+        "BRFS3": true,
+        "JBSS3": true,
+        "SLCE3": true,
+        "SMTO3": true
+      },
+      "execution_date": "2019-09-10",
+      "exit_date": "2019-10-09",
+      "sequence": 8
+    }
+  ]
+}

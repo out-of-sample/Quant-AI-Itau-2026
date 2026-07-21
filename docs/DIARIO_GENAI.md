@@ -1165,6 +1165,48 @@ substituída por um solver autofinanciado antes dos testes finais.
 
 ---
 
+## 2026-07-20 (noite) — Fricções reais, snapshot offline e bloqueio do aluguel (D-057)
+
+**Uso**: materializar SMTO3, ADTV, eventos corporativos e as condições de aluguel da Fase 4.2,
+sem abrir o holdout nem usar P&L para alterar os parâmetros congelados.
+
+**Valor real**: a captura de eventos foi transformada em processo retomável por fonte depois
+que a B3 aplicou rate limit. Isso revelou que o código emissor do endpoint de eventos em ações
+não é o nome comercial (`SLC AGRICOLA`), mas o código (`SLCE`); usar o nome poderia congelar um
+vazio como se significasse “sem evento”. O snapshot final contém cinco tickers, hashes e
+horários, e o build offline absorve o split 3:1 real da SMTO3. O estado COTAHIST mostrou, sem
+retornos, que AGRO3 nunca supera o piso de ADTV no dev, enquanto o bloco 2018/19 preserva o
+núcleo com SLCE3. O parser BDI identificou taxa repetida em linha sem contrato e linha Total
+que seria duplicada se somada às modalidades; ambas ganharam testes.
+
+**Validação humana/mecânica**: os códigos emissores foram conferidos em respostas ao vivo. O
+split da SMTO3 foi confrontado com duas linhas reais do COTAHIST (R$52,45 → R$17,45) e evento
+B3 de razão 3. O retorno extremo da JBSS3 em 22/05/2017 foi confrontado com a sequência de
+preços oficial e com comunicado da CVM sobre os fatos e processos de maio/2017. Duas
+exportações BDI reais de 17/07/2026 validaram BOM, preâmbulo, decimal brasileiro, modalidades e
+totais. Testes sintéticos provam que o gate de 1% usa o patrimônio corrente e falha alto quando
+o arquivo está incompleto.
+
+**O que a IA errou**: a primeira implementação da captura usou nomes comerciais como
+`issuingCompany`, causando respostas não JSON e retries inúteis; a captura foi corrigida para
+códigos emissores e passou a invalidar cache quando a consulta muda. O primeiro payload do BDI
+enviou datas `dd/mm/aaaa` e `FinalDate` vazio, recebendo HTTP 500; a inspeção do cliente oficial
+mostrou que ambos os campos usam ISO. Mais importante, D-055 foi fechado supondo que o BDI
+histórico poderia ser ingerido. A auditoria oficial mostrou retenção antiga de 10 dias e
+centralização só em 2023: não há evidência pública suficiente para 2018/19. Em vez de preencher
+o passado com taxa atual ou zeros, o projeto abriu R27 e bloqueou o smoke test.
+
+Uma auditoria independente antes do commit encontrou mais duas inferências perigosas: a
+primeira versão aceitava “arquivo completo” pela presença de linhas, sem provar a integridade do
+arquivo inteiro, e o motor podia instalar um alvo mesmo sem negociação do papel no close de
+execução. As correções passaram a exigir CSV + manifesto + hash + contagem para criar cobertura,
+um painel explícito de negociação nas fronteiras e falha para retorno total menor que −100%.
+Também se corrigiu a descrição do snapshot: o hash é da serialização JSON canônica do payload
+interpretado, não dos bytes HTTP originais. Essas mudanças ocorreram antes de qualquer P&L de
+carteira ou acesso ao holdout.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

@@ -491,6 +491,50 @@ ON/PN/UNIT; a normalização agora filtra classe pelo ISIN. Papéis deslistados 
 ficam com a limitação declarada. O `cashDividends` do supplement é só resumo; o histórico
 completo de dinheiro segue no `GetListedCashDividends`.
 
+#### 4.2.2 Snapshot offline de eventos e dados de aluguel B3
+
+Os retornos de desenvolvimento deixaram de consultar APIs durante o build. A captura explícita
+em `data/reference/corporate_events_dev_v1.json` preserva, por ticker e por fonte, os eventos
+normalizados até 31/12/2019, o horário de captura, a contagem e o SHA-256 da serialização JSON
+canônica do payload interpretado. O hash prova estabilidade sem afirmar que preserva os bytes
+HTTP originais, mantidos apenas no cache local. O build combina B3 e StatusInvest pelo montador
+D-015, inclui SMTO3 e falha se surgir retorno absoluto ≥30% não auditado. O split 3:1 da SMTO3
+em 12/2016 foi confirmado no COTAHIST e no evento B3 (`factor=200` ⇒ razão 3). A queda de 31,3%
+da JBSS3 em 22/05/2017 é movimento real no período da colaboração premiada dos controladores,
+não split; a exceção congela data, retorno esperado, tolerância e fonte CVM em
+`data/reference/price_return_exceptions_v1.json`.
+
+Para a ponta short, duas exportações oficiais do Boletim Diário foram implementadas e testadas
+ao vivo, com CSV bruto em cache e manifesto versionado:
+
+| Tabela BDI | Uso no contrato D-055 | Cuidados de interpretação |
+|---|---|---|
+| `BTBLoanBalance` — Empréstimos registrados | negócio positivo nos 5 pregões anteriores e taxa doadora observada | a B3 repete a última taxa em modalidade com **zero contratos e zero quantidade**; taxa preenchida não prova negócio |
+| `BTBLendingOpenPosition` — Posição em aberto | estoque total alugado no pregão D−1 | há linhas por modalidade e uma linha `Total`; somar ambas duplica o estoque |
+
+O arquivo referente a D−1 é tratado como disponível no primeiro pregão posterior. Na decisão
+no close de D, a taxa é a média doadora ponderada por quantidade no dia mais recente com negócio
+positivo dentro dos cinco pregões; a taxa tomadora não é usada porque D-055 acrescenta sua
+própria hipótese de intermediação. O estoque em reais é `quantidade Total(D−1) × close
+COTAHIST(D)`. Completude só existe após validar o CSV contra manifesto versionado — tabela,
+data interna, bytes, SHA-256 e contagem de linhas. Arquivo ou manifesto ausente/divergente falha
+alto; ticker ausente num arquivo assim atestado significa estoque zero. O gate final compara o
+short pretendido com 1% desse estoque usando o **patrimônio corrente imediatamente antes da
+ordem**, não R$500 mil fixos.
+
+**Limitação histórica material (R27/D-057).** A página pública gratuita lançada em 14/11/2019
+declarava retenção de apenas **10 dias**. A B3 centralizou as duas tabelas no BDI em 2023 e
+anunciou sua exclusividade a partir de 01/12/2023; a interface corrente limita consultas a
+D−21. Probes dos PDFs oficiais confirmaram as tabelas apenas a partir de setembro de 2023, de
+forma consistente com a migração. Não foi encontrada série pública por ticker para 2018/19 nem
+para a primeira parte do holdout. O NEFIN menciona *loan fees/short interest*, mas os arquivos
+legados estão indisponíveis e a série documentada é semanal/agregada, insuficiente para D-055.
+Logo, **não houve backfill, taxa atual aplicada ao passado nem disponibilidade presumida**. Uma
+fonte histórica contratada (por exemplo, serviço B3) ou uma mudança metodológica explícita é
+necessária antes do smoke test. Fontes: [lançamento com retenção de 10 dias](https://www.b3.com.br/pt_br/noticias/dados-para-download.htm),
+[centralização no BDI em 2023](https://www.b3.com.br/pt_br/noticias/melhorias-no-site-8AA8D0CC8A91931A018ACE03859D1F68.htm)
+e [glossário oficial de empréstimos registrados](https://www.b3.com.br/data/files/32/02/C0/25/391EA810E9C1AAA8AC094EA8/Glossario%20_%20Emprestimos_Registrados.pdf).
+
 ### 4.3 🔴 O trade-off que define o escopo do projeto: histórico × universo
 
 **Primeira barra disponível**, por grupo econômico:
@@ -636,6 +680,7 @@ igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN e
 | ComexStat semanal | ~1 dia | 🔴 **não arquiva** | ❌ inutilizável para backtest |
 | ANTAQ | ~40 dias | — | ❌ despriorizada (pior que ComexStat) |
 | **COTAHIST (B3)** | D+1 | ✅ (registro de pregão) | 🥇 preços + universo point-in-time |
+| **BDI aluguel (B3)** | primeiro pregão após a referência | ✅ no arquivo baixado; 🔴 retenção pública curta | taxa/negócio/estoque short; R27 bloqueia 2018/19 |
 | yfinance | D+1 | 🔴 **apaga deslistados** | só conferência cruzada |
 | Futuros (yfinance) | D+1 | ✅ | preço de commodity |
 | ONI (NOAA) | até dia 5; caso primário espera +2 meses | 🔴 não (revisão recente + base quinquenal) | controle (El Niño) |
