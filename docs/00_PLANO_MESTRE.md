@@ -334,6 +334,15 @@ Andamento:
   a cultura estressada. Não muda o contrato de estratégia/operacional, só o artefato de exposição.
   Limites declarados em D-061: magnitude do choque ainda descartada, produtor ainda fino no dev,
   canal do processador ainda de preço.
+- ✅ **Auditoria das estruturas de monetização de H1 (D-062, 2026-07-24)**: avaliou, return-agnóstico e
+  com base acadêmica, se um veículo melhor-casado com o nowcast de produção existiria — logística de
+  grão (Rumo) e spread soja–milho. **Rumo rejeitada**: apesar de ~75% grão e 42% de MT, é
+  **limitada por capacidade** ⇒ volume insensível à revisão marginal (dilui o sinal). **Spread
+  rejeitado**: canal de preço morto (H2a + Silveira 2025 JFM), mercado CBOT eficiente (contradiz a
+  tese de ineficiência brasileira), trade clássico, motor do zero. **Decisão: reter a estratégia de
+  ações do D-061**; nenhum veículo novo entra; a divergência soja–milho vira evidência de apoio no
+  relatório; a auditoria inteira vira ativo de rigor. Verdade estrutural declarada: não há veículo
+  brasileiro líquido com sensibilidade limpa a um nowcast de produção marginal (confirma R1/R7).
 
 ### Fase 6 — Holdout
 

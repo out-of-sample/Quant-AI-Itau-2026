@@ -2204,6 +2204,74 @@ de exposição consumido. O holdout permanece lacrado e roda **uma vez** na Fase
 
 ---
 
+### D-062 — Auditoria das estruturas de monetização de H1; retenção da estratégia de ações (Fase 5)
+
+**Data**: 2026-07-24
+
+**Pergunta que motivou a decisão.** Depois do D-061, o time levantou a questão estrutural certa:
+*a estrutura de ações (long/short produtor–processador) é a certa, dado que só o H1 é sólido?* O
+único resultado não-circular do projeto é o H1 — o choque climático prevê a revisão de produção da
+CONAB (nowcast de **quantidade nacional marginal**). O canal de preço morreu (H2a, 6×), e a tradução
+em ações é fina e no dev virou aposta de setor (D-060). A estrutura atual foi desenhada no D-002 para
+a **tese de preço**, que foi falsificada — ela é órfã da hipótese que a justificava. Antes de gastar
+o holdout, avaliou-se, **return-agnóstico**, se um veículo melhor-casado existiria.
+
+**Reframe.** O que se monetiza é um *nowcast da surpresa da CONAB*. O veículo ideal maximiza a
+sensibilidade ao que prevemos (produção nacional marginal) por unidade de ruído próprio. Dois
+candidatos foram auditados a fundo, com múltiplas personas e base acadêmica.
+
+**Candidato (b) — Rumo / logística de grão (canal de quantidade).** Reviravolta parcial: a Rumo **não**
+é a "ferrovia diversificada" do veto original — **~75% do volume é soja/milho/farelo e ela detém ~42%
+do transporte de grão de Mato Grosso** (epicentro do Shock). Veículo mais líquido do tabuleiro
+(R$108M/dia), reuso altíssimo do motor de ações (D-055/D-056), e âncora acadêmica forte (família
+"alt-data → throughput físico → surpresa de receita": Katona, Painter, Patatoukas & Zeng, JFQA 2025,
+satélite de estacionamento → earnings; Jegadeesh & Livnat, JAE 2006). **Mas a auditoria de
+investibilidade achou a pegadinha decisiva, e ela é fatal para o nosso sinal: a Rumo é limitada por
+CAPACIDADE, não por demanda.** A demanda por ferrovia no Brasil é historicamente maior que a
+capacidade; a Rumo carrega 42% e o resto transborda para caminhão; o volume dela cresce puxado por
+capex (60,1B TKU em 2019 → 64B em 2021), não pela safra. Como sempre sobra mais grão do que ela
+consegue levar, uma **revisão marginal** da safra (o que nosso sinal prevê) **não move o volume anual**
+— muda só o transbordo para caminhão e o *timing* trimestral. Só uma quebra **catastrófica** apareceria.
+Pela lógica de poder (D-045/A1), adicionar um nome líquido de **baixa sensibilidade ao sinal dilui** o
+sinal — mesma vala dos frigoríficos de boi, por outro motivo. **A Rumo não entra na estratégia.**
+
+**Candidato (d) — spread soja–milho (canal de preço diferencial).** A triagem return-agnóstica de
+divergência passou com folga (corr soja×milho2ª = −0,33; mesmo sinal em 43% dos anos; desvio do
+diferencial 2,7× o do nível comum) — há sinal diferencial real. Vantagens: macro-neutro por
+construção, atribuição limpa, o mais "modelo quantitativo" dos dois. **Mas três rachaduras
+estruturais:** (1) é uma aposta de **preço**, e o canal de preço morreu — confirmado também na
+literatura (Silveira, *J. Futures Markets*, 2025: a reação de preço à CONAB é mais fraca que à WASDE);
+(2) o instrumento natural é **CBOT** — o mercado que os próprios docs (H5/`06`) chamam de eficiente
+demais para esse edge, contradizendo a tese de ineficiência **brasileira**; (3) é um **trade clássico**
+(spread soja–milho é o hedge de clima mais batido do agro), perdendo ponto de originalidade, e exige
+um **motor de futuros do zero** (baixo reuso). Rejeitado como estratégia primária.
+
+**Decisão.** (i) **Reter a estratégia de ações do D-061** — não porque é ótima (é fina, R1/R7), mas
+porque nenhuma alternativa a supera de fato, ela reaproveita todo o maquinário e expressa o canal mais
+direto (dano de volume próprio sob H′). (ii) **Nenhum veículo novo entra**: Rumo rejeitada por
+capacidade; spread rejeitado por canal morto/eficiência/reuso. (iii) A **divergência soja–milho de (d)**
+é retida como **evidência de apoio** no relatório (o sinal distingue soja de milho ⇒ é agronômico, não
+macro), sem virar backtest — um motor, sem custo de N nem de comparações múltiplas. (iv) A **auditoria
+inteira vira ativo de rigor**: demonstra, com fonte primária e paper, que avaliamos veículos
+alternativos e por que cada um é amortecido — rigor que pontua em Backtest (15%) e Análise (15%).
+
+**Por quê (a verdade estrutural).** Não existe veículo brasileiro líquido com sensibilidade limpa e
+alta a um nowcast de produção **marginal**: produtores são idiossincráticos + preço morto + ilíquidos;
+a Rumo é capacidade-limitada; o spread é preço-morto em mercado eficiente. O gargalo é do elo
+**sinal→ativo**, não do ativo — por isso trocar de veículo não resolve. Isso confirma, com evidência,
+a limitação nº 1 (R1) e a estreiteza do universo (R7).
+
+**Custo/limitação declarado.** (a) A estratégia continua fina e de baixo poder — a decisão a torna
+**a mais defensável disponível**, não poderosa. (b) A rejeição da Rumo apoia-se em evidência econômica
+de investibilidade (capacidade), não num teste de retorno da RAIL3 (que seria dev-limitado e queimaria
+teste) — é return-agnóstica e declarada como tal. (c) As referências acadêmicas (Silveira 2025 JFM
+DOI 10.1002/fut.22601; Katona et al. JFQA 2025; Jegadeesh & Livnat 2006) precisam ser **conferidas na
+fonte primária** antes de qualquer citação no relatório (regra do `10_REFERENCIAS.md`). (d) O contrato
+congelado (`strategy_spec.py`/`operational_spec.py`) e o artefato H′ (D-061) **não mudam**; o holdout
+segue lacrado.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
