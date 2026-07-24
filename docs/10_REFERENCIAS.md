@@ -72,6 +72,20 @@ final e evitar que a fundamentação vire "achismo com verniz acadêmico".
 
 ---
 
+## 2.1 Literatura da auditoria de estruturas de monetização (D-062)
+
+> Levantadas durante a auditoria D-062 (logística/Rumo × spread soja–milho) via busca web, **não
+> abertas na fonte primária**. Ficam como pista para a fundamentação do relatório (o mecanismo
+> "clima → produção → ativo" e a fraqueza do canal de preço). Conferir antes de qualquer citação.
+
+| # | Referência (como retornada na busca) | Uso na auditoria | Status |
+|---|---|---|---|
+| 12 | Silveira et al., *"The Reaction of Corn Futures Markets to US and Brazilian Crop Reports"*, Journal of Futures Markets, 2025, DOI 10.1002/fut.22601 | evidência de que a reação de preço à **CONAB** é mais fraca que à **WASDE** (por que o canal de preço/(d) é fraco) | `⚠ não verificado — conferir autoria/ano/DOI na fonte` |
+| 13 | Katona, Painter, Patatoukas & Zeng, *"On the Capital Market Consequences of Alternative Data: Evidence from Outer Space"*, JFQA 60(2), 2025 | âncora do mecanismo "alt-data → throughput físico → surpresa de receita → retorno" (candidato Rumo) — já citada em `teses_candidatas.md` l.1096-1098 | `⚠ não verificado na fonte` |
+| 14 | Jegadeesh & Livnat, *"Revenue Surprises and Stock Returns"*, Journal of Accounting and Economics, 2006 | surpresa de receita → retorno (candidato Rumo) — já citada em `teses_candidatas.md` l.1098-1099 | `⚠ não verificado na fonte` |
+
+---
+
 ## 3. Métodos quantitativos e estatísticos
 
 Os métodos abaixo **são usados** no desenho (fato: aparecem nos docs indicados). O que falta é

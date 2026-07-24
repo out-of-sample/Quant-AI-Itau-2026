@@ -1312,6 +1312,37 @@ nunca passa pela sessão, só por terminal separado (`read -rsp`).
 
 ---
 
+## 2026-07-24 — Fase 5, auditoria das estruturas de monetização (D-062)
+
+**Uso**: o time fez a pergunta estrutural certa — a estrutura de ações é a certa dado que só o H1 é
+sólido? — e pediu uma auditoria completa de dois veículos alternativos (logística/Rumo e spread
+soja–milho), com múltiplas personas, base acadêmica, pegadinhas e reuso. A IA conduziu a análise:
+busca de literatura, extração de fonte primária (20-F Cosan), varredura de liquidez do universo B3, e
+um teste de divergência dos choques por cultura.
+
+**Valor real**: a IA achou, sem olhar retorno, a **pegadinha que decide o caso da Rumo**: apesar de
+75% do volume ser grão e 42% de MT, a Rumo é **limitada por capacidade** (demanda ferroviária > oferta
+no Brasil; 58% do grão de MT vai por caminhão; volume cresce por capex, não por safra) ⇒ o volume
+anual é **insensível à revisão marginal** que o nosso sinal prevê. Isso derrubou (b) por um motivo
+oposto ao esperado. Para (d), a busca trouxe Silveira (2025, J. Futures Markets): a reação de preço à
+CONAB é mais fraca que à WASDE — evidência publicada de por que o canal de preço morreu. Conclusão:
+nenhum veículo supera a estratégia atual; a auditoria vira ativo de rigor.
+
+**Validação humana**: o teste de divergência (soja×milho2ª) rodou no pipeline real (corr −0,33,
+diferencial 2,7× o nível), return-agnóstico; a liquidez da Rumo e dos vetados foi medida no COTAHIST
+real (não de memória); a capacidade-limitação foi corroborada por fonte primária + setorial, não
+assumida. As referências acadêmicas ficaram marcadas como **a conferir na fonte primária** antes de
+qualquer citação (regra do `10_REFERENCIAS.md`).
+
+**O que a IA errou**: a IA **oscilou de recomendação duas vezes** e precisou se corrigir em público —
+primeiro superestimou (d) (elegância sobre substância; ignorou que é aposta de preço no canal morto e
+em mercado eficiente), depois superestimou (b) ao ver os 75%/42% (ignorou a capacidade-limitação). Só
+a auditoria disciplinada, empurrada pelo time ("pense melhor, não concorde por concordar"), estabilizou
+a conclusão. Documentado como lição: entusiasmo com uma tese nova precisa passar pela mesma régua de
+falsificação que as antigas, antes de virar recomendação.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
