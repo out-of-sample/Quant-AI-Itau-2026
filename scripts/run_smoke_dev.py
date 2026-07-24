@@ -65,7 +65,7 @@ def load_grain_inputs():
     producing = set(pam["municipality_code"].unique())
     muni = muni[muni["municipality_code"].isin(producing)].sort_values(["kind", "ref_date"])
     muni = stamp_municipal_panel(muni.reset_index(drop=True))
-    registry = load_exposure_registry("data/reference/exposure_fundamental_v1.json")
+    registry = load_exposure_registry("data/reference/exposure_hprime_v1.json")
     return registry, muni, pam, conab
 
 

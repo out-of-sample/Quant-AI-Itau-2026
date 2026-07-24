@@ -144,3 +144,37 @@ class TestRegistryTripwires:
 def test_asof_requires_canonical_columns():
     with pytest.raises(ValueError, match="colunas obrigatórias"):
         exposure_asof(pd.DataFrame({"ticker": ["AGRO3"]}), "2020-01-01")
+
+
+HPRIME_PATH = Path("data/reference/exposure_hprime_v1.json")
+
+
+class TestHPrimeRegistry:
+    """Matriz re-derivada sob H′ de quantidade (D-061). O v1 de preço fica intacto."""
+
+    @pytest.fixture
+    def hprime(self):
+        return load_exposure_registry(HPRIME_PATH)
+
+    def test_loads_and_validates(self, hprime):
+        assert len(hprime) == 10
+        assert hprime["exposure_id"].nunique() == 5
+
+    def test_materiality_reductions_of_d061(self, hprime):
+        # AGRO3 desce de 1,00 (preço) para 0,50 (quantidade: grão minoria, parte fora do Shock).
+        agro = hprime[hprime["exposure_id"] == "agro3_2014_form20f"]
+        assert agro["materiality"].iloc[0] == pytest.approx(0.5)
+        # JBSS3 desce de 0,50 para 0,25 (só Seara/BR dentro do Shock).
+        jbs = hprime[hprime["exposure_id"] == "jbss3_2014_annual_report"]
+        assert jbs["materiality"].iloc[0] == pytest.approx(0.25)
+
+    def test_processors_no_longer_identical(self, hprime):
+        # O colapso vinha de BRFS3 ≡ JBSS3. Sob H′ a materialidade do último cai ⇒ vetores diferem.
+        latest = exposure_matrix_asof(hprime, "2019-01-07")
+        assert not np.allclose(latest.loc["BRFS3"].to_numpy(), latest.loc["JBSS3"].to_numpy())
+
+    def test_directions_and_crop_weights_unchanged_vs_price_matrix(self, hprime, registry):
+        # D-061 mexe só na materialidade: direção e cesta de cultura são idênticas ao v1.
+        for col in ("direction", "crop_weight"):
+            merged = registry.merge(hprime, on=["exposure_id", "crop"], suffixes=("_v1", "_hp"))
+            assert (merged[f"{col}_v1"] == merged[f"{col}_hp"]).all()

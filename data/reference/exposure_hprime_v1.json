@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "decision": "D-061",
+  "crops": [
+    "soy",
+    "corn_second"
+  ],
+  "vintages": [
+    {
+      "exposure_id": "brfs3_2013_form20f",
+      "ticker": "BRFS3",
+      "ref_date": "2013-12-31",
+      "avail_date": "2014-03-31",
+      "availability_basis": "exact_filing",
+      "direction": -1,
+      "materiality": 0.25,
+      "crop_weights": {
+        "soy": 0.5,
+        "corn_second": 0.5
+      },
+      "crop_weight_basis": "equal_split_unresolved",
+      "source": {
+        "title": "BRF S.A. Form 20-F 2013",
+        "url": "https://www.sec.gov/Archives/edgar/data/1122491/000129281414000758/brfform20f_2013.htm",
+        "locator": "Raw materials and feed production"
+      },
+      "evidence": "Milho e farelo de soja são insumos básicos recorrentes da ração; a fonte não separa sua participação no custo consolidado.",
+      "calculation": "Canal direto sem percentual consolidado separável: materialidade 0,25; cesta conjunta sem abertura: 50%/50%. Releitura H′-quantidade: consumo físico de grão brasileiro (dentro do Shock); materialidade 0,25 inalterada nesta safra inicial."
+    },
+    {
+      "exposure_id": "agro3_2014_form20f",
+      "ticker": "AGRO3",
+      "ref_date": "2014-06-30",
+      "avail_date": "2014-10-31",
+      "availability_basis": "exact_filing",
+      "direction": 1,
+      "materiality": 0.5,
+      "crop_weights": {
+        "soy": 0.8403607702412611,
+        "corn_second": 0.1596392297587389
+      },
+      "crop_weight_basis": "planted_area",
+      "source": {
+        "title": "BrasilAgro Form 20-F 2014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1499849/000119312514391641/d810767d20f.htm",
+        "locator": "Operating and financial review; planted area by crop"
+      },
+      "evidence": "Grãos representaram 69,8% da receita; a área 2013/14 foi 52.457 ha de soja e 9.965 ha de milho.",
+      "calculation": "Sob H′-quantidade: grão caiu de 70,6% para 51,7% da receita operacional e cana subiu de 29% para 48% (auditoria D-035, 20-F FY2019); a soja própria tem parte fora do Shock (Cremaq/PI e Cresca/Paraguai). Volume próprio dentro do Shock é minoria e declinante → materialidade 0,50 (candidato da auditoria), abaixo do 1,00 do canal de preço D-033. Pesos por área 2013/14 inalterados."
+    },
+    {
+      "exposure_id": "jbss3_2014_annual_report",
+      "ticker": "JBSS3",
+      "ref_date": "2014-12-31",
+      "avail_date": "2015-07-01",
+      "availability_basis": "conservative_bound",
+      "direction": -1,
+      "materiality": 0.25,
+      "crop_weights": {
+        "soy": 0.5,
+        "corn_second": 0.5
+      },
+      "crop_weight_basis": "equal_split_unresolved",
+      "source": {
+        "title": "JBS Relatório Anual e de Sustentabilidade 2014",
+        "url": "https://www.jbs.com.br/wp-content/uploads/2023/10/relatorio_anual_e_da_sustentabilidade_da_jbs_s.a._2014.pdf",
+        "locator": "JBS Foods; desempenho financeiro e custos de ração"
+      },
+      "evidence": "JBS Foods, operação de aves e suínos sensível a ração, teve receita de R$12,8903 bi ante R$120,4697 bi consolidados (10,7%).",
+      "calculation": "Sob H′-quantidade/geografia: apenas o segmento Seara (Brasil) consome grão brasileiro DENTRO do Shock; Pilgrim's (milho EUA) e Moy Park (trigo/EU) ficam FORA. Grão é minoria de um consolidado dominado por bovinos (auditoria D-035). O processador mais diluído → materialidade 0,25, um degrau ordinal abaixo do 0,50 conservador de D-033. Soja/milho não separáveis: 50%/50% (lacuna declarada)."
+    },
+    {
+      "exposure_id": "slce3_2017_release",
+      "ticker": "SLCE3",
+      "ref_date": "2017-12-31",
+      "avail_date": "2018-03-07",
+      "availability_basis": "exact_filing",
+      "direction": 1,
+      "materiality": 0.5,
+      "crop_weights": {
+        "soy": 0.8631578947368421,
+        "corn_second": 0.1368421052631579
+      },
+      "crop_weight_basis": "net_revenue_share",
+      "source": {
+        "title": "SLC Agrícola Relatório de Administração 2017 e Release 4T17",
+        "url": "https://www.slcagricola.com.br/wp-content/uploads/2015/12/Release_4T17_07.03.2018_VF.pdf",
+        "locator": "Receita líquida por cultura"
+      },
+      "evidence": "Soja representou 41,0% e milho 6,5% da receita líquida de 2017; juntos, 47,5%.",
+      "calculation": "Materialidade 0,50; pesos dentro da cesta: soja=41/47,5 e milho=6,5/47,5. Releitura H′-quantidade: volume próprio de soja/milho colhido e vendido, dentro do Shock; materialidade 0,50 inalterada."
+    },
+    {
+      "exposure_id": "brfs3_2017_form20f",
+      "ticker": "BRFS3",
+      "ref_date": "2017-12-31",
+      "avail_date": "2018-04-27",
+      "availability_basis": "exact_filing",
+      "direction": -1,
+      "materiality": 0.5,
+      "crop_weights": {
+        "soy": 0.5,
+        "corn_second": 0.5
+      },
+      "crop_weight_basis": "equal_split_unresolved",
+      "source": {
+        "title": "BRF S.A. Form 20-F 2017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1122491/000129281418001481/brfform_20f.htm",
+        "locator": "Raw materials; production-cost composition"
+      },
+      "evidence": "Milho, farelo e grão de soja representaram conjuntamente 28,5% do custo de produção.",
+      "calculation": "Canal entre 10% e 50%: materialidade 0,50; cesta sem abertura por cultura: 50%/50%. Releitura H′-quantidade: 28,5% do custo é grão brasileiro físico DENTRO do Shock (co-localizado) → processador mais limpo; materialidade 0,50 inalterada."
+    }
+  ],
+  "derived_from": "D-032/D-033 (data/reference/exposure_fundamental_v1.json); auditoria D-035 (data/reference/corporate_audit_v1.json)",
+  "criterion": "H′ quantidade: share da economia da firma dirigido por volume físico de soja/milho DENTRO da geografia do Shock. Direção e pesos de cultura inalterados; materialidade re-derivada sob quantidade/geografia (não preço). Return-agnóstico: nenhum retorno consultado."
+}

@@ -322,6 +322,19 @@ Atualizar e pré-registrar a suíte para H′; executar H4/H5, placebo, lag/vint
 subperíodos e leave-one-out na ordem de poder de falsificação. O H3 original já foi substituído
 pelo teste primário D-053 e H2a já produziu achado negativo.
 
+Andamento:
+- ✅ **Reconstrução da matriz de exposição sob H′ (D-061, 2026-07-24)**: uma investigação
+  return-agnóstica (choques sintéticos, sem retorno) achou que a matriz de **preço** D-033 dava
+  exposição **idêntica** aos dois processadores ⇒ a carteira colapsava em **dois estados**
+  dependentes só do sinal do choque, um bit-idêntico à setorial ingênua (a identidade que zerou o
+  `climate_increment` de D-060). `E` nunca fora re-derivada para H′ (D-053 herdou a de preço). D-061
+  re-deriva a materialidade sob o critério de quantidade/geografia, das fontes primárias já
+  auditadas em D-035 (AGRO3 1,0→0,50; JBSS3 0,50→0,25), em `data/reference/exposure_hprime_v1.json`
+  (v1 preservado). A carteira passa a **8 estados** com inclinação long entre processadores conforme
+  a cultura estressada. Não muda o contrato de estratégia/operacional, só o artefato de exposição.
+  Limites declarados em D-061: magnitude do choque ainda descartada, produtor ainda fino no dev,
+  canal do processador ainda de preço.
+
 ### Fase 6 — Holdout
 
 Liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
