@@ -1278,6 +1278,40 @@ holdout.
 
 ---
 
+## 2026-07-24 — Fase 5, reconstrução da matriz de exposição sob H′ (D-061)
+
+**Uso**: ao retomar o projeto (máquina nova), a IA fez uma leitura geral e, investigando a carteira
+congelada com **choques sintéticos** (sem retorno), descobriu que os dois processadores (BRFS3,
+JBSS3) tinham exposição **idêntica** na matriz de preço D-033 — o que fazia a carteira colapsar em
+**dois estados** dependentes só do sinal do choque, um bit-idêntico à carteira setorial ingênua de
+D-060. Ou seja, o `climate_increment=0,0` de D-060 não era artefato amostral, era **identidade
+algébrica**. A IA então re-derivou a materialidade sob o critério H′ de quantidade.
+
+**Valor real**: a IA achou, sem olhar P&L, que a matriz nunca fora re-derivada para H′ (D-053 herdou
+a de preço e só aplicou o sinal), e que a auditoria D-035 **já tinha os números** para diferenciar os
+nomes (BRF 28,5% custo brasileiro co-localizado; JBS "mais diluído", só Seara/BR no Shock). A
+correção — AGRO3 1,0→0,5 e JBSS3 0,5→0,25 — quebra o colapso (1→8 estados) usando fonte primária já
+documentada, sem dado novo. A IA também **não escondeu** que isso é mexer num input congelado depois
+de ver a degeneração, e trouxe a decisão de governança (reconstruir vs. narrar) ao time em vez de
+decidir sozinha.
+
+**Validação humana**: cada afirmação-chave foi verificada por execução, não por inspeção — a
+degeneração (1 estado) e a correção (8 estados) foram confirmadas **no loader validado do pipeline
+real**, não só na função sintética; teste unitário novo trava as duas quedas de materialidade e que
+os processadores deixaram de ser idênticos; a reprodução do D-060 na máquina nova bateu bit a bit
+(+36,26%, R²=0,838) antes de qualquer mudança, validando a migração.
+
+**O que a IA errou**: na primeira análise a IA afirmou, por álgebra apressada, que diferenciar só a
+**materialidade** (mantendo cesta 50/50) **não** quebraria o colapso — que precisaria de cestas de
+cultura diferentes. O teste em código **derrubou isso na hora**: materialidade diferente já leva de 1
+para 8 estados (porque o produtor tem cesta diferente dos processadores, e o demean responde à
+mistura soja×milho). A IA corrigiu o raciocínio a partir do resultado do código. Também houve um erro
+de processo na sessão: ao restaurar o token do GitHub, a IA instruiu colar o segredo com prefixo `!`
+achando que não entraria na transcrição — **entrou**; o token teve de ser revogado. Lição: segredo
+nunca passa pela sessão, só por terminal separado (`read -rsp`).
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

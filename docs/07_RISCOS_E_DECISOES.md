@@ -2131,6 +2131,79 @@ justamente o que o holdout, e só ele, vai medir. Artefatos em `data/processed/d
 
 ---
 
+### D-061 — Reconstrução da matriz de exposição sob o critério H′ de quantidade (Fase 5), anterior ao holdout
+
+**Data**: 2026-07-24
+
+**Achado que motiva a decisão (return-agnóstico).** Investigando a carteira congelada com choques
+**sintéticos** — sem consultar nenhum retorno —, verificou-se que a matriz `E` de D-033 dava aos
+dois processadores (BRFS3 e JBSS3) vetores de exposição **idênticos** (direção −1, materialidade
+0,50, cesta soja/milho 50/50). Com o único produtor líquido no dev (AGRO3 reprova ADTV) e dois
+processadores indistinguíveis, a função de pesos (`dollar_neutral_weights`, demean + water-filling
++ caps + bruto fixo) tem **apenas dois estados de carteira alcançáveis**, e qual deles ocorre
+depende só do **sinal** do choque nacional; a magnitude é integralmente descartada pela
+normalização. Um dos dois estados é **bit-idêntico** à carteira setorial ingênua de D-060 — por
+isso o `climate_increment` de D-060 deu **exatamente** `0,0` (dez casas), não "aproximadamente
+zero". **Isto corrige a leitura de custo/limitação de D-060**: o incremento nulo não é artefato de
+"só 3 nomes no dev", é uma **identidade algébrica** que valeria também no holdout enquanto os
+processadores forem gêmeos. Uma estratégia cuja informação climática efetiva na seção transversal
+é **um bit por bloco** não expressa a própria tese cross-section.
+
+**Por que reabrir um input congelado é legítimo aqui.** (i) O achado é **return-agnóstico**:
+derivado de choques sintéticos na função de pesos, não de P&L; o dev permanece queimado e o
+holdout lacrado. (ii) A degeneração é **estrutural**, não um resultado ruim: consertar um mecanismo
+que matematicamente não consegue expressar a hipótese ≠ ajustar desenho para melhorar um número.
+(iii) A matriz `E` foi construída em D-032/D-033 para o **canal de preço**; H′ (D-044) trocou a
+hipótese econômica para **quantidade dominante**, mas `E` **nunca foi re-derivada** para H′ — D-053
+herdou a matriz de preço e apenas aplicou o sinal negativo. (iv) A auditoria D-035 **já havia
+deixado explícito** que a atenuação de materialidade "entra como haircut candidato … no
+congelamento do score"; D-053 congelou a estratégia (universo, direção, sizing, teste) mas
+**não executou** essa re-derivação. D-061 executa a decisão que D-035 pré-sinalizou, sob o critério
+correto de H′.
+
+**O que foi decidido.** Re-derivar a materialidade de cada nome de grão sob o **critério H′ de
+quantidade**: *share da economia da firma dirigido por volume físico de soja/milho DENTRO da
+geografia do Shock*. Direção e pesos de cultura inalterados; apenas a materialidade é reavaliada
+sob quantidade/geografia (não preço), a partir das **fontes primárias já documentadas** em
+`data/reference/corporate_audit_v1.json` (auditoria D-035), sem baixar dado novo nem olhar retorno.
+Resultado (`data/reference/exposure_hprime_v1.json`, artefato imutável novo; o v1 fica congelado
+como registro do canal de preço):
+
+| Nome | D-033 (preço) | H′ (quantidade) | Base primária (auditoria D-035) |
+|---|---|---|---|
+| SLCE3 | +1, 0,50 | **+1, 0,50** (mantém) | produtor direto; volume próprio dentro do Shock |
+| AGRO3 | +1, **1,00** | **+1, 0,50** (↓) | grão 70,6%→51,7% e caindo; soja própria em PI+Paraguai, fora do Shock |
+| BRFS3 | −1, 0,50 | **−1, 0,50** (mantém) | 28,5% do custo, grão brasileiro físico, dentro do Shock (mais limpo) |
+| JBSS3 | −1, 0,50 | **−1, 0,25** (↓) | mais diluído: só Seara/BR no Shock; Pilgrim's (EUA) e Moy Park (EU) fora |
+
+As duas mudanças são **descidas** em direção aos candidatos que a própria auditoria D-035 já havia
+registrado, sob o critério de geografia/quantidade. Nenhum nome direto novo entrou; o universo de
+D-052/D-053 (cinco nomes) permanece.
+
+**O que isto conserta e o que NÃO conserta.** Verificado no pipeline real (loader validado, não
+função sintética): a carteira passa de **1 para 8 estados** e o **incremento de clima deixa de ser
+nulo** — o lado long agora inclina entre BRFS3 e JBSS3 conforme **qual cultura** (soja vs milho)
+está mais estressada, um sinal cross-section climático genuíno que não existia. **NÃO** conserta:
+(a) a magnitude total do choque continua descartada (comportamento correto de uma carteira
+dollar-neutral — não se dimensiona por z-score sem evidência de que z maior ⇒ retorno maior);
+(b) o lado produtor no dev continua sendo um único nome no cap (a cross-section de produtor exige
+AGRO3 passar ADTV, o que só o holdout dirá); (c) o canal econômico do processador continua sendo o
+custo de insumo, que passa pelo **preço** — e o preço foi empiricamente fraco (D-037/D-041); a
+estratégia honesta segue sendo um **spread produtor–processador com uma inclinação climática**, não
+uma cross-section climática pura.
+
+**Custo/limitação declarado.** (a) É uma mudança num artefato herdado do congelamento D-053, feita
+**depois** de observar a degeneração no dev; a defesa é que o achado é return-agnóstico e a mudança
+é estrutural e pré-sinalizada por D-035 — mas é uma defesa que exige do avaliador seguir esse
+argumento, e isso é declarado, não escondido. (b) A materialidade ordinal tem latitude (0,25 vs
+0,35 para a JBSS3); a escolha usa o degrau ordinal já existente e a evidência da auditoria, sem
+sintonia fina por resultado. (c) A estratégia continua fina e limitada pelos cinco anos-safra
+(R1); D-061 a torna **não-degenerada**, não a torna poderosa. (d) O contrato de estratégia
+(`strategy_spec.py`) e o operacional (`operational_spec.py`) **não mudam**; muda apenas o artefato
+de exposição consumido. O holdout permanece lacrado e roda **uma vez** na Fase 6.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

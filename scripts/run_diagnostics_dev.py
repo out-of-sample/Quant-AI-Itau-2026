@@ -125,11 +125,22 @@ def main() -> None:
         f"regressão no spread processador−produtor: beta {decomp['spread_beta']:.3f}, "
         f"R² {decomp['spread_r2']:.3f}"
     )
+    # Leitura dirigida pelos números (vale para a matriz de preço e para a H′ de quantidade).
+    if abs(incr) < 1e-4:
+        head = (
+            "Leitura: incremento ≈0 ⇒ o livro É bit-idêntico à aposta de setor; o score de clima\n"
+            "não diferencia nada na seção transversal (processadores com exposição idêntica)."
+        )
+    else:
+        head = (
+            f"Leitura: incremento {incr:+.2%} ≠ 0 ⇒ o score de clima JÁ move o livro para fora\n"
+            f"da aposta de setor pura, mas R²={decomp['spread_r2']:.2f} mostra que o setor ainda\n"
+            "domina a variância — é um spread produtor×processador com uma inclinação climática,\n"
+            "não uma cross-section climática pura."
+        )
     print(
-        "\nLeitura: incremento ~0 e R² alto ⇒ no dev o livro É uma aposta de setor; o score de\n"
-        "clima quase não diferencia com 3 nomes ativos. O retorno vem do spread proteína×\n"
-        "produtor, não do sinal climático. Consequência para o relatório: reportar exposição\n"
-        "setorial, não vender o P&L do dev como alpha de clima."
+        "\n" + head + "\nConsequência para o relatório: reportar a exposição setorial e nunca\n"
+        "vender o P&L do dev como alpha de clima (o dev é circular; só o holdout mede)."
     )
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

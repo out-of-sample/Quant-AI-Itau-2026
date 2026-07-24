@@ -223,3 +223,25 @@ eixo de sensibilidade no congelamento do score — **sem reescrever** este regis
 (ii) o **lado long fica condicionado a H2a**, pois `Q` está parcialmente fora do Shock e o
 líquido do produtor não é resolvível só pelo fundamento; (iii) o **universo não muda** — nenhum
 nome direto novo emergiu e a concentração (R19) não é diluível por nomes diretos.
+
+### 7.2 Reconstrução sob H′ de quantidade (D-061, 2026-07-24)
+
+D-035 promoveu o registro de **preço** e deixou explícito que a atenuação de materialidade entraria
+como haircut candidato "no congelamento do score". D-053 congelou a estratégia mas **herdou a
+matriz de preço sem re-derivá-la** para H′ (D-044), que trocou a hipótese econômica para
+**quantidade dominante**. Na Fase 5, uma investigação **return-agnóstica** (choques sintéticos na
+função de pesos, sem retorno) mostrou que isso deixava BRFS3 e JBSS3 com exposição **idêntica** →
+a carteira colapsava em **dois estados** dependentes só do **sinal** do choque, um deles
+bit-idêntico à carteira setorial ingênua (a identidade que zerou o `climate_increment` em D-060).
+
+D-061 re-deriva a materialidade sob o critério H′ de quantidade — *share da economia da firma
+dirigido por volume físico de soja/milho dentro da geografia do Shock* —, a partir das fontes
+primárias **já auditadas** em D-035, sem dado novo nem retorno. Apenas a materialidade muda:
+**AGRO3 1,00→0,50** (grão minoria e declinante; soja própria parcialmente fora do Shock) e
+**JBSS3 0,50→0,25** (só Seara/BR no Shock; Pilgrim's/Moy Park fora). Direção e pesos de cultura
+inalterados; universo inalterado. O artefato é `data/reference/exposure_hprime_v1.json` (imutável;
+o v1 permanece congelado como registro do canal de preço, ainda consumido pelo teste falsificado
+de reação de ações D-042/D-043). A carteira passa a **8 estados** com inclinação long entre os
+processadores conforme a cultura estressada. Detalhes, ganhos e limites (magnitude ainda
+descartada; produtor ainda fino; canal do processador ainda de preço) em `07_RISCOS_E_DECISOES.md`
+D-061.
