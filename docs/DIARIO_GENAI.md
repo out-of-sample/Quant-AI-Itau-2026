@@ -1400,6 +1400,30 @@ holdout (Fase 6).
 
 ---
 
+## 2026-07-26 — Fase 5, pré-registro da suíte de robustez do sinal H1 (D-065)
+
+**Uso**: desenhar a suíte de robustez do mecanismo H1 (clima→revisão CONAB). A IA ancorou-se na máquina
+existente (`stats/h1a.py`, `build_h1a_panel`, `run_h1a`, `run_gate.py`) para identificar os botões reais
+do desenho (climatologia, prelim/final, lag, janela crítica) e propôs o grid + placebos + critérios.
+
+**Valor real (disciplina)**: a IA insistiu em **separar o pré-registro da execução** — congelar o grid
+single-knob e os limiares (banda [0,4; 2,5], placebo <0,5× e p>0,10) num commit **anterior** aos números,
+para não poder escolher a posteriori quais perturbações reportar ou onde traçar a banda. Os critérios
+foram implementados como código executável (`perturbation_verdict`, `overall_robust`) com 11 testes, e o
+`__post_init__` **trava** que cada perturbação mexe em exatamente um botão — o próprio código impede um
+desvio multi-knob disfarçado. Mesmo padrão que o projeto usou na matriz `E` (regra antes do dado).
+
+**O que a IA cuidou de não fazer**: não rodou nada ainda (este passo é só o pré-registro); não tratou o
+dev como gate (N minúsculo, só descritivo); marcou a fonte `final` com a ressalva de vintage R15/R16; e
+registrou que a suíte mede **estabilidade de desenho**, não adiciona poder — evitando vender robustez
+como se fosse significância nova.
+
+**Validação humana**: os critérios são testados (perturbação real fora da banda reprova; placebo que
+sobrevive vira bandeira vermelha; veredito global exige placebos mortos). Return-agnóstico; holdout de
+retornos lacrado. Execução e números no próximo passo.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

@@ -352,6 +352,13 @@ Andamento:
   veículo de preço esbarra no canal morto/CBOT; (3) abriu o **hedge de setor** como o thread de "arrumar
   o que temos" (isolar o resíduo climático do beta de setor confirmado no D-060), a ser pré-registrado
   return-agnóstico (futuro D-064). Busca por veículo alternativo **encerrada e mapeada**.
+- 🟡 **Pré-registro da suíte de robustez do sinal H1 (D-065, 2026-07-26)**: congela em
+  `stats/robustness_spec.py`, **antes de rodar**, o grid single-knob (climatologia ±2 anos, fonte
+  final×prelim, lag +14d, janela crítica ±15d) e dois placebos (espacial e temporal), com critérios
+  executáveis (banda |β|/|β_base| ∈ [0,4; 2,5]; placebo morre se |β|<0,5× e p>0,10) e veredito global.
+  Return-agnóstico (mecanismo H1a, não retornos); mede **estabilidade de desenho**, não poder. Só
+  informativo agora porque o D-061 desfez a degeneração da carteira. Runner e números vêm no próximo
+  passo. Testes 497→508.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
