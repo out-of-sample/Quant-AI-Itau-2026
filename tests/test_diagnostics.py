@@ -12,6 +12,7 @@ from quantagro.backtest.diagnostics import (
     concentration_metrics,
     cost_monotonicity,
     sector_climate_decomposition,
+    sector_orthogonal_decomposition,
 )
 from quantagro.backtest.operational_spec import PRODUCERS, TradeBlock
 from quantagro.backtest.strategy_spec import PER_NAME_CAP, UNIVERSE
@@ -122,6 +123,85 @@ def test_sector_climate_decomposition_flags_spread_bet() -> None:
     assert out["climate_increment"] == pytest.approx(0.0, abs=1e-12)
     assert out["spread_beta"] == pytest.approx(1.0, abs=1e-6)
     assert out["spread_r2"] == pytest.approx(1.0, abs=1e-6)
+
+
+def _sector_direction(dates: pd.DatetimeIndex) -> pd.DataFrame:
+    """Direção de setor dollar-neutral entre grãos: produtor +0,5 / processador −0,5, SMTO3 0."""
+    row = {"AGRO3": 0.5, "SLCE3": 0.5, "BRFS3": -0.5, "JBSS3": -0.5, "SMTO3": 0.0}
+    return pd.DataFrame([row] * len(dates), index=dates).reindex(columns=list(UNIVERSE))
+
+
+def test_sector_orthogonal_additivity_and_orthogonality() -> None:
+    dates = pd.to_datetime(["2019-02-01", "2019-02-04", "2019-02-05"])
+    s = _sector_direction(dates)
+    # Livro real = tilt de setor + uma inclinação cross-section (SLC mais curto que AGRO).
+    w = pd.DataFrame(
+        {"AGRO3": 0.3, "SLCE3": 0.5, "BRFS3": -0.4, "JBSS3": -0.4, "SMTO3": 0.0},
+        index=dates,
+    ).reindex(columns=list(UNIVERSE))
+    rng = np.random.default_rng(1)
+    returns = pd.DataFrame(
+        rng.normal(0.0, 0.02, (len(dates), len(UNIVERSE))), index=dates, columns=list(UNIVERSE)
+    )
+    out = sector_orthogonal_decomposition(w, s, returns)
+    # Aditividade exata: setor + clima reconstrói o bruto do livro, dia a dia e no total.
+    daily = out["daily"]
+    assert np.allclose(daily["sector_gross"] + daily["climate_gross"], daily["book_gross"])
+    assert out["sector_arith_return"] + out["climate_arith_return"] == pytest.approx(
+        out["book_arith_return"], abs=1e-12
+    )
+    # Ortogonalidade em espaço de pesos: ⟨w_clima, s⟩ ≈ 0 em todo pregão.
+    assert out["max_ortho_residual"] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_sector_orthogonal_pure_sector_book_has_zero_climate() -> None:
+    dates = pd.to_datetime(["2019-03-01", "2019-03-04"])
+    s = _sector_direction(dates)
+    w = s * 0.8  # livro proporcional à direção de setor ⇒ resíduo climático nulo
+    rng = np.random.default_rng(2)
+    returns = pd.DataFrame(
+        rng.normal(0.0, 0.02, (len(dates), len(UNIVERSE))), index=dates, columns=list(UNIVERSE)
+    )
+    out = sector_orthogonal_decomposition(w, s, returns)
+    assert out["climate_arith_return"] == pytest.approx(0.0, abs=1e-12)
+    assert out["daily"]["climate_gross"].abs().max() == pytest.approx(0.0, abs=1e-12)
+
+
+def test_sector_orthogonal_is_return_agnostic() -> None:
+    dates = pd.to_datetime(["2019-04-01", "2019-04-02"])
+    s = _sector_direction(dates)
+    w = pd.DataFrame(
+        {"AGRO3": 0.2, "SLCE3": 0.6, "BRFS3": -0.5, "JBSS3": -0.3, "SMTO3": 0.0},
+        index=dates,
+    ).reindex(columns=list(UNIVERSE))
+    ret_a = pd.DataFrame(0.01, index=dates, columns=list(UNIVERSE))
+    ret_b = pd.DataFrame(-0.07, index=dates, columns=list(UNIVERSE))
+    out_a = sector_orthogonal_decomposition(w, s, ret_a)
+    out_b = sector_orthogonal_decomposition(w, s, ret_b)
+    # A separação de pesos (coef) não depende do retorno: idêntica para retornos diferentes.
+    assert np.allclose(out_a["daily"]["coef"], out_b["daily"]["coef"])
+
+
+def test_sector_orthogonal_zero_direction_keeps_book_as_climate() -> None:
+    dates = pd.to_datetime(["2019-05-02", "2019-05-03"])
+    s = pd.DataFrame(0.0, index=dates, columns=list(UNIVERSE))  # sem direção de setor
+    w = pd.DataFrame(
+        {"AGRO3": 0.1, "SLCE3": -0.2, "BRFS3": 0.05, "JBSS3": 0.05, "SMTO3": 0.0},
+        index=dates,
+    ).reindex(columns=list(UNIVERSE))
+    returns = pd.DataFrame(0.02, index=dates, columns=list(UNIVERSE))
+    out = sector_orthogonal_decomposition(w, s, returns)
+    assert (out["daily"]["coef"] == 0.0).all()
+    assert out["sector_arith_return"] == pytest.approx(0.0, abs=1e-12)
+    assert out["climate_arith_return"] == pytest.approx(out["book_arith_return"], abs=1e-12)
+
+
+def test_sector_orthogonal_rejects_wrong_columns() -> None:
+    dates = pd.to_datetime(["2019-06-03"])
+    s = _sector_direction(dates)
+    bad = pd.DataFrame({"AGRO3": [0.1], "SLCE3": [0.1]}, index=dates)
+    with pytest.raises(ValueError, match="colunas"):
+        sector_orthogonal_decomposition(bad, s, s)
 
 
 def test_cost_monotonicity() -> None:

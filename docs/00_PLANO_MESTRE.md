@@ -352,6 +352,14 @@ Andamento:
   veículo de preço esbarra no canal morto/CBOT; (3) abriu o **hedge de setor** como o thread de "arrumar
   o que temos" (isolar o resíduo climático do beta de setor confirmado no D-060), a ser pré-registrado
   return-agnóstico (futuro D-064). Busca por veículo alternativo **encerrada e mapeada**.
+- ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
+  o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
+  **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
+  `diagnostics.py::sector_orthogonal_decomposition` congela uma separação aditiva/exata do bruto do
+  livro em parte de setor (projeção nos pesos setoriais ingênuos) e resíduo climático ortogonal — **só
+  pesos, sem retornos** (return-agnóstica). Na Fase 6 explica o resultado do holdout (quanto é clima ×
+  setor) sem gastar α extra nem multiplicar a família de testes; no dev roda descritiva/circular
+  (Bloco C′). Não muda a estratégia negociada. Testes 492→497.
 
 ### Fase 6 — Holdout
 

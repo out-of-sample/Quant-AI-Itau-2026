@@ -33,6 +33,7 @@ from quantagro.backtest.diagnostics import (  # noqa: E402
     concentration_metrics,
     cost_monotonicity,
     sector_climate_decomposition,
+    sector_orthogonal_decomposition,
 )
 from quantagro.backtest.engine import build_target_schedule, run_backtest  # noqa: E402
 from quantagro.backtest.inputs import materialize_grain_raw_scores  # noqa: E402
@@ -143,10 +144,30 @@ def main() -> None:
         "vender o P&L do dev como alpha de clima (o dev é circular; só o holdout mede)."
     )
 
+    # --- Bloco C′: decomposição ortogonal pré-registrada (D-064) ----------------------------
+    # Alternativa 1: não muda a estratégia; separa o bruto do livro em setor × resíduo climático
+    # projetando os pesos reais sobre os pesos setoriais ingênuos (return-agnóstico). No holdout
+    # (Fase 6) esta MESMA regra explica o resultado. Aqui é só demonstração descritiva e CIRCULAR.
+    ortho = sector_orthogonal_decomposition(base.weights, naive_base.weights, returns)
+    print("\n--- Bloco C′ · decomposição ortogonal setor×clima (D-064, descritivo) ---")
+    print(f"bruto do livro (aritmético):          {ortho['book_arith_return']:+.2%}")
+    print(f"  parte alinhada à aposta de setor:   {ortho['sector_arith_return']:+.2%}")
+    print(f"  resíduo ortogonal (clima puro):     {ortho['climate_arith_return']:+.2%}")
+    print(f"  fatia climática do bruto:           {ortho['climate_share']:+.1%}")
+    print(f"resíduo de ortogonalidade máx (~0):   {ortho['max_ortho_residual']:.2e}")
+    print(
+        "Return-agnóstico na separação; total aritmético (antes de custos). O número do dev é\n"
+        "CIRCULAR (direção H′ derivada do dev) — a leitura de lucro é só do holdout."
+    )
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     attr.to_parquet(OUT_DIR / "diag_dev_attribution.parquet")
     naive_base.daily.to_parquet(OUT_DIR / "diag_dev_naive_daily.parquet")
     pd.Series(decomp).to_json(OUT_DIR / "diag_dev_decomposition.json")
+    ortho["daily"].to_parquet(OUT_DIR / "diag_dev_ortho_daily.parquet")
+    pd.Series({k: v for k, v in ortho.items() if k != "daily"}).to_json(
+        OUT_DIR / "diag_dev_ortho_decomposition.json"
+    )
 
     print("\n" + "=" * 92)
     print("DIAGNÓSTICO OK se rodou sem erro. Interpretação de LUCRO fica para o holdout (Fase 6).")
