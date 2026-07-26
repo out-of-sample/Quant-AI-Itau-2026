@@ -2412,6 +2412,41 @@ não vale como validação; contrato congelado e holdout seguem intactos.
 
 ---
 
+### D-065 — Pré-registro da suíte de robustez do sinal H1 (Fase 5), anterior aos resultados
+
+**Data**: 2026-07-26
+
+**O que foi decidido.** Congelar, **antes de rodar**, o grid de perturbações e os critérios de aprovação
+da suíte de robustez do mecanismo H1 (clima→revisão CONAB), em `stats/robustness_spec.py`. É
+**return-agnóstico**: testa o mecanismo H1a, não retornos; o holdout de retornos segue lacrado e a
+leitura por sub-amostra respeita a separação dev/holdout de D-029 (reportada, não usada para escolher).
+
+**Grid (single-knob a partir do baseline congelado de D-030).** Cada perturbação mexe em **exatamente
+um botão** (travado no `__post_init__`): (real) climatologia ±2 anos; fonte `final` vs `prelim` (com
+ressalva de vintage R15/R16); lag de disponibilidade +14 dias; janela crítica ±15 dias. (placebo)
+espacial — `Shock` embaralhado entre UFs no mesmo ano-safra; temporal — `Shock` do ano-safra anterior.
+
+**Critérios (congelados).** Perturbação **real** passa se o β agrupado no span cheio mantém o sinal
+esperado (β<0, estresse ⇒ revisão para baixo) **e** |β|/|β_base| ∈ [0,4; 2,5]. **Placebo** comporta-se
+bem se |β| < 0,5×|β_base| **e** bootstrap p > 0,10 — um placebo significativo e de mesmo sinal é
+**bandeira vermelha** (sinal possivelmente mecânico). Veredito global "robusto" = todas as reais
+preservam o sinal, ≥5/6 na banda, e os dois placebos morrem. β_base é o baseline pooled de H1a
+(D-030/D-031, β≈−0,067). O dev é reportado como descritivo (N minúsculo), nunca gate.
+
+**Por quê separar pré-registro de execução.** A honestidade científica está em declarar o grid e os
+limiares **antes** de ver os números, para não poder escolher a posteriori quais perturbações reportar
+ou onde traçar a banda. Este commit é anterior à materialização — mesmo padrão do projeto que colocou a
+regra da matriz `E` num commit anterior aos dados (D-032). A suíte só é informativa **agora** porque o
+D-061 desfez a degeneração da carteira (1→8 estados): antes, robustez de um livro de 2 estados era vazia.
+
+**Custo/limitação declarado.** (a) A banda [0,4; 2,5] e o teto de placebo 0,5 são escolhas de
+julgamento — congeladas aqui para não serem ajustadas depois, mas são convenções, não verdades. (b) A
+fonte `final` carrega o alerta de vintage (R15/R16): entra como sensibilidade, não como fonte primária.
+(c) O N de anos-safra é pequeno; a suíte mede **estabilidade de desenho**, não adiciona poder
+estatístico. (d) Ainda não rodou — este passo é só o pré-registro; a execução e os números vêm a seguir.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
