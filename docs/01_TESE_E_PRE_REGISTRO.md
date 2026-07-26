@@ -75,6 +75,15 @@ liquidez, câmbio e commodity podem permanecer diferentes entre as pontas; serã
 quando viável, neutralizados explicitamente. H4 testa se o retorno residual ainda é apenas
 exposição reembalada.
 
+> **Ressalva empírica (D-060/D-061), para não superdimensionar a tese.** No desenvolvimento, a
+> **dispersão cross-seccional é fina**: o livro é, na prática, um **spread setorial (produtor ×
+> processador) com uma inclinação climática**, não uma cross-section de clima pura — a diagnose
+> mediu que o setor domina a variância do retorno (D-060). O D-061 corrigiu uma degeneração que
+> reduzia a informação de clima a um bit por bloco (processadores com exposição idêntica), devolvendo
+> à carteira a capacidade de expressar a dispersão; ainda assim, a carga de setor é real e será
+> **declarada e decomposta** (a leitura climática × setorial do holdout está pré-registrada em D-064).
+> A honestidade sobre esse limite faz parte do Conceito, não o enfraquece.
+
 > **Formalmente**: não modelamos `E[retorno do agro | clima]`. Modelamos
 > `E[retorno da empresa i | clima] = f(exposição líquida da empresa i à commodity c)`.
 
