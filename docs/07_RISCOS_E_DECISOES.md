@@ -2447,6 +2447,56 @@ estatístico. (d) Ainda não rodou — este passo é só o pré-registro; a exec
 
 ---
 
+### D-066 — Resultado da suíte de robustez do sinal H1 (Fase 5)
+
+**Data**: 2026-07-26
+
+**O que foi feito.** Executou-se, uma vez, o grid congelado de D-065 (`scripts/run_robustness_h1.py`,
+`stats/robustness.py`), com o motor de Shock **intocado** — cada perturbação constrói inputs
+modificados para o `build_h1a_panel`. Baseline bit-idêntico ao portão: β=**−0,0672**, bootstrap
+p<0,001, N=729, 8 anos-safra. Return-agnóstico; holdout de retornos lacrado.
+
+**Robustez direcional — forte.** As quatro perturbações reais que rodaram **preservaram o sinal
+(β<0) e a ordem de grandeza** (|β|/|β_base| na banda [0,4; 2,5]): climatologia +2 anos **0,97×**;
+lag de disponibilidade +14d **1,02×**; janela +15d **0,76×**; e a **fonte `final` fortalece** o sinal
+(β=−0,092, **1,37×**) — o mecanismo não depende do botão específico. O **placebo temporal morreu
+limpo** (β=+0,011, p=0,42, sinal invertido): o sinal não é artefato de tendência temporal.
+
+**O achado central — componente nacional-comum (placebo espacial).** O placebo espacial (choque
+embaralhado entre UFs no mesmo ano-safra) **não morreu por completo**: embaralhar a geografia destrói
+~69% do β (β cai de −0,067 para −0,021), confirmando que **a maioria do sinal é regional**, mas sobra
+um resíduo de ~31% **significativo** (p=0,019, mesmo sinal). Leitura: existe um **componente
+nacional-comum forte** — um ano seco desloca choque e revisão de todas as UFs juntas, então o choque de
+uma UF trocada ainda prevê a revisão de outra. Isto **caracteriza**, não falsifica, H1: o sinal é real
+e majoritariamente regional, mas parte relevante da sua força é um **nowcast nacional**, não
+discriminação regional fina. Coerente com D-060/D-061 (cross-section fino) e com a auditoria de veículos
+D-062/D-063 (o que se monetiza é uma surpresa de produção **nacional**).
+
+**Dois botões não rodaram — piso de dado, declarado (não fragilidade).** Climatologia −2 anos exige a
+série `final` antes de 2000-12 (início da cobertura) ⇒ falha de cobertura em 1998. Janela −15d exige
+`prelim` em meados de novembro, fora da janela crítica (Dez–Mai) para a qual o painel municipal foi
+materializado. Ambas são limites de **cobertura de dado**; uma materialização futura mais ampla poderia
+rodá-las — não se ajustou a magnitude pós-hoc para forçar execução.
+
+**Veredito global pré-registrado: NÃO ROBUSTO — reportado fielmente.** O gate de D-065 reprovou por
+**dois** motivos, e por honestidade os dois ficam registrados: (i) só 4<5 perturbações reais foram
+executáveis (pisos de dado); (ii) o placebo espacial ficou significativo. **Nenhum dos dois é
+fragilidade direcional do sinal** — que foi, ao contrário, notavelmente estável. O gate estrito falhar e
+ser reportado assim mesmo *é* o entregável de rigor: fixamos a régua antes dos números e não a afrouxamos.
+
+**Consequência para o relatório.** (a) Apresentar a tabela de robustez direcional como força (sinal e
+magnitude estáveis, `final` inclusive fortalece). (b) Declarar o componente nacional-comum como
+limitação honesta — não vender o β agrupado como identificação regional limpa. (c) Amarrar a narrativa:
+H1 é um nowcast nacional robusto de direção, o que explica por que a tradução cross-section em ações é
+fina (D-060) e por que nenhum veículo isola o sinal de forma limpa (D-063).
+
+**Custo/limitação declarado.** (a) O componente nacional-comum limita a identificação regional — é o
+principal achado a comunicar. (b) Dois botões pré-registrados não rodaram por cobertura; a robustez a
+esses eixos fica **não testada**, não aprovada. (c) N pequeno de anos-safra: mede estabilidade, não
+adiciona poder. (d) Mecanismo, não retorno; holdout intacto.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
