@@ -2129,6 +2129,12 @@ variação cross-section real, o score de clima tem mais espaço para diferencia
 justamente o que o holdout, e só ele, vai medir. Artefatos em `data/processed/diag_dev_*`
 (gitignored); módulo e runner versionados.
 
+> **Correção posterior (ver D-061):** a leitura de "artefato de 3 nomes" acima está **superada**. O
+> D-061 provou que o incremento nulo era uma **identidade algébrica** (processadores com exposição
+> idêntica ⇒ carteira degenerada em 2 estados), que valeria também no holdout — não um efeito de
+> amostra pequena. A reconstrução de `E` sob H′ (D-061) quebrou a degeneração (1→8 estados). Este
+> registro fica intacto como estava; a correção vive no D-061.
+
 ---
 
 ### D-061 — Reconstrução da matriz de exposição sob o critério H′ de quantidade (Fase 5), anterior ao holdout
