@@ -1424,6 +1424,36 @@ retornos lacrado. Execução e números no próximo passo.
 
 ---
 
+## 2026-07-26 — Fase 5, execução da suíte de robustez do sinal H1 (D-066)
+
+**Uso**: implementar e rodar a suíte pré-registrada em D-065. Decisão de engenharia da IA: **não tocar
+no motor de Shock congelado** — cada perturbação constrói inputs modificados para o `build_h1a_panel`
+inalterado (climatologia por parâmetro, janela por specs deslocadas, lag por shift de `avail_date`,
+fonte final por relabel do painel, placebos por transformação do painel montado).
+
+**Bug que a IA pegou antes de rodar**: o cache memoizado do `_shocks` embutia o lag do prelim (+7d) na
+chave; as perturbações de lag e de fonte final mudam a disponibilidade do sinal e teriam causado **hit
+de cache incorreto** — exatamente a classe de bug que o projeto teme. Correção mínima: threar um
+`signal_lag_days` (default = baseline, protegido pelos testes de H1a que continuaram verdes) só na chave.
+
+**Achado real (return-agnóstico)**: robustez direcional **forte** — as 4 perturbações reais rodáveis
+preservaram sinal e magnitude (climatologia +2 = 0,97×; lag +14d = 1,02×; janela +15d = 0,76×; fonte
+`final` até **fortalece**, 1,37×); placebo temporal morreu limpo (p=0,42). **Mas** o placebo **espacial
+não morreu de todo**: embaralhar UFs destrói ~69% do β, sobrando ~31% significativo (p=0,019) ⇒
+**componente nacional-comum forte**. Isso caracteriza H1 como nowcast nacional (não discriminação
+regional pura), amarrando com D-060/D-061/D-063.
+
+**Honestidade sobre o veredito**: o gate global pré-registrado deu **NÃO ROBUSTO** e a IA reportou
+**fielmente**, sem afrouxar limiar — reprova por (i) só 4<5 reais rodáveis (dois botões caem em piso de
+dado: série final começa em 2000; painel só cobre Dez–Mai) e (ii) placebo espacial significativo. A IA
+foi explícita de que nenhum dos dois é fragilidade direcional, e de que um gate estrito falhar e ser
+reportado assim mesmo é o entregável de rigor — não uma derrota a esconder.
+
+**Validação humana**: baseline reproduz o portão D-030 bit-a-bit (β=−0,0672); transformações cobertas
+por 11 testes puros; motor congelado intocado. Mecanismo, não retorno; holdout lacrado.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

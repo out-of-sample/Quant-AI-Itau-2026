@@ -101,6 +101,7 @@ def _shocks(
     pam_panel: pd.DataFrame,
     climatology_first_year: int,
     windows: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS,
+    signal_lag_days: int = PRELIM_LAG_DAYS,
 ) -> pd.DataFrame:
     """``Shock`` de UF em cada ``(safra, avail_date)``, memoizado por ``(spec, ano, corte, PAM)``.
 
@@ -121,7 +122,7 @@ def _shocks(
         ts = pd.Timestamp(t)
         weights = pam_weights_asof(pam_panel, ts)
         pam_year = int(weights["ref_year"].max())
-        cutoff = (ts - pd.Timedelta(days=PRELIM_LAG_DAYS)).to_datetime64()
+        cutoff = (ts - pd.Timedelta(days=signal_lag_days)).to_datetime64()
         pos = int(np.searchsorted(prelim_refs, cutoff, side="right"))
         vis_max = pd.Timestamp(prelim_refs[pos - 1]) if pos > 0 else None
         visible_by_uf: dict[str, pd.DataFrame] = {}
@@ -163,17 +164,22 @@ def build_h1a_panel(
     climatology_first_year: int,
     bases: range = range(2017, 2025),
     windows: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS,
+    signal_lag_days: int = PRELIM_LAG_DAYS,
 ) -> pd.DataFrame:
     """Painel de regressão de H1a: ``(cultura, UF, safra, levantamento≥base+1)`` com revisão+Shock.
 
     ``municipal_stamped`` já carimbado (``stamp_municipal_panel``). ``bases`` = primeiros anos
     das safras com painel de vintages (2017/18+) **e** sinal ``prelim`` disponível.
+    ``signal_lag_days`` ajusta só a chave de cache do corte para casar com o lag real de
+    disponibilidade do sinal (default ``PRELIM_LAG_DAYS``); só a robustez D-065 o altera.
     """
     conab = _prepare_conab(conab, bases, windows)
     rev = _revisions(conab)
     if rev.empty:
         raise ValueError("nenhuma revisão computável no painel CONAB filtrado")
-    shocks = _shocks(rev, municipal_stamped, pam_panel, climatology_first_year, windows)
+    shocks = _shocks(
+        rev, municipal_stamped, pam_panel, climatology_first_year, windows, signal_lag_days
+    )
     panel = rev.merge(shocks, on=["crop", "uf", "ano_agricola", "avail_date"], how="inner")
     panel["base_year"] = panel["ano_agricola"].str.slice(0, 4).astype(int)
     panel["sample"] = np.where(panel["base_year"] <= DEV_LAST_BASE, "dev", "holdout")

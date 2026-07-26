@@ -359,6 +359,17 @@ Andamento:
   Return-agnóstico (mecanismo H1a, não retornos); mede **estabilidade de desenho**, não poder. Só
   informativo agora porque o D-061 desfez a degeneração da carteira. Runner e números vêm no próximo
   passo. Testes 497→508.
+- 🟡 **Suíte de robustez do sinal H1 executada (D-066, 2026-07-26)**: baseline reproduz o portão
+  (β=−0,0672, p<0,001, N=729, 8 safras). **Robustez direcional forte**: as 4 perturbações reais
+  rodáveis preservaram sinal e magnitude (climatologia +2 = 0,97×; lag +14d = 1,02×; janela +15d =
+  0,76×; **fonte `final` fortalece** = 1,37×); placebo **temporal morreu limpo** (p=0,42). **Achado
+  central**: o placebo **espacial não morreu de todo** — embaralhar UFs destrói ~69% do β (maioria é
+  regional) mas sobra ~31% significativo (p=0,019) ⇒ **componente nacional-comum forte** (caracteriza,
+  não falsifica H1; casa com D-060/D-061/D-063). Dois botões não rodaram por piso de dado (climatologia
+  −2 = série final começa em 2000; janela −15 = painel só cobre Dez–Mai), declarados. **Veredito global
+  pré-registrado = NÃO ROBUSTO**, reportado fielmente (reprova por 4<5 reais rodáveis + placebo espacial
+  significativo; **nenhum é fragilidade direcional**). O gate estrito falhar e ser reportado é o próprio
+  entregável de rigor. Motor de Shock intocado; `signal_lag_days` só na chave de cache. Testes 508→519.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
