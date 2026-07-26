@@ -16,6 +16,14 @@ com um ``E·Shock`` constante (produtor +1, processador −1) e cana inativa. De
 isso vira "short produtor / long processador" com pesos iguais por perna — a aposta de setor pura,
 sem nenhuma informação cross-section de clima. A diferença entre a carteira real e essa carteira
 isola exatamente o que o score de clima acrescenta além do tilt de setor.
+
+**Regra de decomposição pré-registrada (D-064).** ``sector_orthogonal_decomposition`` congela, antes
+do holdout, uma separação ADITIVA e EXATA do retorno bruto do livro em (i) a parte alinhada à aposta
+de setor e (ii) o resíduo ortogonal a ela, projetando os pesos reais sobre os pesos setoriais
+ingênuos em espaço de pesos — **sem usar retorno na separação** (return-agnóstica). É a Alternativa
+1 do fork de 2026-07-26: não altera a estratégia negociada; ensina o resultado do holdout a se
+explicar (quanto foi setor, quanto foi clima). Distinta do ``sector_climate_decomposition`` do D-060
+(incremento sobre a ingênua + regressão ex-post), que continua como descritivo do dev.
 """
 
 from __future__ import annotations
@@ -143,6 +151,76 @@ def sector_climate_decomposition(
         "climate_increment": book_ret - naive_ret,
         "spread_beta": float(beta[1]),
         "spread_r2": r2,
+    }
+
+
+def sector_orthogonal_decomposition(
+    book_weights: pd.DataFrame,
+    sector_weights: pd.DataFrame,
+    returns: pd.DataFrame,
+) -> dict[str, object]:
+    """Decomposição aditiva pré-registrada (D-064): parte de setor × resíduo climático ortogonal.
+
+    Para cada pregão ``t``, projeta os pesos reais ``w`` sobre a direção de setor ``s`` (os pesos da
+    carteira setorial ingênua no mesmo dia — mesma máquina, mesmos caps/elegibilidade):
+
+        c        = ⟨w, s⟩ / ⟨s, s⟩          (0 se ⟨s, s⟩ = 0)
+        w_setor  = c · s                     (componente alinhada à aposta de setor)
+        w_clima  = w − c · s                 (resíduo ortogonal: ⟨w_clima, s⟩ = 0)
+
+    A separação usa **só ``w`` e ``s``, nunca retornos** ⇒ return-agnóstica, congelável antes do
+    holdout. A contribuição bruta de cada perna no dia é peso·retorno e, por linearidade, ``setor``
+    + ``clima`` reconstrói exatamente o bruto do livro. Os totais somam as contribuições diárias
+    (atribuição **aritmética**, antes de custos — custos não são lineares na projeção e são
+    reportados à parte). ``climate_share`` é a fatia do bruto que sobrevive à neutralização de
+    setor. Descritiva no dev (circular); a inferência mora só no holdout (Fase 6).
+    """
+    cols = list(UNIVERSE)
+    if list(book_weights.columns) != cols or list(sector_weights.columns) != cols:
+        raise ValueError(f"pesos exigem exatamente as colunas {cols}")
+    idx = book_weights.index
+    sector = sector_weights.reindex(idx)
+    if sector.isna().any().any():
+        raise ValueError("pesos setoriais não alinham com o índice do livro (NaN após reindex)")
+    ret = returns.reindex(index=idx, columns=cols).fillna(0.0)
+
+    w = book_weights.to_numpy(dtype=float)
+    s = sector.to_numpy(dtype=float)
+    r = ret.to_numpy(dtype=float)
+
+    dot_ws = (w * s).sum(axis=1)
+    dot_ss = (s * s).sum(axis=1)
+    coef = np.divide(dot_ws, dot_ss, out=np.zeros_like(dot_ws), where=dot_ss > _HELD_TOL)
+    w_sector = coef[:, None] * s
+    w_climate = w - w_sector
+
+    g_sector = (w_sector * r).sum(axis=1)
+    g_climate = (w_climate * r).sum(axis=1)
+    g_book = (w * r).sum(axis=1)
+    ortho_resid = (w_climate * s).sum(axis=1)
+
+    sector_total = float(g_sector.sum())
+    climate_total = float(g_climate.sum())
+    book_total = float(g_book.sum())
+    share = climate_total / book_total if abs(book_total) > _HELD_TOL else float("nan")
+
+    daily = pd.DataFrame(
+        {
+            "coef": coef,
+            "sector_gross": g_sector,
+            "climate_gross": g_climate,
+            "book_gross": g_book,
+            "ortho_residual": ortho_resid,
+        },
+        index=idx,
+    )
+    return {
+        "sector_arith_return": sector_total,
+        "climate_arith_return": climate_total,
+        "book_arith_return": book_total,
+        "climate_share": share,
+        "max_ortho_residual": float(np.abs(ortho_resid).max()) if len(ortho_resid) else 0.0,
+        "daily": daily,
     }
 
 

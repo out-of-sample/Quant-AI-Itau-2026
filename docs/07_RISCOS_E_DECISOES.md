@@ -2353,6 +2353,59 @@ seguem intocados.
 
 ---
 
+### D-064 — Decomposição setor×clima pré-registrada como leitura do holdout (Fase 5)
+
+**Data**: 2026-07-26
+
+**Pergunta que motivou a decisão.** O D-060 provou que, no dev, o P&L é dominado por uma **aposta de
+setor** (produtor×processador), não pela dispersão cross-section de clima. O D-063 abriu o "hedge de
+setor" como o jeito de "arrumar o que temos". A pergunta operacional: *como o hedge de setor entra sem
+comprometer a disciplina do holdout?* Três formas foram postas ao time (2026-07-26): (1) decomposição
+do primário; (2) segunda estratégia negociada com inferência própria; (3) substituir o contrato
+congelado. **O time escolheu (1).**
+
+**Decisão.** O hedge de setor entra como uma **regra de decomposição pré-registrada**, não como mudança
+da estratégia negociada. `backtest/diagnostics.py::sector_orthogonal_decomposition` congela, antes do
+holdout, uma separação **aditiva e exata** do retorno bruto do livro em (i) a parte alinhada à aposta
+de setor e (ii) o resíduo ortogonal a ela. A cada pregão projeta os pesos reais `w` sobre os pesos da
+carteira setorial ingênua `s` (mesma máquina, mesmos caps/elegibilidade):
+
+```
+c = ⟨w,s⟩/⟨s,s⟩ ;  w_setor = c·s ;  w_clima = w − c·s  (⟨w_clima, s⟩ = 0)
+g_setor + g_clima = Σ w·r = g_livro   (linearidade exata)
+```
+
+A separação usa **só `w` e `s`, nunca retornos** — logo é return-agnóstica e congelável agora. Na
+Fase 6 esta mesma regra é aplicada ao resultado do holdout: reporta-se o retorno do livro congelado
+**e** sua fatia climática (resíduo) vs. de setor (projeção). No dev roda como demonstração descritiva
+e **circular** (Bloco C′ do `run_diagnostics_dev.py`); a inferência mora só no holdout.
+
+**Por quê (1) e não (2)/(3).** (2) transformaria o resíduo num segundo livro com inferência própria,
+**multiplicando a família de testes** num holdout de apenas 5 anos-safra (N mínimo) — dividiria o α e
+enfraqueceria os dois testes por pouco retorno marginal. (3) redesenharia o contrato **congelado**
+reagindo a um diagnóstico visto no **dev** — exatamente o "design no dev" que o congelamento existe
+para impedir. (1) entrega o essencial — **medir e mostrar** quanto do retorno do holdout é clima vs
+setor — sem gasto extra de α, sem tocar no que está congelado e sem reagir ao dev de forma que invalide.
+É a resposta madura à fraqueza que nós mesmos encontramos (D-060): a estratégia não muda; ela aprende a
+se explicar. Se a decomposição do holdout mostrar um resíduo climático forte, aí sim (2) pode ser
+pré-registrado como passo seguinte — mas com fato novo, não sobre o dev.
+
+**Distinção do D-060.** `sector_climate_decomposition` (D-060) — incremento sobre a ingênua +
+regressão ex-post no spread — permanece como descritivo do dev. O `sector_orthogonal_decomposition`
+(D-064) é a decomposição **aditiva/exata/return-agnóstica** que vai ao holdout. As duas coexistem; a
+segunda é a pré-registrada.
+
+**Custo/limitação declarado.** (a) A decomposição é **aritmética** (soma de contribuições diárias
+brutas), não composta, e é feita **antes de custos** — custos não são lineares na projeção e são
+reportados à parte; declarar isso ao ler o holdout. (b) A "direção de setor" é a carteira ingênua
+produtor+/processador− ponderada igual; é uma escolha de eixo (defensável porque é exatamente o viés
+que o D-060 achou), não a única projeção possível — beta de mercado é um segundo eixo deixado como
+robustez futura, não pré-registrado aqui. (c) Não é hedge negociado: o livro continua carregando a
+aposta de setor; a decomposição a **mede**, não a remove da execução. (d) O número do dev é circular e
+não vale como validação; contrato congelado e holdout seguem intactos.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

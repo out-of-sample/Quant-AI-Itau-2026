@@ -1371,6 +1371,35 @@ teste com N mínimo e alguns são holdout-only). Contrato congelado e holdout in
 
 ---
 
+## 2026-07-26 — Fase 5, hedge de setor como decomposição pré-registrada (D-064)
+
+**Uso**: implementar o thread de "arrumar o que temos" aberto no D-063 — isolar o resíduo climático da
+aposta de setor confirmada no D-060. A IA ancorou-se primeiro na máquina existente (`diagnostics.py`,
+`build_naive_sector_schedule`), desenhou a projeção em espaço de pesos, e trouxe ao time o fork de
+governança (como o hedge entra: decomposição × segunda estratégia × substituir o congelado) antes de
+codar, porque toca o contrato congelado e o orçamento de testes do holdout.
+
+**Valor real**: em vez de "resolver" a contaminação de setor mexendo na estratégia (tentador e errado),
+a IA formulou a Alternativa 1 — uma decomposição **aditiva, exata e return-agnóstica** (`c = ⟨w,s⟩/⟨s,s⟩`;
+`w_clima = w − c·s`, ortogonal a `s`) que separa o retorno do holdout em setor × clima **sem** mudar o
+que se negocia e **sem** gastar α extra. Reusou integralmente a carteira setorial ingênua do D-060 como
+direção de projeção. Cinco testes unitários fixam as propriedades duras (aditividade, ortogonalidade,
+independência de retorno, direção nula, colunas erradas).
+
+**O acerto de processo (contraste com o D-062)**: aqui a IA **não** oscilou. Parou no fork certo,
+explicou as três opções em linguagem simples a pedido do time, recomendou a (1) com o porquê (não
+multiplicar testes num N=5; não redesenhar o congelado reagindo ao dev) e só implementou após o "ok".
+A disciplina do congelamento foi tratada como restrição dura, não como obstáculo a contornar.
+
+**Validação humana**: separação provada return-agnóstica por teste (retornos diferentes → mesmo split
+de pesos); aditividade exata contra o bruto do livro; rodada descritiva no dev 2018/19 (circular). O
+resíduo de ortogonalidade deu **9,7e-17** (zero de máquina ⇒ projeção exata) e o resíduo climático
+(+2,53%, 6,4% do bruto) bateu com o incremento do D-060 (+2,73%) por método independente — dois
+caminhos concordando que o clima é fino e o setor domina no dev. A leitura de lucro é exclusiva do
+holdout (Fase 6).
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
