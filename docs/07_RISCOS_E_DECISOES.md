@@ -2270,6 +2270,87 @@ fonte primária** antes de qualquer citação no relatório (regra do `10_REFERE
 congelado (`strategy_spec.py`/`operational_spec.py`) e o artefato H′ (D-061) **não mudam**; o holdout
 segue lacrado.
 
+> **Refinamento posterior (2026-07-26, ver D-063):** a rejeição da Rumo aqui apoia-se em "volume
+> anual insensível", o que é verdadeiro mas incompleto. Sob capacidade travada o sinal **não some —
+> migra do volume para o frete/margem**, e é esse canal, de sinal ambíguo e abafado por take-or-pay,
+> que sustenta a rejeição. O D-063 corrige a formulação e enumera o espaço completo de veículos.
+
+---
+
+### D-063 — Correção do canal Rumo e enumeração estruturada do espaço de monetização de H1 (Fase 5)
+
+**Data**: 2026-07-26
+
+**Pergunta que motivou a decisão.** Ao revisar o D-062, o time cobrou **exaustividade**: *e outros
+canais de transporte (portos, hidrovias)? e outras variantes de spread? e outros jeitos de arrumar a
+estratégia que já temos?* O D-062 auditou dois candidatos a fundo, mas não mapeou o espaço inteiro
+nem julgou o canal da Rumo com a precisão devida. Esta decisão fecha as duas lacunas, **return-agnóstica**.
+
+**Correção do canal da Rumo (dívida de honestidade do D-062).** O D-062 rejeitou a Rumo por "volume
+anual insensível à revisão marginal". Isso é verdadeiro mas trata o amortecimento como total, e não é.
+Sob **capacidade estruturalmente travada** (demanda por logística > oferta no Brasil), uma safra marginal
+não desaparece do sinal — **ela migra do canal de volume para o canal de frete/margem**: mais grão
+disputando trilho/porto escassos pressiona o frete para cima. O que mata a Rumo como veículo do *nosso*
+sinal não é a ausência de canal, e sim que esse canal remanescente é **quádruplo-amortecido**: (i)
+**abafado por take-or-pay** — boa parte da receita é contratada e não responde ao spot; (ii) **de sinal
+ambíguo, possivelmente perverso** — safra cheia → congestão → frete/margem *sobem*, o que teria o sinal
+**oposto** ao do produtor sob H′ (a Rumo *ganharia* com a fartura que prejudica o produtor); (iii)
+**regulado** (tarifas de ferrovia/porto têm tetos), o que trunca a transmissão; (iv) o elo
+**margem→lucro→retorno** nunca foi estabelecido para a RAIL3 — seria um segundo H2a a provar, com o
+mesmo N de 5 anos-safra. Conclusão inalterada, motivo afiado: **a Rumo não entra**, agora porque seu
+canal vivo (margem) é abafado, ambíguo no sinal e não-estabelecido — não porque o veículo seja inerte.
+
+**Enumeração estruturada (a moldura "nenhuma pedra sem virar").** Cada veículo/estrutura julgado pelos
+cinco filtros do reframe do D-062 (sensibilidade **limpa** ao nowcast de produção **marginal
+brasileira**; liquidez B3; expressão da ineficiência **brasileira**; validável no **dev** — não
+holdout-only; reuso do motor). `Sens.` = sensibilidade ao sinal; `Val.` = validável no dev.
+
+| Veículo / estrutura | Canal econômico | Sens. | Líquido BR | Inefic. BR | Val. dev | Veredito |
+|---|---|---|---|---|---|---|
+| **Ações produtor×processador (atual, D-061)** | dano de volume próprio (H′/Q) | fraca mas limpa | não (produtor ilíquido) | sim | sim | **retido** (mais defensável) |
+| Ferrovia — Rumo/RAIL3 | volume→frete/margem | ambígua, abafada | sim (R$108M/d) | parcial | sim | rejeitado (canal abafado/perverso) |
+| Porto grão — Santos Brasil/STBP3 | throughput | ~nula p/ grão | sim | parcial | sim | rejeitado (Tecon = contêiner, não bulk de grão; mesma capacidade) |
+| Hidrovia — Hidrovias do Brasil/HBSA3 | volume de barcaça (grão-pesado) | melhor-casada dos transportes | médio | sim | **não** (IPO set/2020 → holdout-only) | fora (não-validável, como JALL3) |
+| Caminhão / rodoviário | frete rodoviário | sinal certo (transbordo) | **sem pure-play B3** | — | — | inexistente como veículo |
+| Spread soja–milho (D-062/d) | preço diferencial | real (corr −0,33) | via CBOT | **contradiz** (CBOT eficiente) | sim | rejeitado (canal de preço morto + trade clássico + motor do zero) |
+| Basis Brasil−Chicago (local − CBOT) | prêmio local de oferta | **a mais limpa** teoricamente | **não** (sem instrumento líquido acessível) | sim | não | ideal no papel, inacessível na prática |
+| Crush spread (soja→farelo+óleo) | margem de esmagamento | de processamento, não de produção | via CBOT | não | sim | fora do escopo (não é surpresa de quantidade) |
+| Insumos / fertilizante (montante) | custo de insumo (canal C) | global, não BR | não-BR | não | — | fora (é o `C` global inseparável do D-034) |
+
+Padrão que emerge: **todo veículo de transporte herda o mesmo gargalo de capacidade** (o sinal migra
+para margem, de sinal ambíguo) exceto a hidrovia — que seria a melhor-casada, mas é **holdout-only**
+por IPO em 2020, logo não-validável no dev pela mesma regra que barrou JALL3 (D-052). E **todo veículo
+de preço** (spread, basis, crush) esbarra no canal de preço morto (H2a, 6×) e/ou na eficiência do CBOT.
+Confirma a verdade estrutural do D-062 com o espaço **mapeado**, não só amostrado: o gargalo é do elo
+**sinal→ativo**.
+
+**"Outros jeitos de arrumar o que temos" — o thread retido.** A cobrança tem uma terceira frente que
+**não** é troca de veículo: melhorar a estrutura atual. As alavancas de re-ponderação (materialidade,
+não-linearidade) já foram usadas no D-061 (colapso 1→8 estados); a expansão de universo foi varrida
+(nenhum nome líquido faltando). Resta a alavanca com maior lastro empírico: o D-060 provou que o P&L do
+dev é **aposta de setor** (spread proteína×produtor, R²=0,84), não alfa de clima. Logo o jeito
+substantivo de "arrumar" é **isolar o resíduo climático do beta de setor** — um **hedge de setor
+pré-registrado** sobre o livro atual. Isso ataca o problema confirmado (contaminação de setor), é
+return-agnóstico, reusa o maquinário e materializa o "market-neutral feito direito" que o R23 exige.
+**Aberto como thread próprio (será D-064 quando implementado)**; não altera o contrato congelado.
+
+**Decisão.** (i) Corrigir a formulação do canal Rumo no registro (feito acima e como nota no D-062).
+(ii) Registrar a enumeração como ativo de rigor do relatório — a busca por veículo alternativo está
+**encerrada e mapeada**, não reabrir sem fato novo. (iii) Abrir o hedge de setor como o thread de
+"arrumar o que temos", a ser pré-registrado e testado **return-agnóstico** antes do holdout.
+
+**Por quê.** A cobrança de exaustividade é legítima e a resposta honesta não é "já olhei" e sim o mapa
+completo com o critério explícito de rejeição de cada célula — isso *é* o entregável de rigor. E a
+correção da Rumo paga uma dívida de honestidade: uma decisão recém-tomada estava certa na conclusão e
+imprecisa no argumento; consertar o argumento vale mais que defender a redação.
+
+**Custo/limitação declarado.** (a) A enumeração é qualitativa/return-agnóstica — não roda RAIL3/STBP3/
+HBSA3 (queimaria teste com N mínimo e alguns são holdout-only). (b) O basis Brasil−Chicago é declarado
+"ideal no papel" sem instrumento — é uma admissão de limite, não um plano. (c) O hedge de setor ainda
+é uma **abertura**, não um resultado; seu valor depende de o resíduo climático sobreviver à
+neutralização — o que pode falhar, e falhar seria um achado válido. (d) Contrato congelado e holdout
+seguem intocados.
+
 ---
 
 ## Como registrar uma decisão nova

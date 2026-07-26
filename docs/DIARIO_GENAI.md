@@ -1343,6 +1343,34 @@ falsificação que as antigas, antes de virar recomendação.
 
 ---
 
+## 2026-07-26 — Fase 5, correção do canal Rumo e enumeração estruturada (D-063)
+
+**Uso**: o time cobrou a **exaustividade** do D-062 — "e outros canais de transporte? e outras variantes
+de spread? e outros jeitos de arrumar o que temos?". A IA mapeou o espaço inteiro de veículos contra os
+cinco filtros do reframe e afiou o argumento da Rumo.
+
+**Valor real**: transformou uma resposta amostral ("já olhei Rumo e spread") num **mapa completo** —
+ferrovia, porto (STBP3), hidrovia (HBSA3), caminhão, spread soja–milho, basis Brasil−Chicago, crush,
+insumos — cada célula com o critério explícito de rejeição. O padrão que emergiu é o entregável: todo
+transporte herda o gargalo de capacidade (exceto a hidrovia, que é holdout-only por IPO 2020) e todo
+veículo de preço esbarra no canal morto/CBOT. Confirma a verdade estrutural do D-062 com o espaço
+mapeado, não só amostrado. Também abriu o thread substantivo de "arrumar o que temos": o **hedge de
+setor** (isolar o resíduo climático do beta confirmado no D-060).
+
+**O que a IA errou (e a correção que este registro paga)**: no D-062 a IA rejeitou a Rumo dizendo
+"volume anual insensível". Correto na conclusão, **impreciso no argumento**: sob capacidade travada o
+sinal não some — **migra do volume para o frete/margem**. O que mata a Rumo não é ausência de canal e
+sim que o canal remanescente é abafado por take-or-pay, de **sinal ambíguo/possivelmente perverso**
+(safra cheia → congestão → margem da Rumo *sobe*, oposto do produtor), regulado e com o elo
+margem→retorno nunca estabelecido. A própria IA identificou a imprecisão ao ser cobrada e corrigiu o
+registro. Lição: "certo na conclusão" não dispensa "certo no argumento" — consertar o raciocínio vale
+mais que defender a redação de uma decisão recém-tomada.
+
+**Validação humana**: return-agnóstica e documental; nada rodado (rodar RAIL3/STBP3/HBSA3 queimaria
+teste com N mínimo e alguns são holdout-only). Contrato congelado e holdout intocados.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

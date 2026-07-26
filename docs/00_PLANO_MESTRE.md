@@ -343,6 +343,15 @@ Andamento:
   ações do D-061**; nenhum veículo novo entra; a divergência soja–milho vira evidência de apoio no
   relatório; a auditoria inteira vira ativo de rigor. Verdade estrutural declarada: não há veículo
   brasileiro líquido com sensibilidade limpa a um nowcast de produção marginal (confirma R1/R7).
+- ✅ **Correção do canal Rumo e enumeração estruturada (D-063, 2026-07-26)**: em resposta à cobrança
+  de exaustividade, (1) afiou a rejeição da Rumo — sob capacidade travada o sinal migra do volume para
+  o **frete/margem**, canal abafado por take-or-pay, de sinal ambíguo/perverso, regulado e não-estabelecido
+  (conclusão inalterada, motivo mais preciso); (2) **mapeou** o espaço inteiro de veículos (ferrovia,
+  porto STBP3, hidrovia HBSA3, caminhão, spread, basis Brasil−Chicago, crush, insumos) contra os cinco
+  filtros — todo transporte herda o gargalo de capacidade exceto a hidrovia, que é holdout-only; todo
+  veículo de preço esbarra no canal morto/CBOT; (3) abriu o **hedge de setor** como o thread de "arrumar
+  o que temos" (isolar o resíduo climático do beta de setor confirmado no D-060), a ser pré-registrado
+  return-agnóstico (futuro D-064). Busca por veículo alternativo **encerrada e mapeada**.
 
 ### Fase 6 — Holdout
 
