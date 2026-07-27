@@ -437,10 +437,25 @@ Andamento:
   `f97093b9…3f9e` → `cfb44198…2865`, fontes 60 → 63 arquivos, `ready=true` restaurado, os seis
   parquets de input **byte-idênticos**. Testes 564→582.
 
+- ⚠️ **Tentativa 1 do holdout perdida (D-074, 2026-07-27)**: a rodada foi autorizada, executada e
+  **falhou em 10 segundos** no bloco 9, com `ValueError: blocos sobrepostos`. Causa: a grade
+  `HOLDING_SENSITIVITY_SESSIONS = (10, 42)` era inviável no calendário real — com 42 pregões, o
+  bloco #5 de 2023/24 encerra em 10/01/2025 e o bloco #0 de 2024/25 executa em 08/01/2025. Uma
+  fronteira de ano-safra entre cinco; some num calendário sem feriados. **Nenhum resultado foi
+  observado**: `published_work_dir: False`, sem `RESULT_RECORD`, stdout de 0 bytes, traceback sem
+  valor econômico. Decisão: remover o 42 (remoção, não substituição), autorizar a tentativa 2 com
+  o registro da 1 preservado e renomeado, e **manter a trava** — a tentativa 3 exige novo D-NNN.
+  `PRIOR_ATTEMPTS` entra no hash do contrato e o executor recusa começar se a trilha sumir.
+  `IN_RUN_VARIANTS` fica em 23 de propósito, para a correção não baixar a barra do Deflated
+  Sharpe. Ensaio geral sintético sobre o calendário real virou teste permanente e reproduziu a
+  falha antes da correção. Hash `cfb44198…2865` → `a4a70b2b…1a28f`; parquets byte-idênticos;
+  testes 582→594.
+
 ### Fase 6 — Holdout
 
-O bloqueio técnico foi fechado em D-072 e o que será reportado foi congelado em D-073. O
-próximo passo é uma decisão humana exclusiva:
+O bloqueio técnico foi fechado em D-072, o que será reportado foi congelado em D-073 e a
+tentativa 2 foi autorizada em D-074 após a perda da tentativa 1. O próximo passo é uma decisão
+humana exclusiva:
 autorizar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
 correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
 qualquer que seja. `ready=true` não equivale a autorização civil.

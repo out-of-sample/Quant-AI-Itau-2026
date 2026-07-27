@@ -119,9 +119,16 @@ TRIAL_LEDGER: tuple[tuple[str, str], ...] = (
     ("D-067", "ramo AGRO3×ADTV e elegibilidade da perna produtora"),
 )
 
-#: Variantes calculadas dentro da rodada única (blocos 2, 7, 8 e 9), contadas como tentativas
+#: Variantes tentadas dentro da rodada única (blocos 2, 7, 8 e 9), contadas como tentativas
 #: pelo critério conservador acima. 3 cenários de custo + 10 sensibilidades de parâmetro
 #: + 5 leave-one-name-out + 5 leave-one-crop-year-out.
+#:
+#: D-074 removeu o horizonte de 42 pregões da grade por inviabilidade de calendário, o que
+#: deixaria 9 sensibilidades computáveis em vez de 10. **O contador permanece em 23 de
+#: propósito.** Reduzi-lo para 22 baixaria o número de tentativas de 39 para 38 e, com ele, a
+#: barra do Deflated Sharpe — ou seja, a correção de um bug passaria a nos favorecer
+#: silenciosamente. O horizonte de 42 foi genuinamente tentado; apenas não era calculável.
+#: Contá-lo é a direção conservadora e mantém o número de tentativas insensível ao acidente.
 IN_RUN_VARIANTS: int = 23
 
 

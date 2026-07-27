@@ -15,7 +15,7 @@
   "input_manifest": {
     "bytes": 13860,
     "path": "data/interim/holdout/input_manifest.json",
-    "sha256": "80a87834899615673666d66a48b5e63832dbbd70cb2d5142166a31887d91fe54"
+    "sha256": "57255805d4470071645018c27f2885d574fef1c1f7f6fc40a4757b2c9ee0e0a8"
   },
   "inputs": {
     "cane_signal": {
@@ -49,7 +49,7 @@
       "sha256": "8132dea21c163d46f388e6c13d319271260fa5487661c361606b93f3ad26ccc1"
     }
   },
-  "logical_spec_sha256": "cfb441983e9f2584d006db66b0e7d5ecf036a6eacc72a10bf78138fdf7322865",
+  "logical_spec_sha256": "a4a70b2b1d766c12c728348d6bef2d9da91bf7dd77e61283e3bb20a65381a28f",
   "package_id": "holdout_v1_d072",
   "schema_version": 1
 }
