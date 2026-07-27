@@ -12,6 +12,7 @@ from quantagro.backtest.holdout import preflight_holdout
 from quantagro.backtest.holdout_spec import (
     ANALYSIS_STEPS,
     AUTHORIZATION_PHRASE,
+    PRIOR_ATTEMPTS,
     RESULT_RECORD,
     RUN_RECORD,
     WORK_DIR,
@@ -32,6 +33,16 @@ def _ready_report():
         work_dir_exists=False,
         ready=True,
     )
+
+
+def _archive_prior_attempts(root) -> None:
+    """A guarda de D-074 exige a trilha das tentativas anteriores preservada no root."""
+    for prior in PRIOR_ATTEMPTS:
+        path = root / str(prior["record"])
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps({"status": "failed", "attempt": prior["attempt"]}), encoding="utf-8"
+        )
 
 
 def _artifacts(primary_passed: bool = False) -> list[dict[str, object]]:
@@ -70,6 +81,7 @@ def test_falha_do_primario_nao_interrompe_e_so_publica_depois_do_selo(
         lambda inputs, preflight: _artifacts(primary_passed=False),
     )
 
+    _archive_prior_attempts(tmp_path)
     sealed = executor.execute_holdout_once(tmp_path, authorization=AUTHORIZATION_PHRASE)
     assert sealed["status"] == "sealed"
     assert capsys.readouterr().out == ""
@@ -91,6 +103,7 @@ def test_excecao_consumiu_tentativa_sem_publicar_resultado(monkeypatch, tmp_path
 
     monkeypatch.setattr(executor, "run_all_analyses", broken)
     with pytest.raises(RuntimeError, match="falha sintética"):
+        _archive_prior_attempts(tmp_path)
         executor.execute_holdout_once(tmp_path, authorization=AUTHORIZATION_PHRASE)
 
     run = json.loads((tmp_path / RUN_RECORD).read_text(encoding="utf-8"))
@@ -99,4 +112,5 @@ def test_excecao_consumiu_tentativa_sem_publicar_resultado(monkeypatch, tmp_path
     assert not (tmp_path / WORK_DIR).exists()
 
     with pytest.raises(HoldoutLockedError, match="registro da rodada única"):
+        _archive_prior_attempts(tmp_path)
         executor.execute_holdout_once(tmp_path, authorization=AUTHORIZATION_PHRASE)

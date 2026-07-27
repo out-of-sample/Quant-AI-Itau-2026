@@ -1615,6 +1615,40 @@ foram incluídos e o hash refeito — ao custo de três recongelamentos numa ses
 limitação em D-073. (b) A primeira tentativa de edição do contrato falhou por asserção e deixou
 o módulo importado sem uso, pego pelo lint antes de qualquer commit.
 
+## 2026-07-27 — Tentativa 1 do holdout perdida e corrigida (D-074)
+
+**Uso**: executar a rodada única autorizada; depois, diagnosticar a falha, medir o impacto de
+cada opção de correção e implementar a escolhida sem contaminar o experimento.
+
+**Valor real**: o diagnóstico foi feito **sem tocar em nenhum dado selado**. A causa era
+aritmética de calendário, então bastou extrair as datas de pregão do COTAHIST bruto (só datas,
+nenhum preço) e testar a grade congelada contra elas. Isso localizou a colisão exata — bloco #5
+de 2023/24 encerrando em 10/01/2025 contra o bloco #0 de 2024/25 executando em 08/01/2025, uma
+fronteira entre cinco — e provou que os horizontes 21 e 10 estavam sãos. Também mostrou que o
+valor 42 só aparece no bloco 9, de onde saiu a garantia de que a correção não podia tocar o
+primário. O ensaio geral que faltava virou teste permanente e reproduziu a falha real antes da
+correção.
+
+**Validação humana**: o time recusou a primeira moldura da IA (ver abaixo) e exigiu proporção.
+Antes de qualquer correção, foram verificados um a um: ausência de artefato publicado, ausência
+de `RESULT_RECORD`, stdout de 0 bytes e varredura das 36 linhas de traceback em busca de valor
+econômico — nenhuma. Depois da correção, os seis parquets de input foram conferidos como
+byte-idênticos em cada recongelamento.
+
+**O que a IA errou**: (a) **o erro central foi antes da falha**: revisei o pacote nesta mesma
+sessão, li a grade de sensibilidade, cronometrei o motor e declarei que o risco da rodada era
+energia e RAM. A grade inviável era verificável em segundos, sem tocar em retorno, e não foi
+verificada — a tentativa perdida é consequência direta disso. (b) Ao reportar, a IA apresentou
+o incidente como possível fim de linha metodológico; o time apontou que corrigir bug de código
+não é reformular tese para encaixar resultado, e que a distinção é justamente o que a regra
+protege. A análise seguinte confirmou o time: a correção não carrega informação sobre retornos.
+(c) A IA quase deixou passar que remover um item da grade **abaixaria** a barra do Deflated
+Sharpe de 39 para 38 tentativas — a salvaguarda de manter `IN_RUN_VARIANTS` em 23 foi criada
+depois de perceber que a correção nos favoreceria em silêncio. (d) Duas edições de teste
+falharam por asserção de unicidade em texto repetido, e uma guarda nova quebrou dois testes
+existentes que rodavam em diretório temporário sem a trilha arquivada — corrigido nos fixtures,
+não afrouxando a guarda.
+
 ---
 
 ## Modelo de entrada (para as próximas)

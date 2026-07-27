@@ -36,6 +36,29 @@ from .strategy_spec import (
 
 PACKAGE_ID = "holdout_v1_d072"
 RUN_RECORD = "data/reference/holdout_run_record_v1.json"
+
+# D-074 — registro imutável das tentativas já consumidas.
+#
+# A trava do executor continua valendo: `RUN_RECORD` é criado em modo exclusivo e uma segunda
+# criação falha. Liberar o caminho exige **arquivar** a tentativa anterior aqui, o que só
+# acontece numa decisão pública datada. Apagar um registro de tentativa é proibido; renomear
+# sem declarar nesta tupla quebra o hash do contrato e trava o preflight.
+#
+# Consequência desejada: a contagem de tentativas é auditável no próprio contrato, e uma
+# terceira tentativa exigirá um novo D-NNN, não um `mv`.
+PRIOR_ATTEMPTS = (
+    {
+        "attempt": 1,
+        "record": "data/reference/holdout_run_record_v1_attempt1_failed.json",
+        "status": "failed",
+        "failed_at_block": 9,
+        "error": "blocos sobrepostos",
+        "published_work_dir": False,
+        "results_observed": False,
+        "cause": "grade de horizonte inviável no calendário real; nenhum resultado foi lido",
+    },
+)
+NEXT_ATTEMPT = len(PRIOR_ATTEMPTS) + 1
 RESULT_RECORD = "data/reference/holdout_result_v1.json"
 WORK_DIR = "data/processed/holdout_v1"
 SOURCE_MANIFEST = "data/reference/holdout_source_attestations_v1.json"
@@ -81,7 +104,12 @@ H5_INFERENCE = "exact_crop_year_sign_flip"
 H5_VETO = H5_GEOGRAPHIC_PLACEBO
 
 ADTV_SENSITIVITY_BRL = (4_000_000.0, 12_000_000.0)
-HOLDING_SENSITIVITY_SESSIONS = (10, 42)
+# D-074: 42 saiu da grade por INVIABILIDADE de calendário, não por resultado. Com 42 pregões o
+# bloco #5 de 2023/24 encerra em 10/01/2025 enquanto o bloco #0 de 2024/25 executa em
+# 08/01/2025 — blocos sobrepostos, que o motor corretamente recusa. A colisão só existe no
+# calendário real da B3 (feriados) e em uma única fronteira de ano-safra. Nenhum valor novo foi
+# escolhido: a grade perde um item, não ganha. Travado em tests/test_holdout_pipeline_synthetic.py.
+HOLDING_SENSITIVITY_SESSIONS = (10,)
 TOTAL_SIGNAL_LAG_SENSITIVITY_DAYS = (14, 21)
 GRAIN_CAP_SENSITIVITY = (0.30, 0.50)
 CANE_CAP_SENSITIVITY = (0.10, 0.20)
@@ -209,7 +237,7 @@ CLAIM_REQUIREMENTS = {
 
 # Tripwire civil: qualquer alteração do payload lógico exige atualizar este valor numa decisão
 # posterior e explicitamente anterior ao unlock. O hash não depende do whitespace dos fontes.
-EXPECTED_LOGICAL_SPEC_SHA256 = "cfb441983e9f2584d006db66b0e7d5ecf036a6eacc72a10bf78138fdf7322865"
+EXPECTED_LOGICAL_SPEC_SHA256 = "a4a70b2b1d766c12c728348d6bef2d9da91bf7dd77e61283e3bb20a65381a28f"
 
 
 def canonical_spec_payload() -> dict[str, object]:
@@ -271,6 +299,8 @@ def canonical_spec_payload() -> dict[str, object]:
         "terminal_events": TERMINAL_EVENTS,
         "claims": CLAIM_REQUIREMENTS,
         "run_record": RUN_RECORD,
+        "prior_attempts": PRIOR_ATTEMPTS,
+        "next_attempt": NEXT_ATTEMPT,
         "result_record": RESULT_RECORD,
         "work_dir": WORK_DIR,
     }
@@ -358,7 +388,7 @@ def validate_holdout_spec() -> None:
         raise ValueError("veto H5 foi alterado")
     if ADTV_FLOOR_BRL != 8_000_000 or ADTV_SENSITIVITY_BRL != (4_000_000.0, 12_000_000.0):
         raise ValueError("grid de liquidez foi alterado")
-    if HOLDING_SESSIONS != 21 or HOLDING_SENSITIVITY_SESSIONS != (10, 42):
+    if HOLDING_SESSIONS != 21 or HOLDING_SENSITIVITY_SESSIONS != (10,):
         raise ValueError("grid de horizonte foi alterado")
     if TOTAL_SIGNAL_LAG_SENSITIVITY_DAYS != (14, 21):
         raise ValueError("grid de lag total foi alterado")

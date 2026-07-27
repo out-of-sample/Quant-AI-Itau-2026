@@ -28,7 +28,9 @@ from .holdout_spec import (
     ANALYSIS_STEPS,
     AUTHORIZATION_PHRASE,
     CLAIM_REQUIREMENTS,
+    NEXT_ATTEMPT,
     PACKAGE_ID,
+    PRIOR_ATTEMPTS,
     RESULT_RECORD,
     RUN_RECORD,
     WORK_DIR,
@@ -166,12 +168,21 @@ def execute_holdout_once(
     final_dir = base / WORK_DIR
     if final_dir.exists() or result_path.exists():
         raise HoldoutLockedError("saída/result record preexistente; rodada não pode começar")
+    for prior in PRIOR_ATTEMPTS:
+        archived = base / str(prior["record"])
+        if not archived.exists():
+            raise HoldoutLockedError(
+                f"registro da tentativa {prior['attempt']} sumiu de {prior['record']}; "
+                "apagar trilha de tentativa é proibido"
+            )
 
     started_at = _utc_now()
     run_record: dict[str, object] = {
         "schema_version": 1,
         "package_id": PACKAGE_ID,
         "status": "started",
+        "attempt": NEXT_ATTEMPT,
+        "prior_attempts": [dict(item) for item in PRIOR_ATTEMPTS],
         "started_at": started_at,
         "logical_spec_sha256": report.logical_spec_sha256,
         "input_manifest_sha256": report.input_manifest_sha256,

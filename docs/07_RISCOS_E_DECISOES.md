@@ -2906,6 +2906,75 @@ continuam sendo cinco anos-safra: reportar por ano dá honestidade e distribuiç
 estatístico. (e) O beta é medido contra um único fator de mercado; neutralidade a fatores
 segue sendo pergunta de H4, não deste relatório.
 
+### D-074 — Tentativa 1 do holdout perdida por bug de viabilidade; correção e segunda tentativa
+
+**Data:** 2026-07-27
+
+**O que aconteceu.** A rodada única foi autorizada e executada. Ela **falhou em 10 segundos**,
+no bloco 9 (sensibilidades de parâmetro), com `ValueError: blocos sobrepostos`. Registro em
+`data/reference/holdout_run_record_v1_attempt1_failed.json`: `status: failed`,
+`published_work_dir: False`, sem `RESULT_RECORD`, sem diretório publicado, stdout de 0 bytes.
+
+**Causa, que é aritmética de calendário e não economia.** `HOLDING_SENSITIVITY_SESSIONS =
+(10, 42)`, congelado em D-068, era inviável. `build_trade_blocks` encadeia blocos (a saída de um
+é a execução do seguinte) e encerra a série quando a decisão passa de 7/set. Com 42 pregões, o
+bloco #5 de 2023/24 encerra em **10/01/2025** enquanto o bloco #0 de 2024/25 executa em
+**08/01/2025** — dois dias de sobreposição, que o motor corretamente recusa. A colisão existe em
+**uma única fronteira de ano-safra entre cinco** e só aparece no calendário real da B3: num
+calendário de dias úteis sem feriados, encaixa. Horizontes 21 (base) e 10 não têm sobreposição.
+
+**Por que nenhum teste pegou.** O smoke do dev roda **um** ano-safra e só o horizonte base; os
+testes unitários usavam calendários sintéticos sem feriados. A combinação "grade de
+sensibilidade × cinco anos-safra reais" nunca foi exercitada antes de gastar a tentativa.
+
+**Nenhum resultado foi observado, e isso é verificável.** Os blocos 0–8 rodaram em memória —
+incluindo primário, H4 e H5 — mas a publicação é atômica e posterior ao selo, e
+`ALLOW_INTERMEDIATE_RESULT_DISPLAY` é `False`. Não houve artefato, nem temporário; o traceback
+de 36 linhas não contém um único valor econômico. Ninguém, humano ou máquina, viu qualquer
+resultado do holdout.
+
+**Decisão.** (a) Remover o horizonte de 42 da grade — **remoção, não substituição**: nenhum
+valor novo foi escolhido, o que evita introduzir um grau de liberdade após a falha. A
+inviabilidade do 42 vira achado reportável. (b) Autorizar a **tentativa 2**, com o registro da
+tentativa 1 **preservado e renomeado**, nunca apagado. (c) **Manter a trava** do executor: uma
+terceira tentativa exigirá novo D-NNN.
+
+**Por que a exceção é admissível.** A propriedade que a regra de tentativa única protege é *não
+condicionar desenho a resultado observado*. Essa propriedade está intacta e atestada por
+máquina. A correção é derivada de feriados da bolsa e não carrega informação alguma sobre
+retornos, de modo que uma mudança agora é informacionalmente indistinguível de uma mudança
+anterior à primeira tentativa. Não estamos reformulando tese para encaixar resultado — estamos
+corrigindo um defeito de especificação numa checagem descritiva.
+
+**Como a exceção fica auditável em vez de arbitrária.** `PRIOR_ATTEMPTS` entra no payload
+lógico do contrato: o próprio hash passa a declarar que houve uma tentativa anterior, com
+causa e status. Renomear o registro sem declará-lo ali quebra o preflight. O executor grava
+`attempt: 2` e **recusa começar se algum registro arquivado tiver sumido** — apagar trilha é
+proibido por código, não por convenção.
+
+**Salvaguarda contra nos favorecermos sem querer.** Remover um item da grade deixaria 9
+sensibilidades computáveis em vez de 10, o que reduziria o número de tentativas de D-073 de 39
+para 38 e **baixaria a barra** do Deflated Sharpe. `IN_RUN_VARIANTS` permanece em **23** de
+propósito: o horizonte de 42 foi genuinamente tentado, apenas não era calculável. O número de
+tentativas segue 39 e é insensível ao acidente.
+
+**Ensaio geral, que faltou antes.** `tests/test_holdout_pipeline_synthetic.py` executa
+`run_all_analyses` de ponta a ponta sobre inputs fabricados no calendário real (fixture
+`tests/fixtures/b3_sessions_2020_2025.csv`, 1.495 pregões extraídos do COTAHIST bruto). Antes da
+correção o ensaio **reproduziu a falha real**; depois, cobre os blocos 0–10 inclusive
+atribuição e serialização, que a tentativa 1 nunca alcançou. Um teste trava por `monkeypatch`
+que o ensaio é cego a parquets reais. Nenhum outro bug latente apareceu.
+
+**Custo/limitação declarado.** (a) Uma tentativa foi consumida; o histórico registra
+permanentemente que a primeira execução falhou, e o relatório dirá isso. (b) A sensibilidade de
+horizonte fica **assimétrica** — só o lado curto (10 pregões) é reportado, e a assimetria é
+declarada, não disfarçada. (c) Um avaliador hostil pode sustentar que uma regra sem exceção
+cedeu na primeira vez que doeu; a defesa é a evidência de que nada foi observado, não a
+alegação de boa-fé. (d) O ensaio sintético prova que o *caminho* executa, não que os dados
+reais não têm patologia própria: uma segunda falha continua possível e consumiria a tentativa
+2. (e) O hash lógico mudou de `cfb44198…2865` para `a4a70b2b…1a28f`; os seis parquets de input
+permaneceram **byte-idênticos** em todo o processo.
+
 ---
 
 ## Como registrar uma decisão nova

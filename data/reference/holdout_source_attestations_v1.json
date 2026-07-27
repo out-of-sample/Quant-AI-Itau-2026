@@ -43,7 +43,7 @@
     "data/reference/holdout_inputs_summary_v1.json": {
       "bytes": 1782,
       "path": "data/reference/holdout_inputs_summary_v1.json",
-      "sha256": "73cb15aacdde1b8e97e1a1cd2b3969fc930ec9d7b4db1fd4b9acc13d91bd7827"
+      "sha256": "fa6f370f5bb9b63f619b225d09e8039f71ee2812b7a62583f43738a0679a1a12"
     },
     "data/reference/holdout_terminal_events_v1.json": {
       "bytes": 994,
@@ -121,9 +121,9 @@
       "sha256": "9a3cbceb334a0f368fdcd0f511094340333cd5f86736f591e029d9045ae2a778"
     },
     "src/quantagro/backtest/holdout_executor.py": {
-      "bytes": 10358,
+      "bytes": 10808,
       "path": "src/quantagro/backtest/holdout_executor.py",
-      "sha256": "03c6242c045e46492d285add82ffd3c841cc60f3427a1728747569015ef12513"
+      "sha256": "b231ce0baaadcba88159b4b045d687361a7e65100f6aae12f24fee9d4a50394f"
     },
     "src/quantagro/backtest/holdout_report.py": {
       "bytes": 5037,
@@ -131,14 +131,14 @@
       "sha256": "0627dd419ac5eb584005c48291eecf38bef5463e464e95c2619d285244964cdb"
     },
     "src/quantagro/backtest/holdout_report_spec.py": {
-      "bytes": 18703,
+      "bytes": 19263,
       "path": "src/quantagro/backtest/holdout_report_spec.py",
-      "sha256": "ae7b5699a2fedbf231eede5a6697b01d213be344499c897b87756d963760b9f9"
+      "sha256": "c9548f8e99a317c8dbb8da35ef9876e28f11ca6f8aa697edf457ef94413876e7"
     },
     "src/quantagro/backtest/holdout_spec.py": {
-      "bytes": 17374,
+      "bytes": 18942,
       "path": "src/quantagro/backtest/holdout_spec.py",
-      "sha256": "890040b4eecebc59733e613a95ec5f3f355a6ab2123f91ff06d625bca96bf01d"
+      "sha256": "0516ccf543482b5557b62eb713994402bd802d8c93ff5aa2c0c4bd3ca9df8f5d"
     },
     "src/quantagro/backtest/inputs.py": {
       "bytes": 6271,
@@ -316,7 +316,7 @@
       "sha256": "c828aa222711a6c64b34d815b46857e277bfaa326038455c3748c0f2da17a9c1"
     }
   },
-  "logical_spec_sha256": "cfb441983e9f2584d006db66b0e7d5ecf036a6eacc72a10bf78138fdf7322865",
+  "logical_spec_sha256": "a4a70b2b1d766c12c728348d6bef2d9da91bf7dd77e61283e3bb20a65381a28f",
   "package_id": "holdout_v1_d072",
   "schema_version": 1
 }
