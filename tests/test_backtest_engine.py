@@ -90,6 +90,10 @@ def test_materializa_h_prime_e_zerada_sem_dois_lados_economicos():
     assert schedule.operational_scores.loc[blocks[0].execution_date, "BRFS3"] == 1.0
     assert schedule.target_weights.loc[blocks[0].execution_date, "AGRO3"] < 0
     assert schedule.target_weights.loc[blocks[0].execution_date, "BRFS3"] > 0
+    assert schedule.decisions.iloc[0]["agro3_eligible"]
+    assert schedule.decisions.iloc[0]["agro3_active"]
+    assert schedule.decisions.iloc[0]["active_grain_producers"] == 1
+    assert schedule.decisions.iloc[0]["active_grain_processors"] == 1
 
     membership.loc[decision, "BRFS3"] = False
     flat = build_target_schedule(blocks, grain, cane, membership)

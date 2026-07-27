@@ -1454,6 +1454,31 @@ por 11 testes puros; motor congelado intocado. Mecanismo, não retorno; holdout 
 
 ---
 
+## 2026-07-26 — Fase 5, ramo AGRO3×ADTV (D-067)
+
+**Uso**: fechar antes do holdout o maior ramo operacional restante: a AGRO3 pode nunca, às vezes ou
+sempre passar o piso de liquidez. A IA reconciliou o contrato D-055 com o motor real e identificou
+que a decisão correta não era escolher uma carteira para cada cenário, mas tornar auditável a regra
+PIT já congelada em cada data `D`.
+
+**Valor real**: o motor passou a expor elegibilidade/atividade da AGRO3 e profundidade ativa dos dois
+lados econômicos. A auditoria return-agnóstica classifica a trajetória e conta blocos com zero, um ou
+dois produtores, sem ler preços ou retornos. A interpretação também foi pré-registrada: se a AGRO3
+continuar fora, resultado positivo não será vendido como dispersão cross-sectional entre produtores;
+se for intermitente, subgrupos ficam descritivos e não criam novos p-valores.
+
+**Validação humana**: testes sintéticos cobrem os três estados
+`never_eligible`/`intermittent`/`always_eligible`, schema incompleto, atividade impossível sem
+elegibilidade e os metadados produzidos pela agenda real. O piso R$8 milhões, os pesos, o teste
+primário e o bloqueio do holdout não foram alterados; a suíte passou de 519 para 523 testes.
+
+**O que a IA errou**: a primeira fixture contou dois produtores a partir da elegibilidade da AGRO3,
+mesmo num caso sintético em que ela estava elegível mas sem score. A revisão distinguiu corretamente
+`eligible` de `active`, adicionou uma trava de consistência e passou a medir profundidade somente nos
+nomes que de fato chegam ao painel/carteira. O lint também detectou e corrigiu a ordem de imports.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

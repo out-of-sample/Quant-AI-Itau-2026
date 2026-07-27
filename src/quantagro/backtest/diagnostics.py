@@ -29,6 +29,7 @@ explicar (quanto foi setor, quanto foi clima). Distinta do ``sector_climate_deco
 from __future__ import annotations
 
 from collections.abc import Sequence
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -38,6 +39,90 @@ from .operational_spec import PROCESSORS, PRODUCERS, TradeBlock
 from .strategy_spec import GRAIN_NAMES, UNIVERSE
 
 _HELD_TOL = 1e-12
+_AGRO3_BRANCH_LABELS = ("never_eligible", "intermittent", "always_eligible")
+
+
+@dataclass(frozen=True)
+class Agro3LiquidityAudit:
+    """Resumo return-agnóstico do ramo de liquidez pré-registrado em D-067."""
+
+    branch: str
+    decisions: int
+    eligible_decisions: int
+    active_decisions: int
+    two_producer_decisions: int
+    one_producer_decisions: int
+    no_producer_decisions: int
+    core_available_decisions: int
+
+
+def audit_agro3_liquidity(decisions: pd.DataFrame) -> Agro3LiquidityAudit:
+    """Classifica a trajetória PIT da AGRO3 sem consultar preço ou retorno.
+
+    A classificação é feita sobre cada data de decisão, nunca sobre uma média do holdout:
+
+    - ``never_eligible``: AGRO3 não passa o filtro em nenhuma decisão;
+    - ``intermittent``: entra e sai mecanicamente conforme o ADTV21 conhecido em ``D``;
+    - ``always_eligible``: passa em todas as decisões.
+
+    ``active`` exige simultaneamente elegibilidade e score válido. A profundidade da perna
+    produtora é contada sobre os grãos ativos, pois é essa seção transversal que chega ao
+    teste/carteira. O resultado é puramente operacional e não cria subtestes por regime.
+    """
+    required = {
+        "agro3_eligible",
+        "agro3_active",
+        "active_grain_producers",
+        "active_grain_processors",
+    }
+    missing = required - set(decisions.columns)
+    if missing:
+        raise ValueError(f"auditoria AGRO3×ADTV sem colunas: {sorted(missing)}")
+    if decisions.empty:
+        raise ValueError("auditoria AGRO3×ADTV exige ao menos uma decisão")
+
+    eligible = decisions["agro3_eligible"]
+    active = decisions["agro3_active"]
+    if not pd.api.types.is_bool_dtype(eligible.dtype) or not pd.api.types.is_bool_dtype(
+        active.dtype
+    ):
+        raise ValueError("elegibilidade/atividade da AGRO3 devem ser booleanas")
+    if eligible.isna().any() or active.isna().any() or (active & ~eligible).any():
+        raise ValueError("AGRO3 ativa exige elegibilidade completa e verdadeira")
+
+    producers = decisions["active_grain_producers"]
+    processors = decisions["active_grain_processors"]
+    if (
+        producers.isna().any()
+        or processors.isna().any()
+        or not producers.isin((0, 1, 2)).all()
+        or not processors.isin((0, 1, 2)).all()
+    ):
+        raise ValueError("contagens ativas de produtor/processador devem pertencer a {0,1,2}")
+    if (active & producers.eq(0)).any() or (~active & producers.eq(2)).any():
+        raise ValueError("profundidade produtora é incompatível com a atividade da AGRO3")
+
+    total = len(decisions)
+    eligible_count = int(eligible.sum())
+    if eligible_count == 0:
+        branch = "never_eligible"
+    elif eligible_count == total:
+        branch = "always_eligible"
+    else:
+        branch = "intermittent"
+    if branch not in _AGRO3_BRANCH_LABELS:  # pragma: no cover - tripwire defensivo
+        raise RuntimeError("classificação AGRO3×ADTV fora do contrato D-067")
+
+    return Agro3LiquidityAudit(
+        branch=branch,
+        decisions=total,
+        eligible_decisions=eligible_count,
+        active_decisions=int(active.sum()),
+        two_producer_decisions=int(producers.eq(2).sum()),
+        one_producer_decisions=int(producers.eq(1).sum()),
+        no_producer_decisions=int(producers.eq(0).sum()),
+        core_available_decisions=int(((producers >= 1) & (processors >= 1)).sum()),
+    )
 
 
 def attribution_by_name(attribution_brl: pd.DataFrame, weights: pd.DataFrame) -> pd.DataFrame:

@@ -8,6 +8,7 @@ import pytest
 
 from quantagro.backtest.diagnostics import (
     attribution_by_name,
+    audit_agro3_liquidity,
     build_naive_sector_schedule,
     concentration_metrics,
     cost_monotonicity,
@@ -211,3 +212,48 @@ def test_cost_monotonicity() -> None:
     assert not bad["monotonic"]
     with pytest.raises(ValueError, match="cenários"):
         cost_monotonicity({"zero": 1.0, "base": 1.0})
+
+
+@pytest.mark.parametrize(
+    ("eligible", "expected_branch"),
+    [
+        ([False, False, False], "never_eligible"),
+        ([False, True, False], "intermittent"),
+        ([True, True, True], "always_eligible"),
+    ],
+)
+def test_auditoria_agro3_classifica_trajetoria_sem_retorno(
+    eligible: list[bool], expected_branch: str
+) -> None:
+    active = [value and i != 1 for i, value in enumerate(eligible)]
+    decisions = pd.DataFrame(
+        {
+            "agro3_eligible": eligible,
+            "agro3_active": active,
+            "active_grain_producers": [2 if value else 1 for value in active],
+            "active_grain_processors": [2, 1, 0],
+        }
+    )
+    out = audit_agro3_liquidity(decisions)
+    assert out.branch == expected_branch
+    assert out.decisions == 3
+    assert out.eligible_decisions == sum(eligible)
+    assert out.two_producer_decisions == sum(active)
+    assert out.one_producer_decisions == 3 - sum(active)
+    assert out.core_available_decisions == 2
+
+
+def test_auditoria_agro3_rejeita_schema_incompleto_e_atividade_sem_elegibilidade() -> None:
+    with pytest.raises(ValueError, match="sem colunas"):
+        audit_agro3_liquidity(pd.DataFrame({"agro3_eligible": [True]}))
+
+    invalid = pd.DataFrame(
+        {
+            "agro3_eligible": [False],
+            "agro3_active": [True],
+            "active_grain_producers": [1],
+            "active_grain_processors": [1],
+        }
+    )
+    with pytest.raises(ValueError, match="ativa exige elegibilidade"):
+        audit_agro3_liquidity(invalid)
