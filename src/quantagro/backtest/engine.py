@@ -26,6 +26,8 @@ from quantagro.validate.borrow import BorrowState
 from .operational_spec import (
     COST_SCENARIOS,
     HOLDING_SESSIONS,
+    PROCESSORS,
+    PRODUCERS,
     REFERENCE_AUM_BRL,
     TradeBlock,
     borrow_all_in_rate,
@@ -138,6 +140,7 @@ def build_target_schedule(
             for name in GRAIN_NAMES
             if name in market_eligible and pd.notna(raw_row[name])
         }
+        active_grains = set(raw)
 
         status = str(cane.loc[date, "status"])
         if status not in _CANE_STATUSES:
@@ -166,6 +169,10 @@ def build_target_schedule(
                 "exit_date": block.exit_date,
                 "market_eligible": len(market_eligible),
                 "scored_grains": len(raw),
+                "agro3_eligible": "AGRO3" in market_eligible,
+                "agro3_active": "AGRO3" in active_grains,
+                "active_grain_producers": len(active_grains & PRODUCERS),
+                "active_grain_processors": len(active_grains & PROCESSORS),
                 "cane_status": status,
                 "status": "planned" if active else "flat_missing_economic_side",
             }

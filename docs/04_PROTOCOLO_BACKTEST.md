@@ -44,6 +44,38 @@ usa o próximo preço nem se descarta o nome silenciosamente.
 **Entregável obrigatório:** gráfico da contagem de ativos elegíveis ao longo do tempo, junto
 da razão de cada entrada/saída. É a prova visual contra survivorship e backfill.
 
+### 1.1 Ramo de liquidez da AGRO3 (D-067)
+
+A AGRO3 nunca passou o piso de R$8 milhões no único desenvolvimento operacional materializável,
+mas isso não autoriza presumir sua exclusão no holdout nem escolher uma regra depois de ver o
+resultado. O ramo fica resolvido **mecanicamente em cada decisão `D`**:
+
+1. `ADTV21(D) ≥ R$8 milhões` e os demais gates PIT ⇒ AGRO3 elegível naquele bloco;
+2. abaixo do piso ⇒ AGRO3 fora somente daquele bloco, sem *carry-forward* e sem apagar a safra;
+3. elegibilidade + score válido ⇒ AGRO3 ativa no painel/carteira; elegibilidade sozinha não
+   preenche score ausente;
+4. o teste primário e a carteira usam a seção transversal válida/elegível daquele bloco,
+   preservando a trava de ao menos um produtor e um processador.
+
+Antes de qualquer retorno, o código congela três classificações sobre a trajetória de decisões:
+`never_eligible`, `intermittent` e `always_eligible`. Também conta quantos blocos têm zero, um ou
+dois produtores ativos. A classificação é **resultado operacional**, não escolha entre três
+estratégias: não há p-valores separados, seleção de subperíodo ou troca do piso pelo ramo mais
+lucrativo.
+
+Interpretação igualmente congelada:
+
+- se a AGRO3 nunca for elegível, a perna produtora terá no máximo a SLCE3; retorno positivo não
+  demonstra dispersão cross-sectional entre produtores;
+- se for intermitente, a atribuição com/sem AGRO3 é apenas descritiva e todos os blocos continuam
+  no teste único pré-registrado;
+- se for sempre elegível, dois produtores só existem nos blocos em que ambos têm score válido;
+  isso melhora a profundidade, mas não basta para afirmar alpha sem os testes H4/H5 e D-064.
+
+O piso primário permanece R$8 milhões. As sensibilidades já declaradas de R$4 milhões e R$12
+milhões serão diagnósticos posteriores do mesmo tiro: nunca substituem o primário, mantêm AUM,
+participação máxima e demais gates inalterados, e podem zerar blocos por capacidade.
+
 ---
 
 ## 2. Timing — a regra que impede lookahead

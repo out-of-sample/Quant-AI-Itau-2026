@@ -370,6 +370,14 @@ Andamento:
   pré-registrado = NÃO ROBUSTO**, reportado fielmente (reprova por 4<5 reais rodáveis + placebo espacial
   significativo; **nenhum é fragilidade direcional**). O gate estrito falhar e ser reportado é o próprio
   entregável de rigor. Motor de Shock intocado; `signal_lag_days` só na chave de cache. Testes 508→519.
+- ✅ **Ramo AGRO3×ADTV pré-registrado (D-067, 2026-07-26)**: o piso primário permanece
+  ADTV21 ≥R$8 milhões e a elegibilidade é resolvida separadamente em cada decisão `D`, sem
+  classificação retroativa da safra e sem escolher carteira pelo P&L. O motor agora expõe
+  elegibilidade/atividade da AGRO3 e profundidade ativa de produtores/processadores; a auditoria
+  return-agnóstica congela os estados `never_eligible`/`intermittent`/`always_eligible`. Se a
+  perna produtora continuar com um nome, nenhum resultado positivo autoriza alegar dispersão
+  cross-sectional entre produtores. Subgrupos são descritivos; não criam novos testes. O
+  holdout continua lacrado. Testes 519→523.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.

@@ -2497,6 +2497,51 @@ adiciona poder. (d) Mecanismo, não retorno; holdout intacto.
 
 ---
 
+### D-067 — Pré-registro do ramo AGRO3×ADTV e da profundidade da perna produtora
+
+**Data:** 2026-07-26
+
+**Pergunta que motivou a decisão.** A AGRO3 nunca superou ADTV21 de R$8 milhões no dev 2018/19;
+por isso a perna produtora ficou reduzida à SLCE3 e ao cap de 0,40. No holdout a AGRO3 pode nunca,
+às vezes ou sempre passar o piso. Deixar para decidir depois dos retornos como tratar esses estados
+abriria um ramo oportunista exatamente antes da rodada única.
+
+**Decisão operacional, anterior ao holdout.** Não existem carteiras alternativas a escolher. A regra
+primária de D-055 permanece: em cada decisão `D`, a AGRO3 entra somente se cumprir os gates PIT,
+inclusive ADTV21 ≥R$8 milhões, e possuir score válido; sai somente daquele bloco quando falha, sem
+*carry-forward*, classificação retroativa da safra ou alteração do piso. O teste primário e a carteira
+consomem os grãos válidos/elegíveis do mesmo bloco e continuam exigindo ao menos um produtor e um
+processador. As cinco safras permanecem no único teste exato; o ramo não cria família inferencial.
+
+**Auditoria executável.** `build_target_schedule` passa a registrar, por decisão,
+`agro3_eligible`, `agro3_active`, quantidade de produtores ativos e quantidade de processadores
+ativos. `diagnostics.audit_agro3_liquidity`, sem preços ou retornos, classifica a trajetória como
+`never_eligible`, `intermittent` ou `always_eligible` e conta blocos com zero/um/dois produtores e
+com núcleo econômico disponível. O bloqueio técnico do holdout permanece: a classificação real só
+será materializada dentro do tiro deliberado da Fase 6.
+
+**Interpretação congelada.**
+
+1. `never_eligible`: a perna produtora tem no máximo a SLCE3. Mesmo com P&L/teste positivo, não se
+   alega dispersão cross-sectional entre produtores; o livro é descrito como spread
+   produtor–processador com produtor concentrado.
+2. `intermittent`: resultados com/sem AGRO3 e atribuição por profundidade são descritivos, sem
+   p-valores ou conclusões por subgrupo. Todos os blocos válidos permanecem no teste único.
+3. `always_eligible`: dois produtores só contam quando AGRO3 e SLCE3 estão simultaneamente ativos.
+   A profundidade melhora, mas não transforma P&L positivo em alpha climático sem D-064/H4/H5.
+
+As sensibilidades de liquidez R$4 milhões/R$12 milhões já previstas em `docs/05` rodam depois do
+primário no mesmo pacote, com AUM, participação máxima, custos e gates inalterados. São diagnóstico;
+não podem substituir R$8 milhões nem mudar o veredito primário.
+
+**Custo/limitação declarado.** (a) A composição do painel varia endogenamente com liquidez, portanto
+o N cross-sectional por bloco deve ser mostrado. (b) Se a AGRO3 continuar fora, o projeto aceita a
+concentração em vez de baixar o piso. (c) Uma comparação descritiva entre blocos com/sem AGRO3 mistura
+tempo e regimes; não identifica efeito causal da liquidez. (d) O passo fecha a interpretação, mas não
+adiciona poder, nomes ou evidência de retorno. Holdout intacto; suíte 519→523 testes.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o
