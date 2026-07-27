@@ -424,9 +424,23 @@ Andamento:
   setor) sem gastar α extra nem multiplicar a família de testes; no dev roda descritiva/circular
   (Bloco C′). Não muda a estratégia negociada. Testes 492→497.
 
+- ✅ **Benchmark das edições anteriores (D-073, 2026-07-27)**: comparação return-agnóstica com 8
+  relatórios, 11 repositórios e as fontes oficiais de 2020–2025, em
+  `docs/15_BENCHMARK_ANOS_ANTERIORES.md`. Nenhuma alteração de contrato, estratégia ou input.
+  Confirmou que estamos acima de todo o acervo em point-in-time, holdout lacrado, pré-registro,
+  custo de aluguel, CI e placebos — nenhum dos 11 repositórios tem integração contínua e só um
+  tem testes. Identificou **seis lacunas técnicas reais**, das quais quatro exigem pré-registro
+  anterior à rodada: métricas por ano-safra, estatísticas descritivas de risco, benchmark de
+  performance declarado e correção pelo número de especificações testadas. A quinta (validar o
+  mecanismo contra um segundo estimador oficial de safra) atacaria o componente nacional-comum
+  de D-066, mas depende de fonte ainda não validada. Limitação declarada: nenhum relatório do
+  acervo é de projeto campeão.
+
 ### Fase 6 — Holdout
 
-O bloqueio técnico foi fechado em D-072. O próximo passo é uma decisão humana exclusiva:
+O bloqueio técnico foi fechado em D-072. Antes da autorização, D-073 abriu quatro pré-registros
+pendentes (`docs/15_BENCHMARK_ANOS_ANTERIORES.md` §8, itens 2–5) que perdem valor se escritos
+depois de vermos o resultado. O passo seguinte é uma decisão humana exclusiva:
 autorizar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
 correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
 qualquer que seja. `ready=true` não equivale a autorização civil.

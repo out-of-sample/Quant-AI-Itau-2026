@@ -2823,6 +2823,52 @@ climático: continuam valendo exatamente os níveis de afirmação de D-068. (f)
 no último close é executável e preserva o universo, mas difere de carregar a conversão
 societária: abre mão do retorno posterior do sucessor e paga giro adicional.
 
+### D-073 — Benchmark das edições anteriores; lacunas técnicas identificadas antes do holdout
+
+**Data:** 2026-07-27
+
+**Problema.** O pacote técnico da rodada única foi fechado em D-072 sem nunca termos comparado
+o projeto com o que outras equipes entregaram em edições anteriores. Corríamos dois riscos
+opostos e simétricos: adotar prática alheia por imitação, sem justificativa; ou perder uma
+melhoria real por nunca ter olhado. O acervo organizado em `03_Exemplos_Anos_Anteriores/`
+tornou a comparação possível, e ela precisava acontecer **antes** da rodada, porque qualquer
+lacuna que exija pré-registro deixa de ser corrigível depois de abrir o holdout.
+
+**Decisão.** Executamos a comparação return-agnóstica com 8 relatórios, 11 repositórios e as
+fontes oficiais sobre as edições 2020–2025, registrada em `docs/15_BENCHMARK_ANOS_ANTERIORES.md`.
+Nenhuma alteração de contrato, de estratégia ou de input foi feita. A comparação classifica os
+achados em três grupos: (a) práticas em que já estamos acima de todo o acervo — point-in-time
+com `avail_date`, holdout lacrado, pré-registro datado, falsificação sem inversão post-hoc,
+custo de aluguel, CI e placebos; (b) **lacunas técnicas reais e implementáveis**; (c) lacunas
+estruturais que esta edição não corrige.
+
+As lacunas do grupo (b), na ordem em que aparecem no documento: validação do mecanismo contra
+um segundo estimador oficial de safra, para separar efeito físico de processo da CONAB
+(§6.1, ataca diretamente o componente nacional-comum de D-066); métricas por ano-safra dentro
+do holdout, incluindo os anos ruins (§6.2); caracterização de risco da carteira — VaR, CVaR,
+tempo submerso, beta —, hoje inexistente (§6.3); benchmark de performance declarado para um
+livro dollar-neutral (§6.4); correção do resultado pelo número de especificações testadas,
+que só é honesta porque o log D-001–D-073 permite contá-las (§6.5); e declaração explícita de
+que a ausência de camada de risco na estratégia é escolha, não omissão (§6.6).
+
+**Por quê.** Os itens §6.2 a §6.5 são pré-registros. Escritos depois de vermos o resultado do
+holdout, perdem inteiramente o valor que os justifica — seriam seleção posterior disfarçada de
+método, exatamente o defeito que auditamos em terceiros. Por isso a comparação foi feita agora
+e não depois da rodada.
+
+**Custo/limitação declarado.** (a) Nenhum relatório do acervo é de projeto campeão; o material
+de melhor colocação confirmada é um 2º lugar. Comparamos contra o 2º lugar e uma cauda de
+trabalhos não classificados, não contra o padrão vencedor — as conclusões sobre "o que é
+suficiente" são limitadas por isso. (b) A fonte candidata a segundo estimador de safra (§6.1)
+**não foi validada**: o arquivo histórico migrou de domínio e responde, mas não confirmamos
+vintage, formato nem cobertura do Brasil. É pista, não fonte; qualquer plano depende de
+sondagem própria. (c) Atender §6.1 abre uma frente de ingestão nova numa fase em que o pacote
+já está congelado; se for adotada, exige recongelamento de hashes e manifestos antes de
+qualquer autorização de rodada. (d) Os itens §6.2–§6.5 aumentam o que será reportado, não o
+poder estatístico dos cinco anos-safra: continuam valendo os níveis de afirmação de D-068.
+(e) Este documento é referência interna e não pode ser citado no relatório final, que é
+anônimo e não compara terceiros.
+
 ---
 
 ## Como registrar uma decisão nova

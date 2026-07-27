@@ -1588,6 +1588,35 @@ uma segunda lacuna societária, exigindo refazer retornos e manifesto. Por fim, 
 retornar 404 para BRFS3/JBSS3 deslistadas/substituídas; a limitação foi registrada em vez de
 declarar validação independente inexistente.
 
+## 2026-07-27 — Benchmark das edições anteriores (D-073)
+
+**Uso**: auditar o acervo de edições anteriores contra o nosso projeto e apontar lacunas
+técnicas ainda corrigíveis — explicitamente separando conteúdo de apresentação e de resultado.
+
+**Valor real**: leitura e auditoria de 8 relatórios, 11 repositórios e as fontes oficiais sobre
+2020–2025 num único passo de trabalho, produzindo o comparativo de `docs/15`. O achado com
+maior consequência não foi a lista de defeitos alheios: foi perceber que quatro melhorias
+identificadas (métricas por ano-safra, descritivos de risco, benchmark declarado e correção
+pelo número de tentativas) **só têm valor se pré-registradas antes da rodada única** — ou seja,
+que a comparação tinha de acontecer agora, e não depois do holdout.
+
+**Validação humana**: cada afirmação sobre terceiros foi tirada do artefato, não de resumo:
+janela de teste, custos, alvo do modelo e ausência de teste estatístico foram lidos no PDF do
+2º lugar de 2025; a contagem de CI e testes veio de varredura direta dos 11 checkouts; a escala
+das edições e os nomes das campeãs vieram das publicações oficiais capturadas em
+`fontes_publicas/`; e as regras de 2026 (5 páginas, código nas etapas finais, prioridade do
+processo sobre o resultado histórico) foram relidas nos PDFs do edital, não da memória.
+
+**O que a IA errou**: (a) a primeira leitura enquadrou o desafio como "o relatório é tudo, o
+repositório não é avaliado" e recomendou deslocar o esforço para a apresentação. O time
+contestou; a releitura do edital deu razão ao time — finalistas podem ser chamados a comprovar
+o desenvolvimento, a semifinal tem Q&A técnico e o documento de critérios diz que a banca
+considera "de forma prioritária, a qualidade do processo de desenvolvimento". A conclusão
+original estava apoiada em evidência parcial. (b) O segundo estimador de safra proposto em
+§6.1 foi apresentado inicialmente como disponível; a sondagem mostrou que o arquivo migrou de
+domínio e não confirmamos vintage nem cobertura, e o item foi rebaixado a pista não validada
+antes de entrar no documento.
+
 ---
 
 ## Modelo de entrada (para as próximas)
