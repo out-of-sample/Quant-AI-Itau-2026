@@ -1588,6 +1588,33 @@ uma segunda lacuna societária, exigindo refazer retornos e manifesto. Por fim, 
 retornar 404 para BRFS3/JBSS3 deslistadas/substituídas; a limitação foi registrada em vez de
 declarar validação independente inexistente.
 
+## 2026-07-27 — Pré-registro do relatório descritivo do holdout (D-073)
+
+**Uso**: fechar, antes da rodada única, o que será reportado sobre o resultado — desempenho por
+ano-safra, risco, benchmark e correção por múltiplas tentativas.
+
+**Valor real**: a investigação inicial mudou o desenho da entrega. A hipótese natural era que
+esses relatórios exigiriam alterar o executor congelado e, portanto, recongelar tudo. A leitura
+do código mostrou que o bloco 10 **já publica a série diária, os pesos e a atribuição** do
+cenário base, e que a série livre de risco já é input atestado de H4 — ou seja, os quatro
+relatórios são calculáveis depois do selo, sem tocar no que a rodada calcula. Isso reduziu a
+mudança a congelar fórmulas, e não mecânica.
+
+**Validação humana**: o tripwire civil do contrato disparou sozinho ao primeiro commit da
+mudança (`payload lógico diverge do hash civil congelado`), que é o comportamento correto e
+provou que a governança não é decorativa. Cada recongelamento foi seguido de verificação de que
+os seis parquets de input continuavam **byte-idênticos** — só o carimbo mudou, nunca o dado.
+Ao fim: `ready=true`, 582 testes, guards de lookahead e segredo limpos, e nenhum resultado
+econômico calculado.
+
+**O que a IA errou**: (a) a primeira versão deixou `holdout_report.py` **fora** de `SPEC_FILES`,
+com o argumento de que era só I/O. Estava errado: aquele módulo contém a regra de quais
+variantes entram na dispersão de Sharpes do Deflated Sharpe, ou seja, um grau de liberdade que
+poderia ser alterado depois de ver o resultado. O mesmo furo valia para o script runner. Os dois
+foram incluídos e o hash refeito — ao custo de três recongelamentos numa sessão, registrado como
+limitação em D-073. (b) A primeira tentativa de edição do contrato falhou por asserção e deixou
+o módulo importado sem uso, pego pelo lint antes de qualquer commit.
+
 ---
 
 ## Modelo de entrada (para as próximas)
