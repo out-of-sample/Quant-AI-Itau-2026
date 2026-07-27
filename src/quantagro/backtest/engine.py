@@ -15,7 +15,7 @@ posição marcada. Não há ``ffill`` de pesos-alvo nem rebalanceamento diário 
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -51,6 +51,7 @@ class TargetSchedule:
     operational_scores: pd.DataFrame
     target_weights: pd.DataFrame
     decisions: pd.DataFrame
+    caps: Mapping[str, float] = field(default_factory=lambda: dict(PER_NAME_CAP))
 
 
 @dataclass(frozen=True)
@@ -90,6 +91,7 @@ def build_target_schedule(
     membership: pd.DataFrame,
     *,
     allow_holdout: bool = False,
+    caps: Mapping[str, float] | None = None,
 ) -> TargetSchedule:
     """Materializa scores e pesos-alvo por bloco sem ler preço ou retorno.
 
@@ -126,6 +128,13 @@ def build_target_schedule(
     _require_dates(cane, decisions, "sinal de cana")
     _require_dates(eligible, decisions, "universo")
 
+    selected_caps = dict(PER_NAME_CAP if caps is None else caps)
+    if set(selected_caps) != set(UNIVERSE):
+        raise ValueError("caps devem cobrir exatamente os cinco nomes congelados")
+    cap_values = np.asarray([float(selected_caps[name]) for name in UNIVERSE])
+    if not np.isfinite(cap_values).all() or (cap_values < 0).any():
+        raise ValueError("caps devem ser finitos e não-negativos")
+
     op_rows: list[dict[str, float]] = []
     weight_rows: list[dict[str, float]] = []
     decision_rows: list[dict[str, object]] = []
@@ -156,7 +165,7 @@ def build_target_schedule(
             cane_shock = float(cane_value)
 
         scores = compose_operational_scores(raw, market_eligible, cane_shock)
-        weights = dollar_neutral_weights(scores) if scores else {}
+        weights = dollar_neutral_weights(scores, selected_caps) if scores else {}
         op_rows.append({name: scores.get(name, np.nan) for name in UNIVERSE})
         weight_rows.append({name: weights.get(name, 0.0) for name in UNIVERSE})
         active = bool(weights) and not np.isclose(sum(abs(v) for v in weights.values()), 0.0)
@@ -180,13 +189,13 @@ def build_target_schedule(
 
     operational = pd.DataFrame(op_rows, index=executions, columns=UNIVERSE, dtype=float)
     targets = pd.DataFrame(weight_rows, index=executions, columns=UNIVERSE, dtype=float)
-    _validate_targets(targets)
+    _validate_targets(targets, selected_caps)
     metadata = pd.DataFrame(decision_rows).set_index("execution_date")
     metadata.index = pd.DatetimeIndex(metadata.index)
-    return TargetSchedule(frozen, operational, targets, metadata)
+    return TargetSchedule(frozen, operational, targets, metadata, selected_caps)
 
 
-def _validate_targets(targets: pd.DataFrame) -> None:
+def _validate_targets(targets: pd.DataFrame, caps: Mapping[str, float] | None = None) -> None:
     values = targets.to_numpy(dtype=float)
     if not np.isfinite(values).all():
         raise ValueError("pesos-alvo devem ser finitos")
@@ -194,8 +203,9 @@ def _validate_targets(targets: pd.DataFrame) -> None:
         raise ValueError("pesos-alvo devem ser dollar-neutral")
     if (np.abs(values).sum(axis=1) > 1.0 + 1e-12).any():
         raise ValueError("pesos-alvo excedem bruto 1,0")
-    caps = pd.Series(PER_NAME_CAP).loc[list(targets.columns)].to_numpy()
-    if (np.abs(values) > caps + 1e-12).any():
+    selected_caps = PER_NAME_CAP if caps is None else caps
+    cap_values = pd.Series(selected_caps).loc[list(targets.columns)].to_numpy()
+    if (np.abs(values) > cap_values + 1e-12).any():
         raise ValueError("peso-alvo excede cap por nome")
 
 
@@ -367,6 +377,8 @@ def run_backtest(
     scenario: str = "zero",
     initial_aum_brl: float = REFERENCE_AUM_BRL,
     allow_holdout: bool = False,
+    holding_sessions: int = HOLDING_SESSIONS,
+    terminal_exits: Mapping[str, pd.Timestamp] | None = None,
 ) -> BacktestResult:
     """Executa os blocos com quantidades fixas e ledger diário autoconsistente.
 
@@ -379,6 +391,12 @@ def run_backtest(
     scope = require_backtest_scope(schedule.blocks, allow_holdout=allow_holdout)
     if scenario not in COST_SCENARIOS:
         raise ValueError(f"cenário de custo inválido: {scenario!r}")
+    if (
+        isinstance(holding_sessions, bool)
+        or not isinstance(holding_sessions, int)
+        or holding_sessions <= 0
+    ):
+        raise ValueError("horizonte deve ser um inteiro positivo de pregões")
     if not np.isfinite(initial_aum_brl) or initial_aum_brl <= 0:
         raise ValueError("patrimônio inicial deve ser positivo e finito")
 
@@ -391,25 +409,44 @@ def run_backtest(
     adtv = _validated_panel(adtv_brl, "ADTV")
     traded_panel = _validated_panel(traded, "negociação", boolean=True)
     borrow_inputs = _validated_borrow_state(borrow_state, schedule)
+    blocks = schedule.blocks
+    active_start = min(block.execution_date for block in blocks)
+    active_end = max(block.exit_date for block in blocks)
+    terminal_by_date: dict[pd.Timestamp, tuple[str, ...]] = {}
+    for ticker, raw_date in (terminal_exits or {}).items():
+        if ticker not in UNIVERSE:
+            raise ValueError(f"evento terminal fora do universo: {ticker}")
+        date = pd.Timestamp(raw_date).normalize()
+        if date.tz is not None:
+            raise ValueError("evento terminal não pode ter fuso")
+        if date < active_start or date > active_end:
+            continue
+        terminal_by_date[date] = tuple(sorted((*terminal_by_date.get(date, ()), ticker)))
     effective = schedule.target_weights.copy()
     effective.loc[:, :] = 0.0
 
-    blocks = schedule.blocks
     for previous, current in zip(blocks, blocks[1:], strict=False):
         if current.execution_date < previous.exit_date:
             raise ValueError("blocos sobrepostos")
     required_boundaries = pd.DatetimeIndex(
-        sorted({d for b in blocks for d in (b.execution_date, b.exit_date)})
+        sorted({d for b in blocks for d in (b.execution_date, b.exit_date)} | set(terminal_by_date))
     )
     _require_dates(ret, required_boundaries, "retornos")
     _require_dates(traded_panel, required_boundaries, "negociação")
     for block in blocks:
         left = int(ret.index.get_loc(block.execution_date))
         right = int(ret.index.get_loc(block.exit_date))
-        if right - left != HOLDING_SESSIONS:
-            raise ValueError(f"{block.crop_year}/{block.sequence} não contém 21 intervalos")
+        if right - left != holding_sessions:
+            raise ValueError(
+                f"{block.crop_year}/{block.sequence} não contém {holding_sessions} intervalos"
+            )
 
     block_by_execution = {b.execution_date: b for b in blocks}
+    collisions = set(terminal_by_date) & {
+        date for block in blocks for date in (block.execution_date, block.exit_date)
+    }
+    if collisions:
+        raise ValueError(f"evento terminal colide com fronteira de bloco: {sorted(collisions)}")
     events: dict[pd.Timestamp, np.ndarray] = {
         b.execution_date: schedule.target_weights.loc[b.execution_date].to_numpy(dtype=float)
         for b in blocks
@@ -418,11 +455,12 @@ def run_backtest(
         if block.exit_date not in block_by_execution:
             events[block.exit_date] = np.zeros(len(UNIVERSE), dtype=float)
 
-    first = min(events)
-    last = max(events)
+    all_event_dates = set(events) | set(terminal_by_date)
+    first = min(all_event_dates)
+    last = max(all_event_dates)
     sessions = ret.loc[first:last].index
     trade_asofs = pd.DatetimeIndex(
-        [_trade_asof(date, block_by_execution, ret.index) for date in events]
+        [_trade_asof(date, block_by_execution, ret.index) for date in all_event_dates]
     )
     _require_dates(adtv, trade_asofs, "ADTV")
 
@@ -469,8 +507,9 @@ def run_backtest(
         spot_cost = 0.0
         orders = np.zeros(len(names), dtype=float)
         gross_turnover = 0.0
-        if date in events:
-            target = events[date]
+        terminal_triggered: tuple[str, ...] = ()
+        if date in all_event_dates:
+            target = events.get(date)
             asof = _trade_asof(date, block_by_execution, ret.index)
             liquidity = adtv.loc[asof].to_numpy(dtype=float)
             pretrade_equity = equity
@@ -511,6 +550,20 @@ def run_backtest(
                 target = gated.to_numpy(dtype=float)
                 effective.loc[date] = gated
                 status_rows.append(status)
+            elif date in terminal_by_date:
+                terminal_names = terminal_by_date[date]
+                active_terminal = tuple(
+                    ticker
+                    for ticker in terminal_names
+                    if abs(holdings[names.index(ticker)]) > 1e-12
+                )
+                if active_terminal:
+                    target = np.zeros(len(names), dtype=float)
+                    terminal_triggered = active_terminal
+                else:
+                    target = holdings / pretrade_equity
+            elif target is None:  # pragma: no cover - união construída acima
+                raise RuntimeError("data de negociação sem evento")
             equity, holdings, orders, spot_cost = _spot_trade(
                 pretrade_equity, holdings, target, liquidity, scenario
             )
@@ -518,7 +571,7 @@ def run_backtest(
             if date in block_by_execution:
                 current_block = block_by_execution[date]
                 current_annual = annual.to_numpy(dtype=float)
-            else:
+            elif terminal_triggered or date in events:
                 current_block = None
                 current_annual = np.zeros(len(names), dtype=float)
             order_rows.append({"date": date} | dict(zip(names, orders, strict=True)))
@@ -546,6 +599,7 @@ def run_backtest(
                 "net_exposure": float(weights.sum()),
                 "gross_traded": gross_turnover,
                 "turnover_one_way": gross_turnover / 2.0,
+                "terminal_exit_tickers": ",".join(terminal_triggered) or pd.NA,
             }
         )
         attribution_rows.append({"date": date} | dict(zip(names, gross_by_name, strict=True)))
@@ -557,7 +611,7 @@ def run_backtest(
         out.index = pd.DatetimeIndex(out.index)
         return out.reindex(columns=columns) if columns is not None else out
 
-    _validate_targets(effective)
+    _validate_targets(effective, schedule.caps)
     block_status = pd.DataFrame(status_rows).set_index("execution_date")
     return BacktestResult(
         scope=scope,

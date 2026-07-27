@@ -1,0 +1,1353 @@
+{
+  "retrieved_at": "2026-07-20T22:57:57Z",
+  "schema_version": 1,
+  "scope": {
+    "end_date": "2025-12-31",
+    "purpose": "holdout_prices"
+  },
+  "sources": {
+    "b3": "sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/",
+    "statusinvest": "statusinvest.com.br/acao/companytickerprovents"
+  },
+  "tickers": {
+    "AGRO3": {
+      "canonical_payload_sha256": {
+        "b3_cash": "a2e95d6109a15cde3f5d4847b151808ab3bfeee8f332ac945e383f2085bc9352",
+        "b3_stock": "76aa8ba08c7c5260cfc44ed9820b0c47614d30b89fcfc68f3b32d23dff96d4f2",
+        "statusinvest_cash": "aa7dd4bd0676ce5855b6b332713c33ed93806f9fca5a26497b9ecbc9f349ded2"
+      },
+      "cash_b3": [
+        {
+          "cash_value": 0.01934868,
+          "cum_date": "2008-10-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.100704387,
+          "cum_date": "2013-12-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.3977,
+          "cum_date": "2015-10-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.182998361,
+          "cum_date": "2016-10-21",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.401081542,
+          "cum_date": "2016-11-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.241108481,
+          "cum_date": "2017-10-02",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.762051076,
+          "cum_date": "2018-10-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.92933058,
+          "cum_date": "2019-10-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.709664147,
+          "cum_date": "2020-10-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.621181215,
+          "cum_date": "2021-10-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.01629324,
+          "cum_date": "2022-04-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.238672791,
+          "cum_date": "2022-10-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.212352878,
+          "cum_date": "2023-10-24",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.555983425,
+          "cum_date": "2024-10-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.75289521,
+          "cum_date": "2025-10-22",
+          "share_ratio": 1.0
+        }
+      ],
+      "cash_statusinvest": [
+        {
+          "cash_value": 0.0193,
+          "cum_date": "2008-10-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.100704387,
+          "cum_date": "2013-12-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.3977,
+          "cum_date": "2015-10-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.182998361,
+          "cum_date": "2016-10-21",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.40108154,
+          "cum_date": "2016-11-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.241108481,
+          "cum_date": "2017-10-02",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.762051076,
+          "cum_date": "2018-10-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.92933058,
+          "cum_date": "2019-10-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.709664147,
+          "cum_date": "2020-10-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.621181215,
+          "cum_date": "2021-10-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.01629324,
+          "cum_date": "2022-04-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.238672791,
+          "cum_date": "2022-10-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.212352878,
+          "cum_date": "2023-10-24",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.555983425,
+          "cum_date": "2024-10-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.75289521,
+          "cum_date": "2025-10-22",
+          "share_ratio": 1.0
+        }
+      ],
+      "issuing_company": "AGRO",
+      "raw_counts": {
+        "b3_cash": 15,
+        "b3_stock": 1,
+        "statusinvest_cash": 15
+      },
+      "source_retrieved_at": {
+        "b3_cash": "2026-07-20T22:56:36Z",
+        "b3_stock": "2026-07-20T22:56:38Z",
+        "statusinvest_cash": "2026-07-20T22:56:40Z"
+      },
+      "stock_b3": [
+        {
+          "cash_value": 0.0,
+          "cum_date": "2007-10-31",
+          "share_ratio": 100.0
+        }
+      ],
+      "ticker": "AGRO3",
+      "trading_name": "BRASILAGRO"
+    },
+    "BRFS3": {
+      "canonical_payload_sha256": {
+        "b3_cash": "ee7cbc3beaa256d48d4b146c775c3243018d42e136e67eb59dae042f19272de1",
+        "b3_stock": "cbf6e205b7939a2d158d1c080c62beb0a4ef515e406e64ece9ef91a979bd2578",
+        "statusinvest_cash": "13de60e3c4a7fa91b18f872c61d8c6f455e45c2fa4ae3d805da2c9fea2a3747c"
+      },
+      "cash_b3": [
+        {
+          "cash_value": 1.7916999999999998e-05,
+          "cum_date": "1997-08-15",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.3889e-05,
+          "cum_date": "1998-02-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.374e-05,
+          "cum_date": "1998-07-24",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.811e-05,
+          "cum_date": "1998-12-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 3.384e-05,
+          "cum_date": "1999-06-24",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.5062e-05,
+          "cum_date": "1999-12-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.883e-06,
+          "cum_date": "2000-02-23",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.07527,
+          "cum_date": "2000-07-17",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.22804,
+          "cum_date": "2000-12-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.30331,
+          "cum_date": "2001-06-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.29612,
+          "cum_date": "2001-09-11",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.479005,
+          "cum_date": "2001-12-14",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.055583,
+          "cum_date": "2002-02-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.12132,
+          "cum_date": "2002-03-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.80883,
+          "cum_date": "2003-12-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.12337,
+          "cum_date": "2004-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.58426531,
+          "cum_date": "2004-12-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.28490056,
+          "cum_date": "2005-02-21",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.04473514,
+          "cum_date": "2005-06-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0851765,
+          "cum_date": "2005-12-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.30306758,
+          "cum_date": "2006-02-06",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.19030166,
+          "cum_date": "2006-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.0222073,
+          "cum_date": "2007-02-14",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.2265496,
+          "cum_date": "2007-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.33795681,
+          "cum_date": "2007-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.25,
+          "cum_date": "2008-04-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.12,
+          "cum_date": "2008-04-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.22998523,
+          "cum_date": "2009-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.06113643,
+          "cum_date": "2010-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.24010772,
+          "cum_date": "2010-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.33591469,
+          "cum_date": "2011-06-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39080857,
+          "cum_date": "2011-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.11501051,
+          "cum_date": "2012-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.20084501,
+          "cum_date": "2012-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.05205085,
+          "cum_date": "2013-04-19",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.41225416,
+          "cum_date": "2013-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.41922417,
+          "cum_date": "2013-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.41421437,
+          "cum_date": "2014-06-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.43441923,
+          "cum_date": "2014-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.09972393,
+          "cum_date": "2014-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.5024384,
+          "cum_date": "2015-06-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.112896461,
+          "cum_date": "2015-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.584462002,
+          "cum_date": "2015-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.121749293,
+          "cum_date": "2016-03-10",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.642347435,
+          "cum_date": "2016-07-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.58165567149,
+          "cum_date": "2024-11-25",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.12297160073,
+          "cum_date": "2024-12-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.83486883675,
+          "cum_date": "2025-09-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.25122591037,
+          "cum_date": "2025-09-18",
+          "share_ratio": 1.0
+        }
+      ],
+      "cash_statusinvest": [
+        {
+          "cash_value": 0.22998523,
+          "cum_date": "2009-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.06113643,
+          "cum_date": "2010-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.24010772,
+          "cum_date": "2010-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.33564596,
+          "cum_date": "2011-06-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39080857,
+          "cum_date": "2011-12-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.11501051,
+          "cum_date": "2012-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.20084501,
+          "cum_date": "2013-01-01",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.05205085,
+          "cum_date": "2013-04-19",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.4123,
+          "cum_date": "2013-06-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.4192,
+          "cum_date": "2013-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.41421437,
+          "cum_date": "2014-06-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.43441923,
+          "cum_date": "2014-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.09972393,
+          "cum_date": "2014-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.5024384,
+          "cum_date": "2015-06-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.583827682,
+          "cum_date": "2015-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.112773934,
+          "cum_date": "2015-12-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.121749293,
+          "cum_date": "2016-03-10",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.642347435,
+          "cum_date": "2016-07-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.58165567149,
+          "cum_date": "2024-11-25",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.12297160073,
+          "cum_date": "2024-12-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.83486883675,
+          "cum_date": "2025-09-18",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.25122591037,
+          "cum_date": "2025-09-18",
+          "share_ratio": 1.0
+        }
+      ],
+      "issuing_company": "BRFS",
+      "raw_counts": {
+        "b3_cash": 70,
+        "b3_stock": 2,
+        "statusinvest_cash": 22
+      },
+      "source_retrieved_at": {
+        "b3_cash": "2026-07-20T22:57:14Z",
+        "b3_stock": "2026-07-20T22:57:16Z",
+        "statusinvest_cash": "2026-07-20T22:57:18Z"
+      },
+      "stock_b3": [
+        {
+          "cash_value": 0.0,
+          "cum_date": "2010-03-31",
+          "share_ratio": 2.0
+        }
+      ],
+      "ticker": "BRFS3",
+      "trading_name": "BRF SA"
+    },
+    "JBSS3": {
+      "canonical_payload_sha256": {
+        "b3_cash": "4ef1a7a9efdef2f9a899ef9db3bd67c2679237027236e43a05c3bfe8efb051bc",
+        "b3_stock": "861395d18ef60ae677e8758e3071c80cac48575711f850a843c59a5f2cb218fa",
+        "statusinvest_cash": "12bfd5766f4ee81d6a5270a2038f4bac0710d8d57c8eca702d6cbe2c2c1d8021"
+      },
+      "cash_b3": [
+        {
+          "cash_value": 0.016464,
+          "cum_date": "2008-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.008795,
+          "cum_date": "2009-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.0243617747,
+          "cum_date": "2010-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.059512572,
+          "cum_date": "2013-04-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.076745337,
+          "cum_date": "2014-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.167379578,
+          "cum_date": "2015-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.405458881,
+          "cum_date": "2016-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.032977738,
+          "cum_date": "2017-04-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.046776254,
+          "cum_date": "2018-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.00224572,
+          "cum_date": "2019-04-30",
+          "share_ratio": 1.0
+        }
+      ],
+      "cash_statusinvest": [
+        {
+          "cash_value": 0.016464,
+          "cum_date": "2008-04-17",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.012286,
+          "cum_date": "2008-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.008795,
+          "cum_date": "2009-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.0243617747,
+          "cum_date": "2010-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.05951,
+          "cum_date": "2013-04-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.076745337,
+          "cum_date": "2014-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.167379578,
+          "cum_date": "2015-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.405458881,
+          "cum_date": "2016-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.032977738,
+          "cum_date": "2017-04-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.046776254,
+          "cum_date": "2018-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.00224572,
+          "cum_date": "2019-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.54059514,
+          "cum_date": "2020-04-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.01667969,
+          "cum_date": "2021-04-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.00134118,
+          "cum_date": "2021-08-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0,
+          "cum_date": "2021-11-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0,
+          "cum_date": "2022-05-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0,
+          "cum_date": "2022-11-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0,
+          "cum_date": "2023-06-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.0,
+          "cum_date": "2024-08-19",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0,
+          "cum_date": "2024-11-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.0,
+          "cum_date": "2025-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.0,
+          "cum_date": "2025-05-23",
+          "share_ratio": 1.0
+        }
+      ],
+      "issuing_company": "JBSS",
+      "raw_counts": {
+        "b3_cash": 10,
+        "b3_stock": 1,
+        "statusinvest_cash": 22
+      },
+      "source_retrieved_at": {
+        "b3_cash": "2026-07-20T22:57:33Z",
+        "b3_stock": "2026-07-20T22:57:35Z",
+        "statusinvest_cash": "2026-07-20T22:57:37Z"
+      },
+      "stock_b3": [],
+      "ticker": "JBSS3",
+      "trading_name": "JBS"
+    },
+    "SLCE3": {
+      "canonical_payload_sha256": {
+        "b3_cash": "019ea6f273293bf986f7e499af26add73d86b67d0ea2d944169b2dabb5b85865",
+        "b3_stock": "8a4869f18a9840f16cc6837dc82cf6cee358a527220cba6ad9705a3322e0847d",
+        "statusinvest_cash": "60c350dbd923a5ca40298d67b9cbc6d90392371404f16e8005f6803631412a4e"
+      },
+      "cash_b3": [
+        {
+          "cash_value": 0.083846121,
+          "cum_date": "2008-04-03",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.1085715433,
+          "cum_date": "2009-04-06",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.0726,
+          "cum_date": "2010-04-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.15896471,
+          "cum_date": "2011-04-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.63439,
+          "cum_date": "2012-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.154921,
+          "cum_date": "2013-04-17",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.38818,
+          "cum_date": "2014-04-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.279744,
+          "cum_date": "2015-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.59951,
+          "cum_date": "2016-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.146471887,
+          "cum_date": "2017-04-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.06984255,
+          "cum_date": "2017-09-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.13395196,
+          "cum_date": "2018-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.894109,
+          "cum_date": "2019-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39398586,
+          "cum_date": "2020-05-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.393772929,
+          "cum_date": "2020-07-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.19796939,
+          "cum_date": "2020-11-13",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.06271439,
+          "cum_date": "2021-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.42614793111,
+          "cum_date": "2022-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.34775659867,
+          "cum_date": "2022-12-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.59617683,
+          "cum_date": "2023-05-04",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.05452740721,
+          "cum_date": "2023-12-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.82996450013,
+          "cum_date": "2024-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.54632738,
+          "cum_date": "2025-05-05",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.86051967,
+          "cum_date": "2025-12-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.04529051,
+          "cum_date": "2025-12-12",
+          "share_ratio": 1.0
+        }
+      ],
+      "cash_statusinvest": [
+        {
+          "cash_value": 0.08384612,
+          "cum_date": "2008-04-03",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.10857154,
+          "cum_date": "2009-04-06",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.0726,
+          "cum_date": "2010-04-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.15896471,
+          "cum_date": "2011-04-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.63439,
+          "cum_date": "2012-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.154921,
+          "cum_date": "2013-04-17",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.388399,
+          "cum_date": "2014-04-16",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.279744,
+          "cum_date": "2015-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.59951,
+          "cum_date": "2016-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.14647189,
+          "cum_date": "2017-04-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.06984255,
+          "cum_date": "2017-09-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.13395196,
+          "cum_date": "2018-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.947055,
+          "cum_date": "2019-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39398586,
+          "cum_date": "2020-05-07",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39377293,
+          "cum_date": "2020-07-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.19813998,
+          "cum_date": "2020-11-13",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.06271439,
+          "cum_date": "2021-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.42614793,
+          "cum_date": "2022-04-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.3477566,
+          "cum_date": "2022-12-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 2.59718105,
+          "cum_date": "2023-05-04",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.05452740721,
+          "cum_date": "2023-12-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.82996450013,
+          "cum_date": "2024-04-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.54632738,
+          "cum_date": "2025-05-05",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.04529051,
+          "cum_date": "2025-12-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.86051967,
+          "cum_date": "2025-12-12",
+          "share_ratio": 1.0
+        }
+      ],
+      "issuing_company": "SLCE",
+      "raw_counts": {
+        "b3_cash": 25,
+        "b3_stock": 2,
+        "statusinvest_cash": 25
+      },
+      "source_retrieved_at": {
+        "b3_cash": "2026-07-20T22:56:17Z",
+        "b3_stock": "2026-07-20T22:56:19Z",
+        "statusinvest_cash": "2026-07-20T22:56:22Z"
+      },
+      "stock_b3": [
+        {
+          "cash_value": 0.0,
+          "cum_date": "2023-12-13",
+          "share_ratio": 2.0
+        },
+        {
+          "cash_value": 0.0,
+          "cum_date": "2025-12-30",
+          "share_ratio": 1.125
+        }
+      ],
+      "ticker": "SLCE3",
+      "trading_name": "SLC AGRICOLA"
+    },
+    "SMTO3": {
+      "canonical_payload_sha256": {
+        "b3_cash": "b298f0ed1f23351c067c2a8e13281acc14ddec18f8096174d3b988b5a3665989",
+        "b3_stock": "bae485ecfebad9818a28e8fdb52caa8d689f6c92eaae4e7d996b69741d453438",
+        "statusinvest_cash": "2d153e9e9caf47254e0638265a6d31c5e39d714c26734c33ef8e0b7a3a1f3075"
+      },
+      "cash_b3": [
+        {
+          "cash_value": 0.17699,
+          "cum_date": "2007-07-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.162421,
+          "cum_date": "2009-11-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.135628,
+          "cum_date": "2010-07-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.1733,
+          "cum_date": "2010-12-13",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.267958374,
+          "cum_date": "2011-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.321343,
+          "cum_date": "2012-07-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.267301564,
+          "cum_date": "2013-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.359544368,
+          "cum_date": "2014-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.601262496,
+          "cum_date": "2015-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.491958116,
+          "cum_date": "2016-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.278877942,
+          "cum_date": "2017-07-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.513108985,
+          "cum_date": "2018-07-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.31356660214,
+          "cum_date": "2019-07-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.34464282,
+          "cum_date": "2019-12-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.19502845939,
+          "cum_date": "2020-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.34644526,
+          "cum_date": "2020-11-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.86611044191,
+          "cum_date": "2021-07-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.07560925,
+          "cum_date": "2021-11-11",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.389750918,
+          "cum_date": "2021-11-11",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.33201004139,
+          "cum_date": "2022-06-23",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39678317599,
+          "cum_date": "2022-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.404186137,
+          "cum_date": "2022-12-15",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.447491795,
+          "cum_date": "2023-06-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.79393734481,
+          "cum_date": "2023-07-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.445733054,
+          "cum_date": "2024-06-20",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.4505107911,
+          "cum_date": "2024-07-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.451657052,
+          "cum_date": "2024-12-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.456512899,
+          "cum_date": "2025-07-30",
+          "share_ratio": 1.0
+        }
+      ],
+      "cash_statusinvest": [
+        {
+          "cash_value": 0.135628,
+          "cum_date": "2010-07-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.1733,
+          "cum_date": "2010-12-13",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.267958374,
+          "cum_date": "2011-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.321343,
+          "cum_date": "2012-07-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.267302,
+          "cum_date": "2013-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.359544368,
+          "cum_date": "2014-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.601262496,
+          "cum_date": "2015-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.491367573,
+          "cum_date": "2016-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.278877942,
+          "cum_date": "2017-07-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.513108985,
+          "cum_date": "2018-07-27",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.31356660214,
+          "cum_date": "2019-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.34464282,
+          "cum_date": "2019-12-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.19502845939,
+          "cum_date": "2020-07-31",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.34644526,
+          "cum_date": "2020-11-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.86611044191,
+          "cum_date": "2021-07-30",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 1.07560925,
+          "cum_date": "2021-11-11",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.389750918,
+          "cum_date": "2021-11-11",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.33201004139,
+          "cum_date": "2022-06-23",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.39678317599,
+          "cum_date": "2022-07-29",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.404186137,
+          "cum_date": "2022-12-15",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.447491795,
+          "cum_date": "2023-06-22",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.79393734481,
+          "cum_date": "2023-07-28",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.445733054,
+          "cum_date": "2024-06-21",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.4505107911,
+          "cum_date": "2024-07-26",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.451657052,
+          "cum_date": "2024-12-12",
+          "share_ratio": 1.0
+        },
+        {
+          "cash_value": 0.456512899,
+          "cum_date": "2025-07-30",
+          "share_ratio": 1.0
+        }
+      ],
+      "issuing_company": "SMTO",
+      "raw_counts": {
+        "b3_cash": 28,
+        "b3_stock": 1,
+        "statusinvest_cash": 27
+      },
+      "source_retrieved_at": {
+        "b3_cash": "2026-07-20T22:57:52Z",
+        "b3_stock": "2026-07-20T22:57:54Z",
+        "statusinvest_cash": "2026-07-20T22:57:57Z"
+      },
+      "stock_b3": [
+        {
+          "cash_value": 0.0,
+          "cum_date": "2016-12-09",
+          "share_ratio": 3.0
+        }
+      ],
+      "ticker": "SMTO3",
+      "trading_name": "SAO MARTINHO"
+    }
+  }
+}

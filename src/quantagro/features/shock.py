@@ -63,6 +63,9 @@ PRELIM_LAG_DAYS = 7
 FINAL_LAG_DAYS = 60
 
 _PRODUCTION_COL = "producao_mil_t"
+_CUMSUM_COL = "_precip_cumsum"
+_CUMCOUNT_COL = "_observed_cumcount"
+_ROWS_COL = "_rows_cumcount"
 
 
 def _ano_agricola(start_year: int) -> str:
@@ -79,7 +82,35 @@ def stamp_municipal_panel(municipal: pd.DataFrame) -> pd.DataFrame:
         sub = municipal[municipal["kind"] == kind]
         if not sub.empty:
             parts.append(stamp_avail_date(sub, lag_days=lag))
-    return pd.concat(parts, ignore_index=True)
+    out = pd.concat(parts, ignore_index=True).sort_values(
+        ["kind", "municipality_code", "ref_date"], ignore_index=True
+    )
+    keys = [out["kind"], out["municipality_code"]]
+    out[_CUMSUM_COL] = out["precip_mm"].fillna(0.0).groupby(keys, sort=False).cumsum()
+    out[_CUMCOUNT_COL] = out["precip_mm"].notna().astype("int64").groupby(keys, sort=False).cumsum()
+    out[_ROWS_COL] = out.groupby(["kind", "municipality_code"], sort=False).cumcount() + 1
+    return out
+
+
+def municipal_cumulative_index(municipal: pd.DataFrame) -> pd.DataFrame:
+    """Índice imutável de endpoints para reutilizar o painel sem reordená-lo por decisão."""
+    required = {
+        "kind",
+        "municipality_code",
+        "ref_date",
+        "avail_date",
+        "precip_mm",
+        _CUMSUM_COL,
+        _CUMCOUNT_COL,
+        _ROWS_COL,
+    }
+    missing = required - set(municipal.columns)
+    if missing:
+        raise ValueError(f"painel municipal sem colunas cumulativas: {sorted(missing)}")
+    indexed = municipal.set_index(["kind", "municipality_code", "ref_date"]).sort_index()
+    if indexed.index.has_duplicates:
+        raise ValueError("painel municipal cumulativo repete kind×município×data")
+    return indexed
 
 
 def conab_uf_weights(
@@ -116,16 +147,73 @@ def conab_uf_weights(
 
 
 def _stretch_sum(
-    municipal: pd.DataFrame, kind: str, codes: pd.Index, start: pd.Timestamp, end: pd.Timestamp
+    municipal: pd.DataFrame,
+    kind: str,
+    codes: pd.Index,
+    start: pd.Timestamp,
+    end: pd.Timestamp,
+    *,
+    cumulative_index: pd.DataFrame | None = None,
+    asof_date: pd.Timestamp | None = None,
 ) -> pd.Series:
     """Acumulado por município no trecho [start, end], exigindo cobertura diária completa."""
+    expected = pd.date_range(start, end, freq="D")
+    if cumulative_index is not None:
+        start_keys = pd.MultiIndex.from_arrays(
+            [
+                np.repeat(kind, len(codes)),
+                codes,
+                np.repeat(start, len(codes)),
+            ],
+            names=["kind", "municipality_code", "ref_date"],
+        )
+        end_keys = pd.MultiIndex.from_arrays(
+            [
+                np.repeat(kind, len(codes)),
+                codes,
+                np.repeat(end, len(codes)),
+            ],
+            names=["kind", "municipality_code", "ref_date"],
+        )
+        columns = [
+            "avail_date",
+            "precip_mm",
+            _CUMSUM_COL,
+            _CUMCOUNT_COL,
+            _ROWS_COL,
+        ]
+        first = cumulative_index.reindex(start_keys)[columns]
+        last = cumulative_index.reindex(end_keys)[columns]
+        if first[_ROWS_COL].isna().any() or last[_ROWS_COL].isna().any():
+            missing = codes[first[_ROWS_COL].isna().to_numpy() | last[_ROWS_COL].isna().to_numpy()]
+            raise ValueError(
+                f"município/data de borda fora do painel municipal: {list(missing[:5])}"
+            )
+        if asof_date is None:
+            raise ValueError("consulta cumulativa exige data as-of explícita")
+        if (first["avail_date"] > asof_date).any() or (last["avail_date"] > asof_date).any():
+            raise ValueError("trecho cumulativo tentou usar borda ainda não disponível")
+        before_sum = first[_CUMSUM_COL].to_numpy() - first["precip_mm"].fillna(0.0).to_numpy()
+        before_count = first[_CUMCOUNT_COL].to_numpy() - first["precip_mm"].notna().to_numpy(
+            dtype=int
+        )
+        sums = last[_CUMSUM_COL].to_numpy() - before_sum
+        counts = last[_CUMCOUNT_COL].to_numpy() - before_count
+        sizes = last[_ROWS_COL].to_numpy() - first[_ROWS_COL].to_numpy() + 1
+        if not np.equal(sizes, len(expected)).all():
+            bad = codes[~np.equal(sizes, len(expected))]
+            raise ValueError(f"município sem todos os dias do trecho: {list(bad[:5])}")
+        if not np.equal(counts, sizes).all():
+            bad = codes[~np.equal(counts, sizes)]
+            raise ValueError(f"precipitação municipal NaN dentro do trecho: {list(bad[:5])}")
+        return pd.Series(sums, index=codes, dtype=float)
+
     sub = municipal[
         (municipal["kind"] == kind)
         & (municipal["ref_date"] >= start)
         & (municipal["ref_date"] <= end)
         & (municipal["municipality_code"].isin(codes))
     ]
-    expected = pd.date_range(start, end, freq="D")
     missing_days = expected.difference(pd.DatetimeIndex(sub["ref_date"].unique()))
     if len(missing_days):
         raise ValueError(
@@ -158,9 +246,24 @@ def _uf_weights(pam_weights: pd.DataFrame, spec: CropRegionWindow) -> pd.Series:
 
 
 def _weighted_stretch(
-    municipal: pd.DataFrame, kind: str, weights: pd.Series, start: pd.Timestamp, end: pd.Timestamp
+    municipal: pd.DataFrame,
+    kind: str,
+    weights: pd.Series,
+    start: pd.Timestamp,
+    end: pd.Timestamp,
+    *,
+    cumulative_index: pd.DataFrame | None = None,
+    asof_date: pd.Timestamp | None = None,
 ) -> float:
-    sums = _stretch_sum(municipal, kind, weights.index, start, end)
+    sums = _stretch_sum(
+        municipal,
+        kind,
+        weights.index,
+        start,
+        end,
+        cumulative_index=cumulative_index,
+        asof_date=asof_date,
+    )
     return float((sums.loc[weights.index] * weights).sum())
 
 
@@ -171,6 +274,7 @@ def uf_shock_asof(
     municipal_visible: pd.DataFrame,
     pam_weights: pd.DataFrame,
     climatology_first_year: int,
+    cumulative_index: pd.DataFrame | None = None,
 ) -> dict:
     """``Shock`` de uma (cultura, UF) em ``t`` — ver o contrato no docstring do módulo.
 
@@ -204,7 +308,15 @@ def uf_shock_asof(
         }
     elapsed = int((cut - start).days)
     weights = _uf_weights(pam_weights, spec)
-    current = _weighted_stretch(prelim, PRIMARY_SIGNAL_KIND, weights, start, cut)
+    current = _weighted_stretch(
+        prelim,
+        PRIMARY_SIGNAL_KIND,
+        weights,
+        start,
+        cut,
+        cumulative_index=cumulative_index,
+        asof_date=pd.Timestamp(t),
+    )
 
     current_start_year = crop_year_start(ano_agricola)
     years = range(climatology_first_year, current_start_year)
@@ -218,7 +330,17 @@ def uf_shock_asof(
     for year in years:
         y_start, _ = critical_period(spec, _ano_agricola(year))
         y_end = y_start + pd.Timedelta(days=elapsed)
-        history.append(_weighted_stretch(final, CLIMATOLOGY_KIND, weights, y_start, y_end))
+        history.append(
+            _weighted_stretch(
+                final,
+                CLIMATOLOGY_KIND,
+                weights,
+                y_start,
+                y_end,
+                cumulative_index=cumulative_index,
+                asof_date=pd.Timestamp(t),
+            )
+        )
     hist = np.asarray(history, dtype=float)
     mean = float(hist.mean())
     std = float(hist.std(ddof=EXPANDING_STD_DDOF))
@@ -246,6 +368,8 @@ def shock_asof(
     conab: pd.DataFrame,
     climatology_first_year: int,
     windows: tuple[CropRegionWindow, ...] = PRIMARY_WINDOWS,
+    *,
+    cumulative_index: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Painel de ``Shock`` (UF + nacional por cultura) observável na data de decisão ``t``.
 
@@ -258,10 +382,19 @@ def shock_asof(
         raise ValueError("painel municipal sem avail_date — use stamp_municipal_panel")
     ts = pd.Timestamp(t)
     municipal_visible = available_asof(municipal, ts)
+    cumulative_columns = {_CUMSUM_COL, _CUMCOUNT_COL, _ROWS_COL}
+    if cumulative_index is None and cumulative_columns.issubset(municipal.columns):
+        cumulative_index = municipal_cumulative_index(municipal)
     pam_weights = pam_weights_asof(pam_panel, ts)
     rows = [
         uf_shock_asof(
-            ts, ano_agricola, spec, municipal_visible, pam_weights, climatology_first_year
+            ts,
+            ano_agricola,
+            spec,
+            municipal_visible,
+            pam_weights,
+            climatology_first_year,
+            cumulative_index,
         )
         for spec in windows
     ]

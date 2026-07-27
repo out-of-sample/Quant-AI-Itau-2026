@@ -24,8 +24,10 @@ from quantagro.backtest.holdout_spec import (
     H5_INFERENCE,
     H5_STATISTIC,
     H5_VETO,
+    INPUT_SUMMARY,
     PACKAGE_ID,
     REQUIRED_INPUTS,
+    SOURCE_MANIFEST,
     SPEC_FILES,
     canonical_spec_payload,
     spec_sha256,
@@ -109,15 +111,110 @@ def test_preflight_lista_ausencias_e_nao_fica_pronto(tmp_path) -> None:
     assert not report.present_inputs
     assert not report.run_record_exists
     assert not report.ready
-    assert not report.executor_implemented
+    assert report.executor_implemented
     assert len(report.logical_spec_sha256) == 64
 
 
-def test_execucao_falha_pelo_executor_antes_dos_inputs() -> None:
-    report = preflight_holdout()
-    assert not EXECUTOR_IMPLEMENTED
-    with pytest.raises(HoldoutLockedError, match="ainda não implementado"):
+def _materialize_synthetic_gate(tmp_path) -> None:
+    for relative in SPEC_FILES:
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(f"source:{relative}".encode())
+    input_records = {}
+    for role, relative in REQUIRED_INPUTS.items():
+        if role == "input_manifest":
+            continue
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(f"input:{role}".encode())
+        attestation = attest_file(path)
+        input_records[role] = {
+            "path": relative,
+            "bytes": attestation.bytes,
+            "sha256": attestation.sha256,
+        }
+    manifest = tmp_path / REQUIRED_INPUTS["input_manifest"]
+    manifest.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "package_id": PACKAGE_ID,
+                "logical_spec_sha256": spec_sha256(),
+                "inputs": input_records,
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest_sha256 = attest_file(manifest).sha256
+    (tmp_path / INPUT_SUMMARY).write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "package_id": PACKAGE_ID,
+                "logical_spec_sha256": spec_sha256(),
+                "input_manifest": {
+                    "path": REQUIRED_INPUTS["input_manifest"],
+                    "sha256": manifest_sha256,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    source_records = {}
+    for relative in SPEC_FILES:
+        attestation = attest_file(tmp_path / relative)
+        source_records[relative] = {
+            "path": relative,
+            "bytes": attestation.bytes,
+            "sha256": attestation.sha256,
+        }
+    source_manifest = tmp_path / SOURCE_MANIFEST
+    source_manifest.parent.mkdir(parents=True, exist_ok=True)
+    source_manifest.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "package_id": PACKAGE_ID,
+                "logical_spec_sha256": spec_sha256(),
+                "files": source_records,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def test_preflight_pronto_exige_hashes_de_fontes_e_inputs(tmp_path) -> None:
+    _materialize_synthetic_gate(tmp_path)
+    report = preflight_holdout(tmp_path)
+    assert EXECUTOR_IMPLEMENTED
+    assert report.ready
+    assert not report.source_manifest_errors
+    assert not report.manifest_errors
+    require_holdout_ready(report)
+
+
+def test_preflight_rejeita_adulteracao_de_fonte_e_input(tmp_path) -> None:
+    _materialize_synthetic_gate(tmp_path)
+    (tmp_path / SPEC_FILES[0]).write_bytes(b"fonte alterado")
+    input_path = tmp_path / REQUIRED_INPUTS["returns"]
+    input_path.write_bytes(b"input alterado")
+    report = preflight_holdout(tmp_path)
+    assert not report.ready
+    assert any("hash/tamanho divergente no fonte" in item for item in report.source_manifest_errors)
+    assert any("hash/tamanho divergente no input" in item for item in report.manifest_errors)
+    with pytest.raises(HoldoutLockedError, match="manifesto de fontes"):
         require_holdout_ready(report)
+
+
+def test_preflight_rejeita_manifesto_de_input_regravado(tmp_path) -> None:
+    _materialize_synthetic_gate(tmp_path)
+    manifest = tmp_path / REQUIRED_INPUTS["input_manifest"]
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["sources"] = [{"path": "fonte_nao_congelada"}]
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+    report = preflight_holdout(tmp_path)
+    assert not report.ready
+    assert "hash/caminho do manifesto diverge do resumo versionado" in report.manifest_errors
 
 
 def test_gate_rejeita_demais_estados_mesmo_em_fixture_sintetica() -> None:
@@ -128,6 +225,7 @@ def test_gate_rejeita_demais_estados_mesmo_em_fixture_sintetica() -> None:
                 base,
                 executor_implemented=True,
                 missing_spec_files=("src/missing.py",),
+                source_manifest_errors=(),
                 missing_inputs=(),
                 ready=False,
             )
@@ -138,6 +236,8 @@ def test_gate_rejeita_demais_estados_mesmo_em_fixture_sintetica() -> None:
                 base,
                 executor_implemented=True,
                 missing_spec_files=(),
+                source_manifest_errors=(),
+                missing_inputs=("returns",),
                 ready=False,
             )
         )
@@ -147,7 +247,9 @@ def test_gate_rejeita_demais_estados_mesmo_em_fixture_sintetica() -> None:
                 base,
                 executor_implemented=True,
                 missing_spec_files=(),
+                source_manifest_errors=(),
                 missing_inputs=(),
+                manifest_errors=(),
                 run_record_exists=True,
                 ready=False,
             )

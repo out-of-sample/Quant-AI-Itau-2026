@@ -1,0 +1,23 @@
+{
+  "events": [
+    {
+      "announcement_avail_date": "2025-05-27",
+      "last_trade_date": "2025-06-06",
+      "source": "B3 Ofício Circular 007/2025-VNC",
+      "source_url": "https://www.b3.com.br/data/files/7E/45/70/BB/263179106B8BCB69AC094EA8/OC%20007-2025-VNC_TRATAMENTO%20DAS%20CARTEIRAS%20DE%20%C3%8DNDICES%20INCORPDE%20ACOES%20DA%20JBS%20PART%20SOC%20SA%20JBS%20PA.pdf",
+      "successor": "JBSS32",
+      "ticker": "JBSS3"
+    },
+    {
+      "announcement_avail_date": "2025-09-08",
+      "last_trade_date": "2025-09-22",
+      "source": "Fato Relevante conjunto Marfrig/BRF, protocolo CVM 1421385",
+      "source_url": "https://www.rad.cvm.gov.br/ENETCONSULTA/frmDownloadDocumento.aspx?CodigoInstituicao=1&Tela=99&descTipo=IPE&numProtocolo=1421385&numSequencia=946097&numVersao=1",
+      "successor": "MBRF3",
+      "ticker": "BRFS3"
+    }
+  ],
+  "policy": "liquidate_entire_active_block_at_last_close",
+  "purpose": "point_in_time_terminal_exit_holdout",
+  "schema_version": 1
+}

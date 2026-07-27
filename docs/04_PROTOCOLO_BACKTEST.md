@@ -41,6 +41,14 @@ conhecida até D — o volume ou o status final de D+1 não podem decidir retros
 ordem. Se faltar close de execução ou saída sem evento terminal auditado, o bloco falha; não se
 usa o próximo preço nem se descarta o nome silenciosamente.
 
+**Evento terminal auditado (D-072):** se um nome mantido deixa de negociar dentro do bloco,
+uma comunicação oficial anterior ao último pregão aciona a liquidação do **bloco inteiro** no
+close terminal, com custo e ADTV normais. Isso preserva a exigência de dois lados econômicos e
+evita inserir o sucessor depois de ver o evento. JBSS3 encerra em 06/06/2025 (ofício B3
+disponível em 27/05) e BRFS3 em 22/09/2025 (fato relevante disponível em 08/09). O teste H′
+trata somente os retornos posteriores do nome terminal como caixa (zero); ausência anterior
+ou de outro nome continua falhando alto.
+
 **Entregável obrigatório:** gráfico da contagem de ativos elegíveis ao longo do tempo, junto
 da razão de cada entrada/saída. É a prova visual contra survivorship e backfill.
 
@@ -363,13 +371,18 @@ expressão “alpha climático”; os demais resultados são diagnósticos ou se
 
 A execução não pode pausar, exibir o primário e esperar decisão humana. Todos os blocos
 obrigatórios continuam mesmo após falha de H′, e os artefatos só são apresentados depois do
-selo final. `scripts/run_holdout_once.py` ainda executa somente um preflight return-agnóstico:
-valida o contrato, calcula hashes SHA-256 dos fontes e verifica a presença dos sete inputs sem
-abrir parquets. `--execute` falha alto antes do I/O porque o executor está explicitamente
-desabilitado.
+selo final. D-072 implementa o executor, mas separa capacidade técnica de autorização:
+`scripts/run_holdout_once.py` sem argumentos faz somente o preflight; `--execute` exige também
+a frase civil exata congelada e, sem ela, falha antes do preflight e do I/O.
 
 O painel diário H4 foi fechado em D-069 e os scores geográficos H5 em D-070/D-071, sem ler o
-desfecho. O unlock ainda exige, em commit anterior e auditável, o executor/registro civil com
-emissão atômica. Um registro de rodada já existente impede nova execução. A existência de P&L positivo, por si só, autoriza apenas
-afirmar retorno OOS positivo; evidência da estratégia exige também H′, e “alpha climático”
-exige adicionalmente componente D-064 positivo e passagem dos vetos H4/H5.
+desfecho. D-072 fecha, em commit anterior ao unlock, os seis parquets derivados, dois
+manifestos de hash, registro civil e emissão atômica. O `RUN_RECORD` é criado com exclusividade
+antes de abrir qualquer parquet; sucesso ou falha consome a única tentativa. Os blocos 0–10 são
+gravados numa pasta temporária no mesmo filesystem, sincronizados e publicados junto do selo 11
+por um único rename. Um registro de rodada já existente impede nova execução.
+
+A existência de P&L positivo, por si só, autoriza apenas afirmar retorno OOS positivo;
+evidência da estratégia exige também H′, e “alpha climático” exige adicionalmente componente
+D-064 positivo e passagem dos vetos H4/H5. O preflight `ready=true` não concede autorização:
+a frase civil só pode ser fornecida numa decisão humana posterior e exclusiva.

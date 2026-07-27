@@ -113,7 +113,10 @@ def _sessions_index(sessions: Sequence[pd.Timestamp] | pd.DatetimeIndex) -> pd.D
 
 
 def build_trade_blocks(
-    sessions: Sequence[pd.Timestamp] | pd.DatetimeIndex, crop_year: str
+    sessions: Sequence[pd.Timestamp] | pd.DatetimeIndex,
+    crop_year: str,
+    *,
+    holding_sessions: int = HOLDING_SESSIONS,
 ) -> tuple[TradeBlock, ...]:
     """Gera a grade D→X de D-055 sem consultar preços ou retornos.
 
@@ -123,6 +126,12 @@ def build_trade_blocks(
     bloco ainda é mantido por 21 pregões e então a carteira fica zerada.
     """
     idx = _sessions_index(sessions)
+    if (
+        isinstance(holding_sessions, bool)
+        or not isinstance(holding_sessions, int)
+        or holding_sessions <= 0
+    ):
+        raise ValueError("horizonte deve ser um inteiro positivo de pregões")
     year = crop_year_start(crop_year) + 1
     anchor = pd.Timestamp(year, *ANCHOR_MONTH_DAY)
     cutoff = pd.Timestamp(year, *FINAL_SIGNAL_MONTH_DAY)
@@ -133,7 +142,7 @@ def build_trade_blocks(
     blocks: list[TradeBlock] = []
     execution_pos = decision_pos + 1
     for sequence in range(len(idx)):
-        exit_pos = execution_pos + HOLDING_SESSIONS
+        exit_pos = execution_pos + holding_sessions
         if exit_pos >= len(idx):
             raise ValueError(f"calendário não cobre a saída final de {crop_year}")
         block = TradeBlock(

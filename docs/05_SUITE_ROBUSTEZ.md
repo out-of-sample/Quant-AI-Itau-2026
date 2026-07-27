@@ -221,14 +221,15 @@ econômica derivada e pré-registrada naquele mercado — nunca copiar a direç�
 
 ---
 
-## 7. Pacote indivisível da rodada única (D-068/D-069)
+## 7. Pacote indivisível da rodada única (D-068–D-072)
 
 O contrato executável vive em `backtest/holdout_spec.py`. O hash inicial D-068
 `cefa5f60…2900` foi substituído em D-069 ao incluir os fontes H4; o hash D-069
 `9ffa0fbf…df6` foi substituído em D-070 ao congelar a geografia H5 antes da materialização.
 O hash D-070 `fbcaa5d0…964f` foi substituído em D-071 ao incluir o materializador e seu
-registro. O payload vigente está travado pelo SHA-256
-`cb125fea931b616e2c62ec22a2821d3899c5a84643fa28d6f02ab9060a04912b`. A rodada não
+registro. D-072 incorporou executor, inputs, fontes de preço e emissão; o payload vigente está
+travado pelo SHA-256
+`f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e`. A rodada não
 pausa após ver o primário: mesmo se H′ falhar, todos os passos são calculados e emitidos.
 
 | Ordem | Bloco | Papel |
@@ -251,16 +252,18 @@ ganham níveis de afirmação distintos:
 
 Falha ou ausência de H4/H5 impede usar “alpha climático”, mesmo com curva positiva.
 
-### 7.1 Portão técnico ainda fechado
+### 7.1 Portão técnico pronto; autorização civil ainda fechada
 
-`scripts/run_holdout_once.py` atualmente executa apenas o preflight, que atesta o código por
-SHA-256 e lista inputs sem abrir parquets. `--execute` falha antes do I/O. Para habilitar a
-rodada faltam, em commits anteriores ao unlock:
+`scripts/run_holdout_once.py` sem argumentos executa apenas o preflight, que compara código e
+inputs com manifestos SHA-256 sem abrir parquets. D-072 encerrou os três requisitos técnicos:
 
 1. ~~materializar controles diários confiáveis de H4~~ **feito em D-069**;
 2. ~~congelar e materializar a geografia não produtiva de H5~~ **feito em D-070/D-071**;
-3. implementar o executor indivisível, registro civil e emissão atômica dos 12 artefatos.
+3. ~~implementar o executor indivisível, registro civil e emissão atômica dos 12 artefatos~~
+   **feito em D-072**.
 
 Os sete inputs derivados têm caminhos fixos em `data/interim/holdout/`; não podem ser
-substituídos por arquivos de desenvolvimento, dados atuais ou download ad hoc. A rodada real
-continua proibida até novo gate explícito.
+substituídos por arquivos de desenvolvimento, dados atuais ou download ad hoc. O manifesto
+versionado de fontes cobre exatamente `SPEC_FILES`; qualquer diferença de bytes bloqueia o
+preflight. A rodada real continua proibida até uma decisão humana posterior fornecer a frase
+civil exata. `ready=true` descreve integridade técnica, não consentimento.

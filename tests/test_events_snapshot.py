@@ -75,9 +75,23 @@ def test_roundtrip_offline(tmp_path: Path):
     path = tmp_path / "events.json"
     write_snapshot(payload, path)
     loaded = load_snapshot(path)
+    assert loaded["scope"]["purpose"] == "development_prices"
     b3, fallback, stock = events_from_snapshot(loaded, "SLCE3")
     assert b3 and fallback and stock
     assert all(isinstance(event.cum_date, pd.Timestamp) for event in b3 + fallback + stock)
+
+
+def test_snapshot_aceita_escopo_explicito_do_holdout():
+    payload = make_snapshot(
+        {"SLCE3": _capture()},
+        cutoff="2025-12-31",
+        retrieved_at="2026-07-20T20:00:00Z",
+        purpose="holdout_prices",
+    )
+    assert payload["scope"] == {
+        "end_date": "2025-12-31",
+        "purpose": "holdout_prices",
+    }
 
 
 def test_identidade_interna_divergente_falha():

@@ -145,3 +145,34 @@ def test_holdout_falha_antes_de_calcular_feature(monkeypatch):
             [block], pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), 2000
         )
     assert not called
+
+
+def test_lag_conservador_atrasa_somente_o_asof_do_choque(monkeypatch):
+    block = _block()
+    observed = []
+
+    def fake_shock(asof, *args, **kwargs):
+        observed.append(asof)
+        return pd.DataFrame(
+            [
+                {"level": "national", "crop": "soy", "status": "ok", "shock": 1.0},
+                {
+                    "level": "national",
+                    "crop": "corn_second",
+                    "status": "window_not_started",
+                    "shock": None,
+                },
+            ]
+        )
+
+    monkeypatch.setattr(inputs, "shock_asof", fake_shock)
+    inputs.materialize_grain_raw_scores(
+        [block],
+        _registry(block.decision_date),
+        pd.DataFrame(),
+        pd.DataFrame(),
+        pd.DataFrame(),
+        2000,
+        total_signal_lag_days=21,
+    )
+    assert observed == [block.decision_date - pd.Timedelta(days=14)]

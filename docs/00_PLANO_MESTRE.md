@@ -15,7 +15,8 @@ preço não teve suporte e a reação das ações veio no sentido contrário. O 
 reformulado, com registro completo, para testar a hipótese nova e pré-registrada de que o dano
 de volume próprio domina o benefício de preço (`Q>P`). O holdout de retornos 2020–2025 continua
 lacrado. A estratégia reformulada foi **congelada antes do holdout** em D-053; ainda não foi
-avaliada fora da amostra nem pode ser chamada de aprovada empiricamente.
+avaliada fora da amostra nem pode ser chamada de aprovada empiricamente. D-072 fechou o pacote
+técnico e o preflight, mas a rodada única ainda depende de uma autorização civil posterior.
 
 O elo causal é testado em etapas, não assumido:
 
@@ -378,7 +379,7 @@ Andamento:
   perna produtora continuar com um nome, nenhum resultado positivo autoriza alegar dispersão
   cross-sectional entre produtores. Subgrupos são descritivos; não criam novos testes. O
   holdout continua lacrado. Testes 519→523.
-- 🟡 **Pacote indivisível do holdout congelado até o preflight (D-068, 2026-07-26)**:
+- ✅ **Pacote indivisível do holdout congelado até o preflight (D-068, 2026-07-26)**:
   `backtest/holdout_spec.py` fixa a ordem dos 12 blocos, o único teste confirmatório H′,
   H4/H5 como vetos, grids descritivos, níveis de afirmação e caminhos dos sete inputs.
   `backtest/holdout.py` e `scripts/run_holdout_once.py` atestam fontes por SHA-256 e listam
@@ -402,7 +403,18 @@ Andamento:
   6.197 raster-dias CHIRPS, janelas, climatologia, pesos CONAB e exposições do sinal real.
   Fontes/partes/output estão presos por hash; rebuild reproduziu SHA-256
   `936bee66…32e1`. O preflight reconhece H4 e H5, mas o veto H5 **não foi estimado** porque
-  exige retornos lacrados. Hash lógico vigente `cb125fea…912b`; testes 540→549.
+  exige retornos lacrados. Hash lógico daquela etapa `cb125fea…912b`; testes 540→549.
+- ✅ **Executor e inputs da rodada única fechados (D-072, 2026-07-26)**:
+  os seis parquets derivados cobrem 1.495 sessões e todas as agendas/lags congelados; manifesto
+  local e resumo versionado prendem inputs e fontes por SHA-256. O executor cria o registro
+  irreversível antes de abrir parquets, calcula obrigatoriamente os blocos 0–10, faz `fsync` e
+  publica os 12 artefatos por rename atômico. Qualquer falha consome a tentativa; alteração em
+  fonte/input bloqueia o preflight. O gate seguro está `ready=true`, mas `--execute` sem a frase
+  civil exata falha antes do I/O. **Nenhum P&L, H′, H4 ou H5 foi calculado.** Hash lógico vigente
+  `f97093b9…3f9e`; manifesto de fontes `cb73c893…090d`; manifesto de inputs
+  `d31091cb…b43d`; suíte 549→564 testes. A auditoria return-agnóstica também detectou dois blocos que cruzam
+  deslistagens em 2025; a regra PIT agora liquida o bloco inteiro no último close oficial,
+  sem seguir JBSS32/MBRF3 nem trocar o universo.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
@@ -414,10 +426,10 @@ Andamento:
 
 ### Fase 6 — Holdout
 
-Depois de fechar o único bloqueio técnico restante — executor/registro civil indivisível —,
-liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
+O bloqueio técnico foi fechado em D-072. O próximo passo é uma decisão humana exclusiva:
+autorizar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
 correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
-qualquer que seja. O preflight atual não autoriza a abertura.
+qualquer que seja. `ready=true` não equivale a autorização civil.
 
 ### Fase 7 — Relatório
 5 páginas, 16:9, 100% anônimo. É o único entregável avaliado.

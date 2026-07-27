@@ -37,19 +37,32 @@ def materialize_grain_raw_scores(
     climatology_first_year: int,
     *,
     allow_holdout: bool = False,
+    total_signal_lag_days: int = 7,
+    municipal_cumulative_index: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Materializa ``E·Shock`` por decisão e nome, antes da direção operacional H′."""
     frozen = tuple(blocks)
     require_backtest_scope(frozen, allow_holdout=allow_holdout)
+    if (
+        isinstance(total_signal_lag_days, bool)
+        or not isinstance(total_signal_lag_days, int)
+        or total_signal_lag_days < 7
+    ):
+        raise ValueError(
+            "lag total deve ser inteiro e não pode antecipar o caso primário de 7 dias"
+        )
+    extra_lag = pd.Timedelta(days=total_signal_lag_days - 7)
     rows = []
     for block in frozen:
+        signal_asof = block.decision_date - extra_lag
         panel = shock_asof(
-            block.decision_date,
+            signal_asof,
             block.crop_year,
             municipal_stamped,
             pam_panel,
             conab_stamped,
             climatology_first_year,
+            cumulative_index=municipal_cumulative_index,
         )
         national = panel[panel["level"] == "national"].set_index("crop")
         if set(national.index) != set(GRAIN_CROPS):
@@ -92,19 +105,30 @@ def materialize_cane_signal(
     climatology_first_year: int,
     *,
     allow_holdout: bool = False,
+    total_signal_lag_days: int = 7,
 ) -> pd.DataFrame:
     """Materializa o Shock nacional de maturação da cana nas cinco UFs de D-055."""
     frozen = tuple(blocks)
     require_backtest_scope(frozen, allow_holdout=allow_holdout)
+    if (
+        isinstance(total_signal_lag_days, bool)
+        or not isinstance(total_signal_lag_days, int)
+        or total_signal_lag_days < 7
+    ):
+        raise ValueError(
+            "lag total deve ser inteiro e não pode antecipar o caso primário de 7 dias"
+        )
+    extra_lag = pd.Timedelta(days=total_signal_lag_days - 7)
     by_uf = {spec.uf: spec for spec in CANE_MATURATION_WINDOWS}
     if set(by_uf) != set(CANE_UFS):
         raise RuntimeError("janelas de maturação não coincidem com as cinco UFs congeladas")
 
     rows = []
     for block in frozen:
+        signal_asof = block.decision_date - extra_lag
         results = {
             uf: uf_cane_shock_asof(
-                block.decision_date,
+                signal_asof,
                 block.crop_year,
                 by_uf[uf],
                 monthly_stamped,

@@ -1553,6 +1553,41 @@ Maraú, Salinas da Margarida, Matinhos e Pontal do Paraná, exigindo `count=size
 cultura e município. Esse erro não chegou ao pré-registro congelado e virou um teste explícito:
 ausência nunca é zero.
 
+## 2026-07-26 — Executor e inputs da rodada única (D-072)
+
+**Uso**: transformar o pacote D-068–D-071 numa operação indivisível, preparar todos os inputs
+e provar o gate sem executar o resultado econômico do holdout.
+
+**Valor real**: a IA implementou a agenda completa de H′, custos, D-064, H4/H5, LOO e
+sensibilidades; separou preflight de autorização por uma frase civil exata; fez a tentativa ser
+consumida antes da leitura dos parquets e a publicação dos 12 artefatos ocorrer por rename
+atômico depois do selo. Também criou dois níveis de atestação: inputs/fontes de dados e os 60
+arquivos executáveis. O cálculo climático ganhou índice cumulativo validado contra o caminho
+original, reduzindo o rebuild sem mudar o resultado.
+
+A revisão return-agnóstica da agenda encontrou ainda dois blocos ativos que cruzavam o fim de
+JBSS3/BRFS3. Antes de tocar P&L, a IA buscou as comunicações oficiais e implementou a liquidação
+do bloco inteiro no último close: não seguir sucessores, não deixar uma carteira sem uma perna
+e não descobrir o erro depois de consumir a rodada.
+
+**Validação humana**: COTAHIST 2020–2025, eventos corporativos, schemas, cobertura e extremos
+foram auditados sem gerar P&L. A queda de SMTO3 em 09/03/2020 foi confirmada como mercado; a
+divergência de SLCE3 em 03/01/2022 levou à fonte primária e à bonificação de 10% omitida pelas
+APIs. O pacote foi reconstruído do zero e comparado por SHA-256. Testes sintéticos provam que
+falha do primário não interrompe os outros blocos, frase errada falha antes do preflight, erro
+consome a tentativa e adulteração de qualquer fonte/input veta `ready`. O comando real
+`--execute` sem frase falhou sem criar `RUN_RECORD`, `RESULT_RECORD` ou saída. A suíte integral
+terminou com 564 testes, além de lint e formatação verdes.
+
+**O que a IA errou**: o primeiro executor apenas registrava os hashes atuais dos fontes; não
+os comparava com valores esperados, então uma mudança acidental seria auditável mas não
+bloqueada. A revisão criou o manifesto versionado e testes de adulteração. O primeiro build
+também parou corretamente na queda extrema de SMTO3, inicialmente indistinguível de split
+perdido; a exceção só foi criada após três evidências. O cross-check de SLCE3 revelou depois
+uma segunda lacuna societária, exigindo refazer retornos e manifesto. Por fim, Yahoo passou a
+retornar 404 para BRFS3/JBSS3 deslistadas/substituídas; a limitação foi registrada em vez de
+declarar validação independente inexistente.
+
 ---
 
 ## Modelo de entrada (para as próximas)

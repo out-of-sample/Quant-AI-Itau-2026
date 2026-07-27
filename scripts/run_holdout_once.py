@@ -1,17 +1,19 @@
-"""Entrada única da Fase 6 — atualmente limitada ao preflight D-068.
+"""Entrada única da Fase 6 — preflight ou rodada civil atômica D-072.
 
-Sem argumentos, imprime apenas hashes de código e a lista de inputs ausentes. D-069 fechou
-H4 e D-070/D-071 fecharam H5; ``--execute`` permanece bloqueado antes de qualquer leitura
-de parquet até que o executor atômico seja fechado em decisão posterior.
+Sem argumentos, imprime apenas hashes e o estado do portão sem abrir parquets. ``--execute``
+exige também a frase civil exata congelada; sem ela, falha antes do I/O. Durante a rodada não
+há impressão intermediária: o comando só devolve a localização do pacote depois do selo final.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 
 sys.path.insert(0, "src")
-from quantagro.backtest.holdout import preflight_holdout, require_holdout_ready  # noqa: E402
+from quantagro.backtest.holdout import preflight_holdout  # noqa: E402
+from quantagro.backtest.holdout_executor import execute_holdout_once  # noqa: E402
 
 
 def main() -> None:
@@ -19,13 +21,20 @@ def main() -> None:
     parser.add_argument(
         "--execute",
         action="store_true",
-        help="tenta atravessar o portão; D-068–D-071 ainda bloqueiam antes do I/O",
+        help="consome a rodada única somente com a frase civil exata",
+    )
+    parser.add_argument(
+        "--authorization",
+        help="frase civil D-072; não é necessária para consultar o preflight",
     )
     args = parser.parse_args()
-    report = preflight_holdout()
-    print(report.to_json())
     if args.execute:
-        require_holdout_ready(report)
+        sealed = execute_holdout_once(".", authorization=args.authorization or "")
+        print(json.dumps(sealed, ensure_ascii=False, indent=2, sort_keys=True))
+        return
+    if args.authorization:
+        parser.error("--authorization só pode acompanhar --execute")
+    print(preflight_holdout().to_json())
 
 
 if __name__ == "__main__":

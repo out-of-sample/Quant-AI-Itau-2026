@@ -171,6 +171,7 @@ def build_naive_sector_schedule(
     membership: pd.DataFrame,
     *,
     allow_holdout: bool = False,
+    caps: dict[str, float] | None = None,
 ) -> TargetSchedule:
     """Carteira setorial ingênua: short produtor / long processador, sem score de clima.
 
@@ -189,7 +190,12 @@ def build_naive_sector_schedule(
     grain_scores = pd.DataFrame([sector_row] * len(frozen), index=decisions)
     cane_signal = pd.DataFrame({"shock": np.nan, "status": "window_not_started"}, index=decisions)
     return build_target_schedule(
-        frozen, grain_scores, cane_signal, membership, allow_holdout=allow_holdout
+        frozen,
+        grain_scores,
+        cane_signal,
+        membership,
+        allow_holdout=allow_holdout,
+        caps=caps,
     )
 
 

@@ -1,0 +1,54 @@
+{
+  "coverage": {
+    "calendar_sessions": 1495,
+    "cane_signal_rows": 224,
+    "end": "2025-12-30",
+    "grain_signal_rows": 224,
+    "market_state_rows": 7475,
+    "signal_lags_days": [
+      7,
+      14,
+      21
+    ],
+    "start": "2020-01-02"
+  },
+  "input_manifest": {
+    "path": "data/interim/holdout/input_manifest.json",
+    "sha256": "d31091cbc4b3408d54c4c1e38dc77f1cb6b9239a5a29c30d156439aeac35b43d"
+  },
+  "inputs": {
+    "cane_signal": {
+      "bytes": 4358,
+      "path": "data/interim/holdout/cane_signal.parquet",
+      "sha256": "1ac34397a4abd2dfa5e3b3bcb501322a961b2210d39dd6bf1ca55868693da76e"
+    },
+    "grain_scores": {
+      "bytes": 10591,
+      "path": "data/interim/holdout/grain_scores.parquet",
+      "sha256": "3aa92059f346a07ce415590776aba69c3c5c90c18feb7fa6ecb00dac0addd4ed"
+    },
+    "h4_controls": {
+      "bytes": 150875,
+      "path": "data/interim/holdout/h4_controls.parquet",
+      "sha256": "07811b9ec22b8914c9081e46bee8858446e4f098f54c2159c8b20a0ce6b3e666"
+    },
+    "h5_geographic_scores": {
+      "bytes": 5220,
+      "path": "data/interim/holdout/h5_geographic_grain_scores.parquet",
+      "sha256": "936bee66b580ad26d6b55ab4f0f004c511489243bd4cb69a9d31c87f864832e1"
+    },
+    "market_state": {
+      "bytes": 83532,
+      "path": "data/interim/holdout/market_state.parquet",
+      "sha256": "8d5869e0ffed4e5c6abd1c01dbc79f5bbd590bf9c3801907aa91cf955ea9926c"
+    },
+    "returns": {
+      "bytes": 84012,
+      "path": "data/interim/holdout/equity_returns.parquet",
+      "sha256": "8132dea21c163d46f388e6c13d319271260fa5487661c361606b93f3ad26ccc1"
+    }
+  },
+  "logical_spec_sha256": "f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e",
+  "package_id": "holdout_v1_d072",
+  "schema_version": 1
+}

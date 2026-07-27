@@ -306,6 +306,36 @@ def test_retorno_ausente_em_posicao_mantida_falha_alto():
         run_backtest(returns, _schedule(blocks), adtv, traded, borrow)
 
 
+def test_evento_terminal_liquida_bloco_inteiro_no_ultimo_close():
+    sessions = _calendar()
+    blocks = _blocks(sessions)
+    returns, adtv, traded, borrow = _inputs(sessions)
+    terminal = sessions[10]
+    returns.loc[returns.index > terminal, "JBSS3"] = np.nan
+    traded.loc[traded.index > terminal, "JBSS3"] = False
+
+    result = run_backtest(
+        returns,
+        _schedule(blocks),
+        adtv,
+        traded,
+        borrow,
+        scenario="base",
+        terminal_exits={"JBSS3": terminal},
+    )
+
+    assert result.daily.loc[terminal, "terminal_exit_tickers"] == "JBSS3"
+    assert (result.holdings_brl.loc[terminal] == 0).all()
+    assert set(result.orders_brl.loc[terminal].index[result.orders_brl.loc[terminal] != 0]) == {
+        "AGRO3",
+        "SLCE3",
+        "BRFS3",
+        "JBSS3",
+    }
+    assert result.daily.loc[terminal, "spot_cost_brl"] > 0
+    assert result.daily.loc[terminal:, "gross_pnl_brl"].iloc[1:].eq(0).all()
+
+
 def test_ordem_acima_de_cinco_porcento_do_adtv_falha_alto():
     sessions = _calendar()
     blocks = _blocks(sessions)
@@ -340,3 +370,18 @@ def test_painel_de_retorno_precisa_conter_calendario_b3_completo():
     returns = returns.drop(index=sessions[10])
     with pytest.raises(ValueError, match="21 intervalos"):
         run_backtest(returns, _schedule(blocks), adtv, traded, borrow)
+
+
+def test_motor_aceita_horizonte_congelado_de_sensibilidade() -> None:
+    sessions = _calendar(periods=30)
+    block = TradeBlock("2018/19", 0, sessions[0], sessions[1], sessions[11])
+    returns, adtv, traded, borrow = _inputs(sessions)
+    result = run_backtest(
+        returns,
+        _schedule((block,)),
+        adtv,
+        traded,
+        borrow,
+        holding_sessions=10,
+    )
+    assert len(result.daily.loc[block.execution_date : block.exit_date].iloc[1:]) == 10
