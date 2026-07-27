@@ -1,0 +1,21 @@
+{
+  "captured_at": "2026-07-27T04:21:58Z",
+  "files": [
+    {
+      "bytes": 124956,
+      "path": "data/raw/terminal_events_holdout/jbss3_b3_oc_007_2025.pdf",
+      "sha256": "578e51c8253b15e10e5b70abd64cf7ca5ee70737e41dc5a36b59ff7c97142998",
+      "ticker": "JBSS3",
+      "url": "https://www.b3.com.br/data/files/7E/45/70/BB/263179106B8BCB69AC094EA8/OC%20007-2025-VNC_TRATAMENTO%20DAS%20CARTEIRAS%20DE%20%C3%8DNDICES%20INCORPDE%20ACOES%20DA%20JBS%20PART%20SOC%20SA%20JBS%20PA.pdf"
+    },
+    {
+      "bytes": 283880,
+      "path": "data/raw/terminal_events_holdout/brfs3_cvm_1421385.pdf",
+      "sha256": "24cd283d8475db543909bec7fc4e2cc6262015844a7d38f6db7b1f07045f4209",
+      "ticker": "BRFS3",
+      "url": "https://www.rad.cvm.gov.br/ENETCONSULTA/frmDownloadDocumento.aspx?CodigoInstituicao=1&Tela=99&descTipo=IPE&numProtocolo=1421385&numSequencia=946097&numVersao=1"
+    }
+  ],
+  "purpose": "primary_evidence_for_holdout_terminal_exits",
+  "schema_version": 1
+}

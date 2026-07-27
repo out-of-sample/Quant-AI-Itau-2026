@@ -39,7 +39,7 @@ Estados: `ABERTA`, `EM ANDAMENTO`, `BLOQUEADA` ou `ENCERRADA`.
 |---|---|---|
 | Rodadores H1a/H1b e escolha da inferência final | `00_PLANO_MESTRE.md` §4, Fase 2 | entrega da fase atual |
 | Fricções e diagnósticos do backtest | Fase 4.2–4.3 e `04_PROTOCOLO_BACKTEST.md` | entregas futuras com fase proprietária; o motor 4.1 e sua contabilidade foram fechados em D-056. A cobertura restrita do dev é risco R26, não dívida transversal |
-| H4/H5 e pacote da rodada única | D-068–D-071, Fases 5–6 e `05_SUITE_ROBUSTEZ.md` | inputs H4/H5 fechados; único bloqueio com fase proprietária restante: executor/registro civil atômico |
+| H4/H5 e pacote da rodada única | D-068–D-072, Fases 5–6 e `05_SUITE_ROBUSTEZ.md` | pacote técnico encerrado em D-072; resta somente a decisão civil da Fase 6, que não é pendência transversal |
 | CEPEA, futuros B3, CAR e extensões opcionais | `02_DADOS.md` e `05_SUITE_ROBUSTEZ.md` | limitações/extensões já localizadas, não dívidas legadas |
 | Nome e identidade visual | Fase 7 e `08_IDENTIDADE.md` | decisão futura do time |
 | Rate limit numérico da NASA POWER e vintage térmico imperfeito | R3/R12 em `07_RISCOS_E_DECISOES.md` | limitação aceita e mitigada por cache; POWER não é fonte primária |

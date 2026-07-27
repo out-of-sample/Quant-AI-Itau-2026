@@ -221,6 +221,29 @@ class TestUfShock:
 
 
 class TestShockAsof:
+    def test_caminho_cumulativo_reproduz_algebra_lenta(self):
+        panel = _municipal_panel(current=1.25, ufs=("MT", "PR"))
+        kwargs = {
+            "t": "2016-01-20",
+            "ano_agricola": ANO,
+            "pam_panel": _pam_panel(ufs=("MT", "PR")),
+            "conab": _conab_panel(),
+            "climatology_first_year": FIRST_CLIM_YEAR,
+            "windows": (SOY_MT, SOY_PR),
+        }
+        fast = shock_asof(municipal=panel, **kwargs)
+        slow = shock_asof(
+            municipal=panel.drop(columns=[c for c in panel if c.startswith("_")]),
+            **kwargs,
+        )
+        numeric = ["precip_mm", "clim_mean_mm", "clim_std_mm", "z", "shock"]
+        assert np.allclose(
+            fast[numeric].to_numpy(dtype=float),
+            slow[numeric].to_numpy(dtype=float),
+            equal_nan=True,
+        )
+        assert fast["status"].tolist() == slow["status"].tolist()
+
     def test_nacional_pondera_pelo_conab_anterior(self):
         panel = _municipal_panel(current=1.25, ufs=("MT", "PR"))
         out = shock_asof(

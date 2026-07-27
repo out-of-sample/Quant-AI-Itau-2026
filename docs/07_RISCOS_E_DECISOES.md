@@ -2749,6 +2749,80 @@ não recria 6.197 rasters brutos já descartados. O manifesto original preserva 
 raster. (e) O único bloqueio técnico restante é o executor/registro civil atômico. Suíte
 540→549 testes.
 
+### D-072 — Executor indivisível, inputs atestados e gate civil da rodada única
+
+**Data:** 2026-07-26
+
+**Problema.** D-068–D-071 já tinham congelado a ordem inferencial, H4 e H5, mas ainda não
+existia uma operação única capaz de materializar todas as sensibilidades e emitir o pacote sem
+parada seletiva. Os retornos/estado de mercado e os sinais das agendas alternativas também não
+estavam fechados. Apenas calcular hashes no começo da rodada seria insuficiente: sem valores
+esperados, uma alteração acidental em fonte seria registrada, porém não vetada.
+
+**Decisão de dados anterior ao P&L.** `build_holdout_inputs.py` produz offline seis parquets e
+um manifesto: retorno total, estado diário, scores de grãos, cana, H4 e H5. O pacote cobre
+1.495 sessões (02/01/2020–30/12/2025), 7.475 linhas de estado e 224 decisões×lag em cada
+feature. A agenda inclui 10/21/42 pregões no lag 7; lag 14/21 usa somente a agenda primária,
+impedindo combinações não registradas. Um índice cumulativo por município tornou o rebuild
+climático exato e viável sem alterar a álgebra do `Shock`; teste compara o caminho rápido ao
+original.
+
+COTAHIST 2020–2025 e snapshot corporativo até 31/12/2025 são as fontes offline. O tripwire
+identificou a queda legítima de SMTO3 em 09/03/2020 (−32,36%), mantida apenas após conferência
+no COTAHIST, série ajustada independente e aviso oficial B3 do circuit breaker. O cross-check
+também revelou bonificação de 10% da SLCE3 com data-base 30/12/2021; entrou no registro manual
+somente após confirmação no relatório anual primário. Yahoo não serve mais BRFS3/JBSS3 após
+as substituições societárias de 2025; isso permanece limitação declarada, não confirmação
+fabricada. O pacote foi reconstruído do zero e os hashes dos seis inputs foram reproduzidos.
+
+A auditoria de agenda, ainda sem retorno, mostrou que pesos planejados de JBSS3 (bloco iniciado
+em 13/05/2025) e BRFS3 (09/09/2025) atravessavam seus últimos pregões. Deixar isso para a
+rodada faria o motor falhar depois de consumir a tentativa. O registro PIT
+`holdout_terminal_events_v1.json` congela a solução geral antes do P&L: quando um nome mantido
+chega ao último close anunciado oficialmente, liquidar **todo o bloco** naquele close, com
+custos e ADTV normais, e permanecer em caixa até a próxima execução. Não seguir JBSS32/MBRF3
+evita acrescentar sucessores fora do universo; encerrar só o nome deixaria o livro sem uma
+perna econômica. No painel confirmatório, retornos posteriores do nome terminal viram caixa
+zero; qualquer ausência anterior ao evento continua erro.
+
+**Decisão de execução.** `holdout_analysis.py` implementa sem ramificação os blocos 0–10:
+H′ exato, custos, D-067, D-064, H4 core/estendida, H5 geográfico/exposição, LOO, grids e
+métricas. `holdout_executor.py` exige a frase civil exata antes do preflight; depois de um
+preflight íntegro, cria `holdout_run_record_v1.json` com `O_EXCL` **antes** de abrir qualquer
+parquet. A partir daí, sucesso ou falha consome a única tentativa. Os 12 JSONs são gravados e
+sincronizados numa pasta temporária do mesmo filesystem; somente após o selo 11 um
+`os.replace` publica o diretório inteiro. Não há stdout intermediário nem interrupção se H′
+falhar.
+
+Dois manifestos fazem o gate falhar por alteração de bytes: o manifesto local prende os seis
+inputs e suas fontes; `holdout_source_attestations_v1.json` cobre exatamente os 60 arquivos de
+`SPEC_FILES`. Caminho, tamanho e SHA-256 precisam coincidir. O payload lógico final é
+`f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e`; o preflight
+seguro termina em `ready=true`, sem registro de rodada, resultado ou diretório publicado.
+O manifesto de fontes tem SHA-256
+`cb73c8930730cf1fe5db74e4d1200729f06eeb0ca2e34a198bee0d60602f090d` e o manifesto
+local de inputs,
+`d31091cbc4b3408d54c4c1e38dc77f1cb6b9239a5a29c30d156439aeac35b43d`.
+`--execute` sem frase continua falhando antes do I/O. Suíte 549→564 testes.
+
+**O que não aconteceu.** A materialização leu retornos individuais para controle de qualidade,
+depois do congelamento integral da estratégia, mas não calculou pesos realizados, retorno de
+carteira, H′, decomposição D-064, H4, H5, LOO ou sensibilidade. Nenhuma condição dos claims foi
+observada. A rodada econômica permanece lacrada e requer autorização humana posterior e
+exclusiva.
+
+**Custo/limitação declarado.** (a) A frase está no código e é um gate de governança, não
+segredo ou controle de acesso; `ready=true` também não é consentimento. (b) Falha de máquina ou
+bug após criar o registro sacrifica a rodada: corrigir e repetir é proibido sem uma nova decisão
+metodológica pública. (c) O rename torna atômico o diretório dos 12 artefatos, mas
+`RESULT_RECORD` e a atualização final de `RUN_RECORD` são passos posteriores; uma queda nesse
+intervalo deixa estado recuperável para auditoria, não autorização para rerun. (d) BRFS3/JBSS3
+perderam o comparador Yahoo gratuito; o risco residual é mitigado, não eliminado. (e) Fechar a
+máquina não adiciona poder aos cinco anos-safra nem transforma resultado positivo em alpha
+climático: continuam valendo exatamente os níveis de afirmação de D-068. (f) Liquidar o bloco
+no último close é executável e preserva o universo, mas difere de carregar a conversão
+societária: abre mão do retorno posterior do sucessor e paga giro adicional.
+
 ---
 
 ## Como registrar uma decisão nova

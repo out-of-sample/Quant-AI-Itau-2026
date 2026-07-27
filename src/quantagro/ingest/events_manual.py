@@ -29,6 +29,13 @@ _MANUAL_EVENTS: dict[str, list[CorporateEvent]] = {
         # Fonte: AGE SLC Agrícola de 30/04/2019 (ri.slcagricola.com.br) e cobertura
         # Reuters/Investing de 30/04–02/05/2019.
         CorporateEvent(cum_date=pd.Timestamp("2019-04-30"), share_ratio=2.0),
+        # Bonificação de 10% aprovada na AGE de 30/12/2021: emissão de 19.311.145 ON,
+        # uma ação nova para cada dez detidas na data-base. Negociação ex a partir do
+        # primeiro pregão seguinte, 03/01/2022. O supplement atual da B3 omite o evento;
+        # o cross-check do holdout o detectou pela divergência de 9,24 p.p. contra o Yahoo.
+        # Fonte primária: Relatório da Administração 2021 da SLC Agrícola, p. 15
+        # (slcagricola.com.br/ra2021/pdf/SLC-RAdm21.pdf).
+        CorporateEvent(cum_date=pd.Timestamp("2021-12-30"), share_ratio=1.1),
         # Bonificação de 10% (1 ON nova para cada 10) aprovada na AGO/E de 27/04/2023;
         # data-base (com) 08/05/2023, negociação ex-direito a partir de 09/05/2023,
         # 21.242.259 novas ações. Fonte: RI SLC Agrícola (ri.slcagricola.com.br/bonificacao)

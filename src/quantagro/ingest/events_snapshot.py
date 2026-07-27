@@ -99,6 +99,7 @@ def make_snapshot(
     *,
     cutoff: str | pd.Timestamp,
     retrieved_at: str,
+    purpose: str = "development_prices",
 ) -> dict[str, object]:
     """Empacota capturas por ticker e valida a identidade declarada em cada uma."""
     end = pd.Timestamp(cutoff).normalize()
@@ -106,13 +107,15 @@ def make_snapshot(
         raise ValueError("cutoff deve ser uma data sem fuso")
     if not retrieved_at.endswith("Z"):
         raise ValueError("retrieved_at deve estar em UTC e terminar em Z")
+    if not purpose or not isinstance(purpose, str):
+        raise ValueError("purpose do snapshot deve ser texto não vazio")
     expected = set(tickers)
     observed = {str(payload.get("ticker")) for payload in tickers.values()}
     if expected != observed:
         raise ValueError("chaves e ticker interno do snapshot divergem")
     return {
         "schema_version": SCHEMA_VERSION,
-        "scope": {"end_date": end.date().isoformat(), "purpose": "development_prices"},
+        "scope": {"end_date": end.date().isoformat(), "purpose": purpose},
         "retrieved_at": retrieved_at,
         "sources": {
             "b3": "sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/",

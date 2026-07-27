@@ -719,6 +719,50 @@ sobrescrever. A limitação é explícita: duas faixas costeiras não representa
 não produtora brasileira, e PAM é um snapshot revisável. O input H5 está pronto; o veto de
 retorno permanece lacrado.
 
+### 5.7 Pacote de inputs da rodada única — concluído em D-072
+
+O pacote local `data/interim/holdout/` contém seis parquets e um manifesto: retorno total dos
+cinco nomes, estado diário de mercado, scores PIT de grãos, sinal PIT de cana, controles H4 e
+scores geográficos H5. São 1.495 sessões de 02/01/2020 a 30/12/2025, 7.475 linhas
+data×ticker de mercado e 224 linhas de cada feature climática. Estas 224 linhas cobrem a união
+das agendas de 10/21/42 pregões no lag primário de 7 dias e a agenda de 21 pregões nos lags
+descritivos de 14/21 dias; combinações não pré-registradas não foram materializadas.
+
+Os COTAHIST anuais 2020–2025 são a fonte primária de preço e calendário. Cada ZIP tem
+manifesto de URL, bytes, captura e SHA-256; bruto continua fora do git. O snapshot corporativo
+offline `corporate_events_holdout_v1.json` fecha eventos até 31/12/2025 com hashes canônicos
+das capturas B3/StatusInvest. O tripwire de extremos interrompe o build, salvo exceção
+individual auditada em `price_return_exceptions_holdout_v1.json`. A única exceção é a queda
+real de 32,36% de SMTO3 em 09/03/2020, confirmada pelo COTAHIST, pela série ajustada
+independente e pelo aviso oficial do primeiro circuit breaker da crise de COVID-19.
+
+O cross-check ajustado também encontrou uma bonificação de 10% da SLCE3 com data-base
+30/12/2021, omitida pelas fontes automáticas. Ela foi incluída em `events_manual.py` somente
+depois de confirmação no Relatório da Administração 2021 da companhia. AGRO3, SLCE3 e SMTO3
+foram comparadas com uma série ajustada independente; BRFS3 e JBSS3 passaram a devolver HTTP
+404 no Yahoo após suas substituições societárias em 2025. Essa ausência é declarada, não
+tratada como confirmação. Para esses dois nomes permanecem COTAHIST oficial, snapshots de
+eventos, reconciliação das fontes e tripwires de retorno.
+
+Os dois tickers terminais cruzam blocos planejados. O registro
+`holdout_terminal_events_v1.json` prende anúncio e último pregão por fonte oficial: JBSS3 em
+06/06/2025 e BRFS3 em 22/09/2025. A regra não completa a série com sucessores; liquida o
+bloco inteiro no último close, com custo, e trata apenas o nome terminal como caixa após esse
+dia no painel H′. Isso evita tanto `ffill` de preço quanto entrada pós-hoc de JBSS32/MBRF3.
+Os PDFs B3/CVM foram conferidos localmente e presos por bytes/SHA-256 em
+`data/manifests/terminal_events_holdout_v1.json`.
+
+`input_manifest.json` atesta cada parquet e todas as fontes; o registro versionado
+`holdout_inputs_summary_v1.json` prende o hash desse manifesto e a cobertura, sem publicar
+retorno individual, média ou P&L. `holdout_source_attestations_v1.json` prende separadamente
+cada arquivo executável de `SPEC_FILES`. O preflight exige igualdade de papel, caminho,
+tamanho e hash nos dois lados antes de declarar `ready=true`.
+
+**Perímetro do lacre:** materializar e auditar os dados de preço exigiu ler séries individuais
+para controle de qualidade, depois de toda a estratégia estar congelada. Não foram calculados
+pesos realizados, carteira, P&L, H′, H4 ou H5. O resultado econômico do holdout continua
+desconhecido até a rodada única.
+
 ---
 
 ## 6. Resumo: latência e vintage por fonte

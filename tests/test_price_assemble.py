@@ -13,6 +13,7 @@ import pytest
 
 from quantagro.ingest.cotahist import filter_equities_spot, parse_cotahist
 from quantagro.ingest.events_b3 import b3_cash_to_events
+from quantagro.ingest.events_manual import manual_events
 from quantagro.ingest.events_statusinvest import statusinvest_to_events
 from quantagro.prices.adjust import CorporateEvent
 from quantagro.prices.assemble import (
@@ -121,6 +122,12 @@ class TestMergeCashEvents:
 
 
 class TestAssembleTotalReturn:
+    def test_bonificacao_slc_2021_esta_no_registro_manual(self):
+        events = manual_events("SLCE3")
+        event = [item for item in events if item.cum_date == pd.Timestamp("2021-12-30")]
+        assert len(event) == 1
+        assert event[0].share_ratio == pytest.approx(1.1)
+
     def test_split_real_smto_2016_fica_neutro_com_ratio_tres(self):
         quotes = filter_equities_spot(parse_cotahist(FIXTURES / "cotahist_smto_split_2016.txt"))
         close = close_series(quotes, "SMTO3")

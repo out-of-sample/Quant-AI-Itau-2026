@@ -33,14 +33,18 @@ from .strategy_spec import (
     UNIVERSE,
 )
 
-PACKAGE_ID = "holdout_v1_d068"
+PACKAGE_ID = "holdout_v1_d072"
 RUN_RECORD = "data/reference/holdout_run_record_v1.json"
 RESULT_RECORD = "data/reference/holdout_result_v1.json"
 WORK_DIR = "data/processed/holdout_v1"
+SOURCE_MANIFEST = "data/reference/holdout_source_attestations_v1.json"
+TERMINAL_EVENTS = "data/reference/holdout_terminal_events_v1.json"
+INPUT_SUMMARY = "data/reference/holdout_inputs_summary_v1.json"
 
-# D-069 fechou H4 e D-070/D-071 fecharam H5. O executor continua desabilitado até a
-# orquestração final ser implementada e auditada em commit próprio.
-EXECUTOR_IMPLEMENTED = False
+# D-072 implementa toda a orquestração, mas não autoriza a rodada. A frase civil exata exige
+# uma decisão humana posterior e exclusiva; ``--execute`` sozinho continua falhando antes do I/O.
+EXECUTOR_IMPLEMENTED = True
+AUTHORIZATION_PHRASE = "AUTORIZO_HOLDOUT_V1_D072_RODADA_UNICA"
 CONTINUE_AFTER_PRIMARY_FAILURE = True
 ALLOW_INTERMEDIATE_RESULT_DISPLAY = False
 
@@ -125,6 +129,8 @@ REQUIRED_INPUTS = {
 # Qualquer mudança nestes arquivos altera o hash do contrato e exige nova decisão anterior
 # ao holdout. O próprio módulo entra na lista; o runner final será acrescentado antes do unlock.
 SPEC_FILES = (
+    "pyproject.toml",
+    "requirements.lock",
     "src/quantagro/backtest/strategy_spec.py",
     "src/quantagro/backtest/operational_spec.py",
     "src/quantagro/backtest/inputs.py",
@@ -132,13 +138,38 @@ SPEC_FILES = (
     "src/quantagro/backtest/diagnostics.py",
     "src/quantagro/backtest/holdout_spec.py",
     "src/quantagro/backtest/holdout.py",
+    "src/quantagro/backtest/holdout_analysis.py",
+    "src/quantagro/backtest/holdout_executor.py",
+    "src/quantagro/backtest/terminal_events.py",
     "src/quantagro/features/shock_spec.py",
     "src/quantagro/features/shock.py",
+    "src/quantagro/features/cane_panel.py",
+    "src/quantagro/features/cane_shock.py",
     "src/quantagro/features/exposure.py",
+    "src/quantagro/features/panel.py",
+    "src/quantagro/ingest/borrow_b3.py",
+    "src/quantagro/ingest/conab.py",
+    "src/quantagro/ingest/conab_calendar.py",
+    "src/quantagro/ingest/cotahist.py",
+    "src/quantagro/ingest/events_b3.py",
+    "src/quantagro/ingest/events_manual.py",
+    "src/quantagro/ingest/events_snapshot.py",
+    "src/quantagro/ingest/events_statusinvest.py",
     "src/quantagro/ingest/h4_market.py",
+    "src/quantagro/ingest/ibge_geometry.py",
+    "src/quantagro/ingest/nefin.py",
+    "src/quantagro/ingest/oni.py",
+    "src/quantagro/ingest/pam.py",
+    "src/quantagro/ingest/pam_calendar.py",
+    "src/quantagro/prices/adjust.py",
+    "src/quantagro/prices/assemble.py",
     "src/quantagro/robustness/h4_controls.py",
     "src/quantagro/robustness/h5_geography.py",
     "src/quantagro/robustness/h5_geography_spec.py",
+    "src/quantagro/stats/cane_h1.py",
+    "src/quantagro/stats/h2a.py",
+    "src/quantagro/stats/inference.py",
+    "src/quantagro/validate/pit.py",
     "src/quantagro/validate/universe.py",
     "src/quantagro/validate/borrow.py",
     "data/reference/exposure_hprime_v1.json",
@@ -146,9 +177,17 @@ SPEC_FILES = (
     "data/reference/h4_controls_summary_v1.json",
     "data/reference/h5_geography_spec_v1.json",
     "data/reference/h5_geographic_scores_summary_v1.json",
+    "data/reference/corporate_events_holdout_v1.json",
+    "data/reference/price_return_exceptions_holdout_v1.json",
+    INPUT_SUMMARY,
+    "data/reference/holdout_terminal_events_v1.json",
+    "data/manifests/terminal_events_holdout_v1.json",
     "data/manifests/pam_1612_corn_total_2014-2024_ba_20260727.json",
     "scripts/build_h4_controls.py",
     "scripts/build_h5_geographic_scores.py",
+    "scripts/build_holdout_inputs.py",
+    "scripts/build_holdout_source_manifest.py",
+    "scripts/finalize_holdout_events.py",
     "scripts/run_holdout_once.py",
 )
 
@@ -166,7 +205,7 @@ CLAIM_REQUIREMENTS = {
 
 # Tripwire civil: qualquer alteração do payload lógico exige atualizar este valor numa decisão
 # posterior e explicitamente anterior ao unlock. O hash não depende do whitespace dos fontes.
-EXPECTED_LOGICAL_SPEC_SHA256 = "cb125fea931b616e2c62ec22a2821d3899c5a84643fa28d6f02ab9060a04912b"
+EXPECTED_LOGICAL_SPEC_SHA256 = "f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e"
 
 
 def canonical_spec_payload() -> dict[str, object]:
@@ -174,6 +213,7 @@ def canonical_spec_payload() -> dict[str, object]:
     return {
         "package_id": PACKAGE_ID,
         "executor_implemented": EXECUTOR_IMPLEMENTED,
+        "authorization_phrase_sha256": sha256(AUTHORIZATION_PHRASE.encode("utf-8")).hexdigest(),
         "continue_after_primary_failure": CONTINUE_AFTER_PRIMARY_FAILURE,
         "allow_intermediate_result_display": ALLOW_INTERMEDIATE_RESULT_DISPLAY,
         "primary": {
@@ -220,7 +260,10 @@ def canonical_spec_payload() -> dict[str, object]:
         },
         "steps": tuple(asdict(step) for step in ANALYSIS_STEPS),
         "required_inputs": REQUIRED_INPUTS,
+        "input_summary": INPUT_SUMMARY,
         "spec_files": SPEC_FILES,
+        "source_manifest": SOURCE_MANIFEST,
+        "terminal_events": TERMINAL_EVENTS,
         "claims": CLAIM_REQUIREMENTS,
         "run_record": RUN_RECORD,
         "result_record": RESULT_RECORD,
@@ -341,7 +384,9 @@ def validate_holdout_spec() -> None:
     }:
         raise ValueError("caminhos ou papéis dos inputs foram alterados")
     if spec_sha256() != EXPECTED_LOGICAL_SPEC_SHA256:
-        raise RuntimeError("payload lógico diverge do hash civil congelado em D-068–D-071")
+        raise RuntimeError(
+            f"payload lógico diverge do hash civil congelado: observado={spec_sha256()}"
+        )
 
 
 validate_holdout_spec()

@@ -1,0 +1,14 @@
+{
+  "exceptions": [
+    {
+      "absolute_tolerance": 1e-12,
+      "date": "2020-03-09",
+      "expected_return": -0.323583180987203,
+      "primary_source": "https://www.b3.com.br/pt_br/noticias/aviso-ao-mercado-8AE490C870BF0D5D0170BF7FBAE91DA7.htm",
+      "reason": "movimento de mercado no primeiro circuit breaker da crise de COVID-19; COTAHIST oficial fecha SMTO3 de 27,35 em 06/03 para 18,50 em 09/03, sem evento societário, e o retorno ajustado independente coincide",
+      "ticker": "SMTO3"
+    }
+  ],
+  "purpose": "audited_extreme_raw_returns_in_holdout",
+  "schema_version": 1
+}
