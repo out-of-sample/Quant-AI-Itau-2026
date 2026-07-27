@@ -41,9 +41,9 @@
       "sha256": "d6b5e3078a8d023d8fb115d863b2fbf1709c337852520aac36a72aef38f083ff"
     },
     "data/reference/holdout_inputs_summary_v1.json": {
-      "bytes": 1762,
+      "bytes": 1782,
       "path": "data/reference/holdout_inputs_summary_v1.json",
-      "sha256": "be860a30436618a348234425e0cfad92c94afe6e30e879d9c59b014e0baa9a1a"
+      "sha256": "73cb15aacdde1b8e97e1a1cd2b3969fc930ec9d7b4db1fd4b9acc13d91bd7827"
     },
     "data/reference/holdout_terminal_events_v1.json": {
       "bytes": 994,
@@ -95,6 +95,11 @@
       "path": "scripts/run_holdout_once.py",
       "sha256": "59f7cbeaf74762efd271f6bfb4b0946f2c81515948a3edf5498111861e39f287"
     },
+    "scripts/run_holdout_report.py": {
+      "bytes": 705,
+      "path": "scripts/run_holdout_report.py",
+      "sha256": "80c23c62513bac4f2a10019b8daa32d9844e13350816891f68e41523b66651c2"
+    },
     "src/quantagro/backtest/diagnostics.py": {
       "bytes": 14662,
       "path": "src/quantagro/backtest/diagnostics.py",
@@ -120,10 +125,20 @@
       "path": "src/quantagro/backtest/holdout_executor.py",
       "sha256": "03c6242c045e46492d285add82ffd3c841cc60f3427a1728747569015ef12513"
     },
+    "src/quantagro/backtest/holdout_report.py": {
+      "bytes": 5037,
+      "path": "src/quantagro/backtest/holdout_report.py",
+      "sha256": "0627dd419ac5eb584005c48291eecf38bef5463e464e95c2619d285244964cdb"
+    },
+    "src/quantagro/backtest/holdout_report_spec.py": {
+      "bytes": 18703,
+      "path": "src/quantagro/backtest/holdout_report_spec.py",
+      "sha256": "ae7b5699a2fedbf231eede5a6697b01d213be344499c897b87756d963760b9f9"
+    },
     "src/quantagro/backtest/holdout_spec.py": {
-      "bytes": 17136,
+      "bytes": 17374,
       "path": "src/quantagro/backtest/holdout_spec.py",
-      "sha256": "92e10580a54beb29d5092f62e079c4e5a86cffe073986e868a5770dece8db2c4"
+      "sha256": "890040b4eecebc59733e613a95ec5f3f355a6ab2123f91ff06d625bca96bf01d"
     },
     "src/quantagro/backtest/inputs.py": {
       "bytes": 6271,
@@ -301,7 +316,7 @@
       "sha256": "c828aa222711a6c64b34d815b46857e277bfaa326038455c3748c0f2da17a9c1"
     }
   },
-  "logical_spec_sha256": "f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e",
+  "logical_spec_sha256": "cfb441983e9f2584d006db66b0e7d5ecf036a6eacc72a10bf78138fdf7322865",
   "package_id": "holdout_v1_d072",
   "schema_version": 1
 }

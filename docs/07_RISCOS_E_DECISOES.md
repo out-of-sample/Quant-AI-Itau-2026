@@ -2823,6 +2823,89 @@ climático: continuam valendo exatamente os níveis de afirmação de D-068. (f)
 no último close é executável e preserva o universo, mas difere de carregar a conversão
 societária: abre mão do retorno posterior do sucessor e paga giro adicional.
 
+### D-073 — Pré-registro do relatório descritivo do holdout, anterior à rodada única
+
+**Data:** 2026-07-27
+
+**Problema.** O pacote de D-068–D-072 congelou o que a rodada **calcula**, mas não o que nós
+vamos **reportar** sobre ela. Sobravam quatro buracos, todos com o mesmo formato: são escolhas
+que, se feitas depois de ver o resultado, viram seleção posterior disfarçada de método.
+
+1. O resultado do holdout sai como um agregado sobre cinco anos-safra. Um agregado positivo
+   pode ser um único ano carregando os outros quatro — que é exatamente o defeito que D-060 já
+   encontrou no dev, onde um nome respondia por 54,6% do P&L bruto. Sem regra prévia, a
+   tentação de mostrar só o agregado (ou só os anos bons) existe.
+2. A carteira nunca foi caracterizada por risco. Temos P&L, atribuição e turnover; não temos
+   cauda, tempo submerso nem beta. E `dollar-neutral` não implica beta zero, como D-034 já
+   registrou — logo o beta precisa ser medido, não presumido.
+3. Não havia benchmark de performance declarado. `portfolio_metrics` reporta
+   `sharpe_zero_rf`, que assume taxa livre de risco igual a zero. Escolher o comparador depois
+   permitiria pegar o que favorece.
+4. Não havia correção pelo número de especificações testadas. O log D-001–D-072 mostra que
+   várias configurações de estratégia foram avaliadas ao longo do projeto, algumas delas
+   **com retorno do dev observado** (D-043, D-059, D-060) e uma delas alterando a
+   especificação depois disso (D-061). Ignorar essa multiplicidade infla qualquer Sharpe.
+
+**Decisão.** `backtest/holdout_report_spec.py` congela, antes da rodada: as métricas por
+ano-safra com **todos os cinco anos obrigatórios** no artefato, inclusive negativos e inclusive
+os sem bloco ativo; as estatísticas de risco (VaR/CVaR a 5% histórico, desvio de downside,
+Sortino, Calmar, tempo submerso médio e máximo, beta contra `rm_minus_rf`, exposição bruta e
+líquida); o benchmark primário; e o Deflated Sharpe com a contagem de tentativas enumerada.
+
+O benchmark primário é a **taxa livre de risco local** — a mesma série `risk_free` que H4 já
+usa. Justificativa: o livro é dollar-neutral, não toma exposição direcional; ele consome
+capital como margem e garantia, e o custo de oportunidade desse capital é a taxa livre de
+risco. Ficam **explicitamente recusados** o Ibovespa, um CDI mais spread arbitrário e a taxa
+zero. O Ibovespa é recusado porque um livro sem exposição de mercado pareceria brilhante num
+ano de queda e medíocre num ano de alta, pelos motivos errados nos dois casos. O comparador
+secundário é a carteira setorial ingênua do bloco 4 (D-064), que é o contrafactual honesto de
+"isto é clima ou é setor?". O número de manchete fica fixado no cenário de custo **base** —
+não no `zero`, nem no melhor dos três depois de vistos.
+
+A contagem de tentativas é **enumerada, não resumida num inteiro**, em `TRIAL_LEDGER`: 16
+configurações do log de decisões, cada uma com a decisão que a originou, mais 23 variantes
+calculadas dentro da própria rodada (3 cenários de custo, 10 sensibilidades, 5 leave-one-name-out
+e 5 leave-one-crop-year-out), totalizando 39. Incluir as 23 é deliberadamente conservador:
+elas não selecionaram nada, mas contá-las eleva a barra que o Sharpe observado precisa vencer.
+Preferimos errar para o lado que nos penaliza. A dispersão dos Sharpes das variantes também
+tem a fonte fixada aqui, para não ser escolhida depois.
+
+**Como o pré-registro é imposto.** Não basta escrever a intenção num documento. Os dois módulos
+do relatório e o runner entraram em `SPEC_FILES`, e os parâmetros entraram no payload lógico do
+contrato. Alterar qualquer fórmula, constante ou comparador depois passa a **quebrar o hash
+civil** e a travar o preflight, exatamente como qualquer outra alteração do contrato. O hash
+lógico foi atualizado deliberadamente de `f97093b9…3f9e` para `cfb44198…2865`, com o manifesto
+de fontes indo de 60 para 63 arquivos; `ready=true` foi restaurado ao fim. Os seis parquets de
+input permaneceram **byte-idênticos** — só o carimbo do contrato mudou, nunca o dado.
+
+**Estatuto do relatório: descritivo.** Ele não veta, não promove e não altera nenhum claim de
+D-068. Um resultado ruim aqui não invalida o teste primário; um bom não o corrobora. Isso
+também está travado em teste, para impedir que o relatório vire um gate por acidente.
+
+**Ausência de camada de risco, declarada como escolha.** A estratégia não tem stop, alvo de
+volatilidade nem kill-switch. Isso é decisão, não esquecimento: adicionar overlay agora
+significaria mexer no contrato econômico congelado em D-053, e o custo (mudar a estratégia
+depois de tudo pronto, sem poder testar a mudança fora da amostra) supera o benefício. A
+ausência é registrada aqui para ser dita no relatório, não para passar despercebida.
+
+**Por quê agora.** As quatro peças são calculáveis **depois** da rodada, a partir dos artefatos
+já publicados — o bloco 10 emite a série diária, os pesos e a atribuição do cenário base, e a
+série livre de risco já é input atestado de H4. Nada disso exigia mexer no executor. O que
+exigia ser feito agora é o congelamento: uma fórmula escolhida depois do resultado não é
+método, é justificativa.
+
+**Custo/limitação declarado.** (a) O recongelamento consumiu três atualizações do hash lógico
+numa única sessão (spec, runner, script); todas anteriores a qualquer autorização, mas o
+histórico registra a sequência em vez de um único passo limpo. (b) O Deflated Sharpe depende
+da contagem de tentativas, e nenhuma contagem desse tipo é objetiva: `TRIAL_LEDGER` é
+enumerado justamente para ser auditável e contestável item a item, não para parecer exato.
+(c) A dispersão dos Sharpes das variantes é estimada dentro da própria rodada, sobre variantes
+que não são independentes entre si; o número resultante é indicativo, não uma estimativa
+limpa da variância entre tentativas verdadeiramente independentes. (d) Cinco anos-safra
+continuam sendo cinco anos-safra: reportar por ano dá honestidade e distribuição, não poder
+estatístico. (e) O beta é medido contra um único fator de mercado; neutralidade a fatores
+segue sendo pergunta de H4, não deste relatório.
+
 ---
 
 ## Como registrar uma decisão nova

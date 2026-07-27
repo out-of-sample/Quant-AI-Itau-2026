@@ -424,9 +424,23 @@ Andamento:
   setor) sem gastar α extra nem multiplicar a família de testes; no dev roda descritiva/circular
   (Bloco C′). Não muda a estratégia negociada. Testes 492→497.
 
+- ✅ **Pré-registro do relatório descritivo (D-073, 2026-07-27)**: o pacote congelava o que a
+  rodada calcula, não o que reportamos sobre ela. `backtest/holdout_report_spec.py` fecha, antes
+  da rodada: métricas por ano-safra com **os cinco anos obrigatórios** no artefato (o agregado
+  esconde um ano carregando os outros); estatísticas de risco que não existiam (VaR/CVaR,
+  Sortino, Calmar, tempo submerso, beta — `dollar-neutral` não implica beta zero, ver D-034);
+  benchmark primário = taxa livre de risco, com Ibovespa **explicitamente recusado**, manchete
+  fixada no cenário de custo base; e Deflated Sharpe com as tentativas **enumeradas** (16 do log
+  + 23 variantes da rodada = 39, contagem conservadora). O relatório é descritivo: não veta nem
+  promove nenhum claim de D-068. Imposto por máquina — os módulos entraram em `SPEC_FILES` e os
+  parâmetros no payload lógico, então mudar fórmula depois quebra o preflight. Hash lógico
+  `f97093b9…3f9e` → `cfb44198…2865`, fontes 60 → 63 arquivos, `ready=true` restaurado, os seis
+  parquets de input **byte-idênticos**. Testes 564→582.
+
 ### Fase 6 — Holdout
 
-O bloqueio técnico foi fechado em D-072. O próximo passo é uma decisão humana exclusiva:
+O bloqueio técnico foi fechado em D-072 e o que será reportado foi congelado em D-073. O
+próximo passo é uma decisão humana exclusiva:
 autorizar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
 correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
 qualquer que seja. `ready=true` não equivale a autorização civil.

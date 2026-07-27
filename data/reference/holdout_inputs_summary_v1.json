@@ -13,8 +13,9 @@
     "start": "2020-01-02"
   },
   "input_manifest": {
+    "bytes": 13860,
     "path": "data/interim/holdout/input_manifest.json",
-    "sha256": "d31091cbc4b3408d54c4c1e38dc77f1cb6b9239a5a29c30d156439aeac35b43d"
+    "sha256": "80a87834899615673666d66a48b5e63832dbbd70cb2d5142166a31887d91fe54"
   },
   "inputs": {
     "cane_signal": {
@@ -48,7 +49,7 @@
       "sha256": "8132dea21c163d46f388e6c13d319271260fa5487661c361606b93f3ad26ccc1"
     }
   },
-  "logical_spec_sha256": "f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e",
+  "logical_spec_sha256": "cfb441983e9f2584d006db66b0e7d5ecf036a6eacc72a10bf78138fdf7322865",
   "package_id": "holdout_v1_d072",
   "schema_version": 1
 }

@@ -15,6 +15,7 @@ import json
 from dataclasses import asdict, dataclass
 from hashlib import sha256
 
+from .holdout_report_spec import report_spec_payload
 from .operational_spec import (
     ADTV_FLOOR_BRL,
     COST_SCENARIOS,
@@ -136,6 +137,8 @@ SPEC_FILES = (
     "src/quantagro/backtest/inputs.py",
     "src/quantagro/backtest/engine.py",
     "src/quantagro/backtest/diagnostics.py",
+    "src/quantagro/backtest/holdout_report.py",
+    "src/quantagro/backtest/holdout_report_spec.py",
     "src/quantagro/backtest/holdout_spec.py",
     "src/quantagro/backtest/holdout.py",
     "src/quantagro/backtest/holdout_analysis.py",
@@ -189,6 +192,7 @@ SPEC_FILES = (
     "scripts/build_holdout_source_manifest.py",
     "scripts/finalize_holdout_events.py",
     "scripts/run_holdout_once.py",
+    "scripts/run_holdout_report.py",
 )
 
 CLAIM_REQUIREMENTS = {
@@ -205,7 +209,7 @@ CLAIM_REQUIREMENTS = {
 
 # Tripwire civil: qualquer alteração do payload lógico exige atualizar este valor numa decisão
 # posterior e explicitamente anterior ao unlock. O hash não depende do whitespace dos fontes.
-EXPECTED_LOGICAL_SPEC_SHA256 = "f97093b9e493d0370428f1948f54cdbc29d6ef57587cce06ab7f4de37c393f9e"
+EXPECTED_LOGICAL_SPEC_SHA256 = "cfb441983e9f2584d006db66b0e7d5ecf036a6eacc72a10bf78138fdf7322865"
 
 
 def canonical_spec_payload() -> dict[str, object]:
@@ -258,6 +262,7 @@ def canonical_spec_payload() -> dict[str, object]:
             "loo_names": LOO_NAMES,
             "loo_crop_years": LOO_CROP_YEARS,
         },
+        "report": dict(report_spec_payload()),
         "steps": tuple(asdict(step) for step in ANALYSIS_STEPS),
         "required_inputs": REQUIRED_INPUTS,
         "input_summary": INPUT_SUMMARY,
