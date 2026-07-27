@@ -81,8 +81,13 @@ todo o restante da estratégia real são reutilizados sem alteração. A escolha
 faixas costeiras — uma das geografias não produtoras prometidas no pré-registro — e não tenta
 representar toda área não produtora do país.
 
-- **Resultado esperado**: o alfa **desaparece**. Chuva na Amazônia central não tem por que
-  prever o resultado da SLC Agrícola.
+**Input materializado (D-071):** 46 decisões × quatro nomes de grãos, de 07/01/2021 a
+08/09/2025, sem ausências. O cálculo consumiu 6.197 raster-dias e foi reproduzido com o
+mesmo SHA-256 `936bee66…32e1`. Isso fecha o input, não o teste: `T_placebo`, sua razão contra
+`T_real` e o p-valor continuam lacrados até a rodada única.
+
+- **Resultado esperado**: o alfa **desaparece**. Chuva nesses municípios costeiros sem
+  soja/milho não tem por que prever o resultado da SLC Agrícola.
 - **Critério executável D-068**: sobre o retorno líquido base médio dos cinco anos-safra,
   com sign-flip exato dos clusters, `|T_placebo| < 0,5·|T_real|` e p unilateral >0,10.
 - **Critério de falha**: o placebo retém ≥50% do efeito ou permanece significativo.
@@ -221,8 +226,9 @@ econômica derivada e pré-registrada naquele mercado — nunca copiar a direç�
 O contrato executável vive em `backtest/holdout_spec.py`. O hash inicial D-068
 `cefa5f60…2900` foi substituído em D-069 ao incluir os fontes H4; o hash D-069
 `9ffa0fbf…df6` foi substituído em D-070 ao congelar a geografia H5 antes da materialização.
-O payload vigente está travado pelo SHA-256
-`fbcaa5d02d35c9364fb093fd3df21fc0833ff6712fb6958b6f826d516534964f`. A rodada não
+O hash D-070 `fbcaa5d0…964f` foi substituído em D-071 ao incluir o materializador e seu
+registro. O payload vigente está travado pelo SHA-256
+`cb125fea931b616e2c62ec22a2821d3899c5a84643fa28d6f02ab9060a04912b`. A rodada não
 pausa após ver o primário: mesmo se H′ falhar, todos os passos são calculados e emitidos.
 
 | Ordem | Bloco | Papel |
@@ -252,7 +258,7 @@ SHA-256 e lista inputs sem abrir parquets. `--execute` falha antes do I/O. Para 
 rodada faltam, em commits anteriores ao unlock:
 
 1. ~~materializar controles diários confiáveis de H4~~ **feito em D-069**;
-2. congelar e materializar a geografia não produtiva de H5;
+2. ~~congelar e materializar a geografia não produtiva de H5~~ **feito em D-070/D-071**;
 3. implementar o executor indivisível, registro civil e emissão atômica dos 12 artefatos.
 
 Os sete inputs derivados têm caminhos fixos em `data/interim/holdout/`; não podem ser

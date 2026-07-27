@@ -9,6 +9,7 @@ from quantagro.robustness.h5_geography_spec import (
     H5_PLACEBO_CODES,
     H5_PLACEBO_MUNICIPALITIES,
     H5_TOTAL_CELLS,
+    audit_placebo_cell_index,
     audit_zero_grain_production,
     validate_h5_geography_spec,
 )
@@ -45,3 +46,22 @@ def test_auditoria_rejeita_identidade_municipal_divergente() -> None:
     pam.loc[pam["municipality_code"].eq("2906303"), "municipality_name"] = "Outro"
     with pytest.raises(ValueError, match="identidade PAM"):
         audit_zero_grain_production(pam, years=(2024,))
+
+
+def test_indice_de_celulas_exige_contagens_congeladas() -> None:
+    rows = []
+    for municipality in H5_PLACEBO_MUNICIPALITIES:
+        rows.extend(
+            {
+                "municipality_code": municipality.municipality_code,
+                "uf": municipality.uf,
+                "row": i,
+                "col": i + 100,
+            }
+            for i in range(municipality.n_cells)
+        )
+    index = pd.DataFrame(rows)
+    audit = audit_placebo_cell_index(index)
+    assert audit["n_cells"].sum() == 91
+    with pytest.raises(ValueError, match="diverge"):
+        audit_placebo_cell_index(index.iloc[:-1])

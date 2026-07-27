@@ -2706,6 +2706,49 @@ históricos reconstruídos. (d) A materialização posterior deve falhar se qual
 células, dos 6.197 raster-dias ou das identidades municipais divergir. (e) Nenhum `Shock`
 placebo e nenhum retorno foi calculado.
 
+### D-071 — Scores geográficos H5 materializados; veto de retorno segue lacrado
+
+**Data:** 2026-07-26
+
+**Pré-condição verificável.** O commit `1522ae6` congelou D-070 antes desta materialização.
+Logo, municípios, células, regra de zero PAM, agregação, janelas e pesos já estavam no histórico
+antes de qualquer valor do `Shock` placebo ser calculado.
+
+**Implementação.** `robustness/h5_geography.py` agrega o painel municipal por número de células,
+carimba prelim/final com os mesmos lags do sinal real e calcula uma climatologia expanding do
+mesmo trecho para cada janela `PRIMARY_WINDOWS`. As janelas observáveis são agregadas com os
+mesmos pesos CONAB da safra anterior; `E·Shock_placebo` usa os mesmos vintages H′ por data.
+`scripts/build_h5_geographic_scores.py` usa o calendário NEFIN/B3 para os blocos congelados,
+autoriza apenas a materialização de feature holdout sem retornos e escreve por arquivo
+temporário.
+
+**Resultado de engenharia, não do veto.**
+
+- 91 células em cinco municípios e 6.197 raster-dias CHIRPS completos;
+- 46 datas de decisão entre 07/01/2021 e 08/09/2025, quatro nomes de grãos;
+- zero score ausente/duplicado/infinito;
+- output `h5_geographic_grain_scores.parquet`, SHA-256
+  `936bee66b580ad26d6b55ab4f0f004c511489243bd4cb69a9d31c87f864832e1`;
+- 27 partes municipais e todas as demais fontes presas por SHA-256 em
+  `h5_geographic_scores_summary_v1.json`; rebuild bit-a-bit;
+- preflight reconhece `h4_controls` e `h5_geographic_scores`, mas `--execute` permanece
+  bloqueado antes do I/O.
+
+O hash lógico pré-holdout muda de `fbcaa5d0…964f` para
+`cb125fea931b616e2c62ec22a2821d3899c5a84643fa28d6f02ab9060a04912b`, apenas para
+incluir implementação, script e registro H5 em `SPEC_FILES`. Estratégia, H5 estatístico,
+limiar de 50%, p unilateral, custos, claims e executor falso não mudam.
+
+**Custo/limitação declarado.** (a) O score placebo usa dados do período lacrado, mas não
+preços, retornos, P&L nem elegibilidade; isso é a preparação obrigatória definida em D-068.
+(b) O output não diz se H5 morreu: essa comparação exige o retorno líquido real e só ocorre na
+rodada única. (c) A média costeira pode carregar regime regional BA/PR e não isola causalmente
+ENSO; é um falsificador severo da narrativa, não instrumento causal. (d) Os parquets municipais
+foram produzidos antes sem hashes individuais; D-071 prende o estado atual de cada parte, mas
+não recria 6.197 rasters brutos já descartados. O manifesto original preserva URL/hash de cada
+raster. (e) O único bloqueio técnico restante é o executor/registro civil atômico. Suíte
+540→549 testes.
+
 ---
 
 ## Como registrar uma decisão nova

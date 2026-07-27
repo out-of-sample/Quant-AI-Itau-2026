@@ -395,6 +395,14 @@ Andamento:
   O preflight agora reconhece `h4_controls`; H4 **ainda não foi estimado**, pois o desfecho
   são os retornos lacrados. Hash lógico atualizado de forma pré-holdout em D-069; testes
   530→540.
+- ✅ **Geografia e scores placebo H5 congelados (D-070/D-071, 2026-07-26)**:
+  um primeiro commit fixou, antes do cálculo climático, 91 células em cinco municípios
+  costeiros BA/PR com **110 observações PAM completas e produção zero** de soja/milho em
+  2014–2024. O segundo materializou 46 decisões H5 nos cinco anos-safra, usando os mesmos
+  6.197 raster-dias CHIRPS, janelas, climatologia, pesos CONAB e exposições do sinal real.
+  Fontes/partes/output estão presos por hash; rebuild reproduziu SHA-256
+  `936bee66…32e1`. O preflight reconhece H4 e H5, mas o veto H5 **não foi estimado** porque
+  exige retornos lacrados. Hash lógico vigente `cb125fea…912b`; testes 540→549.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
@@ -406,7 +414,7 @@ Andamento:
 
 ### Fase 6 — Holdout
 
-Depois de fechar os dois bloqueios técnicos restantes de D-068/D-069 e auditar o executor indivisível,
+Depois de fechar o único bloqueio técnico restante — executor/registro civil indivisível —,
 liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
 correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
 qualquer que seja. O preflight atual não autoriza a abertura.

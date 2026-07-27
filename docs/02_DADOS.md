@@ -697,6 +697,28 @@ futura negociável, não preço spot brasileiro. Isso é adequado ao teste de *s
 deve ser declarado. O painel fecha o **input** H4; a regressão só roda na rodada única porque
 seu desfecho são os retornos ainda lacrados.
 
+### 5.6 Contrato de dados geográfico de H5 — concluído em D-070/D-071
+
+O placebo reutiliza o painel municipal CHIRPS D-027 e troca somente o suporte espacial.
+D-070 congelou 91 células contidas nos polígonos IBGE 2013 de Canavieiras, Maraú e Salinas
+da Margarida (BA), Matinhos e Pontal do Paraná (PR). Uma captura PAM adicional de milho/BA
+completa a auditoria: os cinco municípios têm 110 observações completas (soja + milho total ×
+2014–2024) e **nenhuma tonelada positiva**. Símbolo ausente não é zero.
+
+A precipitação diária é a média das 91 células, sem pesos de produção. Cada janela
+`PRIMARY_WINDOWS` é então recalculada com a mesma climatologia expanding, o mesmo trecho
+histórico, o mesmo lag prelim/final e os mesmos pesos CONAB da safra anterior do sinal real.
+As exposições H′ também são idênticas. O resultado
+`data/interim/holdout/h5_geographic_grain_scores.parquet` contém 46 datas de decisão × quatro
+nomes de grãos, sem nulos, e fica preso pelo resumo
+`h5_geographic_scores_summary_v1.json`.
+
+Todos os 27 parquets municipais, o manifesto dos 6.197 raster-dias, a malha de células, PAM,
+CONAB, NEFIN, exposições e output carregam SHA-256. Rebuild divergente falha antes de
+sobrescrever. A limitação é explícita: duas faixas costeiras não representam toda geografia
+não produtora brasileira, e PAM é um snapshot revisável. O input H5 está pronto; o veto de
+retorno permanece lacrado.
+
 ---
 
 ## 6. Resumo: latência e vintage por fonte

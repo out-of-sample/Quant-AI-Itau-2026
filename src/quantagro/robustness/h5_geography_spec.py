@@ -135,4 +135,28 @@ def audit_zero_grain_production(
     )
 
 
+def audit_placebo_cell_index(index: pd.DataFrame) -> pd.DataFrame:
+    """Confirma que a malha cacheada contém exatamente as contagens congeladas."""
+    required = {"municipality_code", "uf", "row", "col"}
+    missing = required - set(index.columns)
+    if missing:
+        raise ValueError(f"índice de células H5 sem colunas: {sorted(missing)}")
+    selected = index[index["municipality_code"].isin(H5_PLACEBO_CODES)].copy()
+    if selected.duplicated(["municipality_code", "row", "col"]).any():
+        raise ValueError("índice H5 contém célula duplicada")
+    expected = {
+        municipality.municipality_code: (municipality.uf, municipality.n_cells)
+        for municipality in H5_PLACEBO_MUNICIPALITIES
+    }
+    rows = []
+    for code, (uf, n_cells) in expected.items():
+        cells = selected[selected["municipality_code"] == code]
+        if len(cells) != n_cells or set(cells["uf"]) != {uf}:
+            raise ValueError(f"índice H5 diverge para {code}: {len(cells)} célula(s)")
+        rows.append({"municipality_code": code, "uf": uf, "n_cells": len(cells)})
+    if len(selected) != H5_TOTAL_CELLS:
+        raise ValueError("índice H5 contém célula extra no suporte congelado")
+    return pd.DataFrame(rows)
+
+
 validate_h5_geography_spec()
