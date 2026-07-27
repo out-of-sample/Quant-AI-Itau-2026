@@ -1,8 +1,8 @@
 """Entrada única da Fase 6 — atualmente limitada ao preflight D-068.
 
-Sem argumentos, imprime apenas hashes de código e a lista de inputs ausentes. ``--execute``
-permanece tecnicamente bloqueado antes de qualquer leitura de parquet até que o executor,
-H4 e H5 sejam fechados em decisões posteriores.
+Sem argumentos, imprime apenas hashes de código e a lista de inputs ausentes. D-069 fechou
+o input H4; ``--execute`` permanece bloqueado antes de qualquer leitura de parquet até que
+H5 e o executor sejam fechados em decisões posteriores.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ def main() -> None:
     parser.add_argument(
         "--execute",
         action="store_true",
-        help="tenta atravessar o portão; D-068 ainda bloqueia antes do I/O",
+        help="tenta atravessar o portão; D-068/D-069 ainda bloqueiam antes do I/O",
     )
     args = parser.parse_args()
     report = preflight_holdout()

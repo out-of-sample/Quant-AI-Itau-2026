@@ -1,0 +1,18 @@
+{
+  "bytes": 165025,
+  "currency": "USD",
+  "downloaded_at": "2026-07-27T01:03:20.633053+00:00",
+  "field": "adjusted_close",
+  "first_ref_date": "2019-12-02",
+  "fund_page": "https://teucrium.com/corn",
+  "last_ref_date": "2025-12-31",
+  "period_end_exclusive": "2026-01-02",
+  "period_start": "2019-12-01",
+  "raw_path": "data/raw/h4_market/yahoo_corn_20260727.json",
+  "role": "corn_second",
+  "rows": 1529,
+  "sha256": "ccb1f56e3ef917d2ad55592238fb73aa0d1f7e15ce53c69013c03daf8a1cbb03",
+  "source": "Yahoo-Chart",
+  "symbol": "CORN",
+  "url": "https://query2.finance.yahoo.com/v8/finance/chart/CORN"
+}

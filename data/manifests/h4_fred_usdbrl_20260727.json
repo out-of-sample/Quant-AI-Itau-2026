@@ -1,0 +1,15 @@
+{
+  "bytes": 146245,
+  "downloaded_at": "2026-07-27T01:03:23.305533+00:00",
+  "field": "brl_per_usd",
+  "first_ref_date": "1995-01-02",
+  "last_ref_date": "2026-07-17",
+  "raw_path": "data/raw/h4_market/fred_dexbzus_20260727.csv",
+  "role": "usdbrl",
+  "rows": 7910,
+  "series_id": "DEXBZUS",
+  "sha256": "627c35001e5c585d5ff5da5a7d47a6f161feaab44e0ac655cac5a12dbeed6fca",
+  "source": "FRED-Federal-Reserve",
+  "unit": "Brazilian reais per U.S. dollar",
+  "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DEXBZUS"
+}

@@ -2,8 +2,8 @@
 
 O preflight atesta código e presença dos inputs sem abrir parquets nem calcular resultados.
 Enquanto ``holdout_spec.EXECUTOR_IMPLEMENTED`` for falso, qualquer tentativa de execução
-falha antes do I/O. O executor e o registro civil serão implementados somente depois que os
-inputs H4/H5 e seus schemas estiverem fechados.
+falha antes do I/O. D-069 fechou o input H4; o executor e o registro civil serão
+implementados somente depois que H5 e seu schema também estiverem fechados.
 """
 
 from __future__ import annotations
@@ -92,7 +92,9 @@ def preflight_holdout(root: str | Path = ".") -> HoldoutPreflight:
 def require_holdout_ready(report: HoldoutPreflight) -> None:
     """Falha alto antes do I/O enquanto qualquer parte do pacote estiver incompleta."""
     if not report.executor_implemented:
-        raise HoldoutLockedError("executor da Fase 6 ainda não implementado; D-068 é só preflight")
+        raise HoldoutLockedError(
+            "executor da Fase 6 ainda não implementado; D-068/D-069 são só preflight"
+        )
     if report.missing_spec_files:
         raise HoldoutLockedError(f"arquivos do contrato ausentes: {report.missing_spec_files}")
     if report.missing_inputs:

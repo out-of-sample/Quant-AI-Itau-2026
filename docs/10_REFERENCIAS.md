@@ -123,6 +123,8 @@ esse paper, quando citado, entra com o mesmo cuidado dos §1-3.
 | CEPEA/ESALQ | Robustez de preço spot brasileiro | `02_DADOS` §5.2; banco Excel e licença CC BY-NC 4.0 verificados em 2026-07-16 | fonte oficial (sem paper) |
 | B3 — histórico de derivativos | Robustez de preço futuro brasileiro por vencimento | `02_DADOS` §5.3; ajustes do pregão verificados em 2026-07-16 | fonte oficial (sem paper) |
 | ONI (NOAA/CPC) | Controle El Niño/La Niña | `02_DADOS` §1.5; arquivo oficial `cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`; metodologia `ONI_v5.php` (verificados em 2026-07-16) | Huang et al. (2017), *Journal of Climate*, citado pela NOAA para ERSST.v5 — `[A CONFIRMAR: referência completa/DOI antes de citar]` |
+| Federal Reserve / FRED — DEXBZUS | Controle diário BRL por USD em H4 | `02_DADOS` §5.5; série oficial H.10 `fred.stlouisfed.org/series/DEXBZUS` (verificada em 2026-07-26, D-069) | fonte oficial (sem paper) |
+| Teucrium SOYB/CORN/CANE | Proxies negociáveis de futuros de soja, milho e açúcar em H4 | `02_DADOS` §5.5; páginas e benchmarks oficiais `teucrium.com/soyb`, `/corn`, `/cane` (verificados em 2026-07-26, D-069); preços capturados pelo Yahoo Chart e presos por hash | prospectos/factsheets oficiais dos fundos; sem paper |
 | ZARC / MAPA — Tábua de Risco | Validação externa das janelas de plantio | `09_FENOLOGIA_E_LIMIARES.md` §5; CSV 2024/25 + dicionário oficial verificados em 16/07/2026 | fonte oficial (sem paper) |
 | PAM / IBGE — SIDRA tabela 1612 | Peso espacial municipal point-in-time | `02_DADOS` §2.3; `09_FENOLOGIA_E_LIMIARES.md` §4 | fonte oficial; calendário efetivo 2014–2024 curado em `pam_calendar.py` (D-024) |
 

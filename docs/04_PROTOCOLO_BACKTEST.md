@@ -368,8 +368,8 @@ valida o contrato, calcula hashes SHA-256 dos fontes e verifica a presença dos 
 abrir parquets. `--execute` falha alto antes do I/O porque o executor está explicitamente
 desabilitado.
 
-O unlock exige, em commits anteriores e auditáveis: painel diário H4 com manifestos, score do
-placebo geográfico H5 e executor/registro civil com emissão atômica. Um registro de rodada já
-existente impede nova execução. A existência de P&L positivo, por si só, autoriza apenas
+O painel diário H4 foi fechado em D-069, sem ler o desfecho. O unlock ainda exige, em commits
+anteriores e auditáveis: score do placebo geográfico H5 e executor/registro civil com emissão
+atômica. Um registro de rodada já existente impede nova execução. A existência de P&L positivo, por si só, autoriza apenas
 afirmar retorno OOS positivo; evidência da estratégia exige também H′, e “alpha climático”
 exige adicionalmente componente D-064 positivo e passagem dos vetos H4/H5.

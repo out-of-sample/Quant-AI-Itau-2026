@@ -51,6 +51,8 @@ r_strat,t − RF_t = α + fatores NEFIN (Mercado, SMB, HML, WML, IML)
 
 - **Spec core (decomposição):** somente os cinco fatores NEFIN.
 - **Spec estendida (veto):** core + FX + soja + milho + açúcar + ONI.
+- **Inputs D-069:** calendário NEFIN/B3; DEXBZUS; ETFs futuros SOYB/CORN/CANE em USD;
+  último ONI estabilizado disponível. Painel ex post de 1.495 sessões, sem nulos.
 - **Inferência:** Newey–West/HAC com 21 lags; `α_H4=0,10`.
 - **Resultado esperado sob H′:** `α > 0` e p unilateral ≤0,10 na spec estendida.
 - **Critério de falha:** `α ≤ 0`, não-significativo ou controles não materializáveis.
@@ -205,11 +207,12 @@ econômica derivada e pré-registrada naquele mercado — nunca copiar a direç�
 
 ---
 
-## 7. Pacote indivisível da rodada única (D-068)
+## 7. Pacote indivisível da rodada única (D-068/D-069)
 
-O contrato executável vive em `backtest/holdout_spec.py`; seu payload lógico D-068 está
-travado pelo SHA-256
-`cefa5f60b78e373e07060f68dcc65412c4e832663deac980f62b43cd7b202900`. A rodada não
+O contrato executável vive em `backtest/holdout_spec.py`. O hash inicial D-068
+`cefa5f60…2900` foi substituído, antes do holdout, ao incluir os fontes H4 congelados em
+D-069. O payload vigente está travado pelo SHA-256
+`9ffa0fbfff81f7ccab1aee09093af2b2167e4b01add2e61a5c342f7919a08df6`. A rodada não
 pausa após ver o primário: mesmo se H′ falhar, todos os passos são calculados e emitidos.
 
 | Ordem | Bloco | Papel |
@@ -238,8 +241,7 @@ Falha ou ausência de H4/H5 impede usar “alpha climático”, mesmo com curva 
 SHA-256 e lista inputs sem abrir parquets. `--execute` falha antes do I/O. Para habilitar a
 rodada faltam, em commits anteriores ao unlock:
 
-1. materializar controles diários confiáveis de H4 — NEFIN + FX + soja/milho/açúcar + ONI,
-   com schema e manifestos;
+1. ~~materializar controles diários confiáveis de H4~~ **feito em D-069**;
 2. congelar e materializar a geografia não produtiva de H5;
 3. implementar o executor indivisível, registro civil e emissão atômica dos 12 artefatos.
 

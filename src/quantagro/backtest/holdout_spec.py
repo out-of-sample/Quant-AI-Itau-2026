@@ -38,8 +38,8 @@ RUN_RECORD = "data/reference/holdout_run_record_v1.json"
 RESULT_RECORD = "data/reference/holdout_result_v1.json"
 WORK_DIR = "data/processed/holdout_v1"
 
-# O executor continua desabilitado até H4/H5 e a orquestração final serem implementados e
-# auditados em commits próprios. O preflight sempre falha alto antes de qualquer retorno.
+# D-069 fechou o input H4. O executor continua desabilitado até H5 e a orquestração final
+# serem implementados e auditados em commits próprios. O preflight falha antes dos retornos.
 EXECUTOR_IMPLEMENTED = False
 CONTINUE_AFTER_PRIMARY_FAILURE = True
 ALLOW_INTERMEDIATE_RESULT_DISPLAY = False
@@ -135,10 +135,14 @@ SPEC_FILES = (
     "src/quantagro/features/shock_spec.py",
     "src/quantagro/features/shock.py",
     "src/quantagro/features/exposure.py",
+    "src/quantagro/ingest/h4_market.py",
+    "src/quantagro/robustness/h4_controls.py",
     "src/quantagro/validate/universe.py",
     "src/quantagro/validate/borrow.py",
     "data/reference/exposure_hprime_v1.json",
     "data/reference/borrow_rate_calibration_v1.json",
+    "data/reference/h4_controls_summary_v1.json",
+    "scripts/build_h4_controls.py",
     "scripts/run_holdout_once.py",
 )
 
@@ -156,7 +160,7 @@ CLAIM_REQUIREMENTS = {
 
 # Tripwire civil: qualquer alteração do payload lógico exige atualizar este valor numa decisão
 # posterior e explicitamente anterior ao unlock. O hash não depende do whitespace dos fontes.
-EXPECTED_LOGICAL_SPEC_SHA256 = "cefa5f60b78e373e07060f68dcc65412c4e832663deac980f62b43cd7b202900"
+EXPECTED_LOGICAL_SPEC_SHA256 = "9ffa0fbfff81f7ccab1aee09093af2b2167e4b01add2e61a5c342f7919a08df6"
 
 
 def canonical_spec_payload() -> dict[str, object]:
@@ -331,7 +335,7 @@ def validate_holdout_spec() -> None:
     }:
         raise ValueError("caminhos ou papéis dos inputs foram alterados")
     if spec_sha256() != EXPECTED_LOGICAL_SPEC_SHA256:
-        raise RuntimeError("payload lógico diverge do hash civil congelado em D-068")
+        raise RuntimeError("payload lógico diverge do hash civil congelado em D-068/D-069")
 
 
 validate_holdout_spec()

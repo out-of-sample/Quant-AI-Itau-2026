@@ -1503,6 +1503,31 @@ P&L da carteira. A estatística H5 também estava ambígua e foi fixada como ret
 por safra, com sign-flip exato. O lint corrigiu a ordenação de imports e o formatador normalizou uma
 quebra de expressão.
 
+## 2026-07-26 — Materialização dos controles diários H4 (D-069)
+
+**Uso**: escolher e implementar fontes/transformações diárias para H4 sem construir uma rolagem
+oportunista de futuros e sem acessar o desfecho lacrado.
+
+**Valor real**: a IA distinguiu “ticker disponível” de “controle confiável”. Em vez dos contínuos
+front-month não ajustados, propôs os ETFs futuros SOYB/CORN/CANE, cujos benchmarks de três
+vencimentos foram conferidos nas páginas oficiais da Teucrium. DEXBZUS veio do FRED/Federal
+Reserve. O código passou a alinhar níveis ao calendário NEFIN/B3 somente para a frente, transformar
+em retorno simples, carregar ONI pela disponibilidade estabilizada e prender captura, manifesto,
+transformação e parquet por hash. O input H4 ficou pronto sem calcular H4.
+
+**Validação humana**: o endpoint Yahoo `query2` devolveu 1.508 observações por ETF em 2020–2025;
+DEXBZUS respondeu ao vivo. A materialização produziu 1.495 sessões B3, zero nulos/duplicatas e
+rebuild com SHA-256 idêntico
+`07811b9ec22b8914c9081e46bee8858446e4f098f54c2159c8b20a0ce6b3e666`. O preflight
+passou a listar `h4_controls` como presente, manteve executor falso e não abriu retornos.
+
+**O que a IA errou**: o primeiro probe usou `query1` e recebeu HTTP 429; a rota pública `query2`
+com User-Agent funcionou sem contorno de autenticação. Nos primeiros testes, o parser não descartou
+o `NaN` com que pandas representa feriado FRED, uma expectativa de retorno ficou deslocada em um
+pregão e o teste ONI ignorou que uma temporada nova se estabilizava em 5 de janeiro; todos foram
+corrigidos pela regra observável. A revisão também percebeu que um rebuild divergente sobrescreveria
+o parquet antes de falhar e mudou a escrita para arquivo temporário + comparação anterior ao replace.
+
 ---
 
 ## Modelo de entrada (para as próximas)

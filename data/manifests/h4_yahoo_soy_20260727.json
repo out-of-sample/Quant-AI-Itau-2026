@@ -1,0 +1,18 @@
+{
+  "bytes": 164166,
+  "currency": "USD",
+  "downloaded_at": "2026-07-27T01:03:20.151508+00:00",
+  "field": "adjusted_close",
+  "first_ref_date": "2019-12-02",
+  "fund_page": "https://teucrium.com/soyb",
+  "last_ref_date": "2025-12-31",
+  "period_end_exclusive": "2026-01-02",
+  "period_start": "2019-12-01",
+  "raw_path": "data/raw/h4_market/yahoo_soyb_20260727.json",
+  "role": "soy",
+  "rows": 1529,
+  "sha256": "7b5bf538a8fd78cbfea2638a5d38e5b03794a2dc0950022dcbd5c51081117012",
+  "source": "Yahoo-Chart",
+  "symbol": "SOYB",
+  "url": "https://query2.finance.yahoo.com/v8/finance/chart/SOYB"
+}
