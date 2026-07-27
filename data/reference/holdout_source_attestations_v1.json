@@ -126,9 +126,9 @@
       "sha256": "b231ce0baaadcba88159b4b045d687361a7e65100f6aae12f24fee9d4a50394f"
     },
     "src/quantagro/backtest/holdout_report.py": {
-      "bytes": 5037,
+      "bytes": 6129,
       "path": "src/quantagro/backtest/holdout_report.py",
-      "sha256": "0627dd419ac5eb584005c48291eecf38bef5463e464e95c2619d285244964cdb"
+      "sha256": "d4241f44d0d5c7f15ec60f6cd1066994924605e84578cd375c9d29e4ff3f0e4a"
     },
     "src/quantagro/backtest/holdout_report_spec.py": {
       "bytes": 19263,

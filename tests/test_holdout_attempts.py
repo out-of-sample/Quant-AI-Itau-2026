@@ -46,7 +46,16 @@ def test_nenhum_resultado_foi_observado_na_tentativa_1():
     payload = json.loads(Path(prior["record"]).read_text(encoding="utf-8"))
     proibidas = {"artifacts", "results", "claims", "conditions", "metrics"}
     assert not (proibidas & set(payload)), "o registro da falha não pode carregar resultado"
-    assert not Path("data/reference/holdout_result_v1.json").exists()
+
+    # A tentativa 2 selou em 27/07/2026 e publicou o resultado. A asserção original — "não
+    # existe resultado nenhum" — só valia enquanto ninguém tinha rodado; ela confundia "a
+    # tentativa 1 não publicou" com "nada foi publicado". O que precisa continuar travado é a
+    # ATRIBUIÇÃO: se existe resultado, ele é da tentativa 2, nunca da 1.
+    resultado = Path("data/reference/holdout_result_v1.json")
+    if resultado.exists():
+        corrida = json.loads(Path("data/reference/holdout_run_record_v1.json").read_text("utf-8"))
+        assert corrida["attempt"] == 2
+        assert corrida["status"] == "sealed"
 
 
 def test_contrato_declara_a_contagem_de_tentativas():

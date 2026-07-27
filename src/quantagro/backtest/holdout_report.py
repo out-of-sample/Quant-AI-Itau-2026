@@ -49,7 +49,11 @@ def _load(work_dir: Path, name: str) -> dict:
 
 
 def _daily_frame(metrics: dict) -> pd.DataFrame:
-    frame = pd.DataFrame(metrics["daily"])
+    # D-075: os artefatos publicados são envelopes {name, order, package_id, payload, role};
+    # a série diária mora sob `payload`. Correção estrutural de nível de dicionário, feita
+    # depois do selo — não altera nenhuma regra pré-registrada em holdout_report_spec.py.
+    series = metrics["payload"]["daily"] if "payload" in metrics else metrics["daily"]
+    frame = pd.DataFrame(series)
     if "date" not in frame.columns:
         raise ValueError("bloco 10 sem coluna 'date' na série diária")
     frame["date"] = pd.to_datetime(frame["date"])
@@ -95,14 +99,24 @@ def build_report(root: str | Path = ".") -> dict[str, object]:
     metrics = _load(work_dir, METRICS_ARTIFACT)
     daily = _daily_frame(metrics)
 
-    controls = pd.read_parquet(base / REQUIRED_INPUTS["h4_controls"])
-    controls.index = pd.to_datetime(controls.index)
+    # D-075: o parquet vem com RangeIndex e a data é a coluna `ref_date`. O alinhamento aqui
+    # espelha exatamente o do bloco 5 selado (holdout_analysis._load_inputs) para que o
+    # benchmark do relatório e o da regressão H4 sejam a MESMA série. A versão anterior
+    # convertia o RangeIndex em epoch (1970) e o reindex devolvia NaN em silêncio.
+    controls = pd.read_parquet(base / REQUIRED_INPUTS["h4_controls"]).copy()
+    controls["ref_date"] = pd.to_datetime(controls["ref_date"]).dt.normalize()
+    controls = controls.set_index("ref_date").sort_index()
     risk_free = controls[BENCHMARK_PRIMARY].astype(float).reindex(daily.index)
     market_excess = (
         controls["rm_minus_rf"].astype(float).reindex(daily.index)
         if "rm_minus_rf" in controls.columns
         else None
     )
+    if risk_free.isna().any() or (market_excess is not None and market_excess.isna().any()):
+        raise ValueError(
+            "controles não alinham integralmente com a série diária selada; "
+            "métrica de excesso não pode ser publicada com buraco"
+        )
 
     risk = tail_risk_metrics(daily, risk_free, market_excess)
     by_year = crop_year_metrics(daily, risk_free)

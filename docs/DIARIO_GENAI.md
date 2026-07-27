@@ -1651,6 +1651,37 @@ não afrouxando a guarda.
 
 ---
 
+## 2026-07-27 — Rodada única executada e selada (D-075)
+
+**Uso**: executar a tentativa 2 autorizada, ler os doze artefatos selados, rodar o relatório
+descritivo pré-registrado e registrar o resultado — qualquer que fosse.
+
+**Valor real**: a rodada selou em 12 segundos e o pacote entregou exatamente o que fora
+desenhado para entregar: as cinco condições avaliadas por regra congelada, com uma delas
+falhando e vetando automaticamente a claim mais forte. O valor da IA aqui não foi produzir o
+resultado — foi ter construído, ao longo de semanas, uma máquina que **não deixa escolher a
+leitura depois**. O benchmark era risk-free porque assim ficou congelado em D-073; se tivesse
+sido "zero", o mesmo P&L teria virado Sharpe +0,33 e uma história de sucesso. Foi o
+pré-registro, não a honestidade do momento, que produziu o número desconfortável.
+
+**Validação humana**: o time autorizou a tentativa 2 de forma explícita e exclusiva, depois de
+a IA parar no checkpoint e recusar-se a encadear a execução com o merge da correção anterior.
+
+**O que a IA errou**: o relatório descritivo do D-073 **nunca havia sido executado** — por
+construção, ele só roda depois do selo — e quebrou nas duas primeiras tentativas. O primeiro
+defeito era inócuo (lia a série diária fora do envelope `payload`). O segundo era grave:
+convertia o `RangeIndex` do parquet de controles em data, virando epoch de 1970, e o `reindex`
+devolvia NaN — de modo que `excess_sharpe`, `sortino` e `beta_vs_market` foram **publicados
+como NaN em silêncio**, com aparência de resultado. Se ninguém olhasse, o relatório final
+citaria métricas vazias. É o mesmo padrão do D-074, e reapareceu no único componente que não
+podia ser ensaiado antes. A correção alinha por `ref_date` exatamente como o bloco 5 selado já
+fazia e troca o silêncio por falha alta; o tripwire de fontes acusou o arquivo editado antes de
+qualquer publicação, e o hash lógico imóvel provou por máquina que nenhuma regra pré-registrada
+se moveu. A lição que fica: **NaN publicado é pior que exceção**, e código que só pode rodar uma
+vez precisa de ensaio contra o formato real, não só contra o formato imaginado.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```

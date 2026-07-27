@@ -1,0 +1,37 @@
+{
+  "artifact_sha256": {
+    "00_preflight.json": "e00811c5b287d8f4a6464c565b12b6d08f6dce08338ccfa960138757d7ee8bc6",
+    "01_primary_hprime.json": "34067c932e2e180e0c124a311ba399ff9e47ee96ee6cd0aae0f3816ae4a27ab9",
+    "02_portfolio.json": "a6a8da6dac9246b2ce0ce62f6190b28cd5ca3c1428b88556cbc61db94e93ac82",
+    "03_liquidity.json": "8c776bf57d75dc8f9d9576669cf0236f956673e86e9a44857364b43c4a137f96",
+    "04_sector_climate.json": "23be1eadb432e236123824201b98812eeb566ea4ae71493691f7343fba2982f5",
+    "05_h4_spanning.json": "001f6b364001fc5e013462914d069e99524aeef3c8b4ae6cbf43c6afb54c86bd",
+    "06_h5_placebos.json": "4ba9ffc241cc76c3d540eea50869e2150564abc61bf0abf5818a8385573670a1",
+    "07_loo_name.json": "b2e4d1eda40e0a60a687534f7412ba30619208e1240d89b6e960453345e7a4f8",
+    "08_loo_year.json": "3824af329bba9f1cd4568a1b9bbf5181adc7fd35fe9e329e76ddb6471886fcec",
+    "09_sensitivities.json": "d4a99bf0aa96b6a47984649ecbc15814257ba9d4b257200caf301a0306a78d75",
+    "10_metrics.json": "6b30d3e48970231a7fd17c45e700e24550c6e763c438d3b495c782ba7f6389e9",
+    "11_seal.json": "47224dbc0b62150b8cb01747d7374125b28382c60d055f136306d85a043ef7ce"
+  },
+  "claims": {
+    "climate_alpha_evidence": false,
+    "oos_strategy_evidence": true,
+    "positive_oos_pnl": true
+  },
+  "conditions": {
+    "base_net_return_positive": true,
+    "d064_climate_component_positive": true,
+    "h4_extended_passed": false,
+    "h5_geographic_died": true,
+    "primary_hprime_passed": true
+  },
+  "input_manifest_sha256": "57255805d4470071645018c27f2885d574fef1c1f7f6fc40a4757b2c9ee0e0a8",
+  "logical_spec_sha256": "a4a70b2b1d766c12c728348d6bef2d9da91bf7dd77e61283e3bb20a65381a28f",
+  "package_id": "holdout_v1_d072",
+  "schema_version": 1,
+  "seal_sha256": "47224dbc0b62150b8cb01747d7374125b28382c60d055f136306d85a043ef7ce",
+  "sealed_at": "2026-07-27T09:24:34Z",
+  "source_manifest_sha256": "972a08a8b85a0c9adbf7b51c55b602844ede039998118dee3c288d7435abf10a",
+  "status": "sealed",
+  "work_dir": "data/processed/holdout_v1"
+}
