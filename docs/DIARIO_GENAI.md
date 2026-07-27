@@ -1477,6 +1477,32 @@ mesmo num caso sintético em que ela estava elegível mas sem score. A revisão 
 `eligible` de `active`, adicionou uma trava de consistência e passou a medir profundidade somente nos
 nomes que de fato chegam ao painel/carteira. O lint também detectou e corrigiu a ordem de imports.
 
+## 2026-07-26 — Pacote indivisível e preflight do holdout (D-068)
+
+**Uso**: auditar todos os graus de liberdade restantes antes da rodada única e transformar a suíte
+textual num contrato executável que não permita olhar o primário, parar e decidir o restante.
+
+**Valor real**: a IA encontrou incompatibilidades acumuladas na documentação — climatologias fora
+do grid D-065, anos de dev não materializáveis por R26, testes/universos já suspensos, H5 confundido
+com o placebo de mecanismo D-066 e duplicação de mercado em H4. O pacote foi reduzido ao conjunto
+honesto: um confirmatório, dois vetos e sensibilidades descritivas, com ordem e níveis de afirmação
+congelados. O preflight calcula hashes dos fontes e verifica caminhos sem interpretar dados; a
+execução fica tecnicamente negada até H4, H5 e o executor final existirem.
+
+**Validação humana**: o time pode inspecionar o payload canônico e seu SHA-256, a lista de 12
+artefatos e os sete caminhos fixos. Testes cobrem unicidade do confirmatório, ausência de resultados
+intermediários, claims, hash determinístico, atestação binária sem parse e todas as falhas do gate.
+O comando de preflight confirmou executor falso, nenhum fonte ausente e os sete inputs ainda
+ausentes; nenhum parquet de holdout foi aberto. A suíte passou de 523 para 530 testes.
+
+**O que a IA errou**: a primeira fixture que simulava fonte ausente usou o repositório real, onde
+todos os fontes já existiam, e falhou pelo motivo correto. A fixture foi tornada sintética por
+substituição explícita do estado. Na primeira versão do payload, “custo base” apareceu dentro do
+teste H′, embora D-053 diga que esse painel não depende do sizing; a revisão moveu custos para o
+P&L da carteira. A estatística H5 também estava ambígua e foi fixada como retorno líquido base médio
+por safra, com sign-flip exato. O lint corrigiu a ordenação de imports e o formatador normalizou uma
+quebra de expressão.
+
 ---
 
 ## Modelo de entrada (para as próximas)

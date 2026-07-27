@@ -670,6 +670,21 @@ grava SHA, timestamp, hash e cobertura no manifesto. Todas as linhas recebem `av
 igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN entra na H4 como
 **atribuição ex post**, depois que os retornos ocorreram; nunca alimenta o sinal ou a carteira.
 
+### 5.5 Contrato de dados diário de H4 — bloqueio antes do holdout
+
+D-068 exige um único painel `data/interim/holdout/h4_controls.parquet`, alinhado ao calendário
+B3, com `Risk_Free`, `Rm_minus_Rf`, SMB, HML, WML, IML, USDBRL, soja, milho 2ª, açúcar e ONI,
+além de manifesto e schema. O snapshot NEFIN está preservado, mas o painel completo **ainda
+não está materializado**.
+
+Em particular, confirmar tickers no yfinance não torna FX e commodities dados prontos para
+H4: as séries contínuas de futuros são front-month não ajustado, portanto exigem uma regra de
+rolagem congelada e testada para que saltos de contrato não sejam confundidos com exposição.
+ONI mensal também precisa de regra explícita de carregamento para a frequência diária. Nenhum
+download contemporâneo ou preenchimento silencioso será feito dentro da rodada. Enquanto
+essas regras, arquivos e manifestos não existirem, H4 falha como veto e o executor do holdout
+permanece desabilitado.
+
 ---
 
 ## 6. Resumo: latência e vintage por fonte

@@ -4,12 +4,13 @@
 > **resultado esperado declarado antes de rodar**. Um teste cujo resultado a gente aceita
 > qualquer que seja ele não é um teste — é uma ilustração.
 
-> **Estado após D-053/D-054:** H1 passou; a família H2a terminou negativa; a direção acionária
-> original foi falsificada; H′ e o substituto de H3 foram congelados em D-053. Esta suíte nasceu
-> antes dessa reformulação e será formalmente congelada para H′ na Fase 5, depois que a Fase 4.0
-> fechar a mecânica. No desenvolvimento ela serve como diagnóstico e teste do motor — não como
-> validação da direção, que foi formulada com esse período. No holdout, roda no mesmo tiro único
-> da Fase 6, sem selecionar quais resultados mostrar.
+> **Estado após D-068:** H1 passou no portão e teve direção estável em D-066, mas o veredito
+> formal da suíte de mecanismo foi NÃO ROBUSTO (cobertura + placebo espacial). H2a terminou
+> negativa; a direção acionária original foi falsificada; H′ e o substituto de H3 estão
+> congelados. D-068 transforma a parte ainda aplicável desta suíte no pacote executável da
+> rodada única. As promessas antigas incompatíveis com dados/decisões posteriores ficam
+> explicitamente substituídas abaixo — não serão executadas só porque apareceram numa versão
+> histórica do plano.
 
 ---
 
@@ -21,10 +22,9 @@ Nem todo teste tem o mesmo poder de destruição. Ordenados por gravidade:
 |---|---|---|
 | 🔴 **Existencial** | **H4 — Spanning regression** | a estratégia é beta de commodity reembalado. O projeto perde a razão de existir como estratégia, e vira um estudo (ainda publicável, mas temos que dizer isso) |
 | 🔴 **Existencial** | **H5 — Placebo espacial** | o sinal não vem da agronomia. Estamos capturando outra coisa (ENSO, FX, risco global) e a narrativa está errada |
-| 🔴 **Existencial** | **Sensibilidade ao lag de publicação** | se o alfa só existe com lag curto e some com lag realista, o alfa era lookahead |
 | 🟡 **Grave** | **Teste primário H′ (D-053)** | se o spread não vier na direção congelada, a reformulação Q-dominante não chega ao equity |
 | 🟡 **Grave** | Sensibilidade a hiperparâmetros | resultado é um pico isolado no espaço de parâmetros = garimpado |
-| 🟢 **Saudável** | Subperíodos, custos dobrados, universo alternativo | degradação é esperada e aceitável; colapso não |
+| 🟢 **Saudável** | Custos, LOO e grids operacionais D-068 | degradação é esperada e aceitável; colapso não |
 
 Resultados que já pertencem à trilha histórica, e não à suíte futura: H1 passou (D-031), H2a
 falhou em seis medidas (D-037–D-041), o Fama–MacBeth foi abandonado por N insuficiente e a
@@ -40,16 +40,20 @@ para tentar produzir narrativa melhor.
 **A pergunta que a banca vai fazer**: *"Isso não é beta de commodities, câmbio ou fatores
 reembalado numa carteira de ações?"*
 
-Regredimos o retorno da estratégia contra tudo o que é barato e óbvio de comprar:
+O D-068 elimina uma colinearidade do rascunho antigo: **IBOV e `Rm_minus_Rf` não entram
+juntos**, pois ambos representam o fator de mercado brasileiro. O desfecho é o retorno líquido
+da estratégia menos `Risk_Free` do NEFIN.
 
 ```
-r_strat,t = α + b₁·IBOV + b₂·USDBRL + b₃·fut_soja + b₄·fut_milho
-            + b₅·fut_açúcar + b₆·fut_café + b₇·ONI(El Niño)
-            + fatores NEFIN (Mercado, SMB, HML, WML, IML) + ε
+r_strat,t − RF_t = α + fatores NEFIN (Mercado, SMB, HML, WML, IML)
+                   + USDBRL + soja + milho + açúcar + ONI + ε_t
 ```
 
-- **Resultado esperado sob H′**: `α > 0` e estatisticamente significativo.
-- **Critério de falha**: `α ≤ 0` ou não-significativo.
+- **Spec core (decomposição):** somente os cinco fatores NEFIN.
+- **Spec estendida (veto):** core + FX + soja + milho + açúcar + ONI.
+- **Inferência:** Newey–West/HAC com 21 lags; `α_H4=0,10`.
+- **Resultado esperado sob H′:** `α > 0` e p unilateral ≤0,10 na spec estendida.
+- **Critério de falha:** `α ≤ 0`, não-significativo ou controles não materializáveis.
 - **Se falhar**: reportamos, com todas as letras, que a estratégia não gera alfa além dos
   fatores conhecidos. Isso é um resultado honesto e ainda rende nota nos critérios "Análise
   dos Resultados" (15%) e "Conclusão" (10%) — mas fingir que não rodamos esse teste seria
@@ -61,41 +65,42 @@ r_strat,t = α + b₁·IBOV + b₂·USDBRL + b₃·fut_soja + b₄·fut_milho
 
 ### 2.2 🔴 H5 — Placebo espacial
 
-Recalculamos o índice de choque climático usando células de grade em regiões **sem produção
-  agrícola relevante** (Amazônia central, litoral, áreas urbanas), mantendo direção H′,
-  calendário, universo, score e custos idênticos.
-pipeline idêntico.
+O **veto** continua sendo o placebo geográfico prometido desde o pré-registro: recalcular o
+índice com geografia fixa sem produção agrícola relevante, mantendo direção H′, calendário,
+universo, score e custos. D-065/D-066 embaralharam UFs para testar o mecanismo H1; isso **não
+substitui** este H5 de retorno.
 
 - **Resultado esperado**: o alfa **desaparece**. Chuva na Amazônia central não tem por que
   prever o resultado da SLC Agrícola.
-- **Critério de falha**: o alfa **sobrevive** ao placebo.
+- **Critério executável D-068**: sobre o retorno líquido base médio dos cinco anos-safra,
+  com sign-flip exato dos clusters, `|T_placebo| < 0,5·|T_real|` e p unilateral >0,10.
+- **Critério de falha**: o placebo retém ≥50% do efeito ou permanece significativo.
 - **Se falhar**: é a prova de que o sinal não é agronômico. Provavelmente é um proxy de
   ENSO, de risco global ou de câmbio. A tese, como escrita, está errada.
 
-**Placebos adicionais** (mesmo espírito, mais baratos):
-- **Placebo temporal**: contar a anomalia climática **fora** da janela fenológica (ex.: chuva
-  em julho no MT, quando não há soja no campo). Deveria dar zero.
-- **Placebo de exposição**: embaralhar a matriz `E_{i,c}` entre empresas. Deveria destruir
-  o alfa — se não destruir, o sinal não vem da exposição, e a tese cross-seccional cai.
-- **Placebo de rótulo**: embaralhar as datas do choque. Distribuição nula do Sharpe.
+O placebo de exposição também permanece obrigatório, permutando materialidades **dentro do lado
+econômico** para não reintroduzir a direção histórica falsificada. Como há apenas
+`2!×2!=4` estados que preservam produtor/processador, ele é **descritivo**, não um segundo
+teste a 10%. O veto formal é o geográfico.
 
-> O placebo de exposição é o mais importante dos três, porque testa se a heterogeneidade
-> empresa–cultura realmente ordena H′. O embaralhamento deve respeitar o desenho congelado e
-> não pode reintroduzir a direção histórica já falsificada.
+Os placebos temporal e de rótulo já foram absorvidos pela suíte de mecanismo D-066; não
+ganham novos P&Ls de holdout.
 
-### 2.3 🔴 Sensibilidade ao lag de publicação
+### 2.3 Sensibilidade ao lag de publicação
 
-O caso primário permanece em 7 dias. A Fase 5 congelará uma grade simétrica de lags antes do
-holdout; a lista herdada é **0, 3, 7, 14 e 21 dias**, sujeita apenas à verificação de que cada
-valor representa uma disponibilidade tecnicamente implementável, não a desempenho.
+O caso primário permanece em 7 dias. D-066 já atrasou o mecanismo em mais 14 dias e preservou
+o β em 1,02×. Para o retorno, D-068 permite apenas lags totais **14 e 21 dias** como
+sensibilidades conservadoras. Os antigos 0/3 dias são removidos: são otimistas em relação à
+disponibilidade congelada e não devem ganhar um P&L no holdout.
 
 - **Resultado esperado**: alfa **decai suavemente** com o lag, e ainda existe em 7 dias
   (nosso caso primário).
-- **Critério de falha**: alfa **alto em lag 0-3 e desaparece em 7+**.
+- **Bandeira de fragilidade**: o caso de 7 dias funciona, mas há colapso abrupto nos dois
+  atrasos conservadores.
 - **Se falhar**: o alfa vivia de informação que não estaria disponível na hora da decisão.
   Ou seja, era **lookahead**, não alfa.
 
-Este é o teste mais barato de rodar e um dos mais mortais. Deve ser o primeiro.
+Os lags alternativos rodam depois do primário, no mesmo tiro, e nunca o substituem.
 
 ### 2.4 🔴 Sensibilidade à revisão dos dados climáticos (específico deste projeto)
 
@@ -104,9 +109,9 @@ retroativamente** os últimos ~2-3 meses de dado. A série que baixamos hoje **n
 que estava disponível na época. Isso é lookahead embutido na fonte, e não é removível
 simplesmente "tomando cuidado no código".
 
-**Teste**: comparar o sinal construído com **CHIRPS-prelim** (o que se sabia na época) contra
-o construído com **CHIRPS-final** (a verdade revisada). O CHIRPS é a única fonte que arquiva
-as duas versões separadamente, o que nos dá um **proxy honesto de vintage**.
+**Executado em D-066**: comparar CHIRPS-prelim com CHIRPS-final dentro da suíte do mecanismo.
+O produto final fortaleceu o β em 1,37×; não será transformado em novo P&L no holdout, pois
+isso repetiria a família de escolhas sobre retornos.
 
 - **Resultado esperado**: a diferença é pequena em relação ao tamanho do choque que queremos
   detectar (uma seca severa aparece nas duas versões).
@@ -126,14 +131,15 @@ que o resultado não desmorona na vizinhança. Tabela no relatório.
 
 | Parâmetro | Primário | Variações testadas | Falha se... |
 |---|---|---|---|
-| Janela fenológica | contrato D-023 por cultura × UF | bloco completo em −10 e +10 dias | resultado só existe na janela exata |
-| Temperatura (secundária) | fora do primário | soja `T_max>40 °C`; milho `T_max>35 °C` | o ganho depende da fonte POWER sem vintage |
-| Mínimo de anos da climatologia | 10 | 5, 15 | idem |
-| Horizonte de holding | 21 dias úteis | 5, 10, 42, 63 | alfa só existe num horizonte específico |
-| Lag de publicação | 7 dias | 0, 3, 14, 21 | ver §2.3 |
-| Método de exposição `E` | fundamentalista (A) | estatístico (B) | os dois discordam completamente |
-| Cap por nome | 0,40 por grão; 0,15 SMTO3 (D-053) | vizinhos simétricos pré-registrados na Fase 5 | resultado depende de uma única posição concentrada |
+| Janela/climatologia/fonte | contrato D-023 | **já testados em D-066**, sem novo P&L | veredito de mecanismo já registrado |
+| Horizonte de holding | 21 dias úteis | **10, 42** | alfa só existe no horizonte exato |
+| Lag total de publicação | 7 dias | **14, 21** | resultado some com atraso conservador |
+| Cap por nome | 0,40 grão; 0,15 cana | grão **0,30/0,50**; cana **0,10/0,20**, single-knob | resultado depende do cap exato |
 | Filtro de liquidez (ADTV) | R$ 8 milhões, 21 pregões (D-055) | R$ 4 mi e R$ 12 mi | alfa só existe nos nomes ilíquidos ⇒ não é operável |
+
+Temperatura, Método B/universo amplo e troca de `E` ficam fora: foram rejeitados/suspensos por
+vintage ou falta de identificação fundamental, e não podem reaparecer como tentativas de salvar
+o holdout.
 
 > **Interpretação correta de uma tabela de sensibilidade**: não estamos procurando o melhor
 > valor. Estamos provando que a escolha primária **não foi garimpada**. Se o Sharpe é 1.8 no
@@ -145,12 +151,13 @@ que o resultado não desmorona na vizinhança. Tabela no relatório.
 
 | Teste | O que é | Por quê |
 |---|---|---|
-| **Subperíodos** | desenvolvimento operacional 2015/16–2019/20; cortes do holdout só serão aplicados no tiro único | ver se o resultado vem de um único episódio sem usar 2020–2025 para redesenhar |
-| **Anos de El Niño vs. La Niña** | condicionar por regime ENSO | a estratégia só funciona num regime climático? |
-| **Universo alternativo** | Método A direto vs. diagnóstico Método B; universo amplo só se houver evidência admissível | ver D-033 e `01_TESE_E_PRE_REGISTRO.md` §6 |
+| **LOO de ano-safra** | excluir cada uma das cinco safras, uma por vez | resultado vem de um único episódio? |
+| **Regime ENSO** | atribuição por ONI, descritiva, sem p-valor de subgrupo | resultado coincide com um regime climático? |
 | **Custos dobrados** | 2× o custo estimado | margem de segurança contra otimismo de execução |
-| **Exclusão de um nome por vez** (*leave-one-out*) | remover cada ação e re-rodar | o alfa depende de uma única empresa? |
-| **Exclusão da maior janela de retorno** | remover o melhor mês | o resultado é um evento único? |
+| **LOO de nome** | remover cada uma das cinco ações e re-rodar | resultado depende de uma única empresa? |
+
+Não se usa o dev 2015/16–2019/20: R26 impede materializar três safras e 2019/20 é transição
+excluída. Não se cria universo alternativo sem exposição fundamental admissível.
 
 ---
 
@@ -195,3 +202,47 @@ econômica derivada e pré-registrada naquele mercado — nunca copiar a direç�
 > derivados de poucos anos-safra continuam sendo poucos eventos, não 3.000. Qualquer intervalo de confiança que
 > ignore isso está mentindo. Vamos reportar o **N efetivo** explicitamente. Um avaliador de
 > gestora vai reparar nisso na hora, e é melhor sermos nós a levantar a questão.
+
+---
+
+## 7. Pacote indivisível da rodada única (D-068)
+
+O contrato executável vive em `backtest/holdout_spec.py`; seu payload lógico D-068 está
+travado pelo SHA-256
+`cefa5f60b78e373e07060f68dcc65412c4e832663deac980f62b43cd7b202900`. A rodada não
+pausa após ver o primário: mesmo se H′ falhar, todos os passos são calculados e emitidos.
+
+| Ordem | Bloco | Papel |
+|---:|---|---|
+| 0 | preflight + hashes | gate |
+| 1 | teste primário H′ | **único confirmatório**, α=0,10 |
+| 2 | carteira zero/base/2× | decisão; base é o resultado principal |
+| 3–4 | AGRO3×ADTV D-067; setor×clima D-064 | diagnóstico obrigatório |
+| 5–6 | H4; H5 geográfico + exposição | vetos adversariais |
+| 7–9 | LOO nome, LOO safra, grids single-knob | sensibilidades descritivas |
+| 10–11 | métricas/atribuição; selo final | relatório + integridade |
+
+Não há impressão de métricas intermediárias nem escolha humana entre blocos. Os resultados
+ganham níveis de afirmação distintos:
+
+- **P&L OOS positivo:** retorno líquido base >0 — afirma somente o fato histórico;
+- **evidência OOS da estratégia:** P&L base >0 **e** primário H′ aprovado;
+- **evidência de alpha climático:** anterior + componente D-064 positivo + H4 estendida
+  aprovada + H5 geográfico morto.
+
+Falha ou ausência de H4/H5 impede usar “alpha climático”, mesmo com curva positiva.
+
+### 7.1 Portão técnico ainda fechado
+
+`scripts/run_holdout_once.py` atualmente executa apenas o preflight, que atesta o código por
+SHA-256 e lista inputs sem abrir parquets. `--execute` falha antes do I/O. Para habilitar a
+rodada faltam, em commits anteriores ao unlock:
+
+1. materializar controles diários confiáveis de H4 — NEFIN + FX + soja/milho/açúcar + ONI,
+   com schema e manifestos;
+2. congelar e materializar a geografia não produtiva de H5;
+3. implementar o executor indivisível, registro civil e emissão atômica dos 12 artefatos.
+
+Os sete inputs derivados têm caminhos fixos em `data/interim/holdout/`; não podem ser
+substituídos por arquivos de desenvolvimento, dados atuais ou download ad hoc. A rodada real
+continua proibida até novo gate explícito.
