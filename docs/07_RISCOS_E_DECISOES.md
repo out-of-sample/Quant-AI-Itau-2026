@@ -2540,6 +2540,72 @@ concentração em vez de baixar o piso. (c) Uma comparação descritiva entre bl
 tempo e regimes; não identifica efeito causal da liquidez. (d) O passo fecha a interpretação, mas não
 adiciona poder, nomes ou evidência de retorno. Holdout intacto; suíte 519→523 testes.
 
+### D-068 — Congelamento do pacote indivisível e preflight da rodada única
+
+**Data:** 2026-07-26
+
+**Problema que motivou a decisão.** A estratégia econômica e a mecânica primária estavam congeladas,
+mas “rodar o holdout uma vez” ainda não era uma operação indivisível. A suíte histórica continha
+promessas que se tornaram incompatíveis com decisões e dados posteriores: climatologias fora do grid
+D-065, dev 2015/16–2019/20 apesar de R26 e da zona de transição, Method B/universo alternativo já
+suspensos, e H5 geográfico ainda sem materialização. Também duplicava o fator de mercado ao propor
+IBOV junto de `Rm_minus_Rf`. Sem correção anterior aos retornos, haveria espaço para escolher o que
+rodar, como interpretar e quando parar.
+
+**Decisão inferencial.** `backtest/holdout_spec.py` congela a ordem dos 12 blocos e proíbe pausa ou
+exibição intermediária. O teste exato H′ de cinco anos-safra, unilateral a 10%, é a **única hipótese
+confirmatória**. Todos os demais blocos rodam mesmo que ele falhe:
+
+1. custos zero/base/2×, AGRO3×ADTV e setor×clima D-064;
+2. H4 e H5 como vetos adversariais à expressão “alpha climático”;
+3. leave-one-name-out, leave-one-crop-year-out e grids single-knob como sensibilidades descritivas;
+4. métricas, atribuição e selo final.
+
+H4 usa `r_estratégia líquida − Risk_Free` como desfecho. A especificação core contém os cinco
+fatores NEFIN (`Rm_minus_Rf`, SMB, HML, WML, IML); a estendida adiciona USDBRL, soja, milho 2ª,
+açúcar e ONI. Não entra IBOV, evitando duplicação de mercado. A inferência é HAC/Newey–West com
+21 lags e α=0,10; somente a estendida é veto.
+
+H5 mantém como veto o placebo geográfico de área não produtora, com a mesma estratégia, calendário,
+score e custos: sobre o retorno líquido base médio dos cinco anos-safra, com sign-flip exato dos
+clusters, ele deve reter menos de 50% da estatística do sinal real em módulo e ter p unilateral
+acima de 0,10. A permutação de exposições dentro de cada lado econômico é obrigatória, porém
+descritiva: com dois produtores e dois processadores há apenas `2!×2!=4` permutações, insuficientes
+para outro teste a 10%. O embaralhamento de UFs de D-065/D-066 testa H1 e **não substitui** H5.
+
+**Grids mantidos.** Além de custo zero/base/2×: ADTV R$4 mi/R$12 mi em torno do piso primário de
+R$8 mi; horizonte 10/42 em torno de 21 pregões; lag total 14/21 em torno de 7 dias; cap de grãos
+0,30/0,50 em torno de 0,40; cap de cana 0,10/0,20 em torno de 0,15; exclusão individual dos cinco
+nomes e das cinco safras. Variações de climatologia/janela/fonte final já pertencem a D-066, no
+mecanismo, e não geram novos P&Ls de holdout. Temperatura, Method B, matriz `E` alternativa e
+universo alternativo ficam fora.
+
+**Níveis de afirmação congelados.**
+
+- retorno líquido base positivo permite dizer apenas “P&L OOS positivo”;
+- evidência OOS da estratégia exige também aprovação do primário H′;
+- evidência de alpha climático exige os dois anteriores, componente climático D-064 positivo,
+  passagem de H4 estendida e morte do placebo geográfico H5.
+
+**Implementação segura e bloqueios.** `backtest/holdout.py` e `scripts/run_holdout_once.py` implementam
+somente o preflight: validam o payload lógico, atestam os fontes por SHA-256 e listam presença dos
+sete inputs sem parsear parquets. `--execute` falha antes do I/O porque
+`EXECUTOR_IMPLEMENTED=False`. O payload lógico está travado pelo hash civil
+`cefa5f60b78e373e07060f68dcc65412c4e832663deac980f62b43cd7b202900`; qualquer divergência
+falha já no import. A rodada continua bloqueada até três entregas anteriores ao unlock:
+(i) controles diários confiáveis e manifestados de H4; (ii) geografia não produtiva e score H5;
+(iii) executor indivisível, registro civil e emissão atômica dos 12 artefatos. Os caminhos dos
+inputs são fixos em `data/interim/holdout/`; arquivos de dev, downloads atuais e substituições ad hoc
+não são aceitos.
+
+**Custo/limitação declarado.** (a) O escopo de robustez ficou menor que a promessa histórica, mas
+agora cada item é executável e compatível com as decisões congeladas. (b) H4 depende de futuros
+contínuos cuja regra de rolagem ainda precisa ser definida; confirmação de ticker não é dado pronto.
+(c) H5 continua existencial e ainda não existe: sua ausência veta a alegação climática e a execução.
+(d) O pacote não aumenta os cinco eventos independentes nem transforma sensibilidades em poder.
+(e) Este passo congela o plano e prova que a porta está fechada; não lê retorno, score ou peso do
+holdout. Suíte 523→530 testes.
+
 ---
 
 ## Como registrar uma decisão nova

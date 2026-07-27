@@ -378,6 +378,14 @@ Andamento:
   perna produtora continuar com um nome, nenhum resultado positivo autoriza alegar dispersão
   cross-sectional entre produtores. Subgrupos são descritivos; não criam novos testes. O
   holdout continua lacrado. Testes 519→523.
+- 🟡 **Pacote indivisível do holdout congelado até o preflight (D-068, 2026-07-26)**:
+  `backtest/holdout_spec.py` fixa a ordem dos 12 blocos, o único teste confirmatório H′,
+  H4/H5 como vetos, grids descritivos, níveis de afirmação e caminhos dos sete inputs.
+  `backtest/holdout.py` e `scripts/run_holdout_once.py` atestam fontes por SHA-256 e listam
+  ausências **sem abrir os parquets**. A execução permanece desabilitada e falha antes do
+  I/O: ainda faltam controles diários confiáveis de H4, o sinal geográfico não produtor de
+  H5 e o executor atômico/registro civil. A auditoria também retirou promessas antigas
+  incompatíveis com D-053–D-067. Holdout intocado; testes 523→530.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
@@ -389,8 +397,10 @@ Andamento:
 
 ### Fase 6 — Holdout
 
-Liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
-correção posterior; o resultado vai para o relatório, qualquer que seja.
+Depois de fechar os três bloqueios técnicos de D-068 e auditar o executor indivisível,
+liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
+correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
+qualquer que seja. O preflight atual não autoriza a abertura.
 
 ### Fase 7 — Relatório
 5 páginas, 16:9, 100% anônimo. É o único entregável avaliado.

@@ -353,3 +353,23 @@ O holdout é exclusivamente 2020/21–2024/25, com decisões/execuções não an
 autorização explícita e exclusiva da Fase 6. A liberação não inclui 2019/20 nem 2025/26. A
 rodada ocorre uma vez, com hash da especificação e manifestos, e o resultado, qualquer que
 seja, vai para o relatório.
+
+### 7.1 Pacote indivisível e preflight (D-068)
+
+O contrato em `backtest/holdout_spec.py` fixa uma sequência de 12 blocos: preflight, teste
+primário H′, carteira/custos, AGRO3×ADTV, setor×clima, H4, H5, dois leave-one-out, grids,
+métricas/atribuição e selo final. H′ é o único confirmatório; H4 e H5 são vetos para a
+expressão “alpha climático”; os demais resultados são diagnósticos ou sensibilidades.
+
+A execução não pode pausar, exibir o primário e esperar decisão humana. Todos os blocos
+obrigatórios continuam mesmo após falha de H′, e os artefatos só são apresentados depois do
+selo final. `scripts/run_holdout_once.py` ainda executa somente um preflight return-agnóstico:
+valida o contrato, calcula hashes SHA-256 dos fontes e verifica a presença dos sete inputs sem
+abrir parquets. `--execute` falha alto antes do I/O porque o executor está explicitamente
+desabilitado.
+
+O unlock exige, em commits anteriores e auditáveis: painel diário H4 com manifestos, score do
+placebo geográfico H5 e executor/registro civil com emissão atômica. Um registro de rodada já
+existente impede nova execução. A existência de P&L positivo, por si só, autoriza apenas
+afirmar retorno OOS positivo; evidência da estratégia exige também H′, e “alpha climático”
+exige adicionalmente componente D-064 positivo e passagem dos vetos H4/H5.
