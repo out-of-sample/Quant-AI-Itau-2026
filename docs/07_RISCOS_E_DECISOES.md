@@ -2665,6 +2665,47 @@ o input não é passar H4: o alpha só será estimado na rodada única. (d) A co
 de closes NYSE/B3 pode gerar não-sincronicidade; H4 é atribuição contemporânea ex post, não regra
 de negociação. (e) Nenhum retorno de ação ou estratégia foi lido. Suíte 530→540 testes.
 
+### D-070 — Geografia placebo H5 congelada antes da materialização
+
+**Data:** 2026-07-26
+
+**Problema.** O pré-registro prometia recalcular o `Shock` em células sem produção agrícola
+relevante, citando Amazônia central ou litoral, mas não fixava polígonos, pesos ou a prova de
+não produção. Escolher coordenadas depois de observar o choque placebo criaria o mesmo grau de
+liberdade que o H5 deve combater. Rebaixar milhares de rasters globais para uma caixa nova
+também seria redundante: o painel CHIRPS D-027 já contém todos os municípios das UFs cobertas
+pela malha fixa.
+
+**Decisão anterior ao choque placebo.** H5 usa as 91 células CHIRPS cujos centros caem nos
+polígonos IBGE 2013 de **Canavieiras, Maraú e Salinas da Margarida (BA), Matinhos e Pontal do Paraná
+(PR)**. São duas faixas do litoral atlântico, uma das geografias não produtoras explicitamente
+previstas em H5. A média de precipitação é ponderada pelo número fixo de células de cada
+município — equivalente a peso igual por célula, sem PAM no sinal placebo.
+
+O snapshot PAM/SIDRA foi auditado **antes** de calcular qualquer série climática: nos cinco
+municípios, a quantidade produzida é exatamente zero para soja e milho total em cada ano de
+2014–2024 (110 observações). O milho/BA exigiu uma captura adicional oficial, presa pelo
+manifesto `pam_1612_corn_total_2014-2024_ba_20260727.json`. A seleção completa e os hashes
+ficam em `h5_geography_spec_v1.json`; o contrato executável vive em
+`robustness/h5_geography_spec.py`.
+
+**Tudo que não muda.** O placebo reutiliza integralmente as janelas `PRIMARY_WINDOWS`, a
+climatologia expanding do mesmo trecho, o mínimo de dez safras, os pesos CONAB da safra
+anterior encerrada, as exposições H′, o calendário, direção, sizing e custos. Só o suporte
+espacial da chuva muda. O score e o retorno do H5 continuam não calculados neste commit.
+O hash lógico pré-holdout muda de `9ffa0fbf…df6` para
+`fbcaa5d02d35c9364fb093fd3df21fc0833ff6712fb6958b6f826d516534964f`, incluindo
+somente o contrato, o registro e o manifesto de auditoria H5 em `SPEC_FILES`.
+
+**Custo/limitação declarado.** (a) O suporte costeiro não representa toda geografia não
+produtora do Brasil e não inclui a alternativa amazônica citada como exemplo. (b) Zero
+soja/milho não significa ausência de outros cultivos, atividade urbana ou risco macro; isso é
+intencional, pois H5 tenta preservar confundidores amplos e retirar o canal agronômico de
+grãos. (c) PAM reescreve o passado: a prova vale para o snapshot capturado, não para vintages
+históricos reconstruídos. (d) A materialização posterior deve falhar se qualquer uma das 91
+células, dos 6.197 raster-dias ou das identidades municipais divergir. (e) Nenhum `Shock`
+placebo e nenhum retorno foi calculado.
+
 ---
 
 ## Como registrar uma decisão nova
