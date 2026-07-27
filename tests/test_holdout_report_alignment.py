@@ -26,6 +26,12 @@ WORK = Path(WORK_DIR)
 SEALED = (WORK / "11_seal.json").exists()
 sealed_only = pytest.mark.skipif(not SEALED, reason="exige a rodada única já selada")
 
+# `data/interim/` e `data/processed/` não vão para o git (só os manifestos vão), então na CI
+# nem os inputs nem os artefatos selados existem. Estes testes são de alinhamento contra dado
+# real e só têm sentido onde o dado real está.
+HAS_CONTROLS = Path(REQUIRED_INPUTS["h4_controls"]).is_file()
+controls_only = pytest.mark.skipif(not HAS_CONTROLS, reason="exige o parquet de controles H4 local")
+
 
 def test_serie_diaria_e_lida_de_dentro_do_envelope():
     envelope = {
@@ -43,6 +49,7 @@ def test_serie_diaria_sem_envelope_continua_funcionando():
     assert frame.index[0] == pd.Timestamp("2021-01-08")
 
 
+@controls_only
 def test_controles_tem_a_data_em_ref_date_e_nao_no_indice():
     """A causa raiz: o parquet nunca teve índice de data."""
     controls = pd.read_parquet(REQUIRED_INPUTS["h4_controls"])
@@ -52,6 +59,7 @@ def test_controles_tem_a_data_em_ref_date_e_nao_no_indice():
 
 
 @sealed_only
+@controls_only
 def test_relatorio_nao_publica_metrica_de_excesso_em_nan():
     """Se o benchmark não alinhar, o relatório precisa FALHAR — nunca devolver NaN."""
     report = build_report(".")
@@ -66,6 +74,7 @@ def test_relatorio_nao_publica_metrica_de_excesso_em_nan():
 
 
 @sealed_only
+@controls_only
 def test_benchmark_do_relatorio_e_a_mesma_serie_do_h4_selado():
     """O risk-free do relatório tem de ser idêntico ao que a regressão H4 já usou."""
     controls = pd.read_parquet(REQUIRED_INPUTS["h4_controls"]).copy()
