@@ -2606,6 +2606,65 @@ contínuos cuja regra de rolagem ainda precisa ser definida; confirmação de ti
 (e) Este passo congela o plano e prova que a porta está fechada; não lê retorno, score ou peso do
 holdout. Suíte 523→530 testes.
 
+### D-069 — Controles diários H4: proxies negociáveis e snapshot ex post
+
+**Data:** 2026-07-26
+
+**Problema.** D-068 congelou as colunas de H4, mas não suas fontes e transformações. Usar os
+tickers contínuos front-month do Yahoo introduziria saltos de rolagem sem uma regra por contrato;
+inventar essa regra agora abriria novos graus de liberdade. Dados mensais FRED/IMF não conseguem
+explicar retorno diário. H4 também precisava respeitar calendários distintos (B3, NYSE e Federal
+Reserve) sem puxar uma observação futura para um pregão brasileiro.
+
+**Decisão de fonte.**
+
+- fatores e taxa livre de risco: snapshot NEFIN D-022;
+- câmbio: **DEXBZUS**, nível diário BRL por USD do FRED/Federal Reserve;
+- commodities: adjusted close, em USD, dos ETFs futuros Teucrium **SOYB**, **CORN** e **CANE**;
+- regime climático: ONI D-021 em nível, usando a última temporada cuja `avail_date`
+  conservadora já ocorreu.
+
+Os três ETFs têm benchmarks públicos baseados em três vencimentos. A rolagem passa a ser a regra
+pré-existente de um veículo negociável, não uma série construída pelo time. Isso resolve a lacuna
+de rolagem declarada em D-068 sem trocar as commodities congeladas.
+
+**Transformação.** O calendário-mestre é o NEFIN/B3. Cada nível externo é carregado somente para
+a frente até a sessão brasileira, com staleness máxima de quatro dias corridos, e vira retorno
+simples entre sessões B3 consecutivas. Feriado americano pode produzir retorno zero numa sessão
+brasileira; o movimento acumulado aparece na próxima observação disponível. Não há backfill.
+Retornos dos ETFs permanecem em USD e a variação BRL/USD entra separadamente, evitando converter
+o mesmo risco cambial duas vezes.
+
+O painel inteiro é um **snapshot ex post** com `avail_date=27/07/2026`, a captura mais tardia.
+Yahoo, FRED e NOAA podem reescrever o histórico; não se finge disponibilidade D+1. H4 nunca alimenta
+sinal, score, universo ou ordem. Sua regressão ainda não foi executada porque o desfecho são os
+retornos lacrados da estratégia.
+
+**Materialização e auditoria.** `ingest/h4_market.py` baixa e valida quatro fontes de mercado;
+`robustness/h4_controls.py` alinha e valida o painel; `scripts/build_h4_controls.py` prende a
+primeira seleção de capturas e recusa substituição silenciosa. Resultado:
+
+- 1.495 sessões, 02/01/2020–30/12/2025;
+- 13 colunas, zero células ausentes e zero datas duplicadas;
+- parquet `data/interim/holdout/h4_controls.parquet`, SHA-256
+  `07811b9ec22b8914c9081e46bee8858446e4f098f54c2159c8b20a0ce6b3e666`;
+- seis fontes e transformações registradas em `h4_controls_summary_v1.json`;
+- rebuild bit-a-bit; cache sem manifesto/hash falha alto; rebuild divergente não sobrescreve
+  o arquivo congelado.
+
+O hash lógico do pacote muda de `cefa5f60…2900` para
+`9ffa0fbfff81f7ccab1aee09093af2b2167e4b01add2e61a5c342f7919a08df6`, mudança
+pré-holdout que apenas inclui os novos fontes/registro H4 em `SPEC_FILES`. Estratégia, teste,
+grids, claims e executor bloqueado permanecem iguais. O preflight agora mostra `h4_controls`
+presente e seis inputs ainda ausentes.
+
+**Custo/limitação declarado.** (a) ETF é proxy: inclui collateral yield, despesas, tracking
+error e curva de futuros; não é spot brasileiro. (b) Yahoo adjusted close e ONI não preservam
+vintage, mitigado por captura/hash e `avail_date` única de snapshot, não eliminado. (c) Fechar
+o input não é passar H4: o alpha só será estimado na rodada única. (d) A coincidência imperfeita
+de closes NYSE/B3 pode gerar não-sincronicidade; H4 é atribuição contemporânea ex post, não regra
+de negociação. (e) Nenhum retorno de ação ou estratégia foi lido. Suíte 530→540 testes.
+
 ---
 
 ## Como registrar uma decisão nova

@@ -386,6 +386,15 @@ Andamento:
   I/O: ainda faltam controles diários confiáveis de H4, o sinal geográfico não produtor de
   H5 e o executor atômico/registro civil. A auditoria também retirou promessas antigas
   incompatíveis com D-053–D-067. Holdout intocado; testes 523→530.
+- ✅ **Painel diário H4 materializado e congelado (D-069, 2026-07-26)**:
+  `ingest/h4_market.py` captura câmbio diário DEXBZUS e os ETFs futuros SOYB/CORN/CANE;
+  `robustness/h4_controls.py` alinha tudo ao calendário NEFIN/B3 sem backfill e carrega o
+  último ONI estabilizado disponível. São **1.495 sessões** (02/01/2020–30/12/2025), zero
+  ausências/duplicatas, snapshot 27/07/2026 e parquet reproduzido com o mesmo SHA-256.
+  Manifestos e `h4_controls_summary_v1.json` prendem as seis fontes e as transformações.
+  O preflight agora reconhece `h4_controls`; H4 **ainda não foi estimado**, pois o desfecho
+  são os retornos lacrados. Hash lógico atualizado de forma pré-holdout em D-069; testes
+  530→540.
 - ✅ **Hedge de setor como decomposição pré-registrada (D-064, 2026-07-26)**: dado que o D-060 mostrou
   o P&L do dev dominado por aposta de setor, o time escolheu (entre 3 formas) que o hedge entra como
   **regra de decomposição do primário**, não como estratégia nova nem mudança do contrato congelado.
@@ -397,7 +406,7 @@ Andamento:
 
 ### Fase 6 — Holdout
 
-Depois de fechar os três bloqueios técnicos de D-068 e auditar o executor indivisível,
+Depois de fechar os dois bloqueios técnicos restantes de D-068/D-069 e auditar o executor indivisível,
 liberar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
 correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
 qualquer que seja. O preflight atual não autoriza a abertura.

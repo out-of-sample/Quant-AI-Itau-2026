@@ -1,0 +1,95 @@
+{
+  "decision": "D-069",
+  "holdout_logical_spec_sha256": "9ffa0fbfff81f7ccab1aee09093af2b2167e4b01add2e61a5c342f7919a08df6",
+  "output": {
+    "columns": [
+      "ref_date",
+      "avail_date",
+      "rm_minus_rf",
+      "smb",
+      "hml",
+      "wml",
+      "iml",
+      "usdbrl",
+      "soy",
+      "corn_second",
+      "sugar",
+      "oni",
+      "risk_free"
+    ],
+    "path": "data/interim/holdout/h4_controls.parquet",
+    "sha256": "07811b9ec22b8914c9081e46bee8858446e4f098f54c2159c8b20a0ce6b3e666"
+  },
+  "quality": {
+    "duplicate_ref_dates": 0,
+    "missing_cells": 0,
+    "zero_market_returns": {
+      "corn_second": 72,
+      "soy": 71,
+      "sugar": 85,
+      "usdbrl": 55
+    }
+  },
+  "schema_version": 1,
+  "scope": {
+    "end": "2025-12-31",
+    "first_ref_date": "2020-01-02",
+    "last_ref_date": "2025-12-30",
+    "rows": 1495,
+    "snapshot_avail_date": "2026-07-27",
+    "start": "2020-01-01"
+  },
+  "sources": {
+    "corn_second": {
+      "downloaded_at": "2026-07-27T01:03:20.633053+00:00",
+      "manifest_path": "data/manifests/h4_yahoo_corn_second_20260727.json",
+      "raw_path": "data/raw/h4_market/yahoo_corn_20260727.json",
+      "sha256": "ccb1f56e3ef917d2ad55592238fb73aa0d1f7e15ce53c69013c03daf8a1cbb03"
+    },
+    "nefin": {
+      "downloaded_at": "2026-07-17T01:10:51.616328+00:00",
+      "manifest_path": "data/manifests/nefin_factors_20260717_e12ab2b324cb.json",
+      "raw_path": "data/raw/nefin/nefin_factors_20260717_e12ab2b324cb.csv",
+      "sha256": "da80260e1a67e6860a90db7b10a61964f9ebe209bf3234e3a8e0b11e91a5ec23"
+    },
+    "oni": {
+      "downloaded_at": "2026-07-17T00:54:30.679297+00:00",
+      "manifest_path": "data/manifests/oni_20260717.json",
+      "raw_path": "data/raw/oni/oni_20260717.txt",
+      "sha256": "54ffcbf1339f334ee54bb14812033222cad86c4d0b3af59d6309e555614020fe"
+    },
+    "soy": {
+      "downloaded_at": "2026-07-27T01:03:20.151508+00:00",
+      "manifest_path": "data/manifests/h4_yahoo_soy_20260727.json",
+      "raw_path": "data/raw/h4_market/yahoo_soyb_20260727.json",
+      "sha256": "7b5bf538a8fd78cbfea2638a5d38e5b03794a2dc0950022dcbd5c51081117012"
+    },
+    "sugar": {
+      "downloaded_at": "2026-07-27T01:03:20.944796+00:00",
+      "manifest_path": "data/manifests/h4_yahoo_sugar_20260727.json",
+      "raw_path": "data/raw/h4_market/yahoo_cane_20260727.json",
+      "sha256": "13b905e3e4734d5b1cfeb915e7231c2a13f4c294d90a0d1d280bcb16c155bf9e"
+    },
+    "usdbrl": {
+      "downloaded_at": "2026-07-27T01:03:23.305533+00:00",
+      "manifest_path": "data/manifests/h4_fred_usdbrl_20260727.json",
+      "raw_path": "data/raw/h4_market/fred_dexbzus_20260727.csv",
+      "sha256": "627c35001e5c585d5ff5da5a7d47a6f161feaab44e0ac655cac5a12dbeed6fca"
+    }
+  },
+  "transform": {
+    "calendar": "NEFIN/B3",
+    "commodity_currency": "USD",
+    "commodity_proxies": {
+      "corn_second": "CORN",
+      "soy": "SOYB",
+      "sugar": "CANE"
+    },
+    "market_alignment": "last_observation_carried_forward_without_backfill",
+    "market_return": "simple_return_between_consecutive_b3_sessions",
+    "max_market_staleness_calendar_days": 4,
+    "never_used_for_positions": true,
+    "oni": "latest_stabilized_level_available_asof_ref_date",
+    "usdbrl_quote": "BRL_per_USD"
+  }
+}

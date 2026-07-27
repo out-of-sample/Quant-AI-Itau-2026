@@ -1,5 +1,5 @@
 """Camada de robustez: os testes de docs/05_SUITE_ROBUSTEZ.md, cada um com resultado esperado.
 
-Os três existenciais primeiro (spanning H4, placebo espacial H5, sensibilidade ao lag),
-porque são os que podem tornar todo o resto irrelevante.
+H4 e H5 são vetos existenciais à interpretação de alpha climático. O lag e os demais grids
+são sensibilidades descritivas; H′ permanece a única hipótese confirmatória.
 """

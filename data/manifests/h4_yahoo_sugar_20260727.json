@@ -1,0 +1,18 @@
+{
+  "bytes": 161874,
+  "currency": "USD",
+  "downloaded_at": "2026-07-27T01:03:20.944796+00:00",
+  "field": "adjusted_close",
+  "first_ref_date": "2019-12-02",
+  "fund_page": "https://teucrium.com/cane",
+  "last_ref_date": "2025-12-31",
+  "period_end_exclusive": "2026-01-02",
+  "period_start": "2019-12-01",
+  "raw_path": "data/raw/h4_market/yahoo_cane_20260727.json",
+  "role": "sugar",
+  "rows": 1529,
+  "sha256": "13b905e3e4734d5b1cfeb915e7231c2a13f4c294d90a0d1d280bcb16c155bf9e",
+  "source": "Yahoo-Chart",
+  "symbol": "CANE",
+  "url": "https://query2.finance.yahoo.com/v8/finance/chart/CANE"
+}

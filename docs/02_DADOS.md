@@ -670,20 +670,32 @@ grava SHA, timestamp, hash e cobertura no manifesto. Todas as linhas recebem `av
 igual à data do snapshot. Isso é conservador e coerente com seu papel: NEFIN entra na H4 como
 **atribuição ex post**, depois que os retornos ocorreram; nunca alimenta o sinal ou a carteira.
 
-### 5.5 Contrato de dados diário de H4 — bloqueio antes do holdout
+### 5.5 Contrato de dados diário de H4 — concluído em D-069
 
-D-068 exige um único painel `data/interim/holdout/h4_controls.parquet`, alinhado ao calendário
-B3, com `Risk_Free`, `Rm_minus_Rf`, SMB, HML, WML, IML, USDBRL, soja, milho 2ª, açúcar e ONI,
-além de manifesto e schema. O snapshot NEFIN está preservado, mas o painel completo **ainda
-não está materializado**.
+D-069 materializou `data/interim/holdout/h4_controls.parquet` no calendário NEFIN/B3:
+`Risk_Free`, `Rm_minus_Rf`, SMB, HML, WML, IML, retorno BRL/USD, retornos de soja/milho/açúcar
+e ONI em nível. São **1.495 sessões** entre 02/01/2020 e 30/12/2025, sem nulos ou duplicatas.
+O snapshot inteiro recebe `avail_date=27/07/2026`: H4 é atribuição **ex post**, nunca sinal,
+e nenhuma fonte recebe disponibilidade histórica inventada.
 
-Em particular, confirmar tickers no yfinance não torna FX e commodities dados prontos para
-H4: as séries contínuas de futuros são front-month não ajustado, portanto exigem uma regra de
-rolagem congelada e testada para que saltos de contrato não sejam confundidos com exposição.
-ONI mensal também precisa de regra explícita de carregamento para a frequência diária. Nenhum
-download contemporâneo ou preenchimento silencioso será feito dentro da rodada. Enquanto
-essas regras, arquivos e manifestos não existirem, H4 falha como veto e o executor do holdout
-permanece desabilitado.
+**Escolha de commodities.** Em vez de fabricar uma série contínua front-month, os controles
+usam os ETFs Teucrium **SOYB, CORN e CANE**, capturados em adjusted close pelo Yahoo Chart.
+Cada fundo distribui seu benchmark entre três vencimentos; a regra de rolagem pertence ao
+veículo negociável e antecede o projeto. Os retornos são simples, em USD. BRL/USD entra
+separadamente pela série diária oficial **DEXBZUS** do FRED/Federal Reserve. Níveis externos
+são carregados somente para a frente até a sessão B3, com máximo de quatro dias corridos;
+feriado americano pode produzir retorno zero no dia brasileiro e acumular no próximo.
+
+ONI usa a última temporada cuja disponibilidade conservadora de D-021 já ocorreu. Como o
+arquivo NOAA e o Yahoo podem reescrever o passado, isso não reconstrói o vintage original:
+é o vintage capturado, com agenda de disponibilidade conservadora. Os seis arquivos brutos
+ficam presos por hash nos manifestos e em `data/reference/h4_controls_summary_v1.json`.
+Rebuild usa exatamente esses caminhos e falha se captura, manifesto ou parquet divergir.
+
+**Limitação:** ETF inclui collateral yield, despesas e tracking error; é proxy de exposição
+futura negociável, não preço spot brasileiro. Isso é adequado ao teste de *spanning*, mas
+deve ser declarado. O painel fecha o **input** H4; a regressão só roda na rodada única porque
+seu desfecho são os retornos ainda lacrados.
 
 ---
 
@@ -702,7 +714,8 @@ permanece desabilitado.
 | **COTAHIST (B3)** | D+1 | ✅ (registro de pregão) | 🥇 preços + universo point-in-time |
 | **BDI aluguel (B3)** | primeiro pregão após a referência | ✅ no arquivo baixado; 🔴 retenção pública curta (só o último pregão) | taxa/negócio/estoque short; sem série histórica, custo via proxy conservadora declarada (D-058) |
 | yfinance | D+1 | 🔴 **apaga deslistados** | só conferência cruzada |
-| Futuros (yfinance) | D+1 | ✅ | preço de commodity |
+| ETFs futuros SOYB/CORN/CANE (Yahoo Chart) | D+1; snapshot capturado | 🔴 não (histórico ajustado pode ser reescrito) | controles negociáveis ex post de commodity em H4 |
+| DEXBZUS (FRED/Federal Reserve) | diário | 🔴 não tratado como vintage histórico; snapshot preso | controle ex post BRL/USD em H4 |
 | ONI (NOAA) | até dia 5; caso primário espera +2 meses | 🔴 não (revisão recente + base quinquenal) | controle (El Niño) |
 | NEFIN | diário, publicado em lotes irregulares | parcial (commits desde jun/2026; revisão histórica material) | fatores ex post (H4) |
 
