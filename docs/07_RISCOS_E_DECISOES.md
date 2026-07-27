@@ -2977,6 +2977,73 @@ permaneceram **byte-idênticos** em todo o processo.
 
 ---
 
+### D-075 — Rodada única executada e selada; correção pós-selo do relatório descritivo
+
+**Data:** 2026-07-27
+
+**A rodada aconteceu.** A tentativa 2 foi autorizada, executou os onze blocos em 12 segundos e
+selou às 09:24:34Z. `status: sealed`, exit 0, stderr vazio, doze artefatos publicados em
+`data/processed/holdout_v1/` com SHA-256 por arquivo. Hash lógico no selo
+`a4a70b2b…1a28f`, fontes `972a08a8…f10a`, inputs `57255805…e0a8`. O holdout 2020/21–2024/25
+deixa de estar lacrado. **Não há terceira tentativa**: o resultado abaixo é o resultado.
+
+**O que passou e o que não passou.** As cinco condições congeladas em D-068 saíram
+`base_net_return_positive: true`, `primary_hprime_passed: true`,
+`d064_climate_component_positive: true`, `h5_geographic_died: true` e
+**`h4_extended_passed: false`**. Pela regra pré-registrada, isso libera as claims
+`positive_oos_pnl` e `oos_strategy_evidence` e **veta `climate_alpha_evidence`**. O veto é o
+resultado central e não é negociável depois do fato: a estratégia não tem alpha ajustado a
+fatores.
+
+**Os números que importam.** Teste primário H′: estatística 0,1665, p = 0,0625 nas 32
+permutações exatas (α = 0,10 unilateral), quatro dos cinco anos-safra com inclinação positiva —
+**passou**. Carteira no cenário base: retorno total +16,97% em 1.186 pregões, CAGR 3,36%,
+vol 12,5%, drawdown máximo −20,9%, Sharpe 0,328 contra taxa zero. Monotonicidade de custo
+respeitada (zero > base > dobro). H4 estendido: alpha diário −0,000238, t = −1,03, p
+unilateral 0,85, R² 0,014. Placebo geográfico morreu como devia (p = 0,56; 43% da magnitude
+real). Decomposição D-064: componente de clima **positivo**, 32% do retorno aritmético do
+book — diferente do dev, onde era 0,00%.
+
+**A leitura honesta, contra o benchmark que nós mesmos declaramos.** O benchmark primário
+congelado em D-073 é o **risk-free**, não zero e não o Ibovespa. Contra ele o Sharpe de excesso
+é **−0,50**: a carteira ganhou dinheiro nominal e **perdeu para o CDI** ao longo de todo o
+holdout. Sortino −0,56, tempo máximo submerso 809 pregões, curtose em excesso 5,3. Dois anos-safra
+positivos em cinco. Deflated Sharpe Ratio **0,025** com 39 tentativas declaradas — o Sharpe
+observado fica **abaixo** do máximo esperado sob a hipótese nula (0,0253 diário). Pela régua que
+pré-registramos antes de ver qualquer número, **não há evidência de habilidade**.
+
+**Concentração e o satélite.** BRFS3 responde por 67% do P&L bruto e o HHI é 0,56 — a carteira
+é uma aposta concentrada, como no dev. O LOO por nome mostra que **remover a SMTO3 elevaria o
+retorno de +17% para +67%**: a cana, admitida com haircut em D-052, foi o maior detrator. Isso é
+observação pós-selo e **não autoriza removê-la** — registra-se como achado, não como ajuste.
+
+**O defeito pós-selo, e por que ele não é o defeito do D-074.** O relatório descritivo do D-073
+rodou pela primeira vez depois do selo e quebrou em dois pontos estruturais: lia a série diária
+fora do envelope `payload` dos artefatos, e convertia o `RangeIndex` do parquet de controles em
+data — virando epoch de 1970, com `reindex` devolvendo NaN. O segundo é o grave: publicou
+`excess_sharpe`, `sortino` e `beta_vs_market` como **NaN em silêncio**, com cara de resultado. A
+correção alinha por `ref_date` normalizado, exatamente como o bloco 5 selado já fazia, e troca o
+silêncio por falha alta. `tests/test_holdout_report_alignment.py` trava as duas propriedades.
+
+**Por que a correção não contamina o pré-registro.** O hash **lógico** não se moveu:
+`a4a70b2b…1a28f` antes e depois, o que prova por máquina que nenhuma regra congelada em
+`holdout_report_spec.py` mudou — nem métrica, nem benchmark, nem contagem de tentativas, nem a
+regra de dispersão. O que mudou foram bytes de adaptador, e o manifesto de fontes acusou o
+arquivo exato antes de qualquer publicação, movendo de `972a08a8…f10a` para `b100395d…e91f`. A
+atestação pré-correção (`0627dd41…64cdb`, 5.037 bytes) fica preservada dentro do registro da
+rodada, de modo que o diff é auditável por terceiros.
+
+**Custo/limitação declarado.** (a) O relatório descritivo foi corrigido **depois** de ver
+resultados; a defesa é o hash lógico imóvel e o diff preservado, não a alegação de boa-fé. (b) O
+mesmo tipo de bug do D-074 — código nunca exercitado contra o formato real — reapareceu no único
+componente que, por definição, não podia ser ensaiado antes do selo. (c) Os doze artefatos vivem
+em `data/processed/`, que é gitignored; a prova versionada é o par registro/selo em
+`data/reference/`, e a perda do diretório local é irreversível. (d) Uma sensibilidade de
+horizonte segue ausente por D-074. (e) A conclusão do projeto passa a ser **negativa sob a régua
+declarada**, e o relatório final tem de dizer isso na primeira página, não na última.
+
+---
+
 ## Como registrar uma decisão nova
 
 Copie o formato acima: `D-NNN — título`, data, o que foi decidido, **por quê**, e qual o

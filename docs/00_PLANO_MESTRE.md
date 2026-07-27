@@ -14,9 +14,11 @@ comprar produtores e vender processadores —, porém, **falhou no desenvolvimen
 preço não teve suporte e a reação das ações veio no sentido contrário. O projeto foi então
 reformulado, com registro completo, para testar a hipótese nova e pré-registrada de que o dano
 de volume próprio domina o benefício de preço (`Q>P`). O holdout de retornos 2020–2025 continua
-lacrado. A estratégia reformulada foi **congelada antes do holdout** em D-053; ainda não foi
-avaliada fora da amostra nem pode ser chamada de aprovada empiricamente. D-072 fechou o pacote
-técnico e o preflight, mas a rodada única ainda depende de uma autorização civil posterior.
+lacrado até 27/07/2026. A estratégia reformulada foi **congelada antes do holdout** em D-053 e
+avaliada fora da amostra **uma única vez** em D-075. O mecanismo H′ sobreviveu ao teste
+primário e a carteira teve P&L nominal positivo, mas **não há alpha ajustado a fatores nem
+evidência de habilidade contra o risk-free** — a conclusão declarada é negativa sob a régua
+que pré-registramos, e é assim que ela entra no relatório.
 
 O elo causal é testado em etapas, não assumido:
 
@@ -451,14 +453,25 @@ Andamento:
   falha antes da correção. Hash `cfb44198…2865` → `a4a70b2b…1a28f`; parquets byte-idênticos;
   testes 582→594.
 
-### Fase 6 — Holdout
+- ✅ **Rodada única executada e selada (D-075, 2026-07-27)**: a tentativa 2 rodou os onze blocos
+  em 12 segundos e selou. Teste primário H′ **passou** (p = 0,0625; 4/5 anos-safra positivos);
+  carteira base **+16,97%** em 1.186 pregões (CAGR 3,36%, DD −20,9%); placebo geográfico morreu;
+  componente de clima positivo (32% do retorno aritmético). **H4 falhou**: alpha ajustado a
+  fatores negativo (t = −1,03; p = 0,85) ⇒ a claim `climate_alpha_evidence` está **vetada** pela
+  regra pré-registrada. Contra o benchmark que declaramos em D-073 — o risk-free — o Sharpe de
+  excesso é **−0,50** e o Deflated Sharpe é **0,025** com 39 tentativas: **não há evidência de
+  habilidade**. Concentração alta (BRFS3 = 67% do P&L bruto). Correção pós-selo do relatório
+  descritivo com hash lógico **imóvel** (`a4a70b2b…1a28f`) e manifesto de fontes movido para
+  `b100395d…e91f`. Testes 594→599.
 
-O bloqueio técnico foi fechado em D-072, o que será reportado foi congelado em D-073 e a
-tentativa 2 foi autorizada em D-074 após a perda da tentativa 1. O próximo passo é uma decisão
-humana exclusiva:
-autorizar deliberadamente e rodar a especificação congelada em 2020–2025 **uma vez**. Nenhuma
-correção posterior; todos os blocos rodam sem pausa e o resultado vai para o relatório,
-qualquer que seja. `ready=true` não equivale a autorização civil.
+### Fase 6 — Holdout — CONCLUÍDA
+
+O bloqueio técnico foi fechado em D-072, o que seria reportado foi congelado em D-073, a
+tentativa 1 foi perdida em D-074 e a **tentativa 2 selou em 27/07/2026 (D-075)**. O holdout não
+está mais lacrado e não há terceira tentativa: o resultado registrado é o resultado. A leitura
+declarada é **negativa sob a régua que pré-registramos** — houve P&L nominal positivo e o
+mecanismo H′ sobreviveu ao teste primário, mas não há alpha ajustado a fatores nem evidência de
+habilidade contra o risk-free. Isso vai para o relatório como conclusão, não como nota de rodapé.
 
 ### Fase 7 — Relatório
 5 páginas, 16:9, 100% anônimo. É o único entregável avaliado.

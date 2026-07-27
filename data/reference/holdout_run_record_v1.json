@@ -1,0 +1,377 @@
+{
+  "attempt": 2,
+  "authorization_sha256": "5b9c47496a957c47a03700569a104a68b36e7dc22439b3c0804f08cf73a4db39",
+  "input_attestations": [
+    {
+      "bytes": 84012,
+      "path": "data/interim/holdout/equity_returns.parquet",
+      "sha256": "8132dea21c163d46f388e6c13d319271260fa5487661c361606b93f3ad26ccc1"
+    },
+    {
+      "bytes": 83532,
+      "path": "data/interim/holdout/market_state.parquet",
+      "sha256": "8d5869e0ffed4e5c6abd1c01dbc79f5bbd590bf9c3801907aa91cf955ea9926c"
+    },
+    {
+      "bytes": 10591,
+      "path": "data/interim/holdout/grain_scores.parquet",
+      "sha256": "3aa92059f346a07ce415590776aba69c3c5c90c18feb7fa6ecb00dac0addd4ed"
+    },
+    {
+      "bytes": 4358,
+      "path": "data/interim/holdout/cane_signal.parquet",
+      "sha256": "1ac34397a4abd2dfa5e3b3bcb501322a961b2210d39dd6bf1ca55868693da76e"
+    },
+    {
+      "bytes": 150875,
+      "path": "data/interim/holdout/h4_controls.parquet",
+      "sha256": "07811b9ec22b8914c9081e46bee8858446e4f098f54c2159c8b20a0ce6b3e666"
+    },
+    {
+      "bytes": 5220,
+      "path": "data/interim/holdout/h5_geographic_grain_scores.parquet",
+      "sha256": "936bee66b580ad26d6b55ab4f0f004c511489243bd4cb69a9d31c87f864832e1"
+    }
+  ],
+  "input_manifest_sha256": "57255805d4470071645018c27f2885d574fef1c1f7f6fc40a4757b2c9ee0e0a8",
+  "logical_spec_sha256": "a4a70b2b1d766c12c728348d6bef2d9da91bf7dd77e61283e3bb20a65381a28f",
+  "package_id": "holdout_v1_d072",
+  "prior_attempts": [
+    {
+      "attempt": 1,
+      "cause": "grade de horizonte inviável no calendário real; nenhum resultado foi lido",
+      "error": "blocos sobrepostos",
+      "failed_at_block": 9,
+      "published_work_dir": false,
+      "record": "data/reference/holdout_run_record_v1_attempt1_failed.json",
+      "results_observed": false,
+      "status": "failed"
+    }
+  ],
+  "result_record": "data/reference/holdout_result_v1.json",
+  "result_record_sha256": "67bf37d15d053db04446634b6badf3965adbfa850cd729cb1d3d64341dd07065",
+  "schema_version": 1,
+  "seal_sha256": "47224dbc0b62150b8cb01747d7374125b28382c60d055f136306d85a043ef7ce",
+  "sealed_at": "2026-07-27T09:24:34Z",
+  "source_attestations": [
+    {
+      "bytes": 2139,
+      "path": "pyproject.toml",
+      "sha256": "adee00f99e99d7db38d2643908965ecddcb594ec5ba726c331c44e14d8023c27"
+    },
+    {
+      "bytes": 40920,
+      "path": "requirements.lock",
+      "sha256": "a40998d4e84f012ef4b7dc51645223c1643706546548789e63d3438510392d21"
+    },
+    {
+      "bytes": 10352,
+      "path": "src/quantagro/backtest/strategy_spec.py",
+      "sha256": "bfb61a176fdb485f78e0a417b8e99150428ca732648125d83f442f3c923c6ac3"
+    },
+    {
+      "bytes": 18250,
+      "path": "src/quantagro/backtest/operational_spec.py",
+      "sha256": "e2867ffc1498c365fb9e6520feba308ba5574293833090d876f7dce6c7ea8542"
+    },
+    {
+      "bytes": 6271,
+      "path": "src/quantagro/backtest/inputs.py",
+      "sha256": "7583f09303a2e96c2f6d9b5a0efd5d951d84aaf39690fca64cf6e9fbba877494"
+    },
+    {
+      "bytes": 28680,
+      "path": "src/quantagro/backtest/engine.py",
+      "sha256": "c852ce2e377f7fa177bb8e15d4c6bbcf3cec4bc26f33235770df45c95b27fd9f"
+    },
+    {
+      "bytes": 14662,
+      "path": "src/quantagro/backtest/diagnostics.py",
+      "sha256": "947dc9a9967d6e2e758bcb951323a8f9eab235ad1e4759ad19312f0b02d352b4"
+    },
+    {
+      "bytes": 5037,
+      "path": "src/quantagro/backtest/holdout_report.py",
+      "sha256": "0627dd419ac5eb584005c48291eecf38bef5463e464e95c2619d285244964cdb"
+    },
+    {
+      "bytes": 19263,
+      "path": "src/quantagro/backtest/holdout_report_spec.py",
+      "sha256": "c9548f8e99a317c8dbb8da35ef9876e28f11ca6f8aa697edf457ef94413876e7"
+    },
+    {
+      "bytes": 18942,
+      "path": "src/quantagro/backtest/holdout_spec.py",
+      "sha256": "0516ccf543482b5557b62eb713994402bd802d8c93ff5aa2c0c4bd3ca9df8f5d"
+    },
+    {
+      "bytes": 10981,
+      "path": "src/quantagro/backtest/holdout.py",
+      "sha256": "57e23ba0c98076ccb62fa3c94f9453066254b739e5a4bb46b31f9ff4cfed579c"
+    },
+    {
+      "bytes": 24296,
+      "path": "src/quantagro/backtest/holdout_analysis.py",
+      "sha256": "9a3cbceb334a0f368fdcd0f511094340333cd5f86736f591e029d9045ae2a778"
+    },
+    {
+      "bytes": 10808,
+      "path": "src/quantagro/backtest/holdout_executor.py",
+      "sha256": "b231ce0baaadcba88159b4b045d687361a7e65100f6aae12f24fee9d4a50394f"
+    },
+    {
+      "bytes": 2071,
+      "path": "src/quantagro/backtest/terminal_events.py",
+      "sha256": "f3fff6acb4b12697d0043c065712cadbd91986de74cd94f44ef73c628176fbec"
+    },
+    {
+      "bytes": 8557,
+      "path": "src/quantagro/features/shock_spec.py",
+      "sha256": "8d795b427d1a4aad5fdda0cbd6ecefb80438267fb6239ccb3def4f16398c20c7"
+    },
+    {
+      "bytes": 18379,
+      "path": "src/quantagro/features/shock.py",
+      "sha256": "ca5ab981c107ebb5991e7b314a89ad9063b299c37c5dbc33b6fceb066bdd6bae"
+    },
+    {
+      "bytes": 1509,
+      "path": "src/quantagro/features/cane_panel.py",
+      "sha256": "8cc6ab2823840c89f72a9a60b7369572038a820a5e3d02900e8844be8e669444"
+    },
+    {
+      "bytes": 5356,
+      "path": "src/quantagro/features/cane_shock.py",
+      "sha256": "1346358c574bdb46080caf9eb2be272582c98ab8e12996045f15294f98f4cb5f"
+    },
+    {
+      "bytes": 7822,
+      "path": "src/quantagro/features/exposure.py",
+      "sha256": "3c0418f1114a6fd1c430b52917e59c7a358fcdbf6c6b05d01a052ef1d0b50c6a"
+    },
+    {
+      "bytes": 4338,
+      "path": "src/quantagro/features/panel.py",
+      "sha256": "8a58767a654dfee25a4fcfa0f0facea2639befa8a00a1cbadc61e2c229c6acff"
+    },
+    {
+      "bytes": 8917,
+      "path": "src/quantagro/ingest/borrow_b3.py",
+      "sha256": "8d97ff5c1bea725b0a8f6c044d49e6ebf240cf3c653187a16f50f07f43961884"
+    },
+    {
+      "bytes": 6369,
+      "path": "src/quantagro/ingest/conab.py",
+      "sha256": "762d12bc1a8286b4fa31d860cb8e04dde9b69c44d5bb672f21f818a11f1dd2ff"
+    },
+    {
+      "bytes": 14065,
+      "path": "src/quantagro/ingest/conab_calendar.py",
+      "sha256": "78bd737627d26aaf430d1891c1c1d1814222ca7e90d62a8234ee6cea57b31eb5"
+    },
+    {
+      "bytes": 5720,
+      "path": "src/quantagro/ingest/cotahist.py",
+      "sha256": "6a90ed7601c35492cea8d6f857ea6cd6c2049d8a305cf66a73970b8fa3701dca"
+    },
+    {
+      "bytes": 8819,
+      "path": "src/quantagro/ingest/events_b3.py",
+      "sha256": "f13cdca0cf6ab8f41e97e391b597bd0f807daae1a5a6e5ad0316f4118aca0bcf"
+    },
+    {
+      "bytes": 4097,
+      "path": "src/quantagro/ingest/events_manual.py",
+      "sha256": "597e0c44a72b47178031a3cb42b74db19beefccb307d4e2916b7859bb641953e"
+    },
+    {
+      "bytes": 6019,
+      "path": "src/quantagro/ingest/events_snapshot.py",
+      "sha256": "822086ff840bfaa3ffe0ccc6482318062f624a5f47e93720654dfdb49e2f2e68"
+    },
+    {
+      "bytes": 4789,
+      "path": "src/quantagro/ingest/events_statusinvest.py",
+      "sha256": "904d17facdebb038794b4f6cd29a133211422bdf0bcc585987e2fcf1d7a3b5a5"
+    },
+    {
+      "bytes": 10840,
+      "path": "src/quantagro/ingest/h4_market.py",
+      "sha256": "f55de62faad3a2b27f40468c5ed94d19527751339cda30db57fab858aa86a9de"
+    },
+    {
+      "bytes": 8839,
+      "path": "src/quantagro/ingest/ibge_geometry.py",
+      "sha256": "00735f899add38ea27c56fc4538edcd3ccb796516ec27e1cfe79196170b4c7f1"
+    },
+    {
+      "bytes": 8959,
+      "path": "src/quantagro/ingest/nefin.py",
+      "sha256": "df7235586cec43dc298f0dc60667c243f429404e9ac95b54f4f43b2012ac7e1f"
+    },
+    {
+      "bytes": 6851,
+      "path": "src/quantagro/ingest/oni.py",
+      "sha256": "bfee54339e4a2858b61e63b25000e617ac2b576a5221759386f9e7dc735eee2a"
+    },
+    {
+      "bytes": 9829,
+      "path": "src/quantagro/ingest/pam.py",
+      "sha256": "d964a0798cbbbfca5f8fd1bb11bea31f101c9441103da0324bf6fe8addfbb6c6"
+    },
+    {
+      "bytes": 3404,
+      "path": "src/quantagro/ingest/pam_calendar.py",
+      "sha256": "24bd20d217d91e3c1ea4a5034f794fed2dec8377abf101a4d75e2119d6498e5e"
+    },
+    {
+      "bytes": 5710,
+      "path": "src/quantagro/prices/adjust.py",
+      "sha256": "5595bf73a201faac65d1b4ce47c6771e47c8934196682724bf3dd99b81ced0b1"
+    },
+    {
+      "bytes": 6621,
+      "path": "src/quantagro/prices/assemble.py",
+      "sha256": "f3c4530e7611a4f7c2e0fffca2726c32c9224bff0771e68e7bc472289c836786"
+    },
+    {
+      "bytes": 7269,
+      "path": "src/quantagro/robustness/h4_controls.py",
+      "sha256": "0f65e75a1b61ad2b1723c4dd953d0335ca4671c0eed8ad9349404444bcb3f19e"
+    },
+    {
+      "bytes": 11189,
+      "path": "src/quantagro/robustness/h5_geography.py",
+      "sha256": "dc09679b8ee8e2db704eea7848aca1324c4ee88f23cac4b0c97355290eb0db24"
+    },
+    {
+      "bytes": 7056,
+      "path": "src/quantagro/robustness/h5_geography_spec.py",
+      "sha256": "7450c03431c7add75626843a3a8e93ddf9fe529dcca7e9f5083d27035d2bf3be"
+    },
+    {
+      "bytes": 7618,
+      "path": "src/quantagro/stats/cane_h1.py",
+      "sha256": "17c1fc5cddbb80816b8f86cb21fd7a236d67120d4acdabaf692a63e9b5696065"
+    },
+    {
+      "bytes": 18661,
+      "path": "src/quantagro/stats/h2a.py",
+      "sha256": "574d7ec32a8997cbb5a91ca2b85241079e164313e1024f8a8c924936e092a90a"
+    },
+    {
+      "bytes": 6839,
+      "path": "src/quantagro/stats/inference.py",
+      "sha256": "e7522e73c2ef82ab8509f1ce7ffab56c72cdb649381f175310b4be0db0f766d2"
+    },
+    {
+      "bytes": 3184,
+      "path": "src/quantagro/validate/pit.py",
+      "sha256": "086d3f81dd161b7c25bbb5325e81c27d0b63c2183ba16f410c933ed7216a7c6a"
+    },
+    {
+      "bytes": 5808,
+      "path": "src/quantagro/validate/universe.py",
+      "sha256": "c828aa222711a6c64b34d815b46857e277bfaa326038455c3748c0f2da17a9c1"
+    },
+    {
+      "bytes": 11929,
+      "path": "src/quantagro/validate/borrow.py",
+      "sha256": "7a00ddbe6faf84c8eb6f2790d3cbf193cbf8463c8eaa7fead82cfe4c00a5865e"
+    },
+    {
+      "bytes": 5966,
+      "path": "data/reference/exposure_hprime_v1.json",
+      "sha256": "5041fb4ea0f05386650576a57dab00e72c50104fb87e2b8dcb03fefe081693fc"
+    },
+    {
+      "bytes": 2528,
+      "path": "data/reference/borrow_rate_calibration_v1.json",
+      "sha256": "8cefe07a310bab6176931dbb83f456ca100724871465056f14d101388ebfa170"
+    },
+    {
+      "bytes": 3259,
+      "path": "data/reference/h4_controls_summary_v1.json",
+      "sha256": "167b3702aa9e9c1953aa51371fad6b2df7f7f7627905e5857a90061615d1e8e7"
+    },
+    {
+      "bytes": 3406,
+      "path": "data/reference/h5_geography_spec_v1.json",
+      "sha256": "d6b5e3078a8d023d8fb115d863b2fbf1709c337852520aac36a72aef38f083ff"
+    },
+    {
+      "bytes": 8488,
+      "path": "data/reference/h5_geographic_scores_summary_v1.json",
+      "sha256": "7e1794dd35a0f8a68002418debd42ffb4afd889ebad47f284d9d044f8260c2dc"
+    },
+    {
+      "bytes": 33841,
+      "path": "data/reference/corporate_events_holdout_v1.json",
+      "sha256": "7ba010e5dc4e7d353e34bf38cad4fa575159122f5497cd4daf656536dcb6ec13"
+    },
+    {
+      "bytes": 591,
+      "path": "data/reference/price_return_exceptions_holdout_v1.json",
+      "sha256": "33d759bcb5b89cf88beb421baf5d8aedadf765ad7dcc884fc09075b143550a0e"
+    },
+    {
+      "bytes": 1782,
+      "path": "data/reference/holdout_inputs_summary_v1.json",
+      "sha256": "fa6f370f5bb9b63f619b225d09e8039f71ee2812b7a62583f43738a0679a1a12"
+    },
+    {
+      "bytes": 994,
+      "path": "data/reference/holdout_terminal_events_v1.json",
+      "sha256": "f1748c99e0c9ac1ea4d8667976e8fdf1f1f81dd5d865d61c8675b61b863f7d41"
+    },
+    {
+      "bytes": 971,
+      "path": "data/manifests/terminal_events_holdout_v1.json",
+      "sha256": "94615664415b5c254be4a84a3714deb8828fe75ef2997dbc837e381f2dfa3629"
+    },
+    {
+      "bytes": 973,
+      "path": "data/manifests/pam_1612_corn_total_2014-2024_ba_20260727.json",
+      "sha256": "819430c29fd3f52fb56d4c75dd5b96aa7262d49b009b6f214eafa94bed99947b"
+    },
+    {
+      "bytes": 7879,
+      "path": "scripts/build_h4_controls.py",
+      "sha256": "c1936c165dae971abcf4a07799cbf4ab612ff5fd90572a608b3cbe045a7f42a4"
+    },
+    {
+      "bytes": 9221,
+      "path": "scripts/build_h5_geographic_scores.py",
+      "sha256": "5570a5e2e133d2239852d3841a7ec0dc01b07ca82830c99f720b43184feec418"
+    },
+    {
+      "bytes": 17114,
+      "path": "scripts/build_holdout_inputs.py",
+      "sha256": "7fbf67fe433be041f846abb0f1b4d8d75c2af4ce0dba5710b26c2c165075e2c4"
+    },
+    {
+      "bytes": 1856,
+      "path": "scripts/build_holdout_source_manifest.py",
+      "sha256": "c7cfeb3d97cd73ed726eff7569943a6e8d7b30c9051a6d5db4fd8f03438c2fe0"
+    },
+    {
+      "bytes": 2368,
+      "path": "scripts/finalize_holdout_events.py",
+      "sha256": "d9d6c7729753bc15d4dd96b6ca1921c2f88bec9a4fa97a118ae8ce03304e5176"
+    },
+    {
+      "bytes": 1389,
+      "path": "scripts/run_holdout_once.py",
+      "sha256": "59f7cbeaf74762efd271f6bfb4b0946f2c81515948a3edf5498111861e39f287"
+    },
+    {
+      "bytes": 705,
+      "path": "scripts/run_holdout_report.py",
+      "sha256": "80c23c62513bac4f2a10019b8daa32d9844e13350816891f68e41523b66651c2"
+    }
+  ],
+  "source_manifest_sha256": "972a08a8b85a0c9adbf7b51c55b602844ede039998118dee3c288d7435abf10a",
+  "started_at": "2026-07-27T09:24:22Z",
+  "status": "sealed",
+  "work_dir": "data/processed/holdout_v1"
+}
