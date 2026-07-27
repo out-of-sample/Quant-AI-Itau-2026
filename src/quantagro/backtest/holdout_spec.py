@@ -38,8 +38,8 @@ RUN_RECORD = "data/reference/holdout_run_record_v1.json"
 RESULT_RECORD = "data/reference/holdout_result_v1.json"
 WORK_DIR = "data/processed/holdout_v1"
 
-# D-069 fechou o input H4. O executor continua desabilitado até H5 e a orquestração final
-# serem implementados e auditados em commits próprios. O preflight falha antes dos retornos.
+# D-069 fechou H4 e D-070/D-071 fecharam H5. O executor continua desabilitado até a
+# orquestração final ser implementada e auditada em commit próprio.
 EXECUTOR_IMPLEMENTED = False
 CONTINUE_AFTER_PRIMARY_FAILURE = True
 ALLOW_INTERMEDIATE_RESULT_DISPLAY = False
@@ -137,12 +137,18 @@ SPEC_FILES = (
     "src/quantagro/features/exposure.py",
     "src/quantagro/ingest/h4_market.py",
     "src/quantagro/robustness/h4_controls.py",
+    "src/quantagro/robustness/h5_geography.py",
+    "src/quantagro/robustness/h5_geography_spec.py",
     "src/quantagro/validate/universe.py",
     "src/quantagro/validate/borrow.py",
     "data/reference/exposure_hprime_v1.json",
     "data/reference/borrow_rate_calibration_v1.json",
     "data/reference/h4_controls_summary_v1.json",
+    "data/reference/h5_geography_spec_v1.json",
+    "data/reference/h5_geographic_scores_summary_v1.json",
+    "data/manifests/pam_1612_corn_total_2014-2024_ba_20260727.json",
     "scripts/build_h4_controls.py",
+    "scripts/build_h5_geographic_scores.py",
     "scripts/run_holdout_once.py",
 )
 
@@ -160,7 +166,7 @@ CLAIM_REQUIREMENTS = {
 
 # Tripwire civil: qualquer alteração do payload lógico exige atualizar este valor numa decisão
 # posterior e explicitamente anterior ao unlock. O hash não depende do whitespace dos fontes.
-EXPECTED_LOGICAL_SPEC_SHA256 = "9ffa0fbfff81f7ccab1aee09093af2b2167e4b01add2e61a5c342f7919a08df6"
+EXPECTED_LOGICAL_SPEC_SHA256 = "cb125fea931b616e2c62ec22a2821d3899c5a84643fa28d6f02ab9060a04912b"
 
 
 def canonical_spec_payload() -> dict[str, object]:
@@ -335,7 +341,7 @@ def validate_holdout_spec() -> None:
     }:
         raise ValueError("caminhos ou papéis dos inputs foram alterados")
     if spec_sha256() != EXPECTED_LOGICAL_SPEC_SHA256:
-        raise RuntimeError("payload lógico diverge do hash civil congelado em D-068/D-069")
+        raise RuntimeError("payload lógico diverge do hash civil congelado em D-068–D-071")
 
 
 validate_holdout_spec()

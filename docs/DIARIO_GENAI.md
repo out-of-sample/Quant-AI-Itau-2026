@@ -1528,6 +1528,31 @@ pregão e o teste ONI ignorou que uma temporada nova se estabilizava em 5 de jan
 corrigidos pela regra observável. A revisão também percebeu que um rebuild divergente sobrescreveria
 o parquet antes de falhar e mudou a escrita para arquivo temporário + comparação anterior ao replace.
 
+## 2026-07-26 — Geografia e materialização do placebo H5 (D-070/D-071)
+
+**Uso**: transformar a promessa “chuva em área sem produção relevante” numa geografia
+executável, congelada antes do cálculo climático e compatível com o pacote indivisível.
+
+**Valor real**: a IA percebeu que rebaixar os 6.197 rasters globais seria redundante: o painel
+municipal D-027 já contém municípios costeiros fora do canal de soja/milho. O desenho trocou
+somente a geografia, preservando janelas, climatologia, pesos CONAB, exposições, direção e
+custos. Um primeiro commit congelou cinco municípios e 91 células; só depois o segundo passo
+materializou 46 decisões H5. O script prendeu por hash as 27 partes municipais, fontes e output
+e recusou rebuild divergente antes do replace.
+
+**Validação humana**: a PAM oficial foi consultada também para milho/BA. A seleção final tem
+110 observações completas em 2014–2024 e zero tonelada de soja/milho. O painel cobre 6.197
+raster-dias, sem célula nodata; o score tem zero ausências/duplicatas e repetiu SHA-256
+`936bee66b580ad26d6b55ab4f0f004c511489243bd4cb69a9d31c87f864832e1`.
+O preflight passou a reconhecer H4 e H5, com executor ainda falso.
+
+**O que a IA errou**: a primeira exploração agregou PAM com `sum`/`max`, que ignoram `NaN`, e
+classificou Itaparica, Salvador e Vera Cruz como zero apesar de símbolos ausentes em anos
+iniciais. A auditoria completa falhou antes do commit. A seleção foi refeita para Canavieiras,
+Maraú, Salinas da Margarida, Matinhos e Pontal do Paraná, exigindo `count=size=11` em cada
+cultura e município. Esse erro não chegou ao pré-registro congelado e virou um teste explícito:
+ausência nunca é zero.
+
 ---
 
 ## Modelo de entrada (para as próximas)

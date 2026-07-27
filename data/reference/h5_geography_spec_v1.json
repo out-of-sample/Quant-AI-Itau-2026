@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "decision": "D-070",
+  "created_before_placebo_shock": true,
+  "purpose": "Trocar somente o suporte espacial do Shock de graos por celulas costeiras sem producao observada de soja/milho.",
+  "municipalities": [
+    {
+      "municipality_code": "2906303",
+      "municipality_name": "Canavieiras",
+      "uf": "BA",
+      "n_chirps_cells": 46
+    },
+    {
+      "municipality_code": "2920700",
+      "municipality_name": "Maraú",
+      "uf": "BA",
+      "n_chirps_cells": 27
+    },
+    {
+      "municipality_code": "2927309",
+      "municipality_name": "Salinas da Margarida",
+      "uf": "BA",
+      "n_chirps_cells": 5
+    },
+    {
+      "municipality_code": "4115705",
+      "municipality_name": "Matinhos",
+      "uf": "PR",
+      "n_chirps_cells": 4
+    },
+    {
+      "municipality_code": "4119954",
+      "municipality_name": "Pontal do Parana",
+      "uf": "PR",
+      "n_chirps_cells": 9
+    }
+  ],
+  "total_chirps_cells": 91,
+  "selection_audit": {
+    "crops": [
+      "soy",
+      "corn_total"
+    ],
+    "years": [
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "expected_observations": 110,
+    "observed_positive_tonnes": 0,
+    "rule": "cada municipio tem quantidade PAM exatamente zero em todas as culturas e anos"
+  },
+  "transform": {
+    "spatial_aggregation": "equal_chirps_grid_cell",
+    "geometry": "IBGE municipal 2013 fixa pre-amostra",
+    "crop_windows": "reutiliza integralmente PRIMARY_WINDOWS",
+    "climatology": "expanding, mesmo trecho e minimo de 10 safras",
+    "national_weights": "CONAB da safra anterior encerrada, iguais ao sinal real",
+    "unchanged": [
+      "calendario",
+      "exposicoes",
+      "direcao H-prime",
+      "sizing",
+      "custos"
+    ]
+  },
+  "sources": {
+    "pam_soy_manifest": {
+      "path": "data/manifests/pam_1612_soy_2014-2024_ba-go-mg-ms-mt-pr-rs_20260717.json",
+      "sha256": "67672de6bba2d9328344701589efdc1c96922f54923df541b7ae61f0bcfc93cc",
+      "raw_sha256": "8d46ddcf70273fbf2799392105dd47ad7583200a923435dae5bf043cbd9b5261"
+    },
+    "pam_corn_primary_manifest": {
+      "path": "data/manifests/pam_1612_corn_total_2014-2024_go-ms-mt-pr_20260717.json",
+      "sha256": "2b49cf345c631288ea78596684d57b9ac7f908bb280fb43f33829c7a68955b47",
+      "raw_sha256": "bfc06f398cf2cf1a0b948db4b420f8a2828d72f8310eb4d2416848fc9aa7d42c"
+    },
+    "pam_corn_ba_manifest": {
+      "path": "data/manifests/pam_1612_corn_total_2014-2024_ba_20260727.json",
+      "sha256": "819430c29fd3f52fb56d4c75dd5b96aa7262d49b009b6f214eafa94bed99947b",
+      "raw_sha256": "d6d0d3e7d3bbb534c717c6da7c4cdf0ee16d211d364cada86d3a7275507f21bd"
+    },
+    "municipal_cell_index": {
+      "path": "data/interim/municipal_cell_index.parquet",
+      "sha256": "5d503926b4cc51661878b45e82b84d696f8c539d1ce04cbbb32bae7cb1c7b408"
+    },
+    "chirps_bulk_manifest": {
+      "path": "data/manifests/chirps_h1_bulk.parquet",
+      "sha256": "c1dc3013b484787c7f4a818b8f0671fbf5442598685b6425960d5f30fbd680fd"
+    }
+  },
+  "limitations": [
+    "PAM/SIDRA reescreve o passado; a auditoria prova o snapshot capturado, nao vintages historicos.",
+    "O suporte cobre duas faixas costeiras e nao representa toda geografia nao produtora do Brasil.",
+    "Zero soja/milho nao significa ausencia de toda atividade economica ou de outros cultivos."
+  ]
+}

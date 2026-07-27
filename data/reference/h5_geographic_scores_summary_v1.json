@@ -1,0 +1,223 @@
+{
+  "decision": "D-071",
+  "geography": {
+    "chirps_cells": 91,
+    "first_final_ref_date": "2000-12-01",
+    "last_prelim_ref_date": "2025-05-31",
+    "municipality_codes": [
+      "2906303",
+      "2920700",
+      "2927309",
+      "4115705",
+      "4119954"
+    ],
+    "raster_days": 6197
+  },
+  "holdout_logical_spec_sha256": "cb125fea931b616e2c62ec22a2821d3899c5a84643fa28d6f02ab9060a04912b",
+  "never_read_returns": true,
+  "output": {
+    "columns": [
+      "AGRO3",
+      "SLCE3",
+      "BRFS3",
+      "JBSS3"
+    ],
+    "index": "decision_date",
+    "path": "data/interim/holdout/h5_geographic_grain_scores.parquet",
+    "sha256": "936bee66b580ad26d6b55ab4f0f004c511489243bd4cb69a9d31c87f864832e1"
+  },
+  "quality": {
+    "duplicate_decision_dates": 0,
+    "finite_scores": true,
+    "missing_scores": 0
+  },
+  "schema_version": 1,
+  "scope": {
+    "crop_years": [
+      "2020/21",
+      "2021/22",
+      "2022/23",
+      "2023/24",
+      "2024/25"
+    ],
+    "first_decision_date": "2021-01-07",
+    "last_decision_date": "2025-09-08",
+    "rows": 46,
+    "tickers": [
+      "AGRO3",
+      "SLCE3",
+      "BRFS3",
+      "JBSS3"
+    ]
+  },
+  "sources": {
+    "fixed": {
+      "cell_index": {
+        "path": "data/interim/municipal_cell_index.parquet",
+        "sha256": "5d503926b4cc51661878b45e82b84d696f8c539d1ce04cbbb32bae7cb1c7b408"
+      },
+      "chirps_manifest": {
+        "path": "data/manifests/chirps_h1_bulk.parquet",
+        "sha256": "c1dc3013b484787c7f4a818b8f0671fbf5442598685b6425960d5f30fbd680fd"
+      },
+      "conab_manifest": {
+        "path": "data/manifests/conab_graos_20260716.json",
+        "sha256": "b2bae171f301222d2b66e417f3a36fa497cc01362e060a08a70ad11c87a4cb2b"
+      },
+      "conab_raw": {
+        "path": "data/raw/conab/LevantamentoGraos_20260716.txt",
+        "sha256": "c2e8e2aa2e1b9c818850dcf56dee6bb4406fca37751f527fb4f95257e93ddd94"
+      },
+      "exposure": {
+        "path": "data/reference/exposure_hprime_v1.json",
+        "sha256": "5041fb4ea0f05386650576a57dab00e72c50104fb87e2b8dcb03fefe081693fc"
+      },
+      "geography_spec": {
+        "path": "data/reference/h5_geography_spec_v1.json",
+        "sha256": "d6b5e3078a8d023d8fb115d863b2fbf1709c337852520aac36a72aef38f083ff"
+      },
+      "nefin_manifest": {
+        "path": "data/manifests/nefin_factors_20260717_e12ab2b324cb.json",
+        "sha256": "5948c623aa5a6cf39efcb19b12b5060dbaf0271bcec138b57d4f586d4f948771"
+      },
+      "nefin_raw": {
+        "path": "data/raw/nefin/nefin_factors_20260717_e12ab2b324cb.csv",
+        "sha256": "da80260e1a67e6860a90db7b10a61964f9ebe209bf3234e3a8e0b11e91a5ec23"
+      },
+      "pam_manifest_0": {
+        "path": "data/manifests/pam_1612_soy_2014-2024_ba-go-mg-ms-mt-pr-rs_20260717.json",
+        "sha256": "67672de6bba2d9328344701589efdc1c96922f54923df541b7ae61f0bcfc93cc"
+      },
+      "pam_manifest_1": {
+        "path": "data/manifests/pam_1612_corn_total_2014-2024_go-ms-mt-pr_20260717.json",
+        "sha256": "2b49cf345c631288ea78596684d57b9ac7f908bb280fb43f33829c7a68955b47"
+      },
+      "pam_manifest_2": {
+        "path": "data/manifests/pam_1612_corn_total_2014-2024_ba_20260727.json",
+        "sha256": "819430c29fd3f52fb56d4c75dd5b96aa7262d49b009b6f214eafa94bed99947b"
+      },
+      "pam_raw_0": {
+        "path": "data/raw/pam/pam_1612_soy_2014-2024_ba-go-mg-ms-mt-pr-rs_20260717.json",
+        "sha256": "8d46ddcf70273fbf2799392105dd47ad7583200a923435dae5bf043cbd9b5261"
+      },
+      "pam_raw_1": {
+        "path": "data/raw/pam/pam_1612_corn_total_2014-2024_go-ms-mt-pr_20260717.json",
+        "sha256": "bfc06f398cf2cf1a0b948db4b420f8a2828d72f8310eb4d2416848fc9aa7d42c"
+      },
+      "pam_raw_2": {
+        "path": "data/raw/pam/pam_1612_corn_total_2014-2024_ba_20260727.json",
+        "sha256": "d6d0d3e7d3bbb534c717c6da7c4cdf0ee16d211d364cada86d3a7275507f21bd"
+      }
+    },
+    "municipal_parts": [
+      {
+        "path": "data/interim/municipal_precip/part_00000.parquet",
+        "sha256": "d31516ef5ecb2bc994d19cccfa41adccb7b1d656c184cb1f27bbcc563dfba958"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00001.parquet",
+        "sha256": "2ccac2c024747bdf2b53f68e79a0a06c95b85dfdf61500d13f96e09518fcc355"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00002.parquet",
+        "sha256": "1b993714a0779cca42e06325ee188204cbbc37f27372c32e6531e95e55ffe200"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00003.parquet",
+        "sha256": "40a188171d71841df34b11e790fc38401f6592e319174ccfabfb1f4372616562"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00004.parquet",
+        "sha256": "87007dbd8203150607ccde764cab1776c928ae621d171ab36d8223727c183262"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00005.parquet",
+        "sha256": "c14e8ed4ceced0fe895d45bebcada2d243050af8ef3429e19bcd8e3d18da648b"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00006.parquet",
+        "sha256": "ad6523ebd5b230f0e16f6cc481275e9f4014284e2acb84fbd73bfa87150f46b0"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00007.parquet",
+        "sha256": "7b77a8526c7ce0ceac84fc4e844e5524f61318d88b8721613d513951dcb22c0f"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00008.parquet",
+        "sha256": "e2b7ef77602a8b16da55d3c4e5ae647288b799cbd34981a2dac0c0465ca1bf4d"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00009.parquet",
+        "sha256": "20782ba8da306d41505857471c8f4136f2fa90e23079c2904c228aa3eb21c7d0"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00010.parquet",
+        "sha256": "bf05a7af053139a52b718bfb63a632741d871a3cfe443014739961299f488114"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00011.parquet",
+        "sha256": "a2f39fe368928242c4c274513455631c28f919f74c2bd50551fedbc865edd60a"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00012.parquet",
+        "sha256": "710344648044211eb3b2380dd0b7567ee36a159c77f28a216e7f071c8ecd5818"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00013.parquet",
+        "sha256": "9bfac3c6526784116cc207f9199dcb66704d82572fb710d625429f5a8f421486"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00014.parquet",
+        "sha256": "d53c9f7b6a62932411534afd3d4d38f328f43e818042cc7d8ec36ef56d57570f"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00015.parquet",
+        "sha256": "5174898548f34b87fff0abdd08e3c57962a1a9a06a358fb0c66f3388316551f6"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00016.parquet",
+        "sha256": "2a677b8aada218d02afb8b0404c824196975f2b8a945162d565f9af9c9cb418b"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00017.parquet",
+        "sha256": "cb4fe9603475017ffe9e0f5ec0f3815253ea0e147fbd4db9345a514a6cb55eb2"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00018.parquet",
+        "sha256": "8f6e7ce00b26675f9293bfadf8563a7df2ca9e74bddb5866385ea35ead32cd4e"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00019.parquet",
+        "sha256": "d2fd046a5b7ed27cadd9277a99b97390ff8fb34e3cf6670132665ff248ff3308"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00020.parquet",
+        "sha256": "86d79be526a24fa8481798ec82d933d12cc2711209c1c1b6218bb66360b5a766"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00021.parquet",
+        "sha256": "b4db20ae220d2d009a259ff1192d0f40b3d2291567fe816314228ea7e7e4905b"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00022.parquet",
+        "sha256": "c3f61f4c1420c4c2b71e6a96757d753b3dd3c49f2aefac0fab7b5c4ad53e2125"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00023.parquet",
+        "sha256": "35eec2446a556b8af0d0e5fe40495c33bf775c5ec4b95814af0428dd1a15319f"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00024.parquet",
+        "sha256": "7fe41c77e49ef860243cf1d1186f26d42373eec11822878afca9fa20497053a7"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00025.parquet",
+        "sha256": "e609ea123b2d0a85bd60ac0bdb19c337a84924ae2fb9620f978ec74ec888d9dd"
+      },
+      {
+        "path": "data/interim/municipal_precip/part_00026.parquet",
+        "sha256": "d130bd349ddddc4878d1ae2799fb114fdcbcce67d55b60e97771450e3b97ecc3"
+      }
+    ]
+  }
+}
