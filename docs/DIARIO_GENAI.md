@@ -1682,6 +1682,74 @@ vez precisa de ensaio contra o formato real, não só contra o formato imaginado
 
 ---
 
+## 2026-07-28 — Nome e identidade do robô
+
+**Uso**: varrer o espaço de nomes possíveis para a estratégia, com justificativa verificável,
+triagem de colisão com marcas do mercado financeiro brasileiro e uma direção de identidade
+visual que pudesse ser desenhada.
+
+**Valor real**: amplitude e verificação, nesta ordem. Foram exploradas mais de trinta opções
+com relação ao mecanismo, esboço de abertura, semente visual e risco — volume que o time não
+produziria à mão. Mas o valor decisivo veio de duas checagens que a IA fez contra fonte, não
+da geração. A primeira foi a triagem de colisão: **MONJOLO** seria uma metáfora quase perfeita
+para a tese — água que move um mecanismo que processa grãos — e foi eliminado porque já nomeia
+um fundo multimercado gerido pela própria gestora que organiza a competição. VEREDA, QUADRA,
+BURITI, MANDACARU, CACIMBA, TRÓPICO, PLANALTO, CHAPADA, SEIVA, SERENO, PULSO e TORÓ caíram por
+colisão com gestoras e fundos existentes. A segunda foi a checagem do folclore que sustenta o
+nome escolhido, descrita abaixo.
+
+O nome fechado é **SERIEMA**. A justificativa é encadeada e cada elo é verificável: a seriema
+é a ave típica do Cerrado, que é o polígono onde o `Shock` é efetivamente calculado (MT, GO,
+MS, MG e BA aparecem nas janelas congeladas de soja, milho 2ª e cana); a crença rural
+brasileira diz que seu canto anuncia chuva, o que espelha o único resultado sólido do projeto,
+H1; o canto se ouve a cerca de um quilômetro, o que dá a imagem de informação que atravessa o
+território antes de ser oficial; e a ave praticamente não voa, o que oferece um encerramento
+coerente com um resultado que teve P&L nominal positivo sem evidência de alpha.
+
+**Validação humana**: o time recusou duas rodadas inteiras antes de aprovar. A primeira foi
+recusada por sonoridade e genericidade; a segunda, por um argumento de mérito — nomes que
+descrevem antecipar o preço descrevem o que qualquer modelo quantitativo faz e não distinguem
+esta estratégia de nenhuma outra. O time também impôs um requisito que a IA havia ignorado, o
+de que o nome precisasse render logo e mascote desenháveis, e foi esse requisito que
+redirecionou a busca para o território dos bioindicadores da cultura rural brasileira. A
+escolha final foi do time.
+
+Ficou registrado um controle obrigatório de redação: o canto da seriema é folclore, não
+meteorologia. A ave entra no relatório como **linhagem** — a tradição de ler sinais físicos
+para antecipar a chuva — e nunca como evidência. É proibido afirmar que a ave prevê chuva ou
+que o modelo detecta um fenômeno meteorológico nomeado.
+
+**O que a IA errou** — e foi pego na verificação:
+
+- **A longlist tinha um defeito sistêmico que o volume escondia.** Das mais de trinta opções,
+  quase todas nomeavam a *entrada* do modelo — chuva, estação, seca — e nenhuma nomeava o
+  *ato* da estratégia. Trinta nomes ocupavam um único ponto do espaço conceitual. Quantidade
+  foi confundida com cobertura.
+- **A IA recomendou VERANICO sem cruzar a recomendação com os próprios documentos congelados
+  do projeto.** "Veranico" já constava da lista de claims que exigem qualificação no
+  posicionamento do relatório, e o nome contradiz o mecanismo da cana, onde a seca no inverno
+  é benéfica porque eleva o ATR (D-050/D-051). Batizar a estratégia
+  com uma claim já qualificada, e que nega o mecanismo de um dos cinco papéis do universo,
+  teria criado uma incoerência verificável no critério que avalia justamente a coerência entre
+  identidade e tese.
+- **A IA propôs o SETE-ESTRELO (Plêiades) como calendário de plantio brasileiro e a fonte não
+  sustentou.** A busca devolveu calendário lunar e Três Marias, não a tradição alegada. O nome
+  foi descartado por falta de fonte, e não adotado com uma justificativa plausível e não
+  conferida. Vale o mesmo princípio de `10_REFERENCIAS.md`: pista não é citação.
+- **A primeira justificativa da paleta era decorativa.** Verde, azul e amarelo foram propostos
+  a partir da bandeira e de um contexto emocional esportivo. O time observou que verde e
+  amarelo em contexto agro brasileiro é a combinação mais saturada do setor — a suposta
+  diferenciação jogaria a peça para dentro da categoria — e que brasilidade não é argumento
+  desta estratégia, já que qualquer time que opere ações brasileiras é brasileiro. As cores
+  foram mantidas com a justificativa refundada na física do próprio dado: mapas de
+  precipitação são azuis, mapas de anomalia são âmbar, vegetação é verde. Mesma peça, defesa
+  diferente — e agora respondível no Q&A.
+- A crença de que o joão-de-barro orienta a porta do ninho contra o vento e a chuva foi
+  encontrada com **evidência científica contraditória**, o que tirou o nome da disputa em vez
+  de virar nota de rodapé conveniente.
+
+---
+
 ## Modelo de entrada (para as próximas)
 
 ```
