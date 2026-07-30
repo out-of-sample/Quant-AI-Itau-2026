@@ -694,8 +694,8 @@ Rebuild usa exatamente esses caminhos e falha se captura, manifesto ou parquet d
 
 **Limitação:** ETF inclui collateral yield, despesas e tracking error; é proxy de exposição
 futura negociável, não preço spot brasileiro. Isso é adequado ao teste de *spanning*, mas
-deve ser declarado. O painel fecha o **input** H4; a regressão só roda na rodada única porque
-seu desfecho são os retornos ainda lacrados.
+deve ser declarado. O painel fecha o **input** H4; a regressão rodou na rodada única de D-075,
+porque seu desfecho eram os retornos então lacrados — e **H4 falhou** (t = −1,03).
 
 ### 5.6 Contrato de dados geográfico de H5 — concluído em D-070/D-071
 
@@ -716,8 +716,8 @@ nomes de grãos, sem nulos, e fica preso pelo resumo
 Todos os 27 parquets municipais, o manifesto dos 6.197 raster-dias, a malha de células, PAM,
 CONAB, NEFIN, exposições e output carregam SHA-256. Rebuild divergente falha antes de
 sobrescrever. A limitação é explícita: duas faixas costeiras não representam toda geografia
-não produtora brasileira, e PAM é um snapshot revisável. O input H5 está pronto; o veto de
-retorno permanece lacrado.
+não produtora brasileira, e PAM é um snapshot revisável. O veto de retorno foi executado em
+D-075: o placebo morreu como devia (p = 0,56; 43% da magnitude real).
 
 ### 5.7 Pacote de inputs da rodada única — concluído em D-072
 

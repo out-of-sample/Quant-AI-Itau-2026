@@ -352,9 +352,10 @@ A safra **2019/20 é uma zona de transição excluída**: seus retornos cairiam 
 pertence às cinco safras congeladas do holdout. Bloco que cruza 31/12/2019 é rejeitado por
 inteiro, nunca truncado.
 
-O holdout de retornos 2020–2025 permanece lacrado mesmo após D-053. “Desenho econômico
-congelado” não significa “permissão para olhar”: a abertura só ocorre na Fase 6, depois de
-fechar a Fase 4.0, implementar e testar o motor e pré-registrar a suíte de robustez.
+O holdout de retornos 2020–2025 permaneceu lacrado mesmo após D-053. “Desenho econômico
+congelado” não significava “permissão para olhar”: a abertura só ocorreu na Fase 6, depois de
+fechar a Fase 4.0, implementar e testar o motor e pré-registrar a suíte de robustez. Ela
+aconteceu uma única vez, em 27/07/2026 (D-075), e o selo encerrou o direito a novas tentativas.
 
 O holdout é exclusivamente 2020/21–2024/25, com decisões/execuções não anteriores a
 01/01/2020 e saídas até 31/12/2025. O motor deve falhar **antes de ler retornos** sem uma

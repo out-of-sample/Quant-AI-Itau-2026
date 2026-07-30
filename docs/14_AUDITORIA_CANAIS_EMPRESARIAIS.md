@@ -41,7 +41,8 @@ ambígua seja transformada em posição por uma fórmula simples demais.
 - ajuste de regra porque um parâmetro gerou retorno melhor.
 
 H2a usa retorno de **commodity** somente no desenvolvimento até 2019, pois testa um elo
-econômico anterior ao equity. Seu recorte 2020–2025 permanece lacrado para confirmação futura.
+econômico anterior ao equity. Seu recorte 2020–2025 ficou lacrado até a rodada única de D-075 e
+não foi reaberto depois dela: H2a não é reexecutado no holdout.
 
 ## 3. Decomposição candidata — ainda não é o score final
 
