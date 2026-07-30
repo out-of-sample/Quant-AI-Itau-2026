@@ -1,51 +1,80 @@
 # Identidade da estratégia
 
-> Status: **candidatos propostos, decisão pendente do time.**
+> Status: **nome aprovado pelo time em 28/07/2026.** Sistema visual em construção.
 > Vale 5% da nota. O critério do edital é *nome + identidade visual coerentes com a tese* —
 > ou seja, o nome não é enfeite, ele precisa **dizer o que a estratégia faz**.
 
 ---
 
-## Candidato recomendado: **VERANICO**
+## O nome: **SERIEMA**
 
-**Veranico** é o termo agronômico brasileiro para uma **estiagem curta no meio da estação
-chuvosa** — dias de sol forte e sem chuva justamente quando a lavoura mais precisa de água.
-O nome é coerente com a tese, mas sua precisão ainda precisa ser ratificada: o sinal primário
-mede déficit acumulado na janela fenológica e pode capturar uma seca mais persistente, não
-necessariamente um veranico curto.
+> **SERIEMA**
+> *Canta antes da chuva.*
 
-**Por que é o nome certo:**
+Três camadas com funções distintas, para não sobrecarregar uma palavra só:
 
-| | |
-|---|---|
-| **Precisão** | Nomeia um caso agronomicamente importante do choque; só será chamado de termo exato se a duração efetiva do sinal primário for compatível com um veranico |
-| **Origem** | Termo brasileiro, do vocabulário de quem trabalha com safra. Sinaliza domínio do assunto, não erudição decorativa |
-| **Coerência com a tese** | O veranico é perigoso justamente por ser **curto e localizado** — passa despercebido numa média mensal e numa leitura macro. É exatamente a informação que o mercado não agrega, que é a nossa hipótese de ineficiência |
-| **Memorável** | Uma palavra, sonora, sem sigla forçada nem acrônimo torturado |
-
-**Identidade visual sugerida**: sol sobre solo rachado, com a rachadura se resolvendo numa
-linha de série temporal — a ponte visual entre o campo e o mercado, que é a tese inteira em
-uma imagem. Paleta terrosa (ocre/terracota) contra um azul de dado, marcando os dois mundos
-que o modelo conecta.
-
----
-
-## Alternativas consideradas
-
-| Nome | A favor | Contra |
+| Camada | Texto | Função |
 |---|---|---|
-| **MONÇÃO** | Une os dois lados da tese: as chuvas de monção **e** as *monções* — as expedições fluviais que transportavam carga no Brasil colonial (clima + embarque) | A dupla referência é elegante, mas exige explicação. Um nome que precisa de nota de rodapé é um nome mais fraco |
-| **CERES** | Deusa romana da agricultura; imediatamente legível | Genérico e muito usado. Não diz nada sobre *o que* a estratégia faz — serviria para qualquer estratégia agro |
-| **ENTRESSAFRA** | Termo brasileiro, evoca o ciclo | Nomeia o período em que **não** há lavoura no campo — o oposto da janela em que o sinal opera |
+| Nome do robô | SERIEMA | memorável, sonoro, apropriável |
+| Tagline | Canta antes da chuva. | nomeia a antecipação, sem prometer retorno |
+| Título editorial | O CERRADO ANTES DO BOLETIM | entrega tese, território e mecanismo |
+
+### Por que este nome
+
+**Território.** A seriema é a ave típica do Cerrado, e o Cerrado é literalmente o polígono onde
+o `Shock` é calculado: MT, GO, MS, MG e BA aparecem nas janelas congeladas de soja, milho 2ª e
+cana (`features/shock_spec.py`). A brasilidade não é decoração aplicada por fora — é o bioma
+dentro do qual o modelo opera.
+
+**Antecipação.** A crença rural brasileira é direta: seriema cantando anuncia chuva. Isso
+espelha o único elo que o projeto de fato demonstrou — H1, o choque climático antecipando a
+revisão de safra da CONAB (D-031).
+
+**Propagação da informação.** O canto da seriema se ouve a cerca de um quilômetro; ela é
+chamada de "a voz do Cerrado". A metáfora não é só de previsão, é de **informação que viaja
+pelo território antes de ser oficial** — que é exatamente o objeto do modelo, e a ineficiência
+de agregação que a tese aponta.
+
+**Encerramento honesto.** A seriema praticamente não voa: corre no chão. Para um projeto cuja
+conclusão selada é P&L nominal positivo **sem** evidência de alpha nem de habilidade contra o
+risk-free (D-075), ter um símbolo que não promete voo é um ativo, não um constrangimento.
+
+### Controle de honestidade — obrigatório
+
+O canto da seriema é **folclore, não meteorologia**. A ave entra como linhagem, nunca como
+evidência. É proibido, em qualquer peça: afirmar que a seriema prevê chuva; sugerir que o
+modelo "detecta" um fenômeno meteorológico nomeado; usar a crença popular como suporte de
+claim. O enquadramento correto é o contraste — o sertanejo lê o canto, nós lemos a grade de
+chuva; a ambição é a mesma, o método é que é auditável.
 
 ---
 
-## Decisão
+## Direção visual
 
-Pendente do time. A recomendação provisória é **VERANICO**, por ser brasileiro, memorável e
-coerente com estresse hídrico em janela crítica. A decisão final deve ocorrer depois da Fase
-3.1, quando a semântica econômica e temporal do score estiver congelada; se o sinal representar
-seca sazonal acumulada, a identidade deve evitar afirmar que detecta apenas estiagens curtas.
+Paleta de verde profundo, azul cobalto e amarelo âmbar, justificada pela **física do dado** e
+não pela bandeira: precipitação é azul, anomalia é âmbar, vegetação é verde. Sem bandeira
+literal, futebol ou ufanismo textual. A linguagem gráfica recorrente são curvas de chuva — o
+topete da ave lido como uma curva de precipitação. Logo, mascote e peças finais ainda não
+existem.
+
+---
+
+## Nomes descartados, e por quê
+
+| Nome | Por que caiu |
+|---|---|
+| **VERANICO** | Nomeia a estiagem curta no meio da estação chuvosa. Exigia ressalva taxonômica — o sinal primário mede déficit acumulado, que pode ser seca persistente — e **contradizia o mecanismo da cana**, onde seca no inverno é benéfica. Defeito técnico, não de gosto |
+| **ISOIETA** | Conceito correto (linha de igual precipitação), mas sonoridade ruim como nome de robô. As curvas permanecem como linguagem visual |
+| **JANELA / ENTRETEMPO** | Genéricos: serviriam para qualquer estratégia de timing |
+| **MONÇÃO** | Dupla referência elegante — as chuvas e as *monções*, expedições fluviais do Brasil colonial —, mas exige nota de rodapé |
+| **CERES** | Deusa romana da agricultura; imediatamente legível, mas genérico. Serviria para qualquer estratégia agro |
+| **ENTRESSAFRA** | Nomeia o período em que **não** há lavoura no campo — o oposto da janela em que o sinal opera |
+
+O funil anterior falhava porque nomeava a **entrada** do modelo (chuva, estação, seca) em vez
+do **ato** do robô. O território que resolveu foi o dos bioindicadores da cultura rural
+brasileira.
+
+---
 
 Se o nome mudar, o pacote de código é renomeado junto — hoje ele usa um nome técnico neutro
-justamente para não travar essa decisão.
+(`quantagro`) justamente para não travar essa decisão.

@@ -13,7 +13,7 @@ futura de commodities agrícolas. O mecanismo físico foi confirmado para soja e
 comprar produtores e vender processadores —, porém, **falhou no desenvolvimento**: o canal de
 preço não teve suporte e a reação das ações veio no sentido contrário. O projeto foi então
 reformulado, com registro completo, para testar a hipótese nova e pré-registrada de que o dano
-de volume próprio domina o benefício de preço (`Q>P`). O holdout de retornos 2020–2025 continua
+de volume próprio domina o benefício de preço (`Q>P`). O holdout de retornos 2020–2025 ficou
 lacrado até 27/07/2026. A estratégia reformulada foi **congelada antes do holdout** em D-053 e
 avaliada fora da amostra **uma única vez** em D-075. O mecanismo H′ sobreviveu ao teste
 primário e a carteira teve P&L nominal positivo, mas **não há alpha ajustado a fatores nem
@@ -167,7 +167,7 @@ Andamento (2026-07-16), toda peça com teste e CI verde (ver `03_ARQUITETURA.md`
 > ajustada por proventos existe, é testada e foi validada contra fonte independente. A
 > auditoria integral e suas correções estão em D-025 e `11_AUDITORIA_FASE1.md`.
 
-### Fase 2 — Validação do mecanismo (o portão mais importante)
+### Fase 2 — Validação do mecanismo (o portão mais importante) ✅
 Testar **H1a**: o choque climático prevê a revisão da CONAB? E **H1b**: prevê o volume
 exportado? Com BH-FDR e erros agrupados por ano-safra.
 
@@ -266,7 +266,7 @@ não dimensiona o experimento primário (D-026). Calibração
 > sizing, caps, execução e teste primário foram congelados antes do holdout. Isso autoriza a
 > construção da máquina, não a abertura do holdout.
 
-### Fase 4 — Backtest
+### Fase 4 — Backtest ✅
 
 Construir e validar a máquina no desenvolvimento, sem usar seu P&L para confirmar H′ ou ajustar
 o desenho. O antigo Backtest B amplo deixa de ser promessa; só pode existir como robustez
@@ -319,7 +319,7 @@ Andamento:
 > aposta setorial (incremento de clima ~0), reforçando que só o holdout valida. O holdout segue
 > lacrado até a Fase 6, e o P&L do dev nunca é tratado como validação.
 
-### Fase 5 — Robustez
+### Fase 5 — Robustez ✅
 
 Atualizar e pré-registrar a suíte para H′; executar H4/H5, placebo, lag/vintage, custos,
 subperíodos e leave-one-out na ordem de poder de falsificação. O H3 original já foi substituído
@@ -473,8 +473,10 @@ declarada é **negativa sob a régua que pré-registramos** — houve P&L nomina
 mecanismo H′ sobreviveu ao teste primário, mas não há alpha ajustado a fatores nem evidência de
 habilidade contra o risk-free. Isso vai para o relatório como conclusão, não como nota de rodapé.
 
-### Fase 7 — Relatório
-5 páginas, 16:9, 100% anônimo. É o único entregável avaliado.
+### Fase 7 — Relatório e identidade — **em andamento**
+5 páginas, 16:9, 100% anônimo. É o único entregável avaliado. A rodada técnica está encerrada;
+o trabalho aqui é converter o material existente em argumento legível, sem afrouxar nenhuma
+das conclusões seladas em D-075. O nome do robô foi aprovado em 28/07/2026 (`08_IDENTIDADE.md`).
 
 ---
 
@@ -484,11 +486,11 @@ habilidade contra o risk-free. Isso vai para o relatório como conclusão, não 
 |---|---|---|
 | Conceito da estratégia | 20% | A reformulação produtor-vs-processador (`01` §2): ineficiência de **agregação**, não de acesso. Economicamente correta e não-óbvia |
 | Modelagem | 20% | Pipeline em 8 camadas com contrato explícito (`03`); features em 3 blocos; exposição estimada por dois métodos independentes que se cruzam |
-| Backtest | 15% | Pré-registro + holdout lacrado + universo point-in-time via COTAHIST + `avail_date` em toda linha (`02`, `04`) |
+| Backtest | 15% | Pré-registro + holdout de tiro único, aberto uma só vez em D-075 + universo point-in-time via COTAHIST + `avail_date` em toda linha (`02`, `04`) |
 | Análise dos resultados | 15% | Suíte de robustez com resultado esperado declarado antes (`05`); crítica adversarial (`06`); achados negativos reportados |
 | Uso de IA generativa | 15% | `DIARIO_GENAI.md` — registro contínuo, com o que a IA acertou **e errou** |
 | Conclusão e próximos passos | 10% | Limitações reais em `06`; riscos sem solução declarados como tal em `07` |
-| Apresentação do robô | 5% | `08_IDENTIDADE.md` |
+| Apresentação do robô | 5% | `08_IDENTIDADE.md` — nome **SERIEMA** aprovado em 28/07/2026, com o folclore enquadrado como linhagem e não como evidência |
 
 ---
 

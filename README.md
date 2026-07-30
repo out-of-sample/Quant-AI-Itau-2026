@@ -21,9 +21,10 @@ distinção entre mecanismo plausível e mecanismo demonstrado orienta a reformu
 A estratégia originalmente candidata era **dollar-neutral long/short dentro do agro**. O
 teste no desenvolvimento mostrou que comprar produtores sob seca perde: o dano de volume
 próprio dominou o benefício de preço. Essa formulação não foi invertida depois do resultado;
-uma hipótese nova, Q-dominante, foi pré-registrada e está sendo construída antes de um único
-teste no holdout. Neutralidade a mercado, fatores e commodities será testada, não presumida
-a partir do notional.
+uma hipótese nova, Q-dominante, foi pré-registrada (D-044), congelada antes de qualquer
+retorno fora da amostra (D-053) e avaliada **uma única vez** no holdout (D-075). Neutralidade
+a mercado, fatores e commodities foi testada, não presumida a partir do notional — e é
+exatamente onde a estratégia falhou.
 
 **A ineficiência explorada é de agregação, não de acesso.** O dado é público e gratuito; caro
 é cruzar grade meteorológica × mapa de produção agrícola × composição de receita e custo das
@@ -80,24 +81,60 @@ Três compromissos que estruturam tudo o mais:
    `avail_date > t`. E, onde a *fonte* reescreve o passado — reanálise climática, revisões do
    ComexStat —, isso está identificado, medido e declarado, não ignorado.
 
-2. **Holdout lacrado.** O recorte de desenvolvimento é 2013–2019, mas o `Shock` primário só
-   existe point-in-time desde a safra 2015/16. O período 2020–2025 de retornos da estratégia
-   é rodado **uma única vez**, com o desenho já congelado. H1 testou o mecanismo no span cheio,
-   com desenvolvimento e holdout reportados separadamente, conforme D-029.
+2. **Holdout de tiro único.** O recorte de desenvolvimento é 2013–2019, mas o `Shock` primário
+   só existe point-in-time desde a safra 2015/16. O período 2020–2025 de retornos da estratégia
+   foi rodado **uma única vez**, em 27/07/2026, com o desenho congelado desde D-053 e o que
+   seria reportado pré-registrado em D-073. Não houve segunda tentativa: o resultado registrado
+   é o resultado. H1 testou o mecanismo no span cheio, com desenvolvimento e holdout reportados
+   separadamente, conforme D-029.
 
 3. **Os achados negativos são reportados.** N efetivo pequeno, transmissão de preço ausente,
    canal líquido do produtor não identificado, beta de commodity e placebo ENSO podem impedir
-   a estratégia. Esses vetos estão escritos antes do backtest, não escondidos no rodapé.
+   a estratégia. Esses vetos estavam escritos antes do backtest — e **um deles se realizou**.
+
+---
+
+## Resultado (holdout 2020/21–2024/25, rodada única selada em D-075)
+
+| | |
+|---|---|
+| Teste primário H′ (permutação exata, α=0,10 unilateral) | p = 0,0625 — **passou**; 4 de 5 anos-safra com inclinação positiva |
+| Retorno total da carteira, cenário base | **+16,97%** em 1.186 pregões (CAGR 3,36%, vol 12,5%, drawdown máx. −20,9%) |
+| H4 — alpha contra mercado, fatores e commodity | alpha diário −0,000238, t = −1,03 — **falhou** |
+| Placebo geográfico H5 | morreu como devia (p = 0,56; 43% da magnitude real) |
+| Contra o benchmark que declaramos antes (risk-free) | Sharpe de excesso **−0,50**; Deflated Sharpe 0,025 com 39 tentativas declaradas |
+
+**A leitura honesta é negativa.** A carteira ganhou dinheiro nominal e perdeu para o CDI ao
+longo de todo o holdout. Pela régua pré-registrada, as claims liberadas são *P&L out-of-sample
+positivo* e *evidência out-of-sample da estratégia*; a claim de **alpha climático está vetada**,
+porque H4 falhou. A conclusão do projeto é **ausência de evidência de habilidade**, e ela vai
+para a primeira página do relatório, não para o rodapé.
+
+Duas observações pós-selo que registramos sem agir sobre elas: BRFS3 responde por 67% do P&L
+bruto (HHI 0,56) e remover a SMTO3 elevaria o retorno de +17% para +67%. Ambas são achados,
+**não** autorização para mexer numa carteira já selada.
 
 ---
 
 ## Estado atual
 
-**Fase 3.4 — construção dos canais da hipótese reformulada.** H1 confirmou o mecanismo
-clima → revisão de safra para soja e milho (D-031), mas os testes de preço e ações derrubaram
-a direção financeira original (D-037–D-043). A hipótese Q-dominante foi pré-registrada em
-D-044. O algodão foi então testado como extensão independente e **rejeitado**: β=+0,042, sinal
-contrário ao esperado, com 0/3 estimativas *leave-one-safra-out* negativas (D-048/D-049).
-O próximo canal é a cana, com contrato fenológico e sinal próprios. O holdout de retornos
-2020–2025 continua lacrado. Dívidas sem fase proprietária ficam em
+**Fase 7 — relatório e identidade.** A rodada técnica está encerrada desde 27/07/2026: o
+holdout foi aberto uma única vez e selado, e não há terceira tentativa. O que resta é converter
+o material em um PDF de 5 páginas, 16:9, anônimo — o único entregável avaliado. Dívidas sem
+fase proprietária ficam em
 [`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).
+
+---
+
+## Como rodar
+
+```bash
+python3.14 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.lock && pip install -e . --no-deps
+pytest                                              # suíte completa
+python scripts/check_lookahead.py $(git ls-files '*.py')   # tripwire de lookahead
+```
+
+Os dados brutos não são versionados (são grandes e regeneráveis pelos módulos de `ingest/`);
+o que garante a auditabilidade é o par código-de-download + `data/manifests/`, que registra o
+hash e a data de captura de cada vintage usado.

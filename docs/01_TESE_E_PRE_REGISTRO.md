@@ -11,7 +11,8 @@
 > reação das ações foi contrária à direção proposta. D-044 abriu uma hipótese nova,
 > Q-dominante, sem inverter retroativamente este documento. A extensão de algodão foi
 > pré-registrada em D-048 e rejeitada em D-049. O desenho operacional vigente deve ser lido no
-> log de decisões e no `00_PLANO_MESTRE.md`; o holdout de retornos permanece lacrado.
+> log de decisões e no `00_PLANO_MESTRE.md`. O holdout de retornos ficou lacrado até 27/07/2026,
+> quando foi aberto uma única vez e selado em D-075 — passando H′ e **falhando H4**.
 
 ---
 
@@ -308,8 +309,9 @@ antes, e reportar o resultado honestamente, é o que separa um trabalho sério d
 > ao BH-FDR; o efeito é consistente no desenvolvimento (−0,057) e no holdout (−0,072) e nas duas
 > culturas. **H1b** corrobora a soja ex post (3º e 6º mês pós-colheita); milho fraco (N=7). A
 > cadeia climático → revisão de safra é real. Depois disso, H2a falhou (D-037–D-041), a direção
-> H3 original foi falsificada (D-043) e H′ foi pré-registrada e congelada (D-044/D-053). H4/H5
-> permanecem para a robustez; o holdout de retornos continua lacrado.
+> H3 original foi falsificada (D-043) e H′ foi pré-registrada e congelada (D-044/D-053). Na
+> rodada única de D-075, H′ passou (p=0,0625), o placebo H5 morreu como devia e **H4 falhou** —
+> a estratégia não tem alpha ajustado a fatores.
 
 ### Confundidor conhecido: ENSO (El Niño / La Niña)
 
