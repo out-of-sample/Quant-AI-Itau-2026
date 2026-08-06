@@ -18,14 +18,15 @@ Três camadas com funções distintas, para não sobrecarregar uma palavra só:
 |---|---|---|
 | Nome do robô | SERIEMA | memorável, sonoro, apropriável |
 | Tagline | Canta antes da chuva. | nomeia a antecipação, sem prometer retorno |
-| Título editorial | O CERRADO ANTES DO BOLETIM | entrega tese, território e mecanismo |
+| Título editorial | DO CANTO À CARTEIRA | entrega ave, cadeia e desfecho |
 
 ### Por que este nome
 
-**Território.** A seriema é a ave típica do Cerrado, e o Cerrado é literalmente o polígono onde
-o `Shock` é calculado: MT, GO, MS, MG e BA aparecem nas janelas congeladas de soja, milho 2ª e
-cana (`features/shock_spec.py`). A brasilidade não é decoração aplicada por fora — é o bioma
-dentro do qual o modelo opera.
+**Território.** A seriema é uma ave emblemática do Cerrado, bioma central para a produção
+agrícola coberta pelo modelo e para a origem cultural do nome. O suporte congelado do `Shock`,
+porém, **não se limita ao Cerrado**: também inclui PR e RS em grãos e SP em cana
+(`features/shock_spec.py`). O bioma sustenta a linhagem da marca, não uma descrição exaustiva
+da geografia da estratégia.
 
 **Antecipação.** A crença rural brasileira é direta: seriema cantando anuncia chuva. Isso
 espelha o único elo que o projeto de fato demonstrou — H1, o choque climático antecipando a
@@ -61,7 +62,7 @@ topete da ave lido como uma curva de precipitação.
 
 | Elemento | Decisão |
 |---|---|
-| Símbolo | seriema desenhada como um `S`; crista azul funciona como curva de chuva |
+| Símbolo | seriema desenhada como um `S`, em uma cor por aplicação; ave mineral no fundo escuro e verde no fundo claro |
 | Verde profundo | `#123B2A` — território, vegetação e série da carteira |
 | Azul cobalto | `#2468C4` — precipitação, dados e benchmark |
 | Amarelo âmbar | `#F2C230` — anomalia, decisão e pontos de atenção |
@@ -89,6 +90,10 @@ identidade concorrente para o repositório.
 O funil anterior falhava porque nomeava a **entrada** do modelo (chuva, estação, seca) em vez
 do **ato** do robô. O território que resolveu foi o dos bioindicadores da cultura rural
 brasileira.
+
+O título de trabalho **O CERRADO ANTES DO BOLETIM** também foi descartado: superdeclarava a
+geografia porque PR, RS e SP não são Cerrado. **DO CANTO À CARTEIRA** foi fechado em
+31/07/2026 por conectar ave, sinal e decisão de alocação sem esse defeito factual.
 
 ---
 

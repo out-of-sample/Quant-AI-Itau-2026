@@ -1709,6 +1709,12 @@ H1; o canto se ouve a cerca de um quilômetro, o que dá a imagem de informaçã
 território antes de ser oficial; e a ave praticamente não voa, o que oferece um encerramento
 coerente com um resultado que teve P&L nominal positivo sem evidência de alpha.
 
+**Correção posterior, registrada em 31/07/2026:** a formulação territorial acima
+superdeclarava o Cerrado. As janelas congeladas também incluem PR e RS em grãos e SP em cana.
+O bioma sustenta a origem e a linhagem da marca, não o universo geográfico inteiro. Pelo mesmo
+motivo, o título de trabalho “O CERRADO ANTES DO BOLETIM” foi descartado; o título fechado em
+L-017 é **DO CANTO À CARTEIRA**.
+
 **Validação humana**: o time recusou duas rodadas inteiras antes de aprovar. A primeira foi
 recusada por sonoridade e genericidade; a segunda, por um argumento de mérito — nomes que
 descrevem antecipar o preço descrevem o que qualquer modelo quantitativo faz e não distinguem
@@ -1779,7 +1785,10 @@ sem antes verificar o ambiente-alvo; a máquina do projeto não possuía o utili
 movida para `python scripts/quality.py`, e o Makefile ficou apenas como atalho opcional. A
 configuração inicial também atribuía labels automáticas que ainda não existiam no remoto;
 essas referências foram removidas para que os formulários e o Dependabot funcionem antes de
-qualquer configuração manual do GitHub.
+qualquer configuração manual do GitHub. A revisão pública também tomou o `docs/08_IDENTIDADE.md`
+desatualizado como autoridade e republicou o título de trabalho “O CERRADO ANTES DO BOLETIM”,
+apesar de L-017 já ter fechado **DO CANTO À CARTEIRA**. O erro foi identificado pelo time e
+corrigido contra o registro canônico da identidade antes do merge.
 
 ---
 
