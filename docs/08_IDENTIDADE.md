@@ -1,6 +1,7 @@
 # Identidade da estratégia
 
-> Status: **nome aprovado pelo time em 28/07/2026.** Sistema visual em construção.
+> Status: **nome e sistema visual concluídos.** Nome aprovado em 28/07/2026; relatório e
+> aplicações finais lacrados em 01/08/2026.
 > Vale 5% da nota. O critério do edital é *nome + identidade visual coerentes com a tese* —
 > ou seja, o nome não é enfeite, ele precisa **dizer o que a estratégia faz**.
 
@@ -54,8 +55,23 @@ chuva; a ambição é a mesma, o método é que é auditável.
 Paleta de verde profundo, azul cobalto e amarelo âmbar, justificada pela **física do dado** e
 não pela bandeira: precipitação é azul, anomalia é âmbar, vegetação é verde. Sem bandeira
 literal, futebol ou ufanismo textual. A linguagem gráfica recorrente são curvas de chuva — o
-topete da ave lido como uma curva de precipitação. Logo, mascote e peças finais ainda não
-existem.
+topete da ave lido como uma curva de precipitação.
+
+## Sistema visual final
+
+| Elemento | Decisão |
+|---|---|
+| Símbolo | seriema desenhada como um `S`; crista azul funciona como curva de chuva |
+| Verde profundo | `#123B2A` — território, vegetação e série da carteira |
+| Azul cobalto | `#2468C4` — precipitação, dados e benchmark |
+| Amarelo âmbar | `#F2C230` — anomalia, decisão e pontos de atenção |
+| Papel | `#F6F3EA` — base editorial de baixo contraste agressivo |
+| Tipografia de títulos | Fraunces, para autoridade editorial sem aparência bancária genérica |
+| Tipografia técnica | IBM Plex Sans e IBM Plex Mono, para números, fontes e especificações |
+
+O símbolo vetorial público está em `assets/brand/seriema.svg`. O sistema completo aparece
+no relatório final `../report/relatorio-seriema.pdf`; a mesma linguagem abre o README sem criar uma
+identidade concorrente para o repositório.
 
 ---
 
@@ -76,5 +92,6 @@ brasileira.
 
 ---
 
-Se o nome mudar, o pacote de código é renomeado junto — hoje ele usa um nome técnico neutro
-(`quantagro`) justamente para não travar essa decisão.
+O pacote de código permanece com o nome técnico neutro `quantagro`. A marca identifica a
+estratégia e a peça editorial; separar os dois evita transformar uma identidade de pesquisa em
+promessa de produto de software.

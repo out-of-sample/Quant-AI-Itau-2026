@@ -1,5 +1,9 @@
 # Auditoria dos canais empresariais — portão da Fase 3.1
 
+> **Status:** auditoria histórica concluída em D-035 e estendida para cana em D-052. As frases
+> de “próximo passo” abaixo registram o estado de cada data; as resoluções posteriores estão no
+> log D-036–D-053 e não reescrevem este portão.
+>
 > Protocolo inserido em D-034 **antes de consultar qualquer retorno de ação**. A matriz
 > fundamentalista D-032/D-033 permanece como registro PIT válido de exposição ao grão, mas não
 > será convertida em score ou carteira até atravessar este portão.

@@ -21,7 +21,7 @@ final e evitar que a fundamentação vire "achismo com verniz acadêmico".
   verificável + data da conferência). O git é a trilha de auditoria.
 
 > Status desta primeira versão: montada a partir de uma varredura dos documentos do repo
-> (principalmente `05_Ideacao_Tese/teses_candidatas.md`). É um ponto de partida, não uma
+> (principalmente `research/ideation/teses_candidatas.md`). É um ponto de partida, não uma
 > bibliografia fechada. **Nenhum autor/ano/DOI foi preenchido de memória.** As lacunas ativas
 > e seus critérios de encerramento estão centralizados em `12_PENDENCIAS_TRANSVERSAIS.md`
 > (PT-003, PT-004 e PT-006).
@@ -38,16 +38,16 @@ final e evitar que a fundamentação vire "achismo com verniz acadêmico".
 1. *"The effect of temperature anomaly and macroeconomic fundamentals on agricultural
    commodity futures returns"* — **Energy Economics**, 2021.
    `[A CONFIRMAR: autores, volume/páginas, DOI]`
-   Proveniência: `05_Ideacao_Tese/teses_candidatas.md` §1 (linhas 44-46).
+   Proveniência: `research/ideation/teses_candidatas.md` §1 (linhas 44-46).
 
 2. *"The Impact of El Niño-Southern Oscillation on U.S. Food and Agricultural Stock Returns"*.
    `[A CONFIRMAR: autores, venue, ano, DOI]`
-   Proveniência: `05_Ideacao_Tese/teses_candidatas.md` §1 (linha 45-46).
+   Proveniência: `research/ideation/teses_candidatas.md` §1 (linha 45-46).
 
 3. Literatura de "weather shocks e retorno de ações" que documenta **subreação inicial seguida
    de correção** — citada de forma **genérica** na ideação, sem um paper específico.
    `[A CONFIRMAR: identificar ao menos um paper concreto desta linha, com autoria e ano]`
-   Proveniência: `05_Ideacao_Tese/teses_candidatas.md` §1 (linhas 47-49).
+   Proveniência: `research/ideation/teses_candidatas.md` §1 (linhas 47-49).
 
 ---
 

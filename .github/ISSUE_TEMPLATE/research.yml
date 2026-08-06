@@ -1,0 +1,46 @@
+name: Extensão de pesquisa
+description: Proponha uma hipótese, fonte ou teste novo sem reescrever o experimento selado.
+title: "[pesquisa] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        O estudo v1 está encerrado. Extensões são novos experimentos: precisam de hipótese,
+        protocolo e avaliação próprios e nunca substituem retroativamente o holdout publicado.
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hipótese falsificável
+      description: Qual ineficiência ou mecanismo será testado? O que o faria falhar?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Fundamentação econômica ou estatística
+      description: Explique por que o efeito deveria existir antes de olhar o resultado.
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Dados e disponibilidade temporal
+      description: Fonte, frequência, vintage, ref_date e avail_date esperados.
+    validations:
+      required: true
+  - type: textarea
+    id: protocol
+    attributes:
+      label: Protocolo de avaliação
+      description: Universo, sinal, custos, benchmark, período e critério de decisão.
+    validations:
+      required: true
+  - type: checkboxes
+    id: integrity
+    attributes:
+      label: Integridade
+      options:
+        - label: A proposta criará novo identificador e não alterará artefatos selados v1.
+          required: true
+        - label: A direção e o critério foram definidos sem selecionar pelo retorno futuro.
+          required: true

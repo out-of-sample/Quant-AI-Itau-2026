@@ -1,5 +1,8 @@
 # Matriz de exposição fundamentalista
 
+> **Status:** registro histórico concluído. D-032/D-033 preservam a matriz do canal de preço;
+> D-061 documenta a reconstrução separada sob H′. Os dois artefatos continuam imutáveis.
+>
 > Especificação do Método A de D-007. Este documento separa, de propósito, a regra definida
 > antes da classificação das empresas do resultado da aplicação dessa regra. Nenhum retorno
 > de ação participa da construção da matriz.

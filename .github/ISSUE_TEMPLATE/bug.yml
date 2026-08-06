@@ -1,0 +1,63 @@
+name: Bug ou falha de reprodução
+description: Relate comportamento incorreto, quebra de pipeline ou divergência reproduzível.
+title: "[bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por ajudar a tornar o estudo auditável. Não inclua tokens, credenciais,
+        dados restritos ou arquivos brutos de terceiros. Vulnerabilidades usam SECURITY.md.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumo
+      description: O que aconteceu e por que parece incorreto?
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit ou versão
+      placeholder: SHA, tag ou branch
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Sistema operacional, versão do Python e comando executado.
+      placeholder: Xubuntu; Python 3.14.x; python scripts/quality.py
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos mínimos para reproduzir
+      description: Inclua somente dados sintéticos, públicos ou fixtures do repositório.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Esperado versus observado
+    validations:
+      required: true
+  - type: dropdown
+    id: pit
+    attributes:
+      label: Pode afetar point-in-time ou o resultado selado?
+      options:
+        - Não sei
+        - Não
+        - Sim — pode afetar avail_date, vintage, universo ou execução
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmações
+      options:
+        - label: Procurei issues existentes e não encontrei duplicata.
+          required: true
+        - label: Removi segredos, credenciais e dados sem licença para redistribuição.
+          required: true

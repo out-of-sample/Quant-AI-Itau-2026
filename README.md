@@ -1,140 +1,156 @@
-# Estratégia quantitativa — choque climático e cross-section do agronegócio brasileiro
+<p align="right"><a href="README.en.md">English</a></p>
 
-Projeto para o Desafio Itaú Asset Quant AI 2026.
+<p align="center">
+  <img src="docs/assets/brand/seriema.svg" alt="Símbolo da SERIEMA" height="168">
+</p>
 
----
+<h1 align="center">SERIEMA</h1>
 
-## A tese
+<p align="center">
+  <strong>Do canto à carteira.</strong><br>
+  Choque climático, geografia agrícola e ações brasileiras — sem atalhos no tempo.
+</p>
 
-Choques climáticos nas regiões produtoras brasileiras carregam informação sobre a oferta
-futura de commodities agrícolas. Essa informação chega ao preço das ações da B3 **com
-defasagem e de forma heterogênea entre empresas**: uma seca pode elevar o preço da
-commodity, reduzir o volume do produtor atingido e comprimir a margem de quem compra o grão
-como insumo.
+<p align="center">
+  <a href="https://github.com/out-of-sample/Quant-AI-Itau-2026/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/out-of-sample/Quant-AI-Itau-2026/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="Python 3.14" src="https://img.shields.io/badge/Python-3.14-2468C4?logo=python&logoColor=white">
+  <a href="LICENSE"><img alt="Licença Apache 2.0" src="https://img.shields.io/badge/licen%C3%A7a-Apache--2.0-123B2A"></a>
+  <img alt="Status: pesquisa concluída" src="https://img.shields.io/badge/status-pesquisa%20conclu%C3%ADda-F2C230">
+</p>
 
-O Brasil é um dos maiores exportadores mundiais dessas commodities. A hipótese econômica
-original era que uma quebra brasileira, como choque de oferta global, elevaria o preço e
-criaria dispersão entre empresas. Os testes D-037–D-041 **não deram suporte estatístico a esse
-canal de preço**, e D-043 mostrou que o dano de volume dominou nos produtores da amostra. Essa
-distinção entre mecanismo plausível e mecanismo demonstrado orienta a reformulação atual.
+> [!IMPORTANT]
+> Este é um artefato acadêmico de pesquisa, não uma recomendação de investimento nem um
+> sistema de execução ao vivo. O resultado negativo contra o benchmark faz parte da conclusão.
 
-A estratégia originalmente candidata era **dollar-neutral long/short dentro do agro**. O
-teste no desenvolvimento mostrou que comprar produtores sob seca perde: o dano de volume
-próprio dominou o benefício de preço. Essa formulação não foi invertida depois do resultado;
-uma hipótese nova, Q-dominante, foi pré-registrada (D-044), congelada antes de qualquer
-retorno fora da amostra (D-053) e avaliada **uma única vez** no holdout (D-075). Neutralidade
-a mercado, fatores e commodities foi testada, não presumida a partir do notional — e é
-exatamente onde a estratégia falhou.
+## Em uma frase
 
-**A ineficiência explorada é de agregação, não de acesso.** O dado é público e gratuito; caro
-é cruzar grade meteorológica × mapa de produção agrícola × composição de receita e custo das
-empresas.
+A SERIEMA combina chuva observada por satélite, geografia de produção, calendário fenológico e
+exposição das empresas para investigar se informação climática local chega às ações do
+agronegócio antes de aparecer consolidada nos boletins nacionais da CONAB.
 
----
+A ineficiência proposta é de **agregação, não de acesso**: os dados são públicos; o trabalho está
+em cruzar grade meteorológica × municípios produtores × safras × empresas sem usar informação
+que ainda não estava disponível na data da decisão.
 
-## A cadeia causal (testada em etapas, não assumida)
+## Resultado selado
 
+O desenho foi congelado antes do holdout 2020/21–2024/25 e executado uma única vez em
+27/07/2026. A estratégia terminou positiva, mas não remunerou o risco frente ao benchmark
+pré-declarado.
+
+| Teste ou métrica | Resultado | Leitura permitida |
+|---|---:|---|
+| Teste primário H′, permutação exata unilateral | `p = 0,0625` | evidência OOS da estratégia |
+| Retorno líquido nominal | **+16,97%** | P&L OOS positivo |
+| Livre de risco local no mesmo intervalo | **+63,31%** | a carteira perdeu para o caixa |
+| Sharpe de excesso | **−0,50** | sem evidência de habilidade |
+| Alpha após fatores, câmbio, commodities e ONI | `t = −1,03` | claim de alpha climático vetada |
+| Drawdown máximo | **−20,92%** | risco relevante para retorno baixo |
+
+<p align="center">
+  <a href="docs/assets/readme/resultado-holdout.png">
+    <img src="docs/assets/readme/resultado-holdout.png" alt="Resultado do holdout: SERIEMA versus livre de risco, sensibilidades e régua de claims" width="920">
+  </a>
+</p>
+
+<p align="center"><em>O sinal passou. A carteira ganhou — mas o caixa ganhou mais.</em></p>
+
+O relatório visual completo tem cinco páginas e está em
+[`report/relatorio-seriema.pdf`](report/relatorio-seriema.pdf). A trilha numérica selada vive em
+[`data/reference/holdout_result_v1.json`](data/reference/holdout_result_v1.json).
+
+## Como a estratégia funciona
+
+```mermaid
+flowchart LR
+    A[CHIRPS<br/>chuva] --> D[Choque climático<br/>PIT]
+    B[IBGE/PAM<br/>geografia] --> D
+    C[CONAB<br/>safra e calendário] --> D
+    D --> E[Exposição<br/>por empresa]
+    E --> F[Score<br/>cross-sectional]
+    F --> G[Carteira<br/>dollar-neutral]
+    G --> H[Backtest<br/>D+1 e 21 pregões]
+    M[Manifestos<br/>vintage + SHA-256] -. auditam .-> D
+    V[avail_date] -. limita .-> D
 ```
-choque climático  →  revisão CONAB  →  preço da commodity  →  ação
-   (CHIRPS)             ✅ H1              ❌ H2              ❌ direção original
-                            ↑
-             ComexStat corroborou soja ex post
-```
 
-Cada seta foi tratada como hipótese com **critério de falsificação declarado antes de rodar**.
-O mecanismo físico passou, mas os elos financeiros não; por isso a formulação original foi
-interrompida e a reformulação é registrada como hipótese nova, não como reinterpretação.
+As quatro primeiras etapas devolvem um número por cultura e região; a matriz de exposição o
+traduz para cinco empresas elegíveis. O motor então aplica universo histórico, liquidez,
+custos, aluguel, limites por ativo e execução no pregão seguinte. A especificação completa
+está em [`docs/04_PROTOCOLO_BACKTEST.md`](docs/04_PROTOCOLO_BACKTEST.md).
 
----
+## O que torna o experimento auditável
 
-## Documentação
+- **Point-in-time por construção.** Toda decisão filtra por `avail_date`, nunca apenas por
+  `ref_date`; fontes que reescrevem o passado têm tratamento de vintage explícito.
+- **Hipóteses falsificáveis.** A tese original falhou no desenvolvimento e não foi
+  silenciosamente invertida. A hipótese Q-dominante posterior foi registrada como nova.
+- **Holdout de tiro único.** Código, fontes e seis inputs foram presos por hash antes da
+  avaliação; a tentativa operacional perdida e a execução selada permanecem registradas.
+- **Resultados negativos visíveis.** P&L nominal positivo não é chamado de alpha. Concentração,
+  drawdown, múltiplas tentativas e comparação com o livre de risco são reportados.
+- **603 testes automatizados.** A CI combina `pytest`, Ruff e guards próprios contra lookahead
+  e segredos.
 
-Comece por **[`docs/00_PLANO_MESTRE.md`](docs/00_PLANO_MESTRE.md)**.
+## Reproduzir e verificar
 
-| | |
-|---|---|
-| [`01_TESE_E_PRE_REGISTRO.md`](docs/01_TESE_E_PRE_REGISTRO.md) | Hipóteses formalizadas e **pré-registradas**, com critério de falsificação |
-| [`02_DADOS.md`](docs/02_DADOS.md) | Fontes, latências e **quais delas reescrevem o passado**. Todas testadas ao vivo |
-| [`03_ARQUITETURA.md`](docs/03_ARQUITETURA.md) | Pipeline em camadas e o contrato de cada uma |
-| [`04_PROTOCOLO_BACKTEST.md`](docs/04_PROTOCOLO_BACKTEST.md) | Execução, custos, universo dinâmico, holdout |
-| [`05_SUITE_ROBUSTEZ.md`](docs/05_SUITE_ROBUSTEZ.md) | Testes de robustez, com resultado esperado declarado **antes** |
-| [`06_CRITICA_ADVERSARIAL.md`](docs/06_CRITICA_ADVERSARIAL.md) | O projeto atacado por um avaliador hostil |
-| [`07_RISCOS_E_DECISOES.md`](docs/07_RISCOS_E_DECISOES.md) | Riscos vivos e log datado de decisões |
-| [`08_IDENTIDADE.md`](docs/08_IDENTIDADE.md) | Nome e identidade visual |
-| [`09_FENOLOGIA_E_LIMIARES.md`](docs/09_FENOLOGIA_E_LIMIARES.md) | Quando o clima importa, por cultura e estado |
-| [`10_REFERENCIAS.md`](docs/10_REFERENCIAS.md) | Referências acadêmicas, métodos e fontes usados — só o rastreável, lacunas marcadas |
-| [`11_AUDITORIA_FASE1.md`](docs/11_AUDITORIA_FASE1.md) | Evidências e decisões que fecharam a ingestão point-in-time |
-| [`12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md) | Fonte única das dívidas legadas e transversais ainda abertas |
-| [`13_MATRIZ_EXPOSICAO.md`](docs/13_MATRIZ_EXPOSICAO.md) | Matriz fundamentalista point-in-time e auditoria do universo |
-| [`14_AUDITORIA_CANAIS_EMPRESARIAIS.md`](docs/14_AUDITORIA_CANAIS_EMPRESARIAIS.md) | Portão econômico entre a matriz e a carteira: preço, volume, custo, H2/H3 e neutralidade |
-| [`DIARIO_GENAI.md`](docs/DIARIO_GENAI.md) | Registro do uso de IA — acertos **e erros** |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branches, commits, PRs, checklist de revisão |
-
----
-
-## O que este projeto assume sobre rigor
-
-Três compromissos que estruturam tudo o mais:
-
-1. **Point-in-time ou nada.** Toda linha de dado carrega `ref_date` (a que se refere) e
-   `avail_date` (quando ficou pública). Nenhuma decisão em `t` pode usar linha com
-   `avail_date > t`. E, onde a *fonte* reescreve o passado — reanálise climática, revisões do
-   ComexStat —, isso está identificado, medido e declarado, não ignorado.
-
-2. **Holdout de tiro único.** O recorte de desenvolvimento é 2013–2019, mas o `Shock` primário
-   só existe point-in-time desde a safra 2015/16. O período 2020–2025 de retornos da estratégia
-   foi rodado **uma única vez**, em 27/07/2026, com o desenho congelado desde D-053 e o que
-   seria reportado pré-registrado em D-073. Não houve segunda tentativa: o resultado registrado
-   é o resultado. H1 testou o mecanismo no span cheio, com desenvolvimento e holdout reportados
-   separadamente, conforme D-029.
-
-3. **Os achados negativos são reportados.** N efetivo pequeno, transmissão de preço ausente,
-   canal líquido do produtor não identificado, beta de commodity e placebo ENSO podem impedir
-   a estratégia. Esses vetos estavam escritos antes do backtest — e **um deles se realizou**.
-
----
-
-## Resultado (holdout 2020/21–2024/25, rodada única selada em D-075)
-
-| | |
-|---|---|
-| Teste primário H′ (permutação exata, α=0,10 unilateral) | p = 0,0625 — **passou**; 4 de 5 anos-safra com inclinação positiva |
-| Retorno total da carteira, cenário base | **+16,97%** em 1.186 pregões (CAGR 3,36%, vol 12,5%, drawdown máx. −20,9%) |
-| H4 — alpha contra mercado, fatores e commodity | alpha diário −0,000238, t = −1,03 — **falhou** |
-| Placebo geográfico H5 | morreu como devia (p = 0,56; 43% da magnitude real) |
-| Contra o benchmark que declaramos antes (risk-free) | Sharpe de excesso **−0,50**; Deflated Sharpe 0,025 com 39 tentativas declaradas |
-
-**A leitura honesta é negativa.** A carteira ganhou dinheiro nominal e perdeu para o CDI ao
-longo de todo o holdout. Pela régua pré-registrada, as claims liberadas são *P&L out-of-sample
-positivo* e *evidência out-of-sample da estratégia*; a claim de **alpha climático está vetada**,
-porque H4 falhou. A conclusão do projeto é **ausência de evidência de habilidade**, e ela vai
-para a primeira página do relatório, não para o rodapé.
-
-Duas observações pós-selo que registramos sem agir sobre elas: BRFS3 responde por 67% do P&L
-bruto (HHI 0,56) e remover a SMTO3 elevaria o retorno de +17% para +67%. Ambas são achados,
-**não** autorização para mexer numa carteira já selada.
-
----
-
-## Estado atual
-
-**Fase 7 — relatório e identidade.** A rodada técnica está encerrada desde 27/07/2026: o
-holdout foi aberto uma única vez e selado, e não há terceira tentativa. O que resta é converter
-o material em um PDF de 5 páginas, 16:9, anônimo — o único entregável avaliado. Dívidas sem
-fase proprietária ficam em
-[`docs/12_PENDENCIAS_TRANSVERSAIS.md`](docs/12_PENDENCIAS_TRANSVERSAIS.md).
-
----
-
-## Como rodar
+Requer CPython 3.14. As versões exatas, inclusive ferramentas, estão travadas com hashes.
 
 ```bash
-python3.14 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.lock && pip install -e . --no-deps
-pytest                                              # suíte completa
-python scripts/check_lookahead.py $(git ls-files '*.py')   # tripwire de lookahead
+python3.14 -m venv .venv
+source .venv/bin/activate
+python -m pip install --require-hashes -r requirements.lock
+python -m pip install -e . --no-deps
+python scripts/quality.py
 ```
 
-Os dados brutos não são versionados (são grandes e regeneráveis pelos módulos de `ingest/`);
-o que garante a auditabilidade é o par código-de-download + `data/manifests/`, que registra o
-hash e a data de captura de cada vintage usado.
+`scripts/quality.py` executa lint, formatação, guards determinísticos e a suíte de testes. Os dados
+brutos e intermediários não são versionados; os manifestos, hashes e artefatos de referência
+são. O que pode ser reproduzido apenas com o clone e o que exige os snapshots arquivados está
+descrito sem ambiguidade em [`REPRODUCING.md`](REPRODUCING.md).
+
+## Mapa do repositório
+
+```text
+.
+├── src/quantagro/       ingestão → validação → features → sinal → backtest
+├── tests/               603 testes, incluindo invariantes PIT e do holdout
+├── scripts/             pipelines executáveis e guards de qualidade
+├── data/manifests/      prova de captura e vintage das fontes
+├── data/reference/      contratos e resultados pequenos, imutáveis e auditáveis
+├── docs/                tese, dados, arquitetura, decisões, riscos e GenAI
+├── report/              relatório final de cinco páginas
+└── requirements.lock    ambiente integral com hashes
+```
+
+Comece por [`docs/00_PLANO_MESTRE.md`](docs/00_PLANO_MESTRE.md). Para uma leitura direcionada:
+
+| Quero entender… | Documento |
+|---|---|
+| hipótese, reformulação e pré-registro | [`docs/01_TESE_E_PRE_REGISTRO.md`](docs/01_TESE_E_PRE_REGISTRO.md) |
+| fontes, latências e vintage | [`docs/02_DADOS.md`](docs/02_DADOS.md) |
+| arquitetura do pipeline | [`docs/03_ARQUITETURA.md`](docs/03_ARQUITETURA.md) |
+| execução e backtest | [`docs/04_PROTOCOLO_BACKTEST.md`](docs/04_PROTOCOLO_BACKTEST.md) |
+| robustez e placebos | [`docs/05_SUITE_ROBUSTEZ.md`](docs/05_SUITE_ROBUSTEZ.md) |
+| crítica, limitações e decisões | [`docs/06_CRITICA_ADVERSARIAL.md`](docs/06_CRITICA_ADVERSARIAL.md) · [`docs/07_RISCOS_E_DECISOES.md`](docs/07_RISCOS_E_DECISOES.md) |
+| identidade SERIEMA | [`docs/08_IDENTIDADE.md`](docs/08_IDENTIDADE.md) |
+| uso concreto de IA generativa | [`docs/DIARIO_GENAI.md`](docs/DIARIO_GENAI.md) |
+
+## Dados e limites de reprodução
+
+Dados brutos de B3, CHIRPS, CONAB, IBGE/PAM, ComexStat, NEFIN, FRED, IPEA e ONI permanecem
+fora do Git por tamanho, termos de redistribuição e preservação de vintage. O repositório
+versiona o código de ingestão e os manifestos que identificam cada captura. Isso permite
+auditar o experimento, mas não promete que todo provedor continuará servindo hoje o mesmo
+arquivo histórico. Consulte [`docs/02_DADOS.md`](docs/02_DADOS.md).
+
+## Contribuições, segurança e licença
+
+Contribuições devem preservar os artefatos selados, incluir testes e declarar qualquer impacto
+point-in-time. Veja [`CONTRIBUTING.md`](CONTRIBUTING.md). Vulnerabilidades devem seguir
+[`SECURITY.md`](SECURITY.md), nunca uma issue pública com credenciais ou dados sensíveis.
+
+O código e os materiais originais deste repositório são disponibilizados sob
+[`Apache-2.0`](LICENSE). A licença não transfere direitos sobre dados de terceiros, nomes ou
+marcas das fontes citadas. O software é fornecido sem garantia e não constitui aconselhamento
+financeiro.

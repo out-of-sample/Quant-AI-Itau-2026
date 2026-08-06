@@ -71,7 +71,9 @@ Detalhes em `01_TESE_E_PRE_REGISTRO.md` §2.
 | **`14_AUDITORIA_CANAIS_EMPRESARIAIS.md`** | Portão econômico entre a matriz PIT e a carteira: efeito-preço, volume próprio, insumo, geografia, hedge e redesenho de H2/H3 |
 | **`DIARIO_GENAI.md`** | Registro contínuo do uso de IA generativa no processo |
 | `../CONTRIBUTING.md` | Branches, commits, PRs, checklist de revisão |
-| `../05_Ideacao_Tese/` | As 21 teses avaliadas e por que esta foi escolhida |
+| `../REPRODUCING.md` | O que um clone público reproduz e o que exige os snapshots arquivados |
+| `../report/relatorio-seriema.pdf` | Relatório final de cinco páginas, 16:9 e anônimo |
+| `research/ideation/` | As 21 teses avaliadas e por que esta foi escolhida |
 
 ---
 
@@ -473,10 +475,13 @@ declarada é **negativa sob a régua que pré-registramos** — houve P&L nomina
 mecanismo H′ sobreviveu ao teste primário, mas não há alpha ajustado a fatores nem evidência de
 habilidade contra o risk-free. Isso vai para o relatório como conclusão, não como nota de rodapé.
 
-### Fase 7 — Relatório e identidade — **em andamento**
-5 páginas, 16:9, 100% anônimo. É o único entregável avaliado. A rodada técnica está encerrada;
-o trabalho aqui é converter o material existente em argumento legível, sem afrouxar nenhuma
-das conclusões seladas em D-075. O nome do robô foi aprovado em 28/07/2026 (`08_IDENTIDADE.md`).
+### Fase 7 — Relatório e identidade — **CONCLUÍDA**
+
+Nome, símbolo, sistema visual e relatório de cinco páginas foram concluídos e lacrados. O PDF
+16:9 permanece 100% anônimo e preserva as conclusões de D-075: P&L nominal positivo e evidência
+OOS da estratégia, sem claim de alpha climático ou de habilidade contra o risk-free. Artefato
+final em `../report/relatorio-seriema.pdf`; identidade e controles de honestidade em
+`08_IDENTIDADE.md`.
 
 ---
 

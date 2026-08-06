@@ -4,10 +4,10 @@
 > seja um teste da tese, e não um retrato do quanto conseguimos ajustar as regras até o
 > gráfico ficar bonito.
 
-> **Estado após D-056:** a especificação econômica de D-053, a mecânica operacional de D-055
-> e a contabilidade diária de D-056 foram congeladas sem consultar P&L. O motor em
-> `backtest/engine.py` executa esses contratos sem rebalanceamento diário implícito e bloqueia
-> o holdout antes do I/O. Nenhum parâmetro pode ser completado olhando resultados.
+> **Status v1:** a especificação econômica de D-053, a mecânica operacional de D-055 e a
+> contabilidade diária de D-056 foram congeladas sem consultar P&L. O pacote foi executado uma
+> única vez e selado em D-075. Este protocolo permanece como registro do experimento; qualquer
+> extensão exige nova especificação e novo holdout, nunca a edição retroativa destes parâmetros.
 
 ---
 

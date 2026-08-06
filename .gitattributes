@@ -1,0 +1,15 @@
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.parquet binary
+*.tif binary
+*.tiff binary
+*.zip binary
+*.gz binary
+
+requirements.lock linguist-generated=true
+data/manifests/** linguist-generated=true
+tests/fixtures/** linguist-generated=true

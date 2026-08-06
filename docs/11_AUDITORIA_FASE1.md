@@ -1,5 +1,8 @@
 # Auditoria de fechamento da Fase 1
 
+> **Status:** auditoria histórica concluída em D-025/D-026. Este documento preserva as
+> evidências que autorizaram a fase seguinte; não é um checklist ainda em andamento.
+
 Registro das verificações que autorizaram o início de C2. O objetivo foi testar integridade,
 proveniência e capacidade point-in-time da ingestão — **não** avaliar a estratégia. Nenhum
 sinal, retorno de carteira, Sharpe ou resultado do holdout foi calculado.

@@ -1,8 +1,8 @@
 # Arquitetura do pipeline — especificação e estado
 
 > Este documento **especifica** o contrato de cada camada: o que recebe, o que entrega, e qual
-> invariante é obrigada a garantir. Parte do pipeline já está implementada e obedece a este
-> contrato — o **estado de implementação** (o que existe hoje em `src/quantagro/`) está na §6.
+> invariante é obrigada a garantir. O pipeline v1 foi implementado e executado; o estado final,
+> inclusive limitações aceitas, está na §6.
 
 
 ---
@@ -29,7 +29,7 @@ mecanicamente (um teste automatizado pode varrer o código atrás de filtros por
 
 ## 1. As camadas
 
-Mapeamento direto do esqueleto genérico de `05_Ideacao_Tese/pipeline_e_portfolio.md`,
+Mapeamento direto do esqueleto genérico de `research/ideation/pipeline_e_portfolio.md`,
 agora instanciado para a tese Clima + ComexStat.
 
 ```
@@ -190,9 +190,13 @@ concretos. Alimenta o relatório de 5 páginas.
 
 ```
 .
+├── README.md / README.en.md     entrada bilíngue e resultado selado
+├── REPRODUCING.md               fronteira de reprodução de código e dados
 ├── CONTRIBUTING.md              branches, commits, PRs, checklist de revisão
-├── README.md
+├── LICENSE                      Apache-2.0
+├── .github/                     CI, Dependabot, issues e template de PR
 ├── docs/
+│   ├── README.md                índice de navegação
 │   ├── 00_PLANO_MESTRE.md       ← ponto de entrada
 │   ├── 01_TESE_E_PRE_REGISTRO.md  hipóteses congeladas + critérios de falsificação
 │   ├── 02_DADOS.md              catálogo de fontes, latências, regras de PIT
@@ -206,11 +210,14 @@ concretos. Alimenta o relatório de 5 páginas.
 │   ├── 10_REFERENCIAS.md          referências acadêmicas, métodos e fontes (com proveniência)
 │   ├── 11_AUDITORIA_FASE1.md      evidências do fechamento da ingestão
 │   ├── 12_PENDENCIAS_TRANSVERSAIS.md  dívidas sem fase proprietária
+│   ├── 13_MATRIZ_EXPOSICAO.md
+│   ├── 14_AUDITORIA_CANAIS_EMPRESARIAIS.md
 │   ├── DIARIO_GENAI.md            registro contínuo de uso de IA (15% da nota)
-│   └── adr/                       Architecture Decision Records
+│   ├── assets/                    marca e figura pública do resultado
+│   └── research/ideation/         arquivo pré-backtest das 21 teses
 ├── pyproject.toml               empacotamento + config de ruff/pytest
 ├── requirements.lock            stack pinado com hashes (reprodutível)
-├── scripts/                     guards determinísticos (check_lookahead, check_secrets)
+├── scripts/                     pipelines, guards e porta de qualidade
 ├── src/quantagro/
 │   ├── ingest/              C0 — preços, eventos, safra, clima, comércio e controles
 │   ├── validate/            C1 — schemas e carimbo PIT
@@ -223,15 +230,13 @@ concretos. Alimenta o relatório de 5 páginas.
 │   └── report/              C8 — tabelas e gráficos do relatório
 ├── tests/                       espelha src/ — inclui fixtures reais e anti-lookahead
 │   └── fixtures/                amostras reais (COTAHIST, respostas da B3)
-├── notebooks/                   exploração (nunca fonte de verdade)
 ├── data/
 │   ├── raw/        (gitignored)  como veio da fonte, intocado
 │   ├── interim/    (gitignored)  limpo e carimbado com avail_date
 │   ├── processed/  (gitignored)  features prontas
-│   └── manifests/  (versionado)  hash + data de download + vintage de cada pull
-└── outputs/
-    ├── figures/                 gráficos do relatório
-    └── tables/                  tabelas de resultado e robustez
+│   ├── manifests/  (versionado)  hash + data de download + vintage de cada pull
+│   └── reference/  (versionado)  contratos, exceções e selo final
+└── report/                      PDF final de cinco páginas
 ```
 
 **Por que `data/manifests/` é versionado e o resto não**: o dado bruto é grande e
@@ -277,10 +282,11 @@ Hooks e CI existem para tornar impossível o erro que mais custa neste projeto.
 
 ---
 
-## 6. Estado de implementação (atualizado em 2026-07-20)
+## 6. Estado de implementação (atualizado em 2026-08-06)
 
-O que já existe em `src/quantagro/` e obedece ao contrato acima. O restante permanece
-especificação (§2) até ser construído — e cada peça construída entra com teste e CI verde.
+Estado final do que existe em `src/quantagro/` e dos limites que permaneceram conscientemente
+aceitos. Cada peça implementada entrou com teste e CI verde; os estados amarelos indicam
+limitação de evidência ou de fonte, não módulo ausente.
 
 | Camada | Módulo | Estado | Notas |
 |---|---|---|---|
@@ -295,8 +301,8 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C0 comércio | `ingest/comexstat.py` | ✅ | H1b *ex post* (`POST /general`). Guardrail do NCM string de 8 dígitos; métricas string→int; captura datada e `dates/updated`. Vintages históricos não são recuperáveis, portanto a fonte **não entra no sizing primário** (D-020/D-026) |
 | C0 controle | `ingest/oni.py` | ✅ | ONI NOAA/CPC sazonal: parser da temporada centrada, captura datada + manifesto; fonte sobrescreve o histórico e revisa os valores recentes. `initial_avail_date` no dia 5 após o fim da janela; caso primário espera mais 2 meses para estabilização (D-021). RONI fica para robustez, sem troca silenciosa do pré-registro |
 | C0 controle | `ingest/nefin.py` | ✅ | fatores brasileiros para H4, em decimal. Download preso ao SHA do commit oficial + manifesto; snapshot inteiro recebe a data do commit. Revisão HML material comprovada entre dois vintages; uso exclusivamente ex post, nunca no sinal (D-022) |
-| C0/C7 controles H4 | `ingest/h4_market.py`, `robustness/h4_controls.py`, `scripts/build_h4_controls.py` | ✅ | D-069: DEXBZUS diário + adjusted close dos ETFs futuros SOYB/CORN/CANE, alinhados sem backfill ao calendário NEFIN/B3; ONI usa última temporada estabilizada disponível. Snapshot ex post de 1.495 sessões, zero nulos/duplicatas, fontes/output presos por hash em `h4_controls_summary_v1.json`. Input H4 pronto; regressão permanece lacrada com os retornos |
-| C0/C7 placebo H5 | `robustness/h5_geography_spec.py`, `robustness/h5_geography.py`, `scripts/build_h5_geographic_scores.py` | ✅ | D-070/D-071: 91 células costeiras em cinco municípios BA/PR com PAM soja/milho completa e zero; mesma agenda, janelas, climatologia, CONAB e exposições do sinal real. 46 decisões, 6.197 raster-dias, zero nulos; fontes/output presos em `h5_geographic_scores_summary_v1.json`. Input pronto; veto de retorno lacrado |
+| C0/C7 controles H4 | `ingest/h4_market.py`, `robustness/h4_controls.py`, `scripts/build_h4_controls.py` | ✅ | D-069 materializou DEXBZUS diário + adjusted close dos ETFs futuros SOYB/CORN/CANE, sem backfill e com ONI estabilizado. D-075 executou o spanning: alpha ajustado negativo, `t=−1,03`, portanto o claim de alpha climático foi vetado |
+| C0/C7 placebo H5 | `robustness/h5_geography_spec.py`, `robustness/h5_geography.py`, `scripts/build_h5_geographic_scores.py` | ✅ | D-070/D-071 materializaram 91 células costeiras e 46 decisões sob a mesma agenda do sinal real. D-075 confirmou que o placebo morreu (`p=0,5625`), como exigia a especificação, sem resgatar o veto de H4 |
 | C0 geografia | `ingest/pam.py`, `ingest/pam_calendar.py`, `ingest/ibge_geometry.py` | ✅ | PAM/SIDRA 1612 municipal com calendário efetivo 2014–2024, captura datada e pesos *as-of*; inclui soja 2713, milho 2711, algodão 2689 e cana 2696. Malha IBGE 2013 fixa pré-amostra, agora incluindo SP. Cobertura positiva sem polígono falha alto (D-024/D-048/D-050) |
 | C4 sinal | `signal/convention.py`, `backtest/strategy_spec.py` | ✅ | a convenção histórica `S=E·Shock` permanece travada como mecanismo falsificado em D-043; a camada operacional H′ foi congelada em D-053: grãos usam o negativo de `E·Shock`, SMTO3 usa cana/maturação +1, com sizing/caps e teste primário explícitos |
 | C1 validação | `validate/pit.py`, `validate/universe.py`, `validate/borrow.py` | ✅ | carimbo as-of; universo/ADTV com reason codes; estado de aluguel exige 5 capturas atestadas + posição D−1, usa taxa doadora do último negócio e marca estoque pelo close D. Arquivo/manifesto ausente ou divergente falha alto. `build_proxy_borrow_state` (D-058) fornece, para datas sem BDI real, um estado de custo conservador declarado (piso 5%+tarifas+2×, disponibilidade por ADTV, reason `proxy`). Estado dev materializado por `scripts/build_market_state_dev.py`, com resumo/hashes em `data/reference/market_state_dev_summary_v1.json`; AGRO3 nunca supera R$8 mi |
@@ -312,7 +318,7 @@ especificação (§2) até ser construído — e cada peça construída entra co
 | C4 estratégia | `backtest/strategy_spec.py` | ✅ | contrato congelado da estratégia reformulada (D-053), anterior ao holdout e return-agnóstico: universo de 5 nomes, direção H′ (grãos = negativo de `E·Shock`; cana +1), sizing dollar-neutral proporcional ao sinal com cap 0,40/0,15 (B1, resolve R19), execução D+1, pesos CONAB, e o teste primário spread produtor–processador só nos grãos (A1). Travado em `tests/test_strategy_spec.py` |
 | C6 backtest | `backtest/strategy_spec.py`, `backtest/operational_spec.py`, `backtest/inputs.py`, `backtest/engine.py`, `backtest/diagnostics.py`, `backtest/holdout_spec.py`, `backtest/holdout.py`, `backtest/holdout_analysis.py`, `backtest/holdout_executor.py`, `backtest/holdout_report_spec.py`, `backtest/holdout_report.py`, scripts | ✅ | contratos D-053/D-055/D-056; ledger autofinanciado e holdout negado por padrão. D-058–D-060 fecham proxy de aluguel, smoke e diagnóstico setorial; D-064 congela setor×clima e D-067 torna AGRO3×ADTV auditável. D-068 congela a rodada, D-069 fecha H4, D-070/D-071 fecham H5 e **D-072 implementa inputs, análises e executor indivisível**. O preflight compara hashes com manifestos versionados; registro exclusivo antecede leitura, falha consome a tentativa e os 12 artefatos só aparecem após o selo. Executor pronto; **D-075 executou e selou a rodada única em 27/07/2026** — onze blocos, doze artefatos, `status: sealed`, sem terceira tentativa |
 | C7 robustez | `stats/robustness_spec.py`, `stats/robustness.py`, `scripts/run_robustness_h1.py` | 🟡 | **suíte de robustez de H1 pré-registrada (D-065) e executada (D-066)**. Spec congela grid single-knob + placebos e critérios executáveis. Runner constrói inputs modificados para o `build_h1a_panel` intocado (`signal_lag_days` só na chave de cache). Resultado: robustez direcional forte (4/4 reais rodáveis preservam sinal/magnitude; `final` fortalece 1,37×; placebo temporal morre), mas placebo **espacial** retém ~31% significativo (p=0,019) ⇒ componente nacional-comum; 2 botões não rodáveis por piso de dado. Veredito global pré-registrado = NÃO ROBUSTO, reportado fielmente. Return-agnóstico |
-| C7 robustez · C8 report | `backtest/holdout_spec.py`, `backtest/holdout_analysis.py`, `scripts/run_holdout_once.py`, `backtest/holdout_report_spec.py`, `scripts/run_holdout_report.py` | ✅ | pacote H′ D-068–D-072 completo: um confirmatório, H4/H5 como vetos, custos, D-064, LOO e sensibilidades descritivas; seis parquets + manifesto atestados. `ready=true` é apenas estado técnico; resultados seguem inexistentes até autorização civil e rodada única. **D-073 pré-registra o relatório descritivo** (ano-safra com os cinco anos obrigatórios, risco/cauda, benchmark declarado e Deflated Sharpe com tentativas enumeradas), imposto pelo hash do contrato e rodado só depois do selo. **D-074** registra a tentativa 1 perdida por grade de horizonte inviável, remove o 42, preserva a trilha em `PRIOR_ATTEMPTS` (dentro do hash) e mantém a trava; o ensaio sintético do pipeline virou teste permanente. **D-075** roda o relatório descritivo pós-selo e corrige nele dois defeitos de adaptador — envelope `payload` e alinhamento por `ref_date` — que produziam métricas de excesso NaN em silêncio; o hash **lógico** não se move (`a4a70b2b…1a28f`), só o manifesto de fontes (`972a08a8…f10a` → `b100395d…e91f`), e `tests/test_holdout_report_alignment.py` trava a falha alta. Relatório na Fase 7 |
+| C7 robustez · C8 report | `backtest/holdout_spec.py`, `backtest/holdout_analysis.py`, `scripts/run_holdout_once.py`, `backtest/holdout_report_spec.py`, `scripts/run_holdout_report.py` | ✅ | D-068–D-073 congelaram análise e relatório; D-074 preserva a tentativa operacional perdida; D-075 executou e selou a rodada final. H′ passou (`p=0,0625`) e a carteira rendeu +16,97%, mas H4 e o benchmark vetaram alpha e habilidade. O hash lógico permaneceu `a4a70b2b…1a28f`; o PDF final está em `../report/` |
 
 > A camada **`prices/`** não estava no esqueleto original de 8 camadas: ela nasceu na Fase 1
 > como o passo que transforma preço bruto + eventos corporativos em retorno total antes das

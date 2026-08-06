@@ -398,7 +398,7 @@ ele também torna visível a escassez de exposição fundamental, em vez de esco
 | **Multiple testing** | culturas × regiões × janelas × lags × limiares = centenas de combinações; alguma vai parecer significativa por acaso | Benjamini-Hochberg (FDR) sobre toda a família de testes + um único conjunto primário pré-registrado (§5) |
 | **Escolha oportunista de período** | escolher o período porque foi onde funcionou | Split declarado a priori (§6), holdout lacrado; perímetro de H1 será fechado em PT-001 antes do teste |
 | **Autocorrelação inflando t-stats** | o sinal climático é altamente persistente; retornos sobrepostos violam independência | Newey-West + *block bootstrap* para inferência |
-| **Viés de sobrevivência do sinal** | testar 21 teses e reportar a que funcionou | As 20 teses descartadas estão documentadas em `05_Ideacao_Tese/teses_candidatas.md` com a justificativa da escolha, feita **antes** de qualquer backtest |
+| **Viés de sobrevivência do sinal** | testar 21 teses e reportar a que funcionou | As 20 teses descartadas estão documentadas em `research/ideation/teses_candidatas.md` com a justificativa da escolha, feita **antes** de qualquer backtest |
 | **Ilusão de liquidez** | assumir que dá para operar R$ 10 mi em JALL3 | Filtro de ADTV mínimo + modelo de slippage proporcional à participação no volume |
 
 ---

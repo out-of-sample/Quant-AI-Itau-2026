@@ -4,13 +4,11 @@
 > **resultado esperado declarado antes de rodar**. Um teste cujo resultado a gente aceita
 > qualquer que seja ele não é um teste — é uma ilustração.
 
-> **Estado após D-068:** H1 passou no portão e teve direção estável em D-066, mas o veredito
-> formal da suíte de mecanismo foi NÃO ROBUSTO (cobertura + placebo espacial). H2a terminou
-> negativa; a direção acionária original foi falsificada; H′ e o substituto de H3 estão
-> congelados. D-068 transforma a parte ainda aplicável desta suíte no pacote executável da
-> rodada única. As promessas antigas incompatíveis com dados/decisões posteriores ficam
-> explicitamente substituídas abaixo — não serão executadas só porque apareceram numa versão
-> histórica do plano.
+> **Estado final após D-075:** H1 passou no portão e teve direção estável em D-066, mas o
+> veredito formal da suíte de mecanismo foi NÃO ROBUSTO (cobertura + placebo espacial). H2a
+> terminou negativa e a direção acionária original foi falsificada. Na rodada única, H′ passou
+> e H5 morreu como previsto, mas H4 falhou; portanto há evidência OOS da estratégia e P&L
+> nominal positivo, **não** evidência de alpha climático ou habilidade contra o risk-free.
 
 ---
 
@@ -252,7 +250,7 @@ ganham níveis de afirmação distintos:
 
 Falha ou ausência de H4/H5 impede usar “alpha climático”, mesmo com curva positiva.
 
-### 7.1 Portão técnico pronto; autorização civil ainda fechada
+### 7.1 Portão concluído e resultado selado
 
 `scripts/run_holdout_once.py` sem argumentos executa apenas o preflight, que compara código e
 inputs com manifestos SHA-256 sem abrir parquets. D-072 encerrou os três requisitos técnicos:
@@ -265,5 +263,17 @@ inputs com manifestos SHA-256 sem abrir parquets. D-072 encerrou os três requis
 Os sete inputs derivados têm caminhos fixos em `data/interim/holdout/`; não podem ser
 substituídos por arquivos de desenvolvimento, dados atuais ou download ad hoc. O manifesto
 versionado de fontes cobre exatamente `SPEC_FILES`; qualquer diferença de bytes bloqueia o
-preflight. A rodada real continua proibida até uma decisão humana posterior fornecer a frase
-civil exata. `ready=true` descreve integridade técnica, não consentimento.
+preflight. Após autorização humana exclusiva, a rodada foi executada em 27/07/2026 e selada:
+
+| Condição pré-declarada | Resultado | Consequência |
+|---|---:|---|
+| H′, permutação exata unilateral | `p=0,0625` | passou |
+| retorno líquido nominal base | `+16,97%` | P&L OOS positivo |
+| componente climático D-064 | positivo | condição necessária, não suficiente |
+| H4 estendida | falhou; `t=−1,03` | veta “alpha climático” |
+| H5 geográfico | morreu; `p=0,5625` | não acionou o veto espacial |
+| Sharpe de excesso ao risk-free | `−0,50` | sem evidência de habilidade |
+
+O registro existente impede nova execução do pacote `v1`. Os valores canônicos e hashes dos
+doze artefatos estão em
+[`../data/reference/holdout_result_v1.json`](../data/reference/holdout_result_v1.json).

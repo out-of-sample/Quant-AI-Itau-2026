@@ -1,5 +1,9 @@
 # Crítica adversarial ao próprio projeto
 
+> **Status pós-resultado:** as objeções foram formuladas antes da rodada final e permanecem
+> preservadas. O balanço ao fim do documento foi reconciliado com D-075; H4 de fato falhou,
+> enquanto H5 morreu como exigido.
+>
 > Este documento existe para atacar a tese, não para defendê-la. Cada objeção abaixo foi
 > escrita como se viesse de um avaliador hostil e competente. Onde a defesa é fraca, está
 > escrito que é fraca. Onde não há defesa, está escrito que não há.
@@ -263,7 +267,7 @@ irrelevante. Vamos reportar o número em vez de omiti-lo.
 
 | | |
 |---|---|
-| **O que é forte** | O mecanismo clima→revisão CONAB foi confirmado; a direção original foi falsificada e preservada no registro; H′ foi congelada com disclosure completo. A cadeia continua **falsificável em etapas**, não uma caixa-preta de “clima → retorno”. |
-| **O que é frágil** | O N efetivo (poucas dezenas de eventos independentes). Não tem conserto. |
-| **O que pode matar** | H4 (a estratégia ser só beta de commodity) e H5 (o sinal ser ENSO disfarçado). |
-| **O que fazemos se morrer** | Reportamos. Um projeto que testa a própria tese com rigor e conclui que ela não se sustenta pontua nos critérios de Backtest (15%), Análise de Resultados (15%) e Conclusão (10%) — e é infinitamente mais defensável do que um Sharpe bonito que não sobrevive à primeira pergunta da banca. |
+| **O que sobreviveu** | O mecanismo clima→revisão CONAB; a direção de H′ no holdout (`p=0,0625`); P&L nominal positivo; placebo geográfico morto. |
+| **O que é frágil** | N efetivo pequeno, concentração e proxies de investibilidade. Não há engenharia que transforme cinco anos-safra em uma amostra grande. |
+| **O que matou a claim forte** | H4 falhou (`t=−1,03`) e o Sharpe de excesso ao risk-free foi `−0,50`. A carteira não demonstrou alpha climático nem habilidade sob a régua congelada. |
+| **Conclusão adversarial** | A informação física existe e o sinal chegou à carteira, mas não remunerou o risco. O estudo é evidência de estratégia, não evidência de uma vantagem investível. |

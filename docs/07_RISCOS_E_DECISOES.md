@@ -1,5 +1,9 @@
 # Registro de riscos e decisões
 
+> **Status:** registro histórico append-only. A tabela de riscos reflete o encerramento de
+> D-075; as decisões abaixo preservam o conhecimento disponível em cada data e não são
+> reescritas à luz do resultado posterior.
+
 Duas coisas neste documento: o **registro de riscos** (o que pode dar errado e o que fazemos
 a respeito) e o **log de decisões** (o que decidimos, quando, por quê — e o que mudou de
 ideia depois).
@@ -22,11 +26,11 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | # | Risco | Prob. | Impacto | Mitigação | Status |
 |---|---|---|---|---|---|
 | R1 | **N efetivo pequeno** — o sinal operacional começa em 2015/16 e H1a depende do painel iniciado em 2017/18; linhas UF×cultura não viram eventos independentes. Sem poder estatístico para efeito pequeno | Alta | Alto | Primário combina soja e milho 2ª em painel de UFs, mas inferência continua agrupada por ano-safra; block bootstrap; **reportar N efetivo por teste**. Outras culturas não são adicionadas só para fabricar N | 🔴 **Sem solução. É a limitação nº 1 e vai declarada no relatório** |
-| R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Dollar-neutral não garante cancelamento; medir betas residuais e executar o *spanning* pré-registrado | Aberto — decide-se no teste |
+| R2 | **A estratégia ser só beta de commodity** (H4) | Média | Existencial | Dollar-neutral não garante cancelamento; medir betas residuais e executar o *spanning* pré-registrado | 🔴 **Materializado em D-075**: H4 falhou (`t=−1,03`); claim de alpha climático vetada |
 | R3 | **Contaminação por revisão dos dados climáticos** — POWER/ERA5 sobrescrevem o passado | **Confirmada** | Alto | CHIRPS prelim arquivado é o único canal primário (D-023); comparar prelim/final. POWER só em robustez térmica | ✅ Mitigado no primário. **Temperatura secundária segue exposta** |
 | R4 | **Viés de sobrevivência do universo** — JBSS3, BRFS3, MRFG3, STBP3 sumiram em 2025 e o yfinance os apagou | **Confirmada** | Alto | **COTAHIST** (registro de pregão da B3) como fonte de universo e preço — delisting-proof por construção | ✅ Resolvido |
 | R5 | **Ajuste de proventos no COTAHIST** — preços não vêm ajustados por dividendos/splits | Alta | Alto | Motor PIT, três fontes, montador e auditoria dos 19 papéis vivos (D-014–D-016/D-025). Cross-check encontrou bonificações SLC/VITT/KLABIN, repetição de classes e parcelas iguais legítimas. Residual: deslistados sem Yahoo e defeitos do próprio Yahoo | ✅ **Resolvido**, residual declarado |
-| R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | Aberto — decide-se no teste |
+| R6 | **Sinal ser ENSO disfarçado** (H5) | Média | Alto | ONI como controle; placebo espacial | 🟢 H5 geográfico morreu em D-075 (`p=0,5625`); o risco fatorial mais amplo permanece absorvido pelo veto de H4 |
 | R7 | **Universo fundamental direto é estreito** — quatro nomes de grãos no teste primário e SMTO3 como satélite de evidência inferior | **Confirmada** | Alto | Não fabricar exposição; teste primário restrito aos quatro grãos; caps 0,40/0,15 e redução de bruto quando necessário (D-053). Método B só como robustez identificada | 🟡 Estrutura resolvida; poder e concentração seguem como limitações |
 | R8 | **Short inviável** em small caps agrícolas (sem doador / aluguel caro) | Média | Médio | D-055 exige evidência B3 PIT em 5 pregões, posição ≤1% do estoque alugado e custo com piso de 5% a.a.; se qualquer short falhar, o bloco inteiro não abre. Long-only não resgata o primário | 🟡 Regra e código resolvidos; custo histórico via proxy conservadora declarada (D-058), não medição |
 | R9 | **Capacidade baixa** — estratégia pode não suportar capital relevante | Alta | Baixo (acadêmico) | D-055 fixa AUM de R$500 mil, ADTV21 ≥R$8 mi, ordem ≤5% do ADTV e short ≤1% do estoque alugado; reportar mínimo/P10/mediana | 🟡 ADTV real medido (AGRO3 sempre abaixo do piso no dev); custo do short via proxy declarada (D-058) |
@@ -40,18 +44,18 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 | R17 | **Fronteiras municipais mudam** — usar malha atual no passado cria suporte espacial futuro; trocar malha por ano muda mecanicamente o sinal | Confirmada | Médio | Malha IBGE 2013 fixa, pré-amostra; geocódigo PAM positivo sem polígono falha e exige crosswalk versionado | 🟡 Mitigado; refinamentos posteriores são ignorados (D-024) |
 | R18 | **ComexStat histórico não preserva o vintage da primeira publicação** — usar hoje a base final como confirmação mensal passada cria lookahead | Confirmada | Alto | Retirar o gate do sizing primário; usar volume final apenas como desfecho H1b *ex post*; manter snapshots para revisões prospectivas (D-026) | ✅ Eliminado do sinal; revisão histórica segue irrecuperável |
 | R19 | **Cap de 20% incompatível com a matriz PIT** — único produtor até 03/2018 exige 50% do bruto; depois, dois exigem 25% cada | Resolvida (D-053) | Baixo | Artefato da estrutura antiga (long produtor). Sob H′ a carteira é balanceada nos dois sentidos e o holdout (2020/21+) tem os 5 nomes vivos ⇒ concentração de "um nome só" não ocorre; cap 0,40 declara o teto | 🟢 Resolvido — sizing dollar-neutral congelado em `strategy_spec.py` |
-| R20 | **Sinal líquido do produtor estava subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | D-043 falsificou a direção antiga; D-044 pré-registrou H′ (`Q>P`) com disclosure de que o dev está queimado; D-053 congelou a camada operacional sem apagar o sinal histórico | 🟡 Reformulado; validação de H′ existe somente no holdout |
+| R20 | **Sinal líquido do produtor estava subespecificado** — preço maior (+) e quebra na própria lavoura (−) foram colapsados em direção positiva | Confirmada | Existencial | D-043 falsificou a direção antiga; D-044 pré-registrou H′ (`Q>P`) com disclosure de que o dev está queimado; D-053 congelou a camada operacional sem apagar o sinal histórico | 🟡 H′ passou no holdout em D-075 (`p=0,0625`), mas H4 e o benchmark impedem concluir habilidade |
 | R21 | **Exposição corporativa temporalmente esparsa** — cinco vintages não representam automaticamente geografia, hedge, aquisições e mix de uma década | Confirmada | Alto | Auditoria PIT feita nas fontes primárias (20-F AGRO3/BRF, 10-K Pilgrim's); mix/geografia/perímetro extraídos; área-por-UF e % de hedge **declarados como lacuna**, não preenchidos (D-035) | 🟡 Mitigado com lacunas declaradas |
 | R22 | **H3/Fama–MacBeth incompatível com N cross-sectional de 3–4 ações** | Confirmada | Alto | Fama–MacBeth suspenso e substituído em D-053 por spread/painel nos quatro grãos, cluster por ano-safra e permutação unilateral | 🟢 Desenho substituto congelado; poder continua limitado por R1 |
-| R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🟡 Conceito corrigido; exposição fatorial ainda aberta |
+| R23 | **Dollar-neutral foi chamado de market-neutral** — notional zero não neutraliza beta, tamanho, liquidez, FX ou commodity | Confirmada | Alto | Corrigir linguagem; medir/neutralizar fatores explicitamente e manter H4 como teste existencial | 🔴 Conceito corrigido e exposição medida; H4 falhou em D-075, confirmando que notional zero não bastou |
 | R24 | **Canal de cana passa por estabilidade direcional, mas sem significância** — ATR maior não implica receita total maior | Confirmada | Alto | Submodelo separado; SMTO3 entra só na carteira, cap 0,15, e fica fora do teste primário; JALL3 excluída. Reportar p=0,12/bootstrap p=0,27 (D-052/D-053) | 🟡 Tratamento congelado; ATR≠receita permanece ressalva aberta |
 | R25 | **D-053 não fechou toda a mecânica do backtest** — calendário, score multicanal, universo incompleto, permutação, custos e fronteiras ainda permitiam escolhas | Confirmada | Existencial | D-055 tornou a grade de blocos executável em `operational_spec.py`, com tripwires e holdout negado por padrão | 🟢 **Resolvido — Fase 4.0 encerrada sem P&L** |
 | R26 | **Desenvolvimento operacional parcialmente não materializável** — D-055 declara 2015/16–2018/19, mas o peso nacional exige a safra CONAB anterior e o painel de vintages começa em 2017/18 | Confirmada | Médio | Não usar equal-weight, peso futuro ou backfill. Validar a mecânica com testes sintéticos; a única safra real de dev computável pelo contrato nacional é 2018/19. Tratar a cobertura como limitação, não selecionar regra alternativa por P&L (D-056) | 🟡 Motor resolvido; cobertura real restrita e declarada |
 | R27 | **Histórico público de aluguel não cobre o experimento** — negócios, taxa e estoque por ticker de D-055 não são recuperáveis em 2018/19 e cobrem apenas parte do holdout | Confirmada | **Existencial para investibilidade** | Parser/gate permanecem estritos; não usar taxa atual, zero por ausência nem backfill. **Fork resolvido pela opção 2 (D-058)**: custo de aluguel via proxy conservadora declarada (piso 5%+tarifas+2×, disponibilidade por ADTV), corroborada pelo único snapshot real; custo é premissa, não medição de investibilidade histórica | 🟡 **Mitigado por D-058**: smoke destravado; limitação (custo não medido do short) declarada no relatório |
 
-> **Sobre R1 e R2**: são os dois riscos que não conseguimos eliminar por engenharia. R1 é
-> uma propriedade do fenômeno (safra é anual, ponto). R2 só se resolve rodando o teste. A
-> postura do projeto é **medir e declarar**, não contornar.
+> **Sobre R1 e R2**: nenhum podia ser eliminado por engenharia. R1 permanece uma propriedade
+> do fenômeno (safra é anual, ponto). R2 foi resolvido por medição e se materializou em D-075.
+> A postura do projeto foi **medir e declarar**, não contornar.
 
 ---
 
@@ -59,7 +63,7 @@ Probabilidade × Impacto, com dono e mitigação. Ordenado por severidade.
 
 ### D-001 — Tese escolhida: choque climático + confirmação por comércio exterior
 **Data**: 2026-07-13
-Escolhida entre 21 teses candidatas avaliadas (`05_Ideacao_Tese/teses_candidatas.md`), por
+Escolhida entre 21 teses candidatas avaliadas (`research/ideation/teses_candidatas.md`), por
 critérios definidos antes da escolha (base teórica, novidade no Brasil, custo/acesso ao dado,
 densidade de observações, clareza da decisão de investimento, defensabilidade).
 **Decisão tomada antes de qualquer backtest.** As 20 alternativas descartadas ficam

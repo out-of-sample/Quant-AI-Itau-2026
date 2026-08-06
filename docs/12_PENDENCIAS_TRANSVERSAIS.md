@@ -37,11 +37,11 @@ Estados: `ABERTA`, `EM ANDAMENTO`, `BLOQUEADA` ou `ENCERRADA`.
 
 | Item | Onde é controlado | Por que não é pendência transversal |
 |---|---|---|
-| Rodadores H1a/H1b e escolha da inferência final | `00_PLANO_MESTRE.md` §4, Fase 2 | entrega da fase atual |
-| Fricções e diagnósticos do backtest | Fase 4.2–4.3 e `04_PROTOCOLO_BACKTEST.md` | entregas futuras com fase proprietária; o motor 4.1 e sua contabilidade foram fechados em D-056. A cobertura restrita do dev é risco R26, não dívida transversal |
-| H4/H5 e pacote da rodada única | D-068–D-072, Fases 5–6 e `05_SUITE_ROBUSTEZ.md` | pacote técnico encerrado em D-072; resta somente a decisão civil da Fase 6, que não é pendência transversal |
+| Rodadores H1a/H1b e inferência | D-030/D-031, Fase 2 | concluídos; pertencem ao histórico da fase, não à lista de dívidas |
+| Fricções e diagnósticos do backtest | D-056–D-060 e `04_PROTOCOLO_BACKTEST.md` | concluídos; a cobertura restrita do dev permanece como risco R26, não dívida transversal |
+| H4/H5 e rodada única | D-068–D-075, Fases 5–6 e `05_SUITE_ROBUSTEZ.md` | pacote executado e selado em D-075; resultados e vetos preservados nos registros `v1` |
 | CEPEA, futuros B3, CAR e extensões opcionais | `02_DADOS.md` e `05_SUITE_ROBUSTEZ.md` | limitações/extensões já localizadas, não dívidas legadas |
-| Nome e identidade visual | Fase 7 e `08_IDENTIDADE.md` | decisão futura do time |
+| Nome e identidade visual | Fase 7 e `08_IDENTIDADE.md` | concluída; não é pendência transversal |
 | Rate limit numérico da NASA POWER e vintage térmico imperfeito | R3/R12 em `07_RISCOS_E_DECISOES.md` | limitação aceita e mitigada por cache; POWER não é fonte primária |
 | Ausência de comparador Yahoo para deslistados | D-016/D-025 | limitação aceita, sem fonte gratuita equivalente conhecida |
 | Progresso semanal da CONAB | `09_FENOLOGIA_E_LIMIARES.md` §7 | descartado do experimento primário; não há ação ativa |

@@ -7,4 +7,4 @@ Regra dura do projeto (docs/00_PLANO_MESTRE.md): nenhum sinal usa dado indispon√
 no instante da decis√£o. Toda tabela carrega ref_date e avail_date; filtra-se por avail_date.
 """
 
-__version__ = "0.0.0"
+__version__ = "1.0.0"

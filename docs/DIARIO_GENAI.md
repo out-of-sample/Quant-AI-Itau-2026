@@ -20,7 +20,10 @@ maduro é a **validação**: o que foi checado, como, e o que caiu na checagem.
 | Formalização da tese | **Assistido** | A crítica econômica veio da IA, mas a decisão foi do time |
 | **Escolha da tese** | ❌ **Não delegada** | Decisão do time, tomada sobre material comparativo |
 | **Decisões de desenho do backtest** | ❌ **Não delegadas** | Pré-registro é responsabilidade do time |
-| Implementação | (fase futura) | — |
+| Implementação e testes | **Intenso, com revisão** | Geração acelerou código e guards; testes, hashes e resultados foram validados pelo time |
+| Autorização da rodada selada | ❌ **Não delegada** | A frase civil e a decisão de abrir o holdout foram exclusivamente humanas |
+| Identidade e relatório | **Assistido** | Exploração ampla e crítica por IA; nome, claims e peça final aprovados pelo time |
+| Engenharia da repo pública | **Assistido** | Auditoria de estrutura, documentação e GitHub; artefatos selados permaneceram intocados |
 
 ---
 
@@ -29,7 +32,7 @@ maduro é a **validação**: o que foi checado, como, e o que caiu na checagem.
 **Uso**: geração e avaliação de um conjunto amplo de teses de dados alternativos, cada uma
 ancorada em literatura acadêmica internacional e cruzada com a disponibilidade real de dados
 públicos brasileiros. Resultado: 21 teses documentadas e pontuadas em 8 critérios
-(`05_Ideacao_Tese/teses_candidatas.md`).
+(`research/ideation/teses_candidatas.md`).
 
 **Valor real**: amplitude. Mapear 21 teses com base acadêmica e verificação de fonte de dados
 manualmente levaria semanas.
@@ -1747,6 +1750,36 @@ que o modelo detecta um fenômeno meteorológico nomeado.
 - A crença de que o joão-de-barro orienta a porta do ninho contra o vento e a chuva foi
   encontrada com **evidência científica contraditória**, o que tirou o nome da disputa em vez
   de virar nota de rodapé conveniente.
+
+---
+
+## 2026-08-06 — Engenharia do repositório público
+
+**Uso**: auditar o repositório como artefato público concluído, comparar sua estrutura com as
+práticas documentadas pelo GitHub e propor uma organização que comunicasse identidade,
+resultado, reprodução e governança sem alterar o experimento selado.
+
+**Valor real**: a revisão converteu uma entrada centrada no andamento da pesquisa em uma
+entrada centrada no que um leitor externo precisa verificar. A identidade SERIEMA já aprovada
+foi reaproveitada no README; o resultado negativo contra o benchmark ganhou destaque em vez de
+ser escondido; o relatório final passou a integrar o acervo; e as fronteiras entre clone,
+captura nova e reprodução exata foram explicitadas. Também foram unificadas, numa única porta
+executável, as verificações locais e da CI: lint, formatação, links, lookahead, segredos e 603
+testes. Formulários de issue e PR, política de segurança, atualização de dependências e pinagem
+integral das Actions completaram a superfície pública sem criar ferramentas sem uso real.
+
+**Validação humana**: cada claim do novo README foi reconciliado com o registro selado; o PDF
+foi conferido por número de páginas, proporção e SHA-256; links locais passaram por um guarda
+novo; a instalação editável foi testada; e a mesma porta usada na CI foi executada localmente.
+A decisão de idioma preservou português como documentação canônica e adicionou uma visão geral
+integral em inglês, evitando a falsa promessa de manter duas árvores técnicas sincronizadas.
+
+**O que a IA errou**: a primeira versão escolheu `make` como interface canônica por convenção,
+sem antes verificar o ambiente-alvo; a máquina do projeto não possuía o utilitário. A porta foi
+movida para `python scripts/quality.py`, e o Makefile ficou apenas como atalho opcional. A
+configuração inicial também atribuía labels automáticas que ainda não existiam no remoto;
+essas referências foram removidas para que os formulários e o Dependabot funcionem antes de
+qualquer configuração manual do GitHub.
 
 ---
 
