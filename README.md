@@ -1,100 +1,136 @@
 <p align="right"><a href="README.en.md">English</a></p>
 
 <p align="center">
-  <img src="docs/assets/brand/seriema.svg" alt="Símbolo da SERIEMA" height="168">
-</p>
-
-<h1 align="center">SERIEMA</h1>
-
-<p align="center">
-  <strong>Do canto à carteira.</strong><br>
-  Choque climático, geografia agrícola e ações brasileiras — sem atalhos no tempo.
+  <img src="docs/assets/brand/seriema-lockup.png" alt="SERIEMA — Do canto à carteira" width="920">
 </p>
 
 <p align="center">
-  <a href="https://github.com/out-of-sample/Quant-AI-Itau-2026/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/out-of-sample/Quant-AI-Itau-2026/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="Python 3.14" src="https://img.shields.io/badge/Python-3.14-2468C4?logo=python&logoColor=white">
-  <a href="LICENSE"><img alt="Licença Apache 2.0" src="https://img.shields.io/badge/licen%C3%A7a-Apache--2.0-123B2A"></a>
-  <img alt="Status: pesquisa concluída" src="https://img.shields.io/badge/status-pesquisa%20conclu%C3%ADda-F2C230">
+  <strong>Um experimento sobre o intervalo entre a chuva que já caiu e o boletim que ainda não saiu.</strong>
 </p>
-
-> [!IMPORTANT]
-> Este é um artefato acadêmico de pesquisa, não uma recomendação de investimento nem um
-> sistema de execução ao vivo. O resultado negativo contra o benchmark faz parte da conclusão.
-
-## Em uma frase
-
-A SERIEMA combina chuva observada por satélite, geografia de produção, calendário fenológico e
-exposição das empresas para investigar se informação climática local chega às ações do
-agronegócio antes de aparecer consolidada nos boletins nacionais da CONAB.
-
-A ineficiência proposta é de **agregação, não de acesso**: os dados são públicos; o trabalho está
-em cruzar grade meteorológica × municípios produtores × safras × empresas sem usar informação
-que ainda não estava disponível na data da decisão.
-
-## Resultado selado
-
-O desenho foi congelado antes do holdout 2020/21–2024/25 e executado uma única vez em
-27/07/2026. A estratégia terminou positiva, mas não remunerou o risco frente ao benchmark
-pré-declarado.
-
-| Teste ou métrica | Resultado | Leitura permitida |
-|---|---:|---|
-| Teste primário H′, permutação exata unilateral | `p = 0,0625` | evidência OOS da estratégia |
-| Retorno líquido nominal | **+16,97%** | P&L OOS positivo |
-| Livre de risco local no mesmo intervalo | **+63,31%** | a carteira perdeu para o caixa |
-| Sharpe de excesso | **−0,50** | sem evidência de habilidade |
-| Alpha após fatores, câmbio, commodities e ONI | `t = −1,03` | claim de alpha climático vetada |
-| Drawdown máximo | **−20,92%** | risco relevante para retorno baixo |
 
 <p align="center">
-  <a href="docs/assets/readme/resultado-holdout.png">
-    <img src="docs/assets/readme/resultado-holdout.png" alt="Resultado do holdout: SERIEMA versus livre de risco, sensibilidades e régua de claims" width="920">
-  </a>
+  <a href="report/relatorio-seriema.pdf">Relatório final</a> ·
+  <a href="results/README.md">Atlas de resultados</a> ·
+  <a href="docs/README.md">Documentação</a> ·
+  <a href="REPRODUCING.md">Reprodução</a>
 </p>
 
-<p align="center"><em>O sinal passou. A carteira ganhou — mas o caixa ganhou mais.</em></p>
+## A pergunta
 
-O relatório visual completo tem cinco páginas e está em
-[`report/relatorio-seriema.pdf`](report/relatorio-seriema.pdf). A trilha numérica selada vive em
-[`data/reference/holdout_result_v1.json`](data/reference/holdout_result_v1.json).
+A chuva muda a safra antes de mudar o boletim. A SERIEMA investiga se observações climáticas
+locais podem ser reunidas, associadas às regiões produtoras e traduzidas em posição sobre ações do
+agronegócio **antes** de a revisão nacional da CONAB consolidar essa informação.
 
-## Como a estratégia funciona
+Os dados são públicos. A possível ineficiência não está em possuir um satélite exclusivo, mas em
+fazer a agregação que o mercado talvez ainda não tenha feito: chuva × município × cultura ×
+calendário × empresa.
 
-```mermaid
-flowchart LR
-    A[CHIRPS<br/>chuva] --> D[Choque climático<br/>PIT]
-    B[IBGE/PAM<br/>geografia] --> D
-    C[CONAB<br/>safra e calendário] --> D
-    D --> E[Exposição<br/>por empresa]
-    E --> F[Score<br/>cross-sectional]
-    F --> G[Carteira<br/>dollar-neutral]
-    G --> H[Backtest<br/>D+1 e 21 pregões]
-    M[Manifestos<br/>vintage + SHA-256] -. auditam .-> D
-    V[avail_date] -. limita .-> D
-```
+O nome vem da ave do Cerrado cujo canto, na tradição rural, anuncia chuva. O robô herda a atenção
+ao clima — não a crença como evidência. E o título editorial, **DO CANTO À CARTEIRA**, descreve o
+caminho que o projeto tenta completar.
 
-As quatro primeiras etapas devolvem um número por cultura e região; a matriz de exposição o
-traduz para cinco empresas elegíveis. O motor então aplica universo histórico, liquidez,
-custos, aluguel, limites por ativo e execução no pregão seguinte. A especificação completa
-está em [`docs/04_PROTOCOLO_BACKTEST.md`](docs/04_PROTOCOLO_BACKTEST.md).
+## Da observação à decisão
 
-## O que torna o experimento auditável
+![Fluxo da chuva por célula até a carteira executada em D+1](results/figures/pipeline.svg)
 
-- **Point-in-time por construção.** Toda decisão filtra por `avail_date`, nunca apenas por
-  `ref_date`; fontes que reescrevem o passado têm tratamento de vintage explícito.
-- **Hipóteses falsificáveis.** A tese original falhou no desenvolvimento e não foi
-  silenciosamente invertida. A hipótese Q-dominante posterior foi registrada como nova.
-- **Holdout de tiro único.** Código, fontes e seis inputs foram presos por hash antes da
-  avaliação; a tentativa operacional perdida e a execução selada permanecem registradas.
-- **Resultados negativos visíveis.** P&L nominal positivo não é chamado de alpha. Concentração,
-  drawdown, múltiplas tentativas e comparação com o livre de risco são reportados.
-- **603 testes automatizados.** A CI combina `pytest`, Ruff e guards próprios contra lookahead
-  e segredos.
+O dado só pode avançar quando já estava disponível. Por isso cada tabela separa a data a que a
+observação se refere (`ref_date`) da data em que ela se tornou pública (`avail_date`). Fontes que
+reescrevem o passado também são presas ao vintage realmente capturado.
+
+O núcleo econômico é simples. Uma quebra de safra reduz quantidade; ao mesmo tempo, menor oferta
+pode elevar preço. O projeto precisava descobrir qual força domina na ação do produtor — e não
+presumir a resposta.
+
+## A investigação mudou de direção
+
+![Progressão da evidência desde o elo físico até a carteira](results/figures/evidence-path.svg)
+
+Primeiro, o choque de chuva antecipou revisões da CONAB. Depois, seis especificações não
+estabeleceram que o preço compensava a quebra. Quando a direção original — comprar produtores — foi
+testada no desenvolvimento, ela foi **antipreditiva**.
+
+O projeto não inverteu silenciosamente o sinal. A tese original ficou registrada como falsificada
+e uma nova hipótese, H′, foi pré-declarada: o dano de quantidade domina; produtores expostos ficam
+vendidos e processadores, comprados. Cana entra por um mecanismo separado e com peso limitado.
+
+Essa sequência é o coração científico da repo. Os números e testes intermediários estão no
+[`atlas`](results/README.md#1-como-a-evidência-evoluiu); o pré-registro e as decisões originais,
+na [`trilha histórica`](docs/history/README.md).
+
+## O teste final
+
+H′, a mecânica da carteira e os seis inputs foram congelados antes do holdout 2020/21–2024/25. A
+rodada foi executada **uma única vez**, em 27/07/2026: cinco anos-safra, 46 decisões, execução D+1,
+liquidez, custos e aluguel.
+
+O teste primário passou (`p = 0,0625`, permutação exata unilateral a 10%). A carteira também
+terminou positiva. Mas a pergunta financeira é mais exigente do que “ganhou dinheiro?”.
+
+## O resultado sem maquiagem
+
+![Curva da SERIEMA contra o livre de risco e drawdown](results/figures/performance.svg)
+
+| | SERIEMA | Livre de risco |
+|---|---:|---:|
+| retorno acumulado | **+16,97%** | **+63,31%** |
+| Sharpe de excesso | **−0,50** | — |
+| drawdown máximo | **−20,92%** | — |
+
+O spanning com fatores, câmbio, commodities e ONI encontrou alpha anualizado aritmético de
+−5,99%, com `t = −1,03`. Portanto:
+
+- há **evidência OOS da estratégia** e **P&L OOS positivo**;
+- não há evidência de **alpha climático**;
+- não há evidência de **habilidade contra o benchmark**.
+
+Em outras palavras: o sinal passou, a carteira ganhou, mas o risco não foi remunerado frente ao
+caixa.
+
+## O que existe por trás do número agregado
+
+![Retorno e Sharpe de excesso por safra](results/figures/crop-years.svg)
+
+Somente duas das cinco safras foram positivas. 2023/24 respondeu por 109,7% do P&L líquido total;
+as outras quatro, juntas, reduziram o resultado. Custos consumiram 12,59 pontos percentuais de
+retorno, BRFS3 concentrou 67% do P&L bruto e atrasar o sinal para 14 dias levou o retorno a −8,51%.
+
+Essas fragilidades não ficam em nota de rodapé. O
+[`atlas de resultados`](results/README.md) abre:
+
+- H1, H2 e a falsificação da tese original, teste por teste;
+- safras, risco, custos e liquidez;
+- sensibilidades de ADTV, caps, holding e lag;
+- leave-one-name-out e leave-one-year-out;
+- atribuição por ação, decomposição setor × clima, placebos e múltiplas tentativas;
+- os JSON/CSV exatos e o script que gera cada figura.
+
+## O que aprendemos
+
+O clima local carregou informação física sobre a safra antes da revisão agregada. Converter essa
+informação em vantagem acionária foi muito mais difícil: o canal de preço não se sustentou, a
+primeira direção morreu e a carteira final não superou o custo de oportunidade.
+
+Esse desfecho não torna o experimento vazio. Ele separa três afirmações que projetos quantitativos
+frequentemente confundem: **há sinal**, **há P&L** e **há habilidade**. Na SERIEMA, as duas primeiras
+têm suporte; a terceira, não.
+
+## Escolha a profundidade
+
+| Se você quer… | Comece aqui |
+|---|---|
+| ver a síntese visual de cinco páginas | [`report/relatorio-seriema.pdf`](report/relatorio-seriema.pdf) |
+| conferir todos os resultados e sensibilidades | [`results/README.md`](results/README.md) |
+| entender a regra econômica | [`docs/methodology/strategy.md`](docs/methodology/strategy.md) |
+| auditar dados, vintage e disponibilidade | [`docs/methodology/data.md`](docs/methodology/data.md) |
+| revisar execução e backtest | [`docs/methodology/backtest.md`](docs/methodology/backtest.md) |
+| acompanhar pré-registros e decisões | [`docs/history/README.md`](docs/history/README.md) |
+| entender nome e identidade visual | [`docs/identity.md`](docs/identity.md) |
+| verificar o uso de IA generativa | [`docs/genai.md`](docs/genai.md) |
 
 ## Reproduzir e verificar
 
-Requer CPython 3.14. As versões exatas, inclusive ferramentas, estão travadas com hashes.
+Só agora entram as instruções de ambiente: elas são importantes para auditoria, mas não são a
+história do projeto.
 
 ```bash
 python3.14 -m venv .venv
@@ -104,53 +140,19 @@ python -m pip install -e . --no-deps
 python scripts/quality.py
 ```
 
-`scripts/quality.py` executa lint, formatação, guards determinísticos e a suíte de testes. Os dados
-brutos e intermediários não são versionados; os manifestos, hashes e artefatos de referência
-são. O que pode ser reproduzido apenas com o clone e o que exige os snapshots arquivados está
-descrito sem ambiguidade em [`REPRODUCING.md`](REPRODUCING.md).
+Um clone limpo verifica o software, os contratos, os resultados compactos e os manifestos. A
+reprodução bit a bit exige os snapshots point-in-time arquivados, que não são redistribuídos por
+tamanho, termos das fontes e preservação de vintage. A fronteira completa está em
+[`REPRODUCING.md`](REPRODUCING.md).
 
-## Mapa do repositório
+<p align="center">
+  <a href="https://github.com/out-of-sample/Quant-AI-Itau-2026/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/out-of-sample/Quant-AI-Itau-2026/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="Python 3.14" src="https://img.shields.io/badge/Python-3.14-2468C4?logo=python&logoColor=white">
+  <a href="LICENSE"><img alt="Licença Apache 2.0" src="https://img.shields.io/badge/licen%C3%A7a-Apache--2.0-123B2A"></a>
+  <img alt="Status: pesquisa concluída" src="https://img.shields.io/badge/status-pesquisa%20conclu%C3%ADda-F2C230">
+</p>
 
-```text
-.
-├── src/quantagro/       ingestão → validação → features → sinal → backtest
-├── tests/               603 testes, incluindo invariantes PIT e do holdout
-├── scripts/             pipelines executáveis e guards de qualidade
-├── data/manifests/      prova de captura e vintage das fontes
-├── data/reference/      contratos e resultados pequenos, imutáveis e auditáveis
-├── docs/                tese, dados, arquitetura, decisões, riscos e GenAI
-├── report/              relatório final de cinco páginas
-└── requirements.lock    ambiente integral com hashes
-```
-
-Comece por [`docs/00_PLANO_MESTRE.md`](docs/00_PLANO_MESTRE.md). Para uma leitura direcionada:
-
-| Quero entender… | Documento |
-|---|---|
-| hipótese, reformulação e pré-registro | [`docs/01_TESE_E_PRE_REGISTRO.md`](docs/01_TESE_E_PRE_REGISTRO.md) |
-| fontes, latências e vintage | [`docs/02_DADOS.md`](docs/02_DADOS.md) |
-| arquitetura do pipeline | [`docs/03_ARQUITETURA.md`](docs/03_ARQUITETURA.md) |
-| execução e backtest | [`docs/04_PROTOCOLO_BACKTEST.md`](docs/04_PROTOCOLO_BACKTEST.md) |
-| robustez e placebos | [`docs/05_SUITE_ROBUSTEZ.md`](docs/05_SUITE_ROBUSTEZ.md) |
-| crítica, limitações e decisões | [`docs/06_CRITICA_ADVERSARIAL.md`](docs/06_CRITICA_ADVERSARIAL.md) · [`docs/07_RISCOS_E_DECISOES.md`](docs/07_RISCOS_E_DECISOES.md) |
-| identidade SERIEMA | [`docs/08_IDENTIDADE.md`](docs/08_IDENTIDADE.md) |
-| uso concreto de IA generativa | [`docs/DIARIO_GENAI.md`](docs/DIARIO_GENAI.md) |
-
-## Dados e limites de reprodução
-
-Dados brutos de B3, CHIRPS, CONAB, IBGE/PAM, ComexStat, NEFIN, FRED, IPEA e ONI permanecem
-fora do Git por tamanho, termos de redistribuição e preservação de vintage. O repositório
-versiona o código de ingestão e os manifestos que identificam cada captura. Isso permite
-auditar o experimento, mas não promete que todo provedor continuará servindo hoje o mesmo
-arquivo histórico. Consulte [`docs/02_DADOS.md`](docs/02_DADOS.md).
-
-## Contribuições, segurança e licença
-
-Contribuições devem preservar os artefatos selados, incluir testes e declarar qualquer impacto
-point-in-time. Veja [`CONTRIBUTING.md`](CONTRIBUTING.md). Vulnerabilidades devem seguir
-[`SECURITY.md`](SECURITY.md), nunca uma issue pública com credenciais ou dados sensíveis.
-
-O código e os materiais originais deste repositório são disponibilizados sob
-[`Apache-2.0`](LICENSE). A licença não transfere direitos sobre dados de terceiros, nomes ou
-marcas das fontes citadas. O software é fornecido sem garantia e não constitui aconselhamento
-financeiro.
+O código e os materiais originais são disponibilizados sob
+[`Apache-2.0`](LICENSE). A licença não transfere direitos sobre dados ou marcas de terceiros. Este
+é um artefato acadêmico de pesquisa, não recomendação de investimento nem sistema de execução ao
+vivo.

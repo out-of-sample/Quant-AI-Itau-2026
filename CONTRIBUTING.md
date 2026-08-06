@@ -17,7 +17,7 @@ de PR não levam assinaturas, rodapés ou trailers de coautoria de nenhum tipo �
 descrição técnica da mudança.
 
 O uso de ferramentas de IA generativa ao longo do projeto é registrado em
-`docs/DIARIO_GENAI.md`, que é a fonte da seção "Uso de IA Generativa" do relatório final.
+`docs/genai.md`, que é a fonte da seção "Uso de IA Generativa" do relatório final.
 Esse registro é feito lá, de forma estruturada e analisável — não espalhado pelo histórico
 do git.
 
@@ -44,8 +44,8 @@ na `main`**.
 
 O ciclo é:
 1. Cria `exp/<ideia>`, testa a ideia, olha o resultado.
-2. **Registra a conclusão** — funcionou ou não — em `docs/07_RISCOS_E_DECISOES.md` (se for
-   uma decisão de desenho) ou em `docs/adr/` (se for uma escolha de arquitetura).
+2. **Registra a conclusão** — funcionou ou não — em `docs/history/decisions.md` (decisão
+   científica) ou na issue/PR correspondente (decisão puramente de implementação).
 3. Se a ideia vingou, **reescreve limpo** numa branch `feat/` e essa sim vira PR.
 4. A branch `exp/` pode ser deletada. **O aprendizado não se perde porque está no
    documento, não na branch.**

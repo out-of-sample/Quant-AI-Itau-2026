@@ -25,7 +25,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 # Runtime — versões travadas porque foram verificadas ao vivo com wheels para cp314
-# (ver docs/07_RISCOS_E_DECISOES.md, D-009). pandas 3.x tem Copy-on-Write por padrão.
+# (ver docs/history/decisions.md, D-009). pandas 3.x tem Copy-on-Write por padrão.
 dependencies = [
     "pandas==3.0.3",
     "numpy==2.5.1",

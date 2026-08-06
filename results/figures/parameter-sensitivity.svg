@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" role="img" aria-labelledby="title desc">
+<title id="title">Sensibilidade de um parâmetro por vez</title>
+<desc id="desc">Retorno líquido em variantes pré-definidas.</desc>
+<style>
+          text { font-family: 'IBM Plex Sans', Inter, Arial, sans-serif; fill: #17201F; }
+          .display { font-family: Fraunces, Georgia, serif; font-size: 34px; font-weight: 650; }
+          .title { font-size: 22px; font-weight: 650; }
+          .subtitle { font-size: 16px; fill: #5E6965; }
+          .body { font-size: 16px; }
+          .small { font-size: 13px; fill: #5E6965; }
+          .micro { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #5E6965; }
+          .number { font-family: Fraunces, Georgia, serif; font-size: 28px; font-weight: 650; }
+          .label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 650; letter-spacing: .04em; }
+          .inverse { fill: #F6F3EA; }
+        </style>
+<rect width="1200" height="690" rx="16" fill="#F6F3EA"/>
+<text x="56.0" y="61.0" class="display" text-anchor="start">A direção depende do timing; não de um único cap</text>
+<text x="56.0" y="92.0" class="subtitle" text-anchor="start">Retorno líquido · um parâmetro alterado por vez · base = +16,97%</text>
+<text x="56.0" y="142.0" class="label" text-anchor="start">ADTV</text>
+<rect x="56" y="162" width="255" height="420" rx="10" fill="#FFFFFF" stroke="#D9DED9"/>
+<line x1="84" y1="380" x2="289" y2="380" stroke="#17201F"/>
+<rect x="90" y="240.0" width="42" height="140.0" rx="4" fill="#2C6B4B"/>
+<text x="111.0" y="232.0" class="small" text-anchor="middle">+22.6%</text>
+<text x="111.0" y="523.0" class="micro" text-anchor="middle"><tspan x="111.0" dy="0">R$ 4 mi</tspan></text>
+<rect x="160" y="274.8" width="42" height="105.2" rx="4" fill="#F2C230"/>
+<text x="181.0" y="266.8" class="small" text-anchor="middle">+17.0%</text>
+<text x="181.0" y="523.0" class="micro" text-anchor="middle"><tspan x="181.0" dy="0">base</tspan><tspan x="181.0" dy="15">R$ 8 mi</tspan></text>
+<rect x="230" y="238.7" width="42" height="141.3" rx="4" fill="#2C6B4B"/>
+<text x="251.0" y="230.7" class="small" text-anchor="middle">+22.8%</text>
+<text x="251.0" y="523.0" class="micro" text-anchor="middle"><tspan x="251.0" dy="0">R$ 12 mi</tspan></text>
+<text x="328.0" y="142.0" class="label" text-anchor="start">CAP CANA</text>
+<rect x="328" y="162" width="255" height="420" rx="10" fill="#FFFFFF" stroke="#D9DED9"/>
+<line x1="356" y1="380" x2="561" y2="380" stroke="#17201F"/>
+<rect x="362" y="242.5" width="42" height="137.5" rx="4" fill="#2C6B4B"/>
+<text x="383.0" y="234.5" class="small" text-anchor="middle">+22.2%</text>
+<text x="383.0" y="523.0" class="micro" text-anchor="middle"><tspan x="383.0" dy="0">10%</tspan></text>
+<rect x="432" y="274.8" width="42" height="105.2" rx="4" fill="#F2C230"/>
+<text x="453.0" y="266.8" class="small" text-anchor="middle">+17.0%</text>
+<text x="453.0" y="523.0" class="micro" text-anchor="middle"><tspan x="453.0" dy="0">base</tspan><tspan x="453.0" dy="15">15%</tspan></text>
+<rect x="502" y="295.5" width="42" height="84.5" rx="4" fill="#2C6B4B"/>
+<text x="523.0" y="287.5" class="small" text-anchor="middle">+13.6%</text>
+<text x="523.0" y="523.0" class="micro" text-anchor="middle"><tspan x="523.0" dy="0">20%</tspan></text>
+<text x="600.0" y="142.0" class="label" text-anchor="start">CAP GRÃOS</text>
+<rect x="600" y="162" width="255" height="420" rx="10" fill="#FFFFFF" stroke="#D9DED9"/>
+<line x1="628" y1="380" x2="833" y2="380" stroke="#17201F"/>
+<rect x="634" y="310.8" width="42" height="69.2" rx="4" fill="#2C6B4B"/>
+<text x="655.0" y="302.8" class="small" text-anchor="middle">+11.2%</text>
+<text x="655.0" y="523.0" class="micro" text-anchor="middle"><tspan x="655.0" dy="0">30%</tspan></text>
+<rect x="704" y="274.8" width="42" height="105.2" rx="4" fill="#F2C230"/>
+<text x="725.0" y="266.8" class="small" text-anchor="middle">+17.0%</text>
+<text x="725.0" y="523.0" class="micro" text-anchor="middle"><tspan x="725.0" dy="0">base</tspan><tspan x="725.0" dy="15">40%</tspan></text>
+<rect x="774" y="232.1" width="42" height="147.9" rx="4" fill="#2C6B4B"/>
+<text x="795.0" y="224.1" class="small" text-anchor="middle">+23.9%</text>
+<text x="795.0" y="523.0" class="micro" text-anchor="middle"><tspan x="795.0" dy="0">50%</tspan></text>
+<text x="872.0" y="142.0" class="label" text-anchor="start">LAG TOTAL</text>
+<rect x="872" y="162" width="255" height="420" rx="10" fill="#FFFFFF" stroke="#D9DED9"/>
+<line x1="900" y1="380" x2="1105" y2="380" stroke="#17201F"/>
+<rect x="906" y="274.8" width="42" height="105.2" rx="4" fill="#F2C230"/>
+<text x="927.0" y="266.8" class="small" text-anchor="middle">+17.0%</text>
+<text x="927.0" y="523.0" class="micro" text-anchor="middle"><tspan x="927.0" dy="0">base</tspan></text>
+<rect x="976" y="380.0" width="42" height="52.8" rx="4" fill="#B85C42"/>
+<text x="997.0" y="450.8" class="small" text-anchor="middle">-8.5%</text>
+<text x="997.0" y="523.0" class="micro" text-anchor="middle"><tspan x="997.0" dy="0">14 dias</tspan></text>
+<rect x="1046" y="341.9" width="42" height="38.1" rx="4" fill="#2C6B4B"/>
+<text x="1067.0" y="333.9" class="small" text-anchor="middle">+6.1%</text>
+<text x="1067.0" y="523.0" class="micro" text-anchor="middle"><tspan x="1067.0" dy="0">21 dias</tspan></text>
+<text x="56.0" y="616.0" class="body" text-anchor="start">Leitura: atrasar o sinal para 14 dias torna o resultado negativo; ampliar o cap de grãos o eleva.</text>
+<line x1="56" y1="650" x2="1144" y2="650" stroke="#D9DED9"/>
+<text x="56.0" y="671.0" class="micro" text-anchor="start">FONTE · 09_sensitivities.json · 02_portfolio.json</text>
+<text x="1144.0" y="671.0" class="micro" text-anchor="end">SERIEMA · DO CANTO À CARTEIRA</text>
+</svg>

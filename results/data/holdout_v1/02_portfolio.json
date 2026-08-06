@@ -1,0 +1,70 @@
+{
+  "name": "portfolio_cost_scenarios",
+  "order": 2,
+  "package_id": "holdout_v1_d072",
+  "payload": {
+    "cost_monotonicity": {
+      "base": 584870.4196558408,
+      "double": 528059.381709374,
+      "monotonic": true,
+      "zero": 647819.2460128573
+    },
+    "scenarios": {
+      "base": {
+        "active_blocks": 46,
+        "annualized_volatility": 0.12534158288007083,
+        "blocks": 46,
+        "borrow_cost_brl": 46246.739306501986,
+        "cagr": 0.033575994247670105,
+        "gross_pnl_brl": 142344.97488968406,
+        "max_drawdown": -0.20916793291376568,
+        "net_pnl_brl": 84870.41965584084,
+        "positive_day_rate": 0.40387858347386174,
+        "scenario": "base",
+        "scope": "holdout",
+        "sessions": 1186,
+        "sharpe_zero_rf": 0.3284115628873939,
+        "spot_cost_brl": 11227.815927340533,
+        "total_return": 0.1697408393116817,
+        "turnover_one_way": 6.916632035959367
+      },
+      "double": {
+        "active_blocks": 46,
+        "annualized_volatility": 0.1255570947849287,
+        "blocks": 46,
+        "borrow_cost_brl": 87912.05322971875,
+        "cagr": 0.011567479062581487,
+        "gross_pnl_brl": 137202.53218844486,
+        "max_drawdown": -0.24281952878728785,
+        "net_pnl_brl": 28059.38170937402,
+        "positive_day_rate": 0.3954468802698145,
+        "scenario": "double",
+        "scope": "holdout",
+        "sessions": 1186,
+        "sharpe_zero_rf": 0.15513812747549094,
+        "spot_cost_brl": 21231.097249350067,
+        "total_return": 0.05611876341874811,
+        "turnover_one_way": 6.926593105128874
+      },
+      "zero": {
+        "active_blocks": 46,
+        "annualized_volatility": 0.12516738406478195,
+        "blocks": 46,
+        "borrow_cost_brl": 0.0,
+        "cagr": 0.056072203925940034,
+        "gross_pnl_brl": 147819.24601285762,
+        "max_drawdown": -0.1919309371306871,
+        "net_pnl_brl": 147819.2460128573,
+        "positive_day_rate": 0.40809443507588533,
+        "scenario": "zero",
+        "scope": "holdout",
+        "sessions": 1186,
+        "sharpe_zero_rf": 0.5022406005958198,
+        "spot_cost_brl": 0.0,
+        "total_return": 0.2956384920257147,
+        "turnover_one_way": 6.907315139660216
+      }
+    }
+  },
+  "role": "decision"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "sector_climate_d064",
+  "order": 4,
+  "package_id": "holdout_v1_d072",
+  "payload": {
+    "book_arith_return": 0.25510171420524774,
+    "climate_arith_return": 0.08154938247049362,
+    "climate_share": 0.31967398856787477,
+    "max_ortho_residual": 7.155734338404329e-17,
+    "sector_arith_return": 0.1735523317347541
+  },
+  "role": "diagnostic"
+}

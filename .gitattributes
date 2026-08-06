@@ -13,3 +13,6 @@
 requirements.lock linguist-generated=true
 data/manifests/** linguist-generated=true
 tests/fixtures/** linguist-generated=true
+results/figures/** linguist-generated=true
+results/data/holdout_v1/public_series.json linguist-generated=true
+results/data/holdout_v1/10_metrics.json linguist-generated=true

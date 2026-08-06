@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+<title id="title">Só duas das cinco safras foram positivas</title>
+<desc id="desc">Retorno líquido e Sharpe de excesso por ano-safra</desc>
+<style>
+          text { font-family: 'IBM Plex Sans', Inter, Arial, sans-serif; fill: #17201F; }
+          .display { font-family: Fraunces, Georgia, serif; font-size: 34px; font-weight: 650; }
+          .title { font-size: 22px; font-weight: 650; }
+          .subtitle { font-size: 16px; fill: #5E6965; }
+          .body { font-size: 16px; }
+          .small { font-size: 13px; fill: #5E6965; }
+          .micro { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #5E6965; }
+          .number { font-family: Fraunces, Georgia, serif; font-size: 28px; font-weight: 650; }
+          .label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 650; letter-spacing: .04em; }
+          .inverse { fill: #F6F3EA; }
+        </style>
+<rect width="1200" height="620" rx="16" fill="#F6F3EA"/>
+<text x="56.0" y="61.0" class="display" text-anchor="start">Só duas das cinco safras foram positivas</text>
+<text x="56.0" y="92.0" class="subtitle" text-anchor="start">Retorno líquido e Sharpe de excesso por ano-safra</text>
+<line x1="70" y1="320" x2="1135" y2="320" stroke="#17201F" stroke-width="1.5"/>
+<rect x="115" y="320.0" width="110" height="32.7" rx="5" fill="#B85C42"/>
+<text x="170.0" y="379.7" class="title" text-anchor="middle">-3.1%</text>
+<text x="170.0" y="475.0" class="label" text-anchor="middle">2020/21</text>
+<text x="170.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. -1.57</text>
+<rect x="320" y="215.0" width="110" height="105.0" rx="5" fill="#123B2A"/>
+<text x="375.0" y="203.0" class="title" text-anchor="middle">+10.0%</text>
+<text x="375.0" y="475.0" class="label" text-anchor="middle">2021/22</text>
+<text x="375.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. +0.14</text>
+<rect x="525" y="320.0" width="110" height="12.2" rx="5" fill="#B85C42"/>
+<text x="580.0" y="359.2" class="title" text-anchor="middle">-1.2%</text>
+<text x="580.0" y="475.0" class="label" text-anchor="middle">2022/23</text>
+<text x="580.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. -0.58</text>
+<rect x="730" y="133.5" width="110" height="186.5" rx="5" fill="#123B2A"/>
+<text x="785.0" y="121.5" class="title" text-anchor="middle">+17.8%</text>
+<text x="785.0" y="475.0" class="label" text-anchor="middle">2023/24</text>
+<text x="785.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. +0.81</text>
+<rect x="935" y="320.0" width="110" height="54.1" rx="5" fill="#B85C42"/>
+<text x="990.0" y="401.1" class="title" text-anchor="middle">-5.2%</text>
+<text x="990.0" y="475.0" class="label" text-anchor="middle">2024/25</text>
+<text x="990.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. -3.80</text>
+<rect x="83" y="535" width="1050" height="38" rx="7" fill="#FFFFFF" stroke="#D9DED9"/>
+<text x="608.0" y="560.0" class="small" text-anchor="middle">2023/24 respondeu por 109,7% do P&amp;L líquido total; as outras safras, em conjunto, reduziram o resultado.</text>
+<line x1="56" y1="580" x2="1144" y2="580" stroke="#D9DED9"/>
+<text x="56.0" y="601.0" class="micro" text-anchor="start">FONTE · 12_descriptive_report.json</text>
+<text x="1144.0" y="601.0" class="micro" text-anchor="end">SERIEMA · DO CANTO À CARTEIRA</text>
+</svg>

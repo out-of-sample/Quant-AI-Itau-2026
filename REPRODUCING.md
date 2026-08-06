@@ -65,7 +65,7 @@ dependência do projeto.
 
 Os dados grandes não são republicados por três razões: tamanho, termos próprios das fontes e
 necessidade de preservar o vintage efetivamente observado. A política detalhada, fonte a fonte,
-está em [`docs/02_DADOS.md`](docs/02_DADOS.md).
+está em [`docs/methodology/data.md`](docs/methodology/data.md).
 
 ## 4. Reproduzir a ingestão
 
@@ -77,7 +77,7 @@ Antes de comparar qualquer saída:
 
 1. confira `ref_date` e `avail_date`;
 2. compare o hash e a data de captura com `data/manifests/`;
-3. verifique em `docs/02_DADOS.md` se a fonte reescreve o passado;
+3. verifique em `docs/methodology/data.md` se a fonte reescreve o passado;
 4. trate divergência de vintage como diferença de dado, não como falha silenciosa do código.
 
 Não existe um alvo único “baixar tudo” porque algumas fontes exigem calendários curados,
@@ -115,7 +115,7 @@ b4a4d174e4e52b13aeb3701cdff331444827af18955151c0a93572840b7c9a33
 ```
 
 Os números do PDF devem reconciliar com `data/reference/holdout_result_v1.json` e com as fontes
-indicadas em `docs/04_PROTOCOLO_BACKTEST.md`. O PDF é uma síntese editorial; os JSONs selados e
+indicadas em `docs/methodology/backtest.md`. O PDF é uma síntese editorial; os JSONs selados e
 o código são a trilha de auditoria.
 
 ## 7. Limites conhecidos

@@ -3,6 +3,17 @@
 Os scripts são interfaces finas sobre `src/quantagro/`. A lógica testável permanece no pacote;
 os executáveis organizam entradas, saídas e validações.
 
+## Publicação de resultados
+
+| Comando | Função |
+|---|---|
+| `python scripts/build_public_figures.py` | regenera os SVGs de `results/figures/` apenas com dados públicos versionados |
+| `python scripts/build_public_series.py` | deriva a série compacta estratégia × livre de risco dos painéis locais selados |
+
+O primeiro comando funciona num clone limpo. O segundo exige `10_metrics.json` e o parquet H4
+arquivados localmente; a saída compacta já está versionada. Nenhum deles reexecuta ou recalibra a
+estratégia.
+
 ## Qualidade
 
 | Comando | Função |

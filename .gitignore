@@ -41,6 +41,7 @@ data/interim/
 data/processed/
 *.csv
 !tests/fixtures/*.csv
+!results/**/*.csv
 *.parquet
 *.zip
 !tests/fixtures/*.zip
@@ -54,6 +55,11 @@ data/processed/
 outputs/figures/*
 outputs/tables/*
 !outputs/**/.gitkeep
+
+# A camada pública de resultados é deliberadamente versionada: contém apenas
+# artefatos compactos, gráficos próprios e séries derivadas do experimento selado.
+!results/
+!results/**
 
 # OS / editor
 .DS_Store

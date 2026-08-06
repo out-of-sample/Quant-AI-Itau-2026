@@ -1,0 +1,173 @@
+{
+  "benchmark": {
+    "primary": "risk_free",
+    "rejected": [
+      "ibovespa",
+      "cdi_plus_spread",
+      "zero"
+    ],
+    "secondary": "naive_sector"
+  },
+  "crop_year_performance": {
+    "best_crop_year": "2023/24",
+    "crop_years": [
+      "2020/21",
+      "2021/22",
+      "2022/23",
+      "2023/24",
+      "2024/25"
+    ],
+    "max_abs_pnl_share": 1.0968757155896391,
+    "per_crop_year": {
+      "2020/21": {
+        "annualized_volatility": 0.049982719247736666,
+        "compounded_return": -0.03113046725871582,
+        "excess_sharpe": -1.574121127178131,
+        "max_drawdown": -0.05621403490290966,
+        "pnl_brl": -15558.769755117013,
+        "pnl_share": -0.1833238225781089,
+        "positive_day_rate": 0.47619047619047616,
+        "sessions": 189
+      },
+      "2021/22": {
+        "annualized_volatility": 0.1809916391217102,
+        "compounded_return": 0.09998012468193562,
+        "excess_sharpe": 0.1419935121720276,
+        "max_drawdown": -0.19817698805575934,
+        "pnl_brl": 48346.119870895986,
+        "pnl_share": 0.5696462921586222,
+        "positive_day_rate": 0.5132275132275133,
+        "sessions": 189
+      },
+      "2022/23": {
+        "annualized_volatility": 0.20741455214402194,
+        "compounded_return": -0.01165113147007335,
+        "excess_sharpe": -0.5794941979298472,
+        "max_drawdown": -0.1810161548021778,
+        "pnl_brl": -6188.186592525104,
+        "pnl_share": -0.07291334975859552,
+        "positive_day_rate": 0.5132275132275133,
+        "sessions": 189
+      },
+      "2023/24": {
+        "annualized_volatility": 0.1261968864383052,
+        "compounded_return": 0.17762577060721263,
+        "excess_sharpe": 0.8142917150435007,
+        "max_drawdown": -0.06266811485142054,
+        "pnl_brl": 93092.3022923934,
+        "pnl_share": 1.0968757155896391,
+        "positive_day_rate": 0.5428571428571428,
+        "sessions": 210
+      },
+      "2024/25": {
+        "annualized_volatility": 0.05499465604162426,
+        "compounded_return": -0.05155236020331544,
+        "excess_sharpe": -3.8014962510241874,
+        "max_drawdown": -0.07020941216620591,
+        "pnl_brl": -31802.699899233878,
+        "pnl_share": -0.3747206627255695,
+        "positive_day_rate": 0.46551724137931033,
+        "sessions": 174
+      }
+    },
+    "worst_crop_year": "2024/25",
+    "years_positive": 2,
+    "years_reported": 5,
+    "years_with_sessions": 5
+  },
+  "descriptive_only": true,
+  "headline_cost_scenario": "base",
+  "multiplicity": {
+    "deflated_sharpe_ratio": 0.024951274321367956,
+    "expected_max_sharpe_daily": 0.02533541975902442,
+    "observed_sharpe_daily": -0.03169408484201805,
+    "trial_ledger": [
+      {
+        "decision": "D-002",
+        "what": "tese reformulada de direcional para cross-seccional"
+      },
+      {
+        "decision": "D-033",
+        "what": "matriz de exposição de preço: quatro nomes diretos"
+      },
+      {
+        "decision": "D-035",
+        "what": "matriz D-033 mantida com a perna long condicionada a H2a"
+      },
+      {
+        "decision": "D-043",
+        "what": "direção original produtor-comprado, AVALIADA COM RETORNOS no dev"
+      },
+      {
+        "decision": "D-044",
+        "what": "direção H′ Q-dominante — o sinal foi escolhido após observar D-043"
+      },
+      {
+        "decision": "D-047",
+        "what": "algodão como canal adicional do escore"
+      },
+      {
+        "decision": "D-050",
+        "what": "cana como canal adicional do escore"
+      },
+      {
+        "decision": "D-052",
+        "what": "universo com SMTO3 dentro e JALL3 fora"
+      },
+      {
+        "decision": "D-053",
+        "what": "congelamento: 5 nomes, water-filling, caps 0,40/0,15, 21 pregões, D+1"
+      },
+      {
+        "decision": "D-055",
+        "what": "contrato operacional: blocos contíguos, ADTV, AUM, custos"
+      },
+      {
+        "decision": "D-059",
+        "what": "smoke do dev 2018/19, COM P&L OBSERVADO"
+      },
+      {
+        "decision": "D-060",
+        "what": "diagnósticos do dev com retornos: atribuição e setor×clima"
+      },
+      {
+        "decision": "D-061",
+        "what": "matriz de exposição rederivada sob H′ após o P&L do dev ter sido visto"
+      },
+      {
+        "decision": "D-062",
+        "what": "veículos alternativos de monetização avaliados e recusados"
+      },
+      {
+        "decision": "D-063",
+        "what": "espaço de veículos reenumerado após a correção do canal Rumo"
+      },
+      {
+        "decision": "D-067",
+        "what": "ramo AGRO3×ADTV e elegibilidade da perna produtora"
+      }
+    ],
+    "trial_sharpe_std_daily": 0.01162464287167418,
+    "trials": 39.0
+  },
+  "risk": {
+    "benchmark": "risk_free",
+    "beta_vs_market": 0.008288464714116768,
+    "calmar": 0.160954059325693,
+    "cvar_95": -0.019226717018450596,
+    "downside_deviation": 0.1131952032929452,
+    "excess_kurtosis": 5.327113108024309,
+    "excess_sharpe": -0.5031279991425698,
+    "max_abs_net_exposure": 0.14381831703372885,
+    "max_drawdown": -0.20916793291376568,
+    "max_gross_exposure": 1.1913531099948942,
+    "max_time_under_water_sessions": 809,
+    "mean_gross_exposure": 0.5215321899850773,
+    "mean_time_under_water_sessions": 76.93333333333334,
+    "sessions": 1186,
+    "skewness": 0.018440584051402552,
+    "sortino": -0.5571960476445373,
+    "var_95": -0.01236035298680574,
+    "worst_session": -0.04869843767699485
+  }
+}
