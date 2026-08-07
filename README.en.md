@@ -113,6 +113,27 @@ That outcome does not make the experiment empty. It separates three claims quant
 often blur: **there is a signal**, **there is P&L**, and **there is skill**. SERIEMA supports the first
 two, not the third.
 
+## What comes next
+
+The next cycle does not rerun the same backtest with different parameters — that would only spend
+degrees of freedom on an already-used sample. It changes the question, across three experiments:
+
+1. **Separate local from national.** The spatial placebo revealed a strong national-common
+   component: shuffling states destroys ~69% of β, yet ~31% survives. Removing that component and
+   trading only the per-company geographic residual attacks both the spatial placebo and the sector
+   beta that dominated P&L.
+2. **Make exposure live.** The `E` matrix is currently fixed on sparse vintages. Rebuilding it from
+   geography, mix, own production, hedging and inputs read out of point-in-time CVM/SEC filings
+   turns exposure from a constant into a variable — which is where a fine cross-section could exist.
+3. **Trade the event, not the calendar.** Replace the fixed 21-session block with pre-registered
+   windows spanning anomaly, nowcast, CONAB release and dissipation. The lag sensitivity (14 days
+   took the return to −8.51%) says timing carries the result; so timing must be a hypothesis, not a
+   convention.
+
+**The decision rule is strict: a new design requires a new holdout.** 2020–2025 has been spent and
+does not become evidence again. The next seal decides among three destinations — demonstrated alpha
+→ capital; mechanism only → risk overlay; neither → close the research line.
+
 ## Choose your depth
 
 | If you want to… | Start here |

@@ -114,6 +114,27 @@ Esse desfecho não torna o experimento vazio. Ele separa três afirmações que 
 frequentemente confundem: **há sinal**, **há P&L** e **há habilidade**. Na SERIEMA, as duas primeiras
 têm suporte; a terceira, não.
 
+## O que vem depois
+
+O próximo ciclo não repete o mesmo backtest com parâmetros diferentes — isso só gastaria graus de
+liberdade sobre uma amostra já usada. Ele muda a pergunta, em três experimentos:
+
+1. **Separar o local do nacional.** O placebo espacial mostrou um componente nacional-comum forte:
+   embaralhar UFs destrói ~69% do β, mas ~31% sobrevive. Remover esse componente e negociar apenas
+   o resíduo geográfico por empresa ataca de uma vez o placebo espacial e o beta setorial que
+   dominou o P&L.
+2. **Tornar a exposição viva.** Hoje a matriz `E` é fixa por vintages esparsos. Atualizá-la com
+   geografia, mix, produção própria, hedge e insumos lidos de documentos CVM/SEC point-in-time
+   transforma a exposição de constante em variável — que é onde a cross-section fina pode existir.
+3. **Operar o evento, não o calendário.** Trocar o bloco fixo de 21 pregões por janelas
+   pré-registradas entre anomalia, nowcast, divulgação da CONAB e dissipação. A sensibilidade ao
+   lag (14 dias levou o retorno a −8,51%) diz que o timing carrega o resultado; então o timing
+   precisa ser hipótese, não convenção.
+
+**A regra de decisão é dura: desenho novo exige holdout novo.** O período 2020–2025 já foi gasto e
+não volta a ser prova. O próximo selo decide entre três destinos — alpha demonstrado → capital;
+só mecanismo → overlay de risco; nenhum dos dois → encerrar a linha de pesquisa.
+
 ## Escolha a profundidade
 
 | Se você quer… | Comece aqui |

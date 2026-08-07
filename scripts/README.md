@@ -30,7 +30,9 @@ estratégia.
 - `build_equity_returns.py`: retorno total point-in-time;
 - `build_market_state_dev.py`: universo, ADTV e estado de aluguel no desenvolvimento;
 - `build_h4_controls.py` e `build_h5_geographic_scores.py`: controles e placebo;
-- `build_holdout_inputs.py` e `build_holdout_source_manifest.py`: pacote pré-execução.
+- `build_holdout_inputs.py` e `build_holdout_source_manifest.py`: pacote pré-execução;
+- `capture_corporate_events_dev.py` e `finalize_holdout_events.py`: proventos, desdobramentos e
+  eventos terminais congelados por janela, em `data/reference/`.
 
 ## Testes econômicos e diagnósticos
 

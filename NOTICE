@@ -1,0 +1,10 @@
+SERIEMA — Do canto à carteira
+Copyright 2026 Caio Nicoluzzi Vieira, Renzo Real Machado Filho e Gabriel Freire Ushijima
+
+Este produto inclui software desenvolvido para o Desafio Quant AI 2026 (Itaú Asset).
+Licenciado sob a Apache License, Version 2.0; veja o arquivo LICENSE.
+
+A licença cobre o código e os materiais originais deste repositório. Ela não transfere
+direitos sobre dados de terceiros consultados pelos módulos de ingestão (CHIRPS, CONAB,
+IBGE, B3, NEFIN, NOAA, FRED, ComexStat, IPEADATA), cujos termos permanecem com as fontes
+originais e estão descritos em docs/methodology/data.md.

@@ -16,5 +16,11 @@ Os manifestos são parte da evidência do backtest. Não os regenere para “atu
 histórica: uma captura nova deve produzir um novo manifesto e um novo identificador de
 experimento.
 
+O CHIRPS é a única fonte com dois níveis de manifesto. Cada download grava um JSON por raster,
+mas a procedência consolidada — `ref_date`, `kind`, URL, SHA-256 e bytes de **6.395** rasters —
+vive em `chirps_h1_bulk.parquet` e `chirps_cane_monthly_bulk.parquet`. Só os bulks são
+versionados: são eles que o pipeline lê e que o selo da rodada atesta. Os JSON por raster são
+regeneráveis e ficam fora do Git.
+
 Detalhes por provedor estão em [`../docs/methodology/data.md`](../docs/methodology/data.md). Os limites de
 reprodução e redistribuição estão em [`../REPRODUCING.md`](../REPRODUCING.md).

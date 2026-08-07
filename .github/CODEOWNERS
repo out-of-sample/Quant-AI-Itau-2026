@@ -1,0 +1,22 @@
+# Revisão obrigatória por área. O GitHub atribui automaticamente estes revisores em cada PR
+# que toque os caminhos abaixo. A regra de aprovação em si está em CONTRIBUTING.md §4.
+#
+# Enquanto o desenvolvimento estiver individual, o dono do caminho pode ser o próprio autor —
+# nesse caso vale a exceção declarada no CONTRIBUTING, não uma auto-aprovação silenciosa.
+
+# Padrão: qualquer arquivo sem dono mais específico.
+*                               @caionv @Renzo-Filho
+
+# Especificações congeladas e artefatos selados. Mudar qualquer um destes altera o contrato do
+# experimento ou reescreve evidência publicada — nunca é uma mudança de rotina.
+/src/quantagro/backtest/*_spec.py   @caionv @Renzo-Filho
+/src/quantagro/features/shock_spec.py @caionv @Renzo-Filho
+/src/quantagro/stats/robustness_spec.py @caionv @Renzo-Filho
+/data/reference/                @caionv @Renzo-Filho
+/results/data/                  @caionv @Renzo-Filho
+/report/                        @caionv @Renzo-Filho
+
+# Portas de qualidade e CI: quebrar um guard remove a rede que protege o resto.
+/.github/workflows/             @caionv @Renzo-Filho
+/scripts/check_*.py             @caionv @Renzo-Filho
+/scripts/quality.py             @caionv @Renzo-Filho

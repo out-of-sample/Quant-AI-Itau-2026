@@ -206,9 +206,10 @@ atribuição bruta de SMTO3 é positiva.
 | JBSS3 | +R$ 18,9 mil | +13,3% |
 | SMTO3 | +R$ 36,0 mil | +25,3% |
 
-O HHI das participações absolutas foi 0,562; BRFS3 foi o maior componente. Na decomposição
-aritmética do livro, o retorno total de 25,51% foi separado em **17,36% de setor** e **8,15% de
-clima** — 32% do total para o componente climático.
+O HHI das participações absolutas foi 0,562; BRFS3 foi o maior componente. A decomposição opera
+sobre o retorno **bruto e aritmético** do livro — 25,51%, e não os +16,97% líquidos e compostos da
+seção 3, que já descontam custos. Esse bruto foi separado em **17,36% de setor** e **8,15% de
+clima**: 32% do total para o componente climático.
 
 Isso é diagnóstico, não prova de alpha. O spanning multifatorial estendido, com fatores NEFIN,
 USD/BRL, soja, milho, açúcar e ONI, encontrou alpha anualizado aritmético **−5,99%**, `t = −1,03`
@@ -221,9 +222,11 @@ igual a 43,3% da real. A troca de exposições dentro de cada lado, porém, most
 da carteira vem da própria composição setorial; ela reforça a necessidade de não chamar o P&L de
 alpha climático.
 
-O ledger contabilizou **39 tentativas** de pesquisa. O Deflated Sharpe Ratio foi 0,025. Mesmo que
-H′ tenha sido registrada antes do holdout, a direção nasceu depois de observar a falsificação no
-desenvolvimento; reportar a multiplicidade é indispensável.
+A correção por multiplicidade usou **39 tentativas**: as 16 decisões de desenho enumeradas no
+`trial_ledger` mais 23 variantes executadas dentro da própria rodada (3 cenários de custo, 10
+sensibilidades, 5 leave-one-name-out e 5 leave-one-year-out). O Deflated Sharpe Ratio foi 0,025.
+Mesmo que H′ tenha sido registrada antes do holdout, a direção nasceu depois de observar a
+falsificação no desenvolvimento; reportar a multiplicidade é indispensável.
 
 ## 9. Fronteira de claims
 

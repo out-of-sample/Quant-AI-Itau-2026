@@ -18,25 +18,25 @@
 <text x="56.0" y="92.0" class="subtitle" text-anchor="start">Net return and excess Sharpe by crop year</text>
 <line x1="70" y1="320" x2="1135" y2="320" stroke="#17201F" stroke-width="1.5"/>
 <rect x="115" y="320.0" width="110" height="32.7" rx="5" fill="#B85C42"/>
-<text x="170.0" y="379.7" class="title" text-anchor="middle">-3.1%</text>
+<text x="170.0" y="379.7" class="title" text-anchor="middle">−3.1%</text>
 <text x="170.0" y="475.0" class="label" text-anchor="middle">2020/21</text>
-<text x="170.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. -1.57</text>
+<text x="170.0" y="507.0" class="small" text-anchor="middle">Excess Sharpe −1.57</text>
 <rect x="320" y="215.0" width="110" height="105.0" rx="5" fill="#123B2A"/>
 <text x="375.0" y="203.0" class="title" text-anchor="middle">+10.0%</text>
 <text x="375.0" y="475.0" class="label" text-anchor="middle">2021/22</text>
-<text x="375.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. +0.14</text>
+<text x="375.0" y="507.0" class="small" text-anchor="middle">Excess Sharpe +0.14</text>
 <rect x="525" y="320.0" width="110" height="12.2" rx="5" fill="#B85C42"/>
-<text x="580.0" y="359.2" class="title" text-anchor="middle">-1.2%</text>
+<text x="580.0" y="359.2" class="title" text-anchor="middle">−1.2%</text>
 <text x="580.0" y="475.0" class="label" text-anchor="middle">2022/23</text>
-<text x="580.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. -0.58</text>
+<text x="580.0" y="507.0" class="small" text-anchor="middle">Excess Sharpe −0.58</text>
 <rect x="730" y="133.5" width="110" height="186.5" rx="5" fill="#123B2A"/>
 <text x="785.0" y="121.5" class="title" text-anchor="middle">+17.8%</text>
 <text x="785.0" y="475.0" class="label" text-anchor="middle">2023/24</text>
-<text x="785.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. +0.81</text>
+<text x="785.0" y="507.0" class="small" text-anchor="middle">Excess Sharpe +0.81</text>
 <rect x="935" y="320.0" width="110" height="54.1" rx="5" fill="#B85C42"/>
-<text x="990.0" y="401.1" class="title" text-anchor="middle">-5.2%</text>
+<text x="990.0" y="401.1" class="title" text-anchor="middle">−5.2%</text>
 <text x="990.0" y="475.0" class="label" text-anchor="middle">2024/25</text>
-<text x="990.0" y="507.0" class="small" text-anchor="middle">Sharpe ex. -3.80</text>
+<text x="990.0" y="507.0" class="small" text-anchor="middle">Excess Sharpe −3.80</text>
 <rect x="83" y="535" width="1050" height="38" rx="7" fill="#FFFFFF" stroke="#D9DED9"/>
 <text x="608.0" y="560.0" class="small" text-anchor="middle">2023/24 produced 109.7% of total net P&amp;L; all other crop years combined reduced the result.</text>
 <line x1="56" y1="580" x2="1144" y2="580" stroke="#D9DED9"/>
