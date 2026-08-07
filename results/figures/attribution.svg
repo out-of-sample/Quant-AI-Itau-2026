@@ -20,7 +20,7 @@
 <line x1="250" y1="170" x2="250" y2="520" stroke="#17201F"/>
 <text x="56.0" y="206.0" class="body" text-anchor="start">AGRO3</text>
 <rect x="181.8" y="184" width="68.2" height="31" rx="4" fill="#B85C42"/>
-<text x="260.0" y="206.0" class="small" text-anchor="start">R$ -21,3 mil</text>
+<text x="260.0" y="206.0" class="small" text-anchor="start">R$ −21,3 mil</text>
 <text x="56.0" y="271.0" class="body" text-anchor="start">SLCE3</text>
 <rect x="250.0" y="249" width="42.8" height="31" rx="4" fill="#123B2A"/>
 <text x="300.8" y="271.0" class="small" text-anchor="start">R$ +13,4 mil</text>
@@ -38,7 +38,7 @@
 <rect x="975.7369248014926" y="215" width="134.3" height="72" rx="6" fill="#F2C230"/>
 <text x="832.9" y="259.0" class="label inverse" text-anchor="middle">SETOR 68%</text>
 <text x="1042.9" y="259.0" class="label" text-anchor="middle">CLIMA 32%</text>
-<text x="690.0" y="339.0" class="body" text-anchor="start"><tspan x="690.0" dy="0">livro +25.5%</tspan><tspan x="690.0" dy="31">componente setorial +17.4%</tspan><tspan x="690.0" dy="31">componente climático +8.2%</tspan></text>
+<text x="690.0" y="339.0" class="body" text-anchor="start"><tspan x="690.0" dy="0">livro +25,5%</tspan><tspan x="690.0" dy="31">componente setorial +17,4%</tspan><tspan x="690.0" dy="31">componente climático +8,2%</tspan></text>
 <rect x="690" y="461" width="420" height="82" rx="8" fill="#FFFFFF" stroke="#D9DED9"/>
 <text x="710.0" y="490.0" class="small" text-anchor="start"><tspan x="710.0" dy="0">A decomposição não resgata o claim de alpha:</tspan><tspan x="710.0" dy="22">o spanning multifatorial encontrou t = −1,03.</tspan></text>
 <line x1="56" y1="640" x2="1144" y2="640" stroke="#D9DED9"/>

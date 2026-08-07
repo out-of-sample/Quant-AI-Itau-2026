@@ -9,8 +9,8 @@ necessariamente disponíveis no provedor depois da captura original.
 Sem qualquer dado privado ou credencial, um clone limpo permite:
 
 - instalar exatamente o ambiente verificado, a partir de um lockfile com hashes;
-- executar os 603 testes unitários, parametrizados e sintéticos — até dois são pulados quando
-  os artefatos locais selados não estão presentes;
+- executar os 607 testes unitários, parametrizados e sintéticos, que passam sem qualquer dado
+  local além do que o próprio repositório versiona;
 - rodar Ruff e os guards determinísticos de lookahead e segredos;
 - inspecionar a especificação congelada da estratégia, do backtest e da rodada única;
 - conferir hashes, cobertura e claims nos registros pequenos de `data/reference/`;

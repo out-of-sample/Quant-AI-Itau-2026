@@ -18,16 +18,16 @@
 <text x="56.0" y="92.0" class="subtitle" text-anchor="start">Retorno total do mesmo desenho operacional</text>
 <text x="56.0" y="184.0" class="label" text-anchor="start">SEM CUSTOS</text>
 <rect x="220" y="160" width="760.0" height="42" rx="6" fill="#7BA6DC"/>
-<text x="995.0" y="189.0" class="title" text-anchor="start">+29.56%</text>
-<text x="1120.0" y="187.0" class="small" text-anchor="end">DD -19.2%</text>
+<text x="995.0" y="189.0" class="title" text-anchor="start">+29,56%</text>
+<text x="1120.0" y="187.0" class="small" text-anchor="end">DD −19,2%</text>
 <text x="56.0" y="284.0" class="label" text-anchor="start">CUSTO BASE</text>
 <rect x="220" y="260" width="436.4" height="42" rx="6" fill="#123B2A"/>
-<text x="671.4" y="289.0" class="title" text-anchor="start">+16.97%</text>
-<text x="1120.0" y="287.0" class="small" text-anchor="end">DD -20.9%</text>
+<text x="671.4" y="289.0" class="title" text-anchor="start">+16,97%</text>
+<text x="1120.0" y="287.0" class="small" text-anchor="end">DD −20,9%</text>
 <text x="56.0" y="384.0" class="label" text-anchor="start">CUSTO ×2</text>
 <rect x="220" y="360" width="144.3" height="42" rx="6" fill="#B85C42"/>
-<text x="379.3" y="389.0" class="title" text-anchor="start">+5.61%</text>
-<text x="1120.0" y="387.0" class="small" text-anchor="end">DD -24.3%</text>
+<text x="379.3" y="389.0" class="title" text-anchor="start">+5,61%</text>
+<text x="1120.0" y="387.0" class="small" text-anchor="end">DD −24,3%</text>
 <text x="220.0" y="474.0" class="small" text-anchor="start">Base: aluguel R$ 46.247 · negociação R$ 11.228</text>
 <line x1="56" y1="520" x2="1144" y2="520" stroke="#D9DED9"/>
 <text x="56.0" y="541.0" class="micro" text-anchor="start">FONTE · 02_portfolio.json</text>

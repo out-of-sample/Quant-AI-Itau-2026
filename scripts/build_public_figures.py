@@ -37,13 +37,25 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def pct(value: float, decimals: int = 1, signed: bool = True) -> str:
+def localize(rendered: str, locale: str = "pt") -> str:
+    """Aplica a convenção tipográfica do idioma a um número já formatado.
+
+    Português usa vírgula decimal; inglês usa ponto. Nos dois casos o sinal negativo é o
+    menos tipográfico (U+2212), não o hífen ASCII — é o mesmo caractere já usado nos rótulos
+    escritos à mão, e sem isso a mesma figura mistura duas convenções.
+    """
+    if locale == "pt":
+        rendered = rendered.replace(".", ",")
+    return rendered.replace("-", "−")
+
+
+def pct(value: float, decimals: int = 1, signed: bool = True, locale: str = "pt") -> str:
     sign = "+" if signed and value > 0 else ""
-    return f"{sign}{value * 100:.{decimals}f}%"
+    return localize(f"{sign}{value * 100:.{decimals}f}%", locale)
 
 
-def num(value: float, decimals: int = 2) -> str:
-    return f"{value:.{decimals}f}"
+def num(value: float, decimals: int = 2, locale: str = "pt") -> str:
+    return localize(f"{value:.{decimals}f}", locale)
 
 
 def text(x: float, y: float, value: str, cls: str = "body", anchor: str = "start") -> str:
@@ -280,13 +292,13 @@ def performance(locale: str = "pt") -> str:
         text(
             x1,
             rf_y - 10,
-            f"LIVRE DE RISCO  {pct(end_rf / 100 - 1)}"
+            f"LIVRE DE RISCO  {pct(end_rf / 100 - 1, locale=locale)}"
             if locale == "pt"
-            else f"RISK-FREE  {pct(end_rf / 100 - 1)}",
+            else f"RISK-FREE  {pct(end_rf / 100 - 1, locale=locale)}",
             "label",
             "end",
         ),
-        text(x1, st_y - 10, f"SERIEMA  {pct(end_st / 100 - 1)}", "label", "end"),
+        text(x1, st_y - 10, f"SERIEMA  {pct(end_st / 100 - 1, locale=locale)}", "label", "end"),
     ]
     dates = [date.fromisoformat(row["date"]) for row in series]
     for year in range(2021, 2026):
@@ -346,11 +358,26 @@ def crop_years(locale: str = "pt") -> str:
             f'<rect x="{x}" y="{y:.1f}" width="{bw}" height="{h:.1f}" rx="5" fill="{color}"/>'
         )
         parts.append(
-            text(x + bw / 2, y - 12 if ret >= 0 else y + h + 27, pct(ret, 1), "title", "middle")
+            text(
+                x + bw / 2,
+                y - 12 if ret >= 0 else y + h + 27,
+                pct(ret, 1, locale=locale),
+                "title",
+                "middle",
+            )
         )
         parts.append(text(x + bw / 2, 475, year, "label", "middle"))
         sharpe = values[year]["excess_sharpe"]
-        parts.append(text(x + bw / 2, 507, f"Sharpe ex. {sharpe:+.2f}", "small", "middle"))
+        label = "Sharpe ex." if locale == "pt" else "Excess Sharpe"
+        parts.append(
+            text(
+                x + bw / 2,
+                507,
+                f"{label} {localize(f'{sharpe:+.2f}', locale)}",
+                "small",
+                "middle",
+            )
+        )
     note = (
         "2023/24 respondeu por 109,7% do P&L líquido total; as outras safras, em conjunto, reduziram o resultado."
         if locale == "pt"
@@ -542,7 +569,7 @@ def attribution() -> str:
         parts.append(
             f'<rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="31" rx="4" fill="{color}"/>'
         )
-        label = f"R$ {value / 1000:+.1f} mil".replace(".", ",")
+        label = f"R$ {localize(f'{value / 1000:+.1f}')} mil"
         label_x = x + w + 8 if value >= 0 else zero_x + 10
         parts.append(text(label_x, y + 22, label, "small"))
     parts.append(text(690, 145, "RETORNO ARITMÉTICO DO LIVRO", "label"))
