@@ -1,0 +1,47 @@
+{
+  "name": "h4_spanning",
+  "order": 5,
+  "package_id": "holdout_v1_d072",
+  "payload": {
+    "core": {
+      "alpha_annualized_arithmetic": -0.063337939174526,
+      "alpha_daily": -0.0002513410284703413,
+      "alpha_p_one_sided": 0.8528087807874687,
+      "alpha_standard_error_hac": 0.00023970201710109317,
+      "alpha_t": -1.048556167820396,
+      "controls": [
+        "rm_minus_rf",
+        "smb",
+        "hml",
+        "wml",
+        "iml"
+      ],
+      "observations": 1186,
+      "passed": false,
+      "r_squared": 0.00470044348413845
+    },
+    "extended": {
+      "alpha_annualized_arithmetic": -0.05988366406185474,
+      "alpha_daily": -0.00023763358754704263,
+      "alpha_p_one_sided": 0.8484259615721331,
+      "alpha_standard_error_hac": 0.00023077811196750914,
+      "alpha_t": -1.0297059176066865,
+      "controls": [
+        "rm_minus_rf",
+        "smb",
+        "hml",
+        "wml",
+        "iml",
+        "usdbrl",
+        "soy",
+        "corn_second",
+        "sugar",
+        "oni"
+      ],
+      "observations": 1186,
+      "passed": false,
+      "r_squared": 0.014429805445155264
+    }
+  },
+  "role": "veto"
+}

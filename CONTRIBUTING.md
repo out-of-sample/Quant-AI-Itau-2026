@@ -1,8 +1,12 @@
-# Como trabalhamos neste repositório
+# Como contribuir com este repositório
 
-Somos 2-3 pessoas mexendo no mesmo código. Estas regras existem para que ninguém sobrescreva
-o trabalho do outro, para que a `main` nunca quebre, e para que, no fim, o histórico do git
-conte a história do projeto — que é matéria-prima direta do relatório final.
+O ciclo original de pesquisa está concluído e a rodada fora da amostra foi selada. Contribuições
+continuam bem-vindas para corrigir bugs, melhorar reprodução e propor extensões, desde que não
+reescrevam os artefatos `v1` nem transformem análises pós-selo em escolhas retroativas.
+
+Antes de começar, procure uma issue existente ou abra uma usando os formulários do GitHub.
+Mudanças pequenas de documentação podem ir direto a um PR; alterações de estratégia, dados ou
+inferência devem explicar previamente a nova hipótese e o novo perímetro de avaliação.
 
 ---
 
@@ -13,7 +17,7 @@ de PR não levam assinaturas, rodapés ou trailers de coautoria de nenhum tipo �
 descrição técnica da mudança.
 
 O uso de ferramentas de IA generativa ao longo do projeto é registrado em
-`docs/DIARIO_GENAI.md`, que é a fonte da seção "Uso de IA Generativa" do relatório final.
+`docs/genai.md`, que é a fonte da seção "Uso de IA Generativa" do relatório final.
 Esse registro é feito lá, de forma estruturada e analisável — não espalhado pelo histórico
 do git.
 
@@ -40,8 +44,8 @@ na `main`**.
 
 O ciclo é:
 1. Cria `exp/<ideia>`, testa a ideia, olha o resultado.
-2. **Registra a conclusão** — funcionou ou não — em `docs/07_RISCOS_E_DECISOES.md` (se for
-   uma decisão de desenho) ou em `docs/adr/` (se for uma escolha de arquitetura).
+2. **Registra a conclusão** — funcionou ou não — em `docs/history/decisions.md` (decisão
+   científica) ou na issue/PR correspondente (decisão puramente de implementação).
 3. Se a ideia vingou, **reescreve limpo** numa branch `feat/` e essa sim vira PR.
 4. A branch `exp/` pode ser deletada. **O aprendizado não se perde porque está no
    documento, não na branch.**
@@ -109,19 +113,21 @@ Antes de aprovar, o revisor confirma:
 - [ ] Se cria um parâmetro novo: ele foi escolhido por lógica econômica/agronômica ou por
       "testei e esse foi o que deu o melhor Sharpe"? Se for o segundo, é overfitting —
       registrar como robustez, não como escolha primária
-- [ ] O holdout (2020-2025) continua lacrado?
+- [ ] Os registros e resultados selados `v1` permanecem byte a byte inalterados?
+- [ ] Se a mudança propõe uma nova estratégia, ela usa novo identificador, novo pré-registro e
+      nova avaliação — sem substituir o holdout publicado?
 
 ---
 
 ## 5. Setup do ambiente (primeira vez neste clone)
 
-O ambiente é Python 3.14 (única versão no projeto). As versões exatas de tudo — runtime e
+O ambiente é Python 3.14. As versões exatas de tudo — runtime e
 ferramental — vivem em `requirements.lock` (gerado com hashes, reprodutível bit a bit).
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.lock        # stack travado, idêntico ao da CI
-pip install -e . --no-deps              # o pacote quantagro em modo editável
+python3.14 -m venv .venv && source .venv/bin/activate
+python -m pip install --require-hashes -r requirements.lock  # stack travado, idêntico à CI
+python -m pip install -e . --no-deps        # pacote quantagro em modo editável
 pre-commit install                      # ativa os ganchos de qualidade a cada commit
 ```
 
@@ -129,6 +135,12 @@ A partir daí, todo commit passa automaticamente por: `ruff` (lint), `ruff forma
 de lookahead (`scripts/check_lookahead.py`) e o de segredos (`scripts/check_secrets.py`). A
 mesma bateria roda na CI — o gancho local só existe para você não descobrir na CI o que dá
 para pegar na sua máquina.
+
+Antes de abrir um PR, rode a mesma porta de qualidade da CI:
+
+```bash
+python scripts/quality.py
+```
 
 **Adicionou ou mudou uma dependência?** Edite `pyproject.toml` e regenere o lock:
 
@@ -163,6 +175,18 @@ git branch -d feat/minha-mudanca             # limpa
   hash/manifesto do que foi baixado, não o CSV commitado.
 - Chaves, tokens, `.env`.
 - Saídas de notebook (limpar antes de commitar).
+
+O relatório final, seus assets canônicos e os artefatos pequenos de referência são exceções
+intencionais: fazem parte do registro público do estudo. Veja `REPRODUCING.md` para a fronteira
+completa entre reprodução de software, de dados e da rodada selada.
+
+---
+
+## 8. Licença das contribuições
+
+Ao enviar uma contribuição, você declara ter direito de fazê-lo e concorda que ela seja
+distribuída sob a licença Apache-2.0 do repositório. Não envie conteúdo de terceiros sem termos
+compatíveis nem dados cuja redistribuição não esteja autorizada.
 
 Se você precisa que um dado seja reproduzível, o caminho é: código de ingestão determinístico
 + registro em `data/manifests/` (data de download, hash, versão da fonte).

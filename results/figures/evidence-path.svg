@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+<title id="title">A hipótese não atravessou o projeto intacta</title>
+<desc id="desc">Cada teste decidiu o próximo — inclusive quando o resultado contrariou a tese.</desc>
+<style>
+          text { font-family: 'IBM Plex Sans', Inter, Arial, sans-serif; fill: #17201F; }
+          .display { font-family: Fraunces, Georgia, serif; font-size: 34px; font-weight: 650; }
+          .title { font-size: 22px; font-weight: 650; }
+          .subtitle { font-size: 16px; fill: #5E6965; }
+          .body { font-size: 16px; }
+          .small { font-size: 13px; fill: #5E6965; }
+          .micro { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #5E6965; }
+          .number { font-family: Fraunces, Georgia, serif; font-size: 28px; font-weight: 650; }
+          .label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 650; letter-spacing: .04em; }
+          .inverse { fill: #F6F3EA; }
+        </style>
+<rect width="1200" height="560" rx="16" fill="#F6F3EA"/>
+<text x="56.0" y="61.0" class="display" text-anchor="start">A hipótese não atravessou o projeto intacta</text>
+<text x="56.0" y="92.0" class="subtitle" text-anchor="start">Cada teste decidiu o próximo — inclusive quando o resultado contrariou a tese.</text>
+<line x1="96" y1="258" x2="976" y2="258" stroke="#D9DED9" stroke-width="5"/>
+<circle cx="96" cy="258" r="18" fill="#123B2A"/>
+<path d="M118 258h170" stroke="#123B2A" stroke-width="3"/>
+<text x="96.0" y="176.0" class="label" text-anchor="middle">01</text>
+<text x="96.0" y="205.0" class="label" text-anchor="middle"><tspan x="96.0" dy="0">ELO</tspan><tspan x="96.0" dy="16">FÍSICO</tspan></text>
+<text x="96.0" y="309.0" class="title" text-anchor="middle">apareceu</text>
+<text x="96.0" y="340.0" class="small" text-anchor="middle">β −0,067 · t −5,96</text>
+<circle cx="316" cy="258" r="18" fill="#B85C42"/>
+<path d="M338 258h170" stroke="#B85C42" stroke-width="3"/>
+<text x="316.0" y="176.0" class="label" text-anchor="middle">02</text>
+<text x="316.0" y="205.0" class="label" text-anchor="middle"><tspan x="316.0" dy="0">CANAL</tspan><tspan x="316.0" dy="16">DE</tspan><tspan x="316.0" dy="16">PREÇO</tspan></text>
+<text x="316.0" y="309.0" class="title" text-anchor="middle">não sustentado</text>
+<text x="316.0" y="340.0" class="small" text-anchor="middle">6 testes · 0 significativos</text>
+<circle cx="536" cy="258" r="18" fill="#B85C42"/>
+<path d="M558 258h170" stroke="#B85C42" stroke-width="3"/>
+<text x="536.0" y="176.0" class="label" text-anchor="middle">03</text>
+<text x="536.0" y="205.0" class="label" text-anchor="middle"><tspan x="536.0" dy="0">TESE</tspan><tspan x="536.0" dy="16">ORIGINAL</tspan></text>
+<text x="536.0" y="309.0" class="title" text-anchor="middle">falsificada</text>
+<text x="536.0" y="340.0" class="small" text-anchor="middle">β −0,091 · t −3,60</text>
+<circle cx="756" cy="258" r="18" fill="#2468C4"/>
+<path d="M778 258h170" stroke="#2468C4" stroke-width="3"/>
+<text x="756.0" y="176.0" class="label" text-anchor="middle">04</text>
+<text x="756.0" y="205.0" class="label" text-anchor="middle"><tspan x="756.0" dy="0">HIPÓTESE</tspan><tspan x="756.0" dy="16">H′</tspan></text>
+<text x="756.0" y="309.0" class="title" text-anchor="middle">evidência OOS</text>
+<text x="756.0" y="340.0" class="small" text-anchor="middle">p = 0,0625</text>
+<circle cx="976" cy="258" r="18" fill="#F2C230"/>
+<text x="976.0" y="176.0" class="label" text-anchor="middle">05</text>
+<text x="976.0" y="205.0" class="label" text-anchor="middle"><tspan x="976.0" dy="0">CARTEIRA</tspan></text>
+<text x="976.0" y="309.0" class="title" text-anchor="middle">sem habilidade</text>
+<text x="976.0" y="340.0" class="small" text-anchor="middle">+16,97% vs +63,31%</text>
+<rect x="96" y="380" width="880" height="90" rx="10" fill="#123B2A"/>
+<text x="536.0" y="416.0" class="body inverse" text-anchor="middle"><tspan x="536.0" dy="0">Resultado científico: o clima contém informação física.</tspan><tspan x="536.0" dy="26">Resultado financeiro: não demonstramos que ela remunera o risco.</tspan></text>
+<line x1="56" y1="520" x2="1144" y2="520" stroke="#D9DED9"/>
+<text x="56.0" y="541.0" class="micro" text-anchor="start">FONTE · evidence_summary_v1.json e artefatos citados</text>
+<text x="1144.0" y="541.0" class="micro" text-anchor="end">SERIEMA · DO CANTO À CARTEIRA</text>
+</svg>

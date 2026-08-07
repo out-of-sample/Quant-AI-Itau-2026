@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "pooled_beta": 0.042136786683397584,
+  "negative_leave_one_out": 0,
+  "total_leave_one_out": 3,
+  "reason": "não corroborado: beta=0.0421; 0/3 LOO negativos"
+}

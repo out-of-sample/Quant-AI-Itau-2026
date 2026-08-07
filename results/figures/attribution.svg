@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+<title id="title">De onde veio o resultado?</title>
+<desc id="desc">Atribuição bruta por nome e decomposição aritmética setor-clima.</desc>
+<style>
+          text { font-family: 'IBM Plex Sans', Inter, Arial, sans-serif; fill: #17201F; }
+          .display { font-family: Fraunces, Georgia, serif; font-size: 34px; font-weight: 650; }
+          .title { font-size: 22px; font-weight: 650; }
+          .subtitle { font-size: 16px; fill: #5E6965; }
+          .body { font-size: 16px; }
+          .small { font-size: 13px; fill: #5E6965; }
+          .micro { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #5E6965; }
+          .number { font-family: Fraunces, Georgia, serif; font-size: 28px; font-weight: 650; }
+          .label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 650; letter-spacing: .04em; }
+          .inverse { fill: #F6F3EA; }
+        </style>
+<rect width="1200" height="680" rx="16" fill="#F6F3EA"/>
+<text x="56.0" y="61.0" class="display" text-anchor="start">BRFS3 respondeu por 67% do P&amp;L bruto</text>
+<text x="56.0" y="92.0" class="subtitle" text-anchor="start">Concentração por nome e decomposição do retorno do livro</text>
+<text x="56.0" y="145.0" class="label" text-anchor="start">P&amp;L BRUTO POR NOME</text>
+<line x1="250" y1="170" x2="250" y2="520" stroke="#17201F"/>
+<text x="56.0" y="206.0" class="body" text-anchor="start">AGRO3</text>
+<rect x="181.8" y="184" width="68.2" height="31" rx="4" fill="#B85C42"/>
+<text x="260.0" y="206.0" class="small" text-anchor="start">R$ -21,3 mil</text>
+<text x="56.0" y="271.0" class="body" text-anchor="start">SLCE3</text>
+<rect x="250.0" y="249" width="42.8" height="31" rx="4" fill="#123B2A"/>
+<text x="300.8" y="271.0" class="small" text-anchor="start">R$ +13,4 mil</text>
+<text x="56.0" y="336.0" class="body" text-anchor="start">BRFS3</text>
+<rect x="250.0" y="314" width="305.2" height="31" rx="4" fill="#123B2A"/>
+<text x="563.2" y="336.0" class="small" text-anchor="start">R$ +95,4 mil</text>
+<text x="56.0" y="401.0" class="body" text-anchor="start">JBSS3</text>
+<rect x="250.0" y="379" width="60.4" height="31" rx="4" fill="#123B2A"/>
+<text x="318.4" y="401.0" class="small" text-anchor="start">R$ +18,9 mil</text>
+<text x="56.0" y="466.0" class="body" text-anchor="start">SMTO3</text>
+<rect x="250.0" y="444" width="115.2" height="31" rx="4" fill="#123B2A"/>
+<text x="373.2" y="466.0" class="small" text-anchor="start">R$ +36,0 mil</text>
+<text x="690.0" y="145.0" class="label" text-anchor="start">RETORNO ARITMÉTICO DO LIVRO</text>
+<rect x="690" y="215" width="285.7" height="72" rx="6" fill="#2468C4"/>
+<rect x="975.7369248014926" y="215" width="134.3" height="72" rx="6" fill="#F2C230"/>
+<text x="832.9" y="259.0" class="label inverse" text-anchor="middle">SETOR 68%</text>
+<text x="1042.9" y="259.0" class="label" text-anchor="middle">CLIMA 32%</text>
+<text x="690.0" y="339.0" class="body" text-anchor="start"><tspan x="690.0" dy="0">livro +25.5%</tspan><tspan x="690.0" dy="31">componente setorial +17.4%</tspan><tspan x="690.0" dy="31">componente climático +8.2%</tspan></text>
+<rect x="690" y="461" width="420" height="82" rx="8" fill="#FFFFFF" stroke="#D9DED9"/>
+<text x="710.0" y="490.0" class="small" text-anchor="start"><tspan x="710.0" dy="0">A decomposição não resgata o claim de alpha:</tspan><tspan x="710.0" dy="22">o spanning multifatorial encontrou t = −1,03.</tspan></text>
+<line x1="56" y1="640" x2="1144" y2="640" stroke="#D9DED9"/>
+<text x="56.0" y="661.0" class="micro" text-anchor="start">FONTE · 10_metrics.json · 04_sector_climate.json · 05_h4_spanning.json</text>
+<text x="1144.0" y="661.0" class="micro" text-anchor="end">SERIEMA · DO CANTO À CARTEIRA</text>
+</svg>

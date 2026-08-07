@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "pooled_beta": 0.013392915296726735,
+  "positive_leave_one_out": 8,
+  "total_leave_one_out": 8,
+  "positive_ufs": 5,
+  "total_ufs": 5,
+  "reason": "corroborado: beta=0.0134; 8/8 LOO positivos; 5/5 UFs positivas"
+}

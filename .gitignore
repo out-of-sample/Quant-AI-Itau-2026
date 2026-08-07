@@ -21,11 +21,17 @@ dist/
 .ruff_cache/
 .pytest_cache/
 .mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+.nox/
+.tox/
 
 # Environment / secrets
 .env
 .env.*
 *.key
+*.log
 
 # Dados brutos, intermediários e processados.
 # São grandes e regeneráveis pelo código de ingestão. O que garante reprodutibilidade é o
@@ -35,6 +41,7 @@ data/interim/
 data/processed/
 *.csv
 !tests/fixtures/*.csv
+!results/**/*.csv
 *.parquet
 *.zip
 !tests/fixtures/*.zip
@@ -49,13 +56,26 @@ outputs/figures/*
 outputs/tables/*
 !outputs/**/.gitkeep
 
+# A camada pública de resultados é deliberadamente versionada: contém apenas
+# artefatos compactos, gráficos próprios e séries derivadas do experimento selado.
+!results/
+!results/**
+
 # OS / editor
 .DS_Store
 .vscode/
 .idea/
 
-# Claude Code local settings
-.claude/settings.local.json
+# Ambientes e estúdios locais de agentes — nunca são parte do artefato público
+.ai/
+.agents/
+.claude/
+.codex/
+pitch_studio
 
-# Guia local de convenções (não versionado — fica na máquina de cada integrante)
+# Guias locais equivalentes; ficam sincronizados na máquina, não no Git
+AGENTS.md
 CLAUDE.md
+
+# Claude Code local settings (redundante com .claude/, mantido por clareza)
+.claude/settings.local.json

@@ -32,3 +32,9 @@ repos:
         language: system
         types: [text]
         exclude: '^scripts/check_secrets\.py$'  # os próprios padrões disparariam o hook
+
+      - id: check-docs
+        name: links locais da documentação
+        entry: python scripts/check_docs.py
+        language: system
+        types: [markdown]

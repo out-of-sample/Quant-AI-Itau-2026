@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+<title id="title">Quanto os custos mudam a conclusão?</title>
+<desc id="desc">Retorno total sob zero, base e dobro dos custos.</desc>
+<style>
+          text { font-family: 'IBM Plex Sans', Inter, Arial, sans-serif; fill: #17201F; }
+          .display { font-family: Fraunces, Georgia, serif; font-size: 34px; font-weight: 650; }
+          .title { font-size: 22px; font-weight: 650; }
+          .subtitle { font-size: 16px; fill: #5E6965; }
+          .body { font-size: 16px; }
+          .small { font-size: 13px; fill: #5E6965; }
+          .micro { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: #5E6965; }
+          .number { font-family: Fraunces, Georgia, serif; font-size: 28px; font-weight: 650; }
+          .label { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 650; letter-spacing: .04em; }
+          .inverse { fill: #F6F3EA; }
+        </style>
+<rect width="1200" height="560" rx="16" fill="#F6F3EA"/>
+<text x="56.0" y="61.0" class="display" text-anchor="start">Custos consomem 12,59 pontos percentuais</text>
+<text x="56.0" y="92.0" class="subtitle" text-anchor="start">Retorno total do mesmo desenho operacional</text>
+<text x="56.0" y="184.0" class="label" text-anchor="start">SEM CUSTOS</text>
+<rect x="220" y="160" width="760.0" height="42" rx="6" fill="#7BA6DC"/>
+<text x="995.0" y="189.0" class="title" text-anchor="start">+29.56%</text>
+<text x="1120.0" y="187.0" class="small" text-anchor="end">DD -19.2%</text>
+<text x="56.0" y="284.0" class="label" text-anchor="start">CUSTO BASE</text>
+<rect x="220" y="260" width="436.4" height="42" rx="6" fill="#123B2A"/>
+<text x="671.4" y="289.0" class="title" text-anchor="start">+16.97%</text>
+<text x="1120.0" y="287.0" class="small" text-anchor="end">DD -20.9%</text>
+<text x="56.0" y="384.0" class="label" text-anchor="start">CUSTO ×2</text>
+<rect x="220" y="360" width="144.3" height="42" rx="6" fill="#B85C42"/>
+<text x="379.3" y="389.0" class="title" text-anchor="start">+5.61%</text>
+<text x="1120.0" y="387.0" class="small" text-anchor="end">DD -24.3%</text>
+<text x="220.0" y="474.0" class="small" text-anchor="start">Base: aluguel R$ 46.247 · negociação R$ 11.228</text>
+<line x1="56" y1="520" x2="1144" y2="520" stroke="#D9DED9"/>
+<text x="56.0" y="541.0" class="micro" text-anchor="start">FONTE · 02_portfolio.json</text>
+<text x="1144.0" y="541.0" class="micro" text-anchor="end">SERIEMA · DO CANTO À CARTEIRA</text>
+</svg>

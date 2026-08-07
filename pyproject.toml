@@ -4,11 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quantagro"
-version = "0.0.0"
+version = "1.0.0"
 description = "Estratégia long/short cross-seccional agro na B3 dirigida por choque climático"
+readme = "README.md"
+license = "Apache-2.0"
 requires-python = "==3.14.*"
+keywords = [
+    "backtesting",
+    "climate-risk",
+    "point-in-time-data",
+    "quantitative-finance",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
 # Runtime — versões travadas porque foram verificadas ao vivo com wheels para cp314
-# (ver docs/07_RISCOS_E_DECISOES.md, D-009). pandas 3.x tem Copy-on-Write por padrão.
+# (ver docs/history/decisions.md, D-009). pandas 3.x tem Copy-on-Write por padrão.
 dependencies = [
     "pandas==3.0.3",
     "numpy==2.5.1",
@@ -19,6 +36,11 @@ dependencies = [
     "tifffile==2026.7.14", # leitura dos GeoTIFF do CHIRPS (Python puro, sem GDAL — cp314 ok)
     "pyshp==3.1.4", # leitura da malha municipal histórica IBGE sem GDAL/GeoPandas
 ]
+
+[project.urls]
+Repository = "https://github.com/out-of-sample/Quant-AI-Itau-2026"
+Documentation = "https://github.com/out-of-sample/Quant-AI-Itau-2026/tree/main/docs"
+Issues = "https://github.com/out-of-sample/Quant-AI-Itau-2026/issues"
 
 [project.optional-dependencies]
 # Ferramental de desenvolvimento. A versão exata (com hashes) vive em requirements.lock;

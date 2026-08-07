@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Se este repositório contribuir para sua pesquisa, cite o software abaixo."
+title: "SERIEMA: Do canto à carteira"
+type: software
+authors:
+  - name: "out-of-sample"
+repository-code: "https://github.com/out-of-sample/Quant-AI-Itau-2026"
+url: "https://github.com/out-of-sample/Quant-AI-Itau-2026"
+version: 1.0.0
+date-released: 2026-08-01
+license: Apache-2.0
+keywords:
+  - backtesting
+  - climate risk
+  - point-in-time data
+  - quantitative finance
+abstract: >-
+  Estratégia long/short cross-sectional em ações brasileiras do agronegócio,
+  construída a partir de chuva local, geografia agrícola e dados point-in-time.

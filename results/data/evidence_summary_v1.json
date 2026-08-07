@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "scope": "public evidence path through D-075",
+  "stages": [
+    {
+      "id": "h1",
+      "question": "A chuva antecipa a revisão da safra?",
+      "result": "yes_with_caveat",
+      "headline": "O elo físico apareceu",
+      "detail": "H1a agrupado: beta -0.0672, t -5.96, N 729, oito safras. A sensibilidade posterior preservou a direção, mas o placebo espacial impediu o veredicto global de robustez.",
+      "sources": [
+        "results/data/mechanism/h1a_results.csv",
+        "results/data/mechanism/robustness_h1_summary.json"
+      ]
+    },
+    {
+      "id": "h2",
+      "question": "A queda de oferta eleva o preço o bastante?",
+      "result": "no_evidence",
+      "headline": "O canal de preço não se sustentou",
+      "detail": "Seis especificações não estabeleceram o elo preço. No último teste local, o sinal foi positivo (beta +0.031), mas sem poder (p bootstrap unilateral 0.2148).",
+      "sources": [
+        "results/data/mechanism/h2a_results.csv",
+        "results/data/mechanism/h2a_diag_results.csv",
+        "results/data/mechanism/h2a_local_results.csv"
+      ]
+    },
+    {
+      "id": "original",
+      "question": "Comprar produtores monetiza o choque?",
+      "result": "falsified",
+      "headline": "A direção original foi falsificada",
+      "detail": "No desenvolvimento, a reação acionária foi antipreditiva: beta -0.091, t -3.60, P&L médio -3.97% por período e hit rate de 12%.",
+      "sources": [
+        "docs/history/decisions.md (D-043)"
+      ]
+    },
+    {
+      "id": "hprime",
+      "question": "O dano de quantidade domina na direção contrária?",
+      "result": "oos_evidence",
+      "headline": "A nova hipótese passou no teste primário",
+      "detail": "H′ foi registrada antes do holdout e passou a permutação exata unilateral: p 0.0625; quatro de cinco inclinações por safra foram positivas.",
+      "sources": [
+        "results/data/holdout_v1/01_primary_hprime.json"
+      ]
+    },
+    {
+      "id": "portfolio",
+      "question": "A evidência virou habilidade investível?",
+      "result": "no_skill",
+      "headline": "P&L positivo, sem habilidade demonstrada",
+      "detail": "Retorno líquido +16.97%, contra +63.31% no livre de risco; Sharpe de excesso -0.50 e alpha estendido t -1.03.",
+      "sources": [
+        "results/data/holdout_v1/02_portfolio.json",
+        "results/data/holdout_v1/05_h4_spanning.json",
+        "results/data/holdout_v1/12_descriptive_report.json"
+      ]
+    }
+  ]
+}

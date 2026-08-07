@@ -1,0 +1,16 @@
+{
+  "name": "liquidity_d067",
+  "order": 3,
+  "package_id": "holdout_v1_d072",
+  "payload": {
+    "active_decisions": 28,
+    "branch": "intermittent",
+    "core_available_decisions": 46,
+    "decisions": 46,
+    "eligible_decisions": 28,
+    "no_producer_decisions": 0,
+    "one_producer_decisions": 18,
+    "two_producer_decisions": 28
+  },
+  "role": "diagnostic"
+}
