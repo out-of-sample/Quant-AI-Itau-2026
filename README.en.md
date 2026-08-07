@@ -9,6 +9,11 @@
 </p>
 
 <p align="center">
+  team <strong>out-of-sample</strong> · Caio Nicoluzzi Vieira · Renzo Real Machado Filho · Gabriel Freire Ushijima<br>
+  <sub>Desafio Quant AI 2026 — Itaú Asset</sub>
+</p>
+
+<p align="center">
   <a href="report/relatorio-seriema.pdf">Final report</a> ·
   <a href="results/README.md">Results atlas</a> ·
   <a href="docs/README.md">Documentation</a> ·
@@ -175,3 +180,6 @@ size, provider terms, and vintage preservation. The exact boundary is documented
 Original code and materials are released under [`Apache-2.0`](LICENSE). The license does not grant
 rights to third-party data or trademarks. This is an academic research artifact, not investment
 advice or a live execution system.
+
+The report submitted for judging is **anonymous**, as the competition rules require. Authorship is
+recorded here, in [`CITATION.cff`](CITATION.cff), and in [`NOTICE`](NOTICE).

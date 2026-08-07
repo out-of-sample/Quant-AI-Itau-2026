@@ -9,6 +9,11 @@
 </p>
 
 <p align="center">
+  equipe <strong>out-of-sample</strong> · Caio Nicoluzzi Vieira · Renzo Real Machado Filho · Gabriel Freire Ushijima<br>
+  <sub>Desafio Quant AI 2026 — Itaú Asset</sub>
+</p>
+
+<p align="center">
   <a href="report/relatorio-seriema.pdf">Relatório final</a> ·
   <a href="results/README.md">Atlas de resultados</a> ·
   <a href="docs/README.md">Documentação</a> ·
@@ -177,3 +182,6 @@ O código e os materiais originais são disponibilizados sob
 [`Apache-2.0`](LICENSE). A licença não transfere direitos sobre dados ou marcas de terceiros. Este
 é um artefato acadêmico de pesquisa, não recomendação de investimento nem sistema de execução ao
 vivo.
+
+O relatório submetido à avaliação é **anônimo**, como exige o regulamento do desafio. A autoria
+fica registrada aqui, no [`CITATION.cff`](CITATION.cff) e no [`NOTICE`](NOTICE).
