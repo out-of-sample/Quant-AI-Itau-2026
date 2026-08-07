@@ -1,9 +1,0 @@
-{
-  "source": "CHIRPS-2.0",
-  "kind": "final",
-  "ref_date": "2020-12-03",
-  "url": "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/tifs/p05/2020/chirps-v2.0.2020.12.03.tif.gz",
-  "sha256": "4020ceb1a3546e4c048863cb61e1bc10a72a52e877b1363038b9ca78892873a5",
-  "bytes": 2832385,
-  "downloaded_at": "2026-07-17T04:38:08.161853+00:00"
-}

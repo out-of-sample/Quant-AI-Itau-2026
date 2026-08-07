@@ -51,6 +51,14 @@ data/processed/
 !data/manifests/
 !data/manifests/**
 
+# Contra-exceção: o manifesto por raster do CHIRPS é escrito a cada download, mas a mesma
+# procedência (URL, SHA-256, bytes) já está consolidada nos dois bulks em parquet, que
+# cobrem 6.395 rasters. Versionar os dois níveis enterrava as ~48 fontes distintas sob
+# centenas de arquivos idênticos em forma. Regenerável; fica fora do Git.
+data/manifests/chirps_final_[0-9]*.json
+data/manifests/chirps_prelim_[0-9]*.json
+data/manifests/chirps_monthly_final_[0-9]*.json
+
 # Saídas geradas (regeneráveis pelo pipeline)
 outputs/figures/*
 outputs/tables/*
