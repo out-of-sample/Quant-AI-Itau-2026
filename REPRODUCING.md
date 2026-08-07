@@ -41,6 +41,21 @@ python scripts/quality.py
 O `requirements.lock` inclui dependências de runtime e desenvolvimento com versões e hashes.
 `pyproject.toml` descreve o pacote; o lockfile é a autoridade para o ambiente reproduzido.
 
+### O lock está congelado de propósito
+
+O SHA-256 do `requirements.lock` está atestado no preflight da rodada única
+([`00_preflight.json`](results/data/holdout_v1/00_preflight.json), bloco `source_attestations`) e
+**continua batendo byte a byte**. É o último vínculo exato entre este repositório e o ambiente sob
+o qual o experimento foi executado, então ele não recebe atualização incremental de dependência —
+o `Dependabot` foi configurado sem o ecossistema `pip` por essa razão. Uma retomada da pesquisa
+gera lock novo e identificador de experimento novo, não bump sobre o lock antigo.
+
+> **Divergência conhecida e esperada:** o `pyproject.toml` **não** bate mais com o hash atestado
+> (`adee00f9…` no selo, outro hoje). A causa é metadado de empacotamento alterado depois da
+> rodada — licença, keywords, classificadores e URLs, adicionados ao preparar o repositório
+> público. Nenhuma dependência ou versão mudou. O registro selado é imutável e continua correto;
+> quem auditar deve usar o `requirements.lock` como definição do ambiente, não o `pyproject.toml`.
+
 ### Comandos de qualidade
 
 ```bash

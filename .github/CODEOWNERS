@@ -5,18 +5,21 @@
 # nesse caso vale a exceção declarada no CONTRIBUTING, não uma auto-aprovação silenciosa.
 
 # Padrão: qualquer arquivo sem dono mais específico.
-*                               @caionv @Renzo-Filho
+*                               @caionv @Renzo-Filho @YushiPy
 
 # Especificações congeladas e artefatos selados. Mudar qualquer um destes altera o contrato do
 # experimento ou reescreve evidência publicada — nunca é uma mudança de rotina.
-/src/quantagro/backtest/*_spec.py   @caionv @Renzo-Filho
-/src/quantagro/features/shock_spec.py @caionv @Renzo-Filho
-/src/quantagro/stats/robustness_spec.py @caionv @Renzo-Filho
-/data/reference/                @caionv @Renzo-Filho
-/results/data/                  @caionv @Renzo-Filho
-/report/                        @caionv @Renzo-Filho
+/src/quantagro/backtest/*_spec.py   @caionv @Renzo-Filho @YushiPy
+/src/quantagro/features/shock_spec.py @caionv @Renzo-Filho @YushiPy
+/src/quantagro/stats/robustness_spec.py @caionv @Renzo-Filho @YushiPy
+/data/reference/                @caionv @Renzo-Filho @YushiPy
+/results/data/                  @caionv @Renzo-Filho @YushiPy
+/report/                        @caionv @Renzo-Filho @YushiPy
+
+# Ambiente do experimento: o lock está atestado pelo selo da rodada única.
+/requirements.lock              @caionv @Renzo-Filho @YushiPy
 
 # Portas de qualidade e CI: quebrar um guard remove a rede que protege o resto.
-/.github/workflows/             @caionv @Renzo-Filho
-/scripts/check_*.py             @caionv @Renzo-Filho
-/scripts/quality.py             @caionv @Renzo-Filho
+/.github/workflows/             @caionv @Renzo-Filho @YushiPy
+/scripts/check_*.py             @caionv @Renzo-Filho @YushiPy
+/scripts/quality.py             @caionv @Renzo-Filho @YushiPy

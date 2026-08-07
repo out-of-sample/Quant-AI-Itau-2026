@@ -1,22 +1,22 @@
 version: 2
 updates:
+  # Actions continuam sendo atualizadas: elas rodam a CI de hoje, não o experimento de
+  # ontem, e ficam presas por SHA — um bump aqui é revisável e não toca o resultado.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
 
-  - package-ecosystem: pip
-    directory: /
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 3
-    groups:
-      scientific-stack:
-        patterns:
-          - numpy
-          - pandas
-          - scipy
-          - statsmodels
-      development-tools:
-        dependency-type: development
+# O ecossistema `pip` foi deliberadamente removido. O `requirements.lock` é o ambiente sob o
+# qual a rodada única foi executada, e seu SHA-256 está atestado no preflight selado
+# (`results/data/holdout_v1/00_preflight.json`). Subir uma dependência quebra o último
+# vínculo exato entre este repositório e o ambiente do experimento, em troca de nada: a
+# pesquisa está encerrada e não será reexecutada sob esta especificação.
+#
+# Se o projeto for retomado com uma especificação nova, o caminho é gerar um lock novo com
+# `pip-compile --generate-hashes --allow-unsafe --extra dev -o requirements.lock pyproject.toml`
+# e um novo identificador de experimento — não aceitar bumps incrementais sobre o lock antigo.
+#
+# Alertas de segurança do Dependabot são outra coisa e continuam valendo: eles avisam sem
+# abrir PR de bump automático, e uma vulnerabilidade real justifica reavaliar esta decisão.
