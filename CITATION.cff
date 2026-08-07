@@ -3,11 +3,16 @@ message: "Se este repositório contribuir para sua pesquisa, cite o software aba
 title: "SERIEMA: Do canto à carteira"
 type: software
 authors:
-  - name: "out-of-sample"
+  - family-names: "Nicoluzzi Vieira"
+    given-names: "Caio"
+  - family-names: "Real Machado Filho"
+    given-names: "Renzo"
+  - family-names: "Freire Ushijima"
+    given-names: "Gabriel"
 repository-code: "https://github.com/out-of-sample/Quant-AI-Itau-2026"
 url: "https://github.com/out-of-sample/Quant-AI-Itau-2026"
 version: 1.0.0
-date-released: 2026-08-01
+date-released: 2026-08-06
 license: Apache-2.0
 keywords:
   - backtesting
