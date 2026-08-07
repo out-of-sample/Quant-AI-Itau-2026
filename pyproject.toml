@@ -27,7 +27,7 @@ classifiers = [
 # Runtime — versões travadas porque foram verificadas ao vivo com wheels para cp314
 # (ver docs/history/decisions.md, D-009). pandas 3.x tem Copy-on-Write por padrão.
 dependencies = [
-    "pandas==3.0.3",
+    "pandas==3.0.5",
     "numpy==2.5.1",
     "scipy==1.18.0",
     "statsmodels==0.14.6",
