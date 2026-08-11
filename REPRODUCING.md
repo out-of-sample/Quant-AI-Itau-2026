@@ -126,7 +126,7 @@ sha256sum report/relatorio-seriema.pdf
 Valor esperado:
 
 ```text
-b4a4d174e4e52b13aeb3701cdff331444827af18955151c0a93572840b7c9a33
+51d91d93c1d57e3ac453a22ebe1b807a6edf3e0a3239853df484b63b816a4a7b
 ```
 
 Os números do PDF devem reconciliar com `data/reference/holdout_result_v1.json` e com as fontes
