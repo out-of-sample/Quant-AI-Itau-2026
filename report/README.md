@@ -7,8 +7,8 @@ cinco páginas, proporção 16:9 e autoria anônima, conforme o regulamento do d
 |---|---|
 | Páginas | 5 |
 | Dimensão | 800 × 450 pt |
-| Tamanho | 3.322.470 bytes |
-| SHA-256 | `51d91d93c1d57e3ac453a22ebe1b807a6edf3e0a3239853df484b63b816a4a7b` |
+| Tamanho | 3.322.805 bytes |
+| SHA-256 | `6f2db0179a67d0a742c40d79aea106f78984e4865237948e66239b13aa54be9f` |
 | Data de lacre | 11/08/2026 |
 
 O PDF é um artefato de comunicação. Para conferir números e proveniência, use o
