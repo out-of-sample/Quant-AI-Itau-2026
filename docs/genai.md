@@ -1824,3 +1824,37 @@ corrigidos antes da publicação.
 **Validação humana**: como foi conferido.
 **O que a IA errou**: erros e propostas derrubadas na verificação. ← não pular
 ```
+
+---
+
+## 2026-08-11 — Revisão final do relatório após leitura crítica externa
+
+**Uso**: submeter o PDF final a uma leitura crítica independente, simulando a banca, e
+converter as lacunas apontadas em revisão editorial — verificando cada correção diretamente
+nos artefatos selados antes de reescrever a peça.
+
+**Valor real**: a crítica identificou que os dois números que sustentam a parte positiva da
+conclusão eram os menos documentados do relatório: o teste primário aprovado exibia `p 0,0625`
+sem o limiar pré-registrado escrito, e o `β −0,0672` aparecia sem estatística `t` nem janela de
+estimação. A revisão declarou o limiar na própria página (`p 0,0625 < α 0,10` unilateral,
+congelado em `backtest/strategy_spec.py` antes do holdout), levou `t −5,96`, `N 729` e a janela
+2017/18–2024/25 para a página de modelagem, separou visualmente o placebo geográfico aprovado
+do teste de alpha reprovado, explicitou a leitura do custo-zero (nem sem custos o retorno
+alcança o livre de risco: +29,6% contra +63,3%), ancorou o `+16,97%` da capa ao comparador
+pré-declarado (+63,31%) e escreveu a regra de elegibilidade da etapa de empresas (exposição
+direta declarada em balanço; 17 candidatos indiretos vetados). Nenhum número novo foi
+calculado: o defeito era de documentação na peça, não de método.
+
+**Validação mecânica e humana**: cada afirmação foi conferida na fonte primária antes de
+entrar na peça — contrato congelado, `data/processed/h1a_results.csv`, artefatos selados do
+holdout e recomputação da acumulação do livre de risco nas mesmas 1.186 sessões. Os scripts de
+montagem ganharam asserts que pinam o limiar, o cenário de custo zero e o episódio-fonte do
+diário; as páginas foram renderizadas duas vezes (hashes idênticos) e o PDF foi auditado por
+número de páginas, proporção 16:9 e ausência de metadados de autoria.
+
+**O que a verificação pegou**: o fecho da página de resultados terminava em `−0,50,` porque
+uma substituição global de ponto por vírgula alcançava também o ponto final da frase — o
+defeito estava na versão anterior e só apareceu na inspeção ampliada do render. E o script da
+página de IA ainda lia `docs/DIARIO_GENAI.md`, caminho extinto na reforma de 2026-08-06:
+qualquer remontagem futura teria falhado antes de produzir imagem. Ambos foram corrigidos
+nesta revisão.
